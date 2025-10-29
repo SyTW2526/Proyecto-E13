@@ -8,12 +8,144 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  name          String
-  password      String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              String           @id @default(uuid())
+  email           String           @unique
+  name            String
+  password        String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  listsOwned      List[]           @relation("ListOwner")
+
+  listShares      ListShare[]
+  categoryShares  CategoryShare[]
+  taskShares      TaskShare[]
   
   @@map("users")
+}
+
+model List {
+  id                  String        @id @default(uuid())
+  name                String
+  description         String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  ownerId             String
+  owner               User          @relation("ListOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  categories          Category[]
+
+  shares              ListShare[]
+  
+  @@map("lists")
+  @@index([ownerId])
+}
+
+model Category {
+  id                  String          @id @default(uuid())
+  name                String
+  description         String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  
+  listId              String
+  list                List            @relation(fields: [listId], references: [id], onDelete: Cascade)
+  
+  tasks               Task[]
+  
+  shares              CategoryShare[]
+  
+  @@map("categories")
+  @@index([listId])
+}
+
+model Task {
+  id                    String      @id @default(uuid())
+  name                  String
+  description           String?
+  status                TaskStatus  @default(PENDING)
+  priority              Priority    @default(MEDIUM)
+  dueDate               DateTime?
+  completed             Boolean     @default(false)
+  completedAt           DateTime?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  
+  categoryId            String
+  category              Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  shares                TaskShare[]
+  
+  @@map("tasks")
+  @@index([categoryId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+model ListShare {
+  id                          String          @id @default(uuid())
+  permission                  SharePermission @default(VIEW)
+  sharedAt                    DateTime        @default(now())
+  
+  listId                      String
+  list                        List            @relation(fields: [listId], references: [id], onDelete: Cascade)
+  
+  userId                      String
+  user                        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([listId, userId])
+  @@map("list_shares")
+  @@index([userId])
+}
+
+model CategoryShare {
+  id                              String          @id @default(uuid())
+  permission                      SharePermission @default(VIEW)
+  sharedAt                        DateTime        @default(now())
+  
+  categoryId                      String
+  category                        Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  userId                          String
+  user                            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([categoryId, userId])
+  @@map("category_shares")
+  @@index([userId])
+}
+
+model TaskShare {
+  id                          String          @id @default(uuid())
+  permission                  SharePermission @default(VIEW)
+  sharedAt                    DateTime        @default(now())
+  
+  taskId                      String
+  task                        Task            @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  userId                      String
+  user                        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([taskId, userId])
+  @@map("task_shares")
+  @@index([userId])
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum SharePermission {
+  VIEW
+  EDIT
+  ADMIN
 }
