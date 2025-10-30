@@ -3,7 +3,8 @@ import express from "express";
 import request from "supertest";
 
 // Mock del controlador para evitar interacción con prisma en estas pruebas de enrutado
-vi.mock("../controllers/controller", () => ({
+// Después del refactor los controladores de users están en ../controllers/users
+vi.mock("../controllers/users", () => ({
   createTestUser: vi.fn((req: any, res: any) =>
     res.status(201).json({ ok: true, route: "create" }),
   ),

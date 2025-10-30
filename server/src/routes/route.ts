@@ -1,18 +1,11 @@
 import { Router } from "express";
-import {
-  getTestUsers,
-  getTestUserById,
-  deleteTestUserById,
-  deleteTestUsers,
-  createTestUser,
-} from "../controllers/controller";
+import usersRouter from "./users";
+import tasksRouter from "./tasks";
 
 const router = Router();
 
-router.post("/users", createTestUser);
-router.get("/users", getTestUsers);
-router.get("/users/:id", getTestUserById);
-router.delete("/users/:id", deleteTestUserById);
-router.delete("/users", deleteTestUsers);
+// Montar routers por recurso: /api/users, /api/tasks
+router.use("/users", usersRouter);
+router.use("/tasks", tasksRouter);
 
 export default router;
