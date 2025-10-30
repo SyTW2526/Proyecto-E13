@@ -77,6 +77,23 @@ describe("controller tasks", () => {
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
+  it("getTaskById - devuelve tarea correctamente", async () => {
+    const req: any = { params: { id: "t1" } };
+    const res = mockRes();
+
+    (prisma.task.findUnique as unknown as any).mockResolvedValue({
+      id: "t1",
+      name: "T1",
+    });
+
+    await tasks.getTaskById(req, res);
+
+    expect(prisma.task.findUnique).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+    const payload = (res.json as any).mock.calls[0][0];
+    expect(payload.task.id).toBe("t1");
+  });
+
   it("updateTask - P2025 devuelve 404 cuando no existe", async () => {
     const req: any = { params: { id: "nope" }, body: { name: "x" } };
     const res = mockRes();
@@ -100,6 +117,25 @@ describe("controller tasks", () => {
     expect(res.status).toHaveBeenCalledWith(404);
 
     (Prisma as any).PrismaClientKnownRequestError = OriginalKnown;
+  });
+
+  it("updateTask - éxito: marcar completed y set completedAt", async () => {
+    const req: any = { params: { id: "t1" }, body: { completed: true } };
+    const res = mockRes();
+
+    (prisma.task.update as unknown as any).mockResolvedValue({
+      id: "t1",
+      completed: true,
+      completedAt: new Date().toISOString(),
+    });
+
+    await tasks.updateTask(req, res);
+
+    expect(prisma.task.update).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+    const payload = (res.json as any).mock.calls[0][0];
+    expect(payload.task.completed).toBe(true);
+    expect(payload.task.completedAt).toBeDefined();
   });
 
   it("deleteTask - P2025 devuelve 404 cuando no existe", async () => {

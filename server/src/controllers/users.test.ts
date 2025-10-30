@@ -94,6 +94,26 @@ describe("controller usuarios", () => {
     (Prisma as any).PrismaClientKnownRequestError = OriginalKnown;
   });
 
+  it("createTestUser - campos faltantes devuelve 400", async () => {
+    const req: any = { body: { name: "Test" } }; // falta email y password
+    const res = mockRes();
+
+    await controller.createTestUser(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+  });
+
+  it("createTestUser - email inválido devuelve 400", async () => {
+    const req: any = {
+      body: { name: "Test", email: "not-an-email", password: "pw" },
+    };
+    const res = mockRes();
+
+    await controller.createTestUser(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+  });
+
   it("getTestUsers - devuelve lista sanitizada", async () => {
     const req: any = {};
     const res = mockRes();
