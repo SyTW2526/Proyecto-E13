@@ -39,8 +39,8 @@ model List {
 
   shares              ListShare[]
   
+  @@index([ownerId])  
   @@map("lists")
-  @@index([ownerId])
 }
 
 model Category {
@@ -57,8 +57,8 @@ model Category {
   
   shares              CategoryShare[]
   
-  @@map("categories")
   @@index([listId])
+  @@map("categories")
 }
 
 model Task {
@@ -68,7 +68,6 @@ model Task {
   status                TaskStatus  @default(PENDING)
   priority              Priority    @default(MEDIUM)
   dueDate               DateTime?
-  completed             Boolean     @default(false)
   completedAt           DateTime?
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
@@ -78,10 +77,9 @@ model Task {
   
   shares                TaskShare[]
   
-  @@map("tasks")
   @@index([categoryId])
-  @@index([status])
-  @@index([dueDate])
+  @@index([status]) 
+  @@map("tasks")
 }
 
 model ListShare {
@@ -95,9 +93,9 @@ model ListShare {
   userId                      String
   user                        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  @@index([userId])
   @@unique([listId, userId])
   @@map("list_shares")
-  @@index([userId])
 }
 
 model CategoryShare {
@@ -111,9 +109,9 @@ model CategoryShare {
   userId                          String
   user                            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  @@index([userId])
   @@unique([categoryId, userId])
   @@map("category_shares")
-  @@index([userId])
 }
 
 model TaskShare {
@@ -127,9 +125,9 @@ model TaskShare {
   userId                      String
   user                        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  @@index([userId])
   @@unique([taskId, userId])
   @@map("task_shares")
-  @@index([userId])
 }
 
 enum TaskStatus {

@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import router from "./routes/route";
+import router from "./routes/routes";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,11 +13,10 @@ app.use("/api", router);
 
 app.get("/", (req, res) => {
   res.json({
-    message: "Servidor funcionando correctamente 🚀",
-    timestamp: new Date().toISOString(),
+    message: "API is running",
   });
 });
 
 app.listen(PORT, () => {
-  console.log("\nServidor iniciado correctamente");
+  console.log("\nServer is running on port:", PORT);
 });

@@ -1,5 +1,3 @@
-// server/src/types/types.ts
-
 export enum TaskStatus {
   PENDING = "PENDING",
   IN_PROGRESS = "IN_PROGRESS",
@@ -11,10 +9,4 @@ export enum Priority {
   MEDIUM = "MEDIUM",
   HIGH = "HIGH",
   URGENT = "URGENT",
-}
-
-export enum SharePermission {
-  VIEW = "VIEW",
-  EDIT = "EDIT",
-  ADMIN = "ADMIN",
 }
