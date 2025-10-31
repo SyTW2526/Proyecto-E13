@@ -1,10 +1,10 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
 // Import el módulo que vamos a probar (ahora está en controllers/users.ts)
-import * as controller from "./users";
+import * as controller from "../src/controllers/users";
 
 // Mock de prisma y bcrypt (mismos paths que usa el módulo)
-vi.mock("../database/database", () => ({
+vi.mock("../src/database/database", () => ({
   default: {
     user: {
       create: vi.fn(),
@@ -23,7 +23,7 @@ vi.mock("bcrypt", () => ({
   },
 }));
 
-import prisma from "../database/database";
+import prisma from "../src/database/database";
 import bcrypt from "bcrypt";
 import { Prisma } from "@prisma/client";
 

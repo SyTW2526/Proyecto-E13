@@ -1,10 +1,10 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
 // Importar el módulo a probar
-import * as tasks from "./tasks";
+import * as tasks from "../src/controllers/tasks";
 
 // Mock de prisma (mismos paths que usa el módulo)
-vi.mock("../database/database", () => ({
+vi.mock("../src/database/database", () => ({
   default: {
     task: {
       create: vi.fn(),
@@ -16,7 +16,7 @@ vi.mock("../database/database", () => ({
   },
 }));
 
-import prisma from "../database/database";
+import prisma from "../src/database/database";
 import { Prisma } from "@prisma/client";
 
 const mockRes = () => {

@@ -3,7 +3,7 @@ import express from "express";
 import request from "supertest";
 
 // Mock del controlador para evitar interacción con prisma en estas pruebas de enrutado
-vi.mock("../controllers/tasks", () => ({
+vi.mock("../src/controllers/tasks", () => ({
   createTask: vi.fn((req: any, res: any) =>
     res.status(201).json({ ok: true, route: "create" }),
   ),
@@ -21,7 +21,7 @@ vi.mock("../controllers/tasks", () => ({
   ),
 }));
 
-import router from "./route";
+import router from "../src/routes/route";
 
 describe("router /tasks - wiring", () => {
   let app: express.Express;

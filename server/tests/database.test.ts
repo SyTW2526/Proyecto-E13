@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import prisma from "./database";
+import prisma from "../src/database/database";
 
 describe("prisma client smoke", () => {
   it("exporta un PrismaClient con métodos esperados", () => {
