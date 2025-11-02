@@ -7,7 +7,11 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
     "start": "node dist/server.js",
+    "check": "tsc --noEmit",
+    "check:watch": "tsc --noEmit --watch",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio"
@@ -26,17 +30,20 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
-    "@types/bcryptjs": "^2.4.6",
+    "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.4",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.9.1",
+    "@types/supertest": "^6.0.3",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.6.2",
     "prisma": "^6.18.0",
+    "supertest": "^7.1.4",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.2"
+    "typescript-eslint": "^8.46.2",
+    "vitest": "^4.0.5"
   }
 }
