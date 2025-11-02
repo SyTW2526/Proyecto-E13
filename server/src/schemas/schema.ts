@@ -1,1 +1,1 @@
-console.log("Backend setup.");
+// ZOD Schema Definitions
