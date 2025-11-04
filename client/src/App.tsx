@@ -1,15 +1,13 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-import { LoginForm } from './components/login-form'
-import './styles/App.css'
+// client/src/App.tsx
+import ThemeToggle from "@/components/ThemeToggle";
+import { LoginForm } from "@/components/login-form";
+import "./styles/App.css";
 
-function App() {
+export default function App() {
   return (
     <>
+      <ThemeToggle />
       <LoginForm />
     </>
-  )
+  );
 }
-
-export default App
