@@ -1,4 +1,10 @@
 // client/src/hooks/useTheme.ts
+/**
+ * @file useTheme.ts
+ * @description Hook personalizado para manejar el tema de la aplicación (claro/oscuro).
+ * Gestiona la persistencia del tema y sincroniza con las preferencias del sistema.
+ */
+
 import { useEffect, useState } from "react";
 
 type Theme = "light" | "dark";

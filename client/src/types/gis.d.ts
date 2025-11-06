@@ -1,29 +1,29 @@
 // client/src/types/gis.d.ts
-export {}
+export {};
 
 declare global {
   interface Window {
-    google?: typeof google
+    google?: typeof google;
   }
   namespace google {
     namespace accounts {
       namespace id {
         interface CredentialResponse {
-          clientId: string
-          credential: string
-          select_by: string
+          clientId: string;
+          credential: string;
+          select_by: string;
         }
         interface IdConfiguration {
-          client_id: string
-          callback: (response: CredentialResponse) => void
-          auto_select?: boolean
-          ux_mode?: "popup" | "redirect"
-          nonce?: string
-          context?: "signin" | "signup" | "use"
+          client_id: string;
+          callback: (response: CredentialResponse) => void;
+          auto_select?: boolean;
+          ux_mode?: "popup" | "redirect";
+          nonce?: string;
+          context?: "signin" | "signup" | "use";
         }
-        function initialize(config: IdConfiguration): void
-        function prompt(momentListener?: () => void): void
-        function renderButton(parent: HTMLElement, options: unknown): void
+        function initialize(config: IdConfiguration): void;
+        function prompt(momentListener?: () => void): void;
+        function renderButton(parent: HTMLElement, options: unknown): void;
       }
     }
   }
