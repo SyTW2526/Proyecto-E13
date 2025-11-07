@@ -1,9 +1,14 @@
 import { Router } from "express";
-import { register, login } from "../controllers/authController";
+import { login, register } from "../controllers/authController";
+import { googleSignIn } from "../controllers/googleAuthController";
 
 const router = Router();
 
-router.post("/register", register);
+// auth local
 router.post("/login", login);
+router.post("/register", register);
+
+// auth con Google (ID token desde el cliente)
+router.post("/google", googleSignIn);
 
 export default router;

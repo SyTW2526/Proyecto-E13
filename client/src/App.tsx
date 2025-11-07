@@ -13,6 +13,7 @@ import SitemapPage from "@/pages/SitemapPage";
 import ContactsPage from "@/pages/ContactsPage";
 import StickyFooter from "@/components/StickyFooter";
 import ThemeToggle from "@/components/ThemeToggle";
+import { Header } from "./components/Header";
 
 // Páginas que todavía no tienen su propio archivo
 const Home = () => <div className="p-6">Inicio</div>;
@@ -25,6 +26,8 @@ export default function App() {
       <div className="fixed z-50 right-[max(0.75rem,env(safe-area-inset-right))] top-[max(0.75rem,env(safe-area-inset-top))]">
         <ThemeToggle />
       </div>
+
+      <Header />
 
       <main className="pb-16">
         <Routes>

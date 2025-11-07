@@ -1,12 +1,8 @@
 // client/src/components/login-form.tsx
 /**
  * @file login-form.tsx
- * @description Componente de formulario de login y registro de usuarios.
- * Soporta autenticación tradicional y Google Sign-In.
+ * @description Componente de login/registro con soporte Google Sign-In (GIS).
  */
-import { useEffect, useMemo, useRef, useState } from "react";
-import axios from "axios";
-import { api, setAuthToken } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,6 +18,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { api, apiErrorMessage, setAuthToken } from "@/lib/api";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 type Mode = "login" | "register";
@@ -31,7 +29,7 @@ export type LoginFormProps = {
   linkTo?: string; // ruta a la “otra” página (/register o /login)
 };
 
-// GIS tipos mínimos
+// Tipos mínimos de GIS
 type GIdCredentialResponse = {
   clientId: string;
   credential: string;
@@ -77,49 +75,98 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
   const [gisReady, setGisReady] = useState(false);
   const googleBtnRef = useRef<HTMLDivElement | null>(null);
 
+  // Detecta que la librería de Google está cargada
   useEffect(() => {
-    const i = window.setInterval(() => setGisReady(Boolean(getGis())), 300);
-    return () => window.clearInterval(i);
+    const checkGisLoaded = () => {
+      const gis = getGis();
+      if (gis) {
+        setGisReady(true);
+        return true;
+      }
+      return false;
+    };
+
+    if (!checkGisLoaded()) {
+      const i = window.setInterval(() => {
+        if (checkGisLoaded()) {
+          window.clearInterval(i);
+        }
+      }, 300);
+      return () => window.clearInterval(i);
+    }
   }, []);
 
+  // Inicializa GIS y renderiza el botón
   useEffect(() => {
     const apiG = getGis();
-    if (!googleClientId || !gisReady || !apiG || !googleBtnRef.current) return;
+    console.log("Estado de GIS:", { apiG, ref: googleBtnRef.current, gisReady });
+    if (!apiG || !googleBtnRef.current) return;
+
+    if (!googleClientId) {
+      console.error("Google Client ID no configurado");
+      setError("Error de configuración de Google Sign-In");
+      return;
+    }
+
+    if (!gisReady) {
+      console.log("Esperando a que la biblioteca de Google se cargue...");
+      return;
+    }
+
+    console.log("Inicializando Google Sign-In con:", { clientId: googleClientId });
     googleBtnRef.current.innerHTML = "";
-    apiG.initialize({
-      client_id: googleClientId,
-      callback: async (resp: GIdCredentialResponse) => {
-        try {
-          setLoading(true);
-          const { credential: idToken } = resp;
-          const { data } = await api.post<{ token: string }>("/auth/google", {
-            idToken,
-          });
-          setAuthToken(data.token);
-          setOk("Login con Google correcto.");
-          setError(null);
-        } catch (err: unknown) {
-          const message = axios.isAxiosError(err)
-            ? ((err.response?.data as { error?: string } | undefined)?.error ??
-              err.message)
-            : "Error en Google Sign-In";
-          setError(message);
-          setOk(null);
-        } finally {
-          setLoading(false);
-        }
-      },
-      ux_mode: "popup",
-      use_fedcm_for_prompt: true,
-      auto_select: false,
-    });
-    apiG.renderButton(googleBtnRef.current, {
-      type: "standard",
-      size: "large",
-      width: "100",
-      theme: "outline",
-    });
-  }, [googleClientId, gisReady]);
+    
+    try {
+      apiG.initialize({
+        client_id: googleClientId,
+        callback: async (resp) => {
+          console.log("Google Sign-In response:", resp);
+          const idToken = resp?.credential;
+          if (!idToken) {
+            console.error("No se recibió credencial de Google");
+            setError("Google no devolvió credencial. Revisa cookies/orígenes.");
+            return;
+          }
+          
+          try {
+            console.log("Enviando token al servidor...");
+            const { data } = await api.post<{token: string}>("/auth/google", { idToken }, {
+              headers: { "Content-Type": "application/json" },
+            });
+            console.log("Respuesta del servidor:", data);
+            setAuthToken(data.token);
+            setOk("Login con Google exitoso");
+          } catch (error) {
+            console.error("Error del servidor:", error);
+            setError(apiErrorMessage(error));
+          }
+        },
+        ux_mode: "popup",
+        use_fedcm_for_prompt: true,
+      });
+
+      // Renderizar el botón después de la inicialización
+      // Función para renderizar el botón
+      const renderButton = () => {
+        if (!googleBtnRef.current) return;
+        googleBtnRef.current.innerHTML = "";
+        apiG.renderButton(googleBtnRef.current, {
+          type: "standard",
+          size: "large",
+          width: 240,
+          theme: "outline",
+          text: ok ? "continue_with" : "signin_with",
+          shape: "rectangular",
+          locale: "es"
+        });
+      };
+
+      renderButton();
+    } catch (error) {
+      console.error("Error al inicializar Google Sign-In:", error);
+      setError("Error al inicializar Google Sign-In. Por favor, intenta de nuevo.");
+    }
+  }, [googleClientId, gisReady, ok]);
 
   const disabled = useMemo(() => loading, [loading]);
 
@@ -136,8 +183,10 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     e.preventDefault();
     setError(null);
     setOk(null);
+
     const v = validate();
     if (v) return setError(v);
+
     setLoading(true);
     try {
       if (mode === "register") {
@@ -153,11 +202,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
         setOk("Login correcto.");
       }
     } catch (err: unknown) {
-      const message = axios.isAxiosError(err)
-        ? ((err.response?.data as { error?: string } | undefined)?.error ??
-          err.message)
-        : "Error de red";
-      setError(message);
+      setError(apiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -194,6 +239,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     />
                   </Field>
                 )}
+
                 <Field>
                   <FieldLabel>Email</FieldLabel>
                   <Input
@@ -206,6 +252,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     required
                   />
                 </Field>
+
                 <Field>
                   <FieldLabel>Contraseña</FieldLabel>
                   <Input
@@ -262,16 +309,11 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     <span className="w-full border-t" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">
-                      o
-                    </span>
+                    <span className="bg-card px-2 text-muted-foreground">o</span>
                   </div>
                 </div>
 
-                <div
-                  ref={googleBtnRef}
-                  className="w-full flex justify-center"
-                />
+                <div ref={googleBtnRef} className="w-full flex justify-center" />
 
                 <FieldDescription className="text-center text-xs text-muted-foreground">
                   Al continuar acepto los Términos y la Política de privacidad

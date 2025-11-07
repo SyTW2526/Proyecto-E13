@@ -4,7 +4,8 @@
  * @description Componente de pie de página fijo que proporciona enlaces rápidos
  * y un botón para volver al inicio de la página.
  */
-import { ArrowUp, Settings, Map, Users } from "lucide-react";
+import { ArrowUp, Map, Settings, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function StickyFooter() {
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
@@ -15,17 +16,17 @@ export default function StickyFooter() {
     <footer className="fixed inset-x-0 bottom-0 z-50 border-t bg-background/90 backdrop-blur">
       <div className="mx-auto max-w-4xl px-3">
         <div className="relative flex h-10 items-center justify-center text-sm text-muted-foreground">
-          <a href="/sitemap" className={linkCls} aria-label="Mapa del sitio">
+          <Link to="/sitemap" className={linkCls} aria-label="Mapa del sitio">
             <Map className="h-4 w-4" /> Mapa del sitio
-          </a>
+          </Link>
           <span className="mx-3 opacity-50">|</span>
-          <a href="/contacts" className={linkCls} aria-label="Contacto">
+          <Link to="/contacts" className={linkCls} aria-label="Contacto">
             <Users className="h-4 w-4" /> Contacto
-          </a>
+          </Link>
           <span className="mx-3 opacity-50">|</span>
-          <a href="/settings" className={linkCls} aria-label="Ajustes">
+          <Link to="/settings" className={linkCls} aria-label="Ajustes">
             <Settings className="h-4 w-4" /> Ajustes
-          </a>
+          </Link>
           <button
             type="button"
             onClick={scrollTop}
