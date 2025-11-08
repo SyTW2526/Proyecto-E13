@@ -12,16 +12,19 @@ model User {
   id              String           @id @default(uuid())
   email           String           @unique
   name            String
-  password        String
+  password        String?
+  googleSub       String?          @unique
+  image           String?
+  emailVerifiedAt DateTime?
+
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  
-  listsOwned      List[]           @relation("ListOwner")
 
+  listsOwned      List[]           @relation("ListOwner")
   listShares      ListShare[]
   categoryShares  CategoryShare[]
   taskShares      TaskShare[]
-  
+
   @@map("users")
 }
 

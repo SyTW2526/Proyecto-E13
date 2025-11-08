@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export function Header() {
   // Cambiar con el manejo de estados
@@ -8,32 +9,36 @@ export function Header() {
     <header className="sticky top-4 z-50 mx-auto w-[95%] max-w-2xl">
       <div className="bg-card/70 backdrop-blur-md border rounded-2xl shadow-md px-4 py-2.5">
         <div className="flex items-center justify-between">
-          <a href="#" className="flex items-center gap-2 group">
+          <Link to="/home" className="flex items-center gap-2 group">
             <span className="font-bold text-xl">TaskGrid</span>
-          </a>
+          </Link>
           <nav className="hidden md:flex items-center gap-6">
-            <a
-              href="#"
+            <Link
+              to="/home"
               className="text-sm font-medium hover:scale-105 transition-transform"
             >
               Inicio
-            </a>
+            </Link>
 
-            <a
-              href="#"
+            <Link
+              to="/tasks"
               className="text-sm font-medium hover:scale-105 transition-transform"
             >
               Mis Tareas
-            </a>
+            </Link>
           </nav>
 
           <div className="flex items-center gap-1">
             {!isAuthenticated ? (
               <>
-                <Button variant="ghost" size="sm">
-                  Signup
-                </Button>
-                <Button variant="default">Login</Button>
+                <Link to="/register">
+                  <Button variant="ghost" size="sm">
+                    Signup
+                  </Button>
+                </Link>
+                <Link to="/login">
+                  <Button variant="default">Login</Button>
+                </Link>
               </>
             ) : (
               <>
@@ -81,19 +86,19 @@ export function Header() {
 
         {/* Navegación móvil */}
         <nav className="md:hidden flex items-center gap-4 mt-3 pt-3 border-t border-border">
-          <a
-            href="/"
+          <Link
+            to="/home"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             Inicio
-          </a>
+          </Link>
           {isAuthenticated && (
-            <a
-              href="/tasks"
+            <Link
+              to="/tasks"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Mis Tareas
-            </a>
+            </Link>
           )}
         </nav>
       </div>
