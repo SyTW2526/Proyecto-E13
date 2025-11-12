@@ -48,7 +48,18 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
       return res.status(400).json({ error: "Wrong password." });
     }
     const token = generateToken({ userId: user.id });
-    return res.status(200).json({ message: "Login successful.", token });
+    return res.status(200).json({
+      message: "Login successful.",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        emailNotifications: user.emailNotifications,
+        pushNotifications: user.pushNotifications,
+        image: user.image,
+      },
+    });
   } catch (error) {
     return res.status(500).json({ error: "Error logging in user." });
   }
@@ -96,7 +107,17 @@ export async function googleSignIn(req: Request, res: Response) {
       }
     }
     const token = generateToken({ userId: user.id });
-    return res.json({ token });
+    return res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        image: user.image,
+        emailNotifications: user.emailNotifications,
+        pushNotifications: user.pushNotifications,
+      },
+    });
   } catch (error) {
     console.error("Google Sign-In error:", error);
     return res

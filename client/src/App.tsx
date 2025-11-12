@@ -1,50 +1,81 @@
-// client/src/App.tsx
-/**
- * @file App.tsx
- * @description Componente principal de la aplicación que maneja el enrutamiento y la estructura básica.
- * Incluye la navegación entre páginas, el toggle del tema y el pie de página fijo.
- */
-
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "@/pages/LoginPage";
-import RegisterPage from "@/pages/RegisterPage";
-import SettingsPage from "@/pages/SettingsPage";
-import SitemapPage from "@/pages/SitemapPage";
-import ContactsPage from "@/pages/ContactsPage";
-import StickyFooter from "@/components/StickyFooter";
-import ThemeToggle from "@/components/ThemeToggle";
-import { Header } from "./components/Header";
-
-// Páginas que todavía no tienen su propio archivo
-const Home = () => <div className="p-6">Inicio</div>;
-const Tasks = () => <div className="p-6">Tareas</div>;
-const Notifications = () => <div className="p-6">Notificaciones</div>;
+import { useAppSelector } from "@/hooks/useRedux";
+import { selectIsAuthenticated } from "@/store/slices/authSlice";
+import LandingPage from "@/pages/public/landingPage";
+import LoginPage from "@/pages/public/loginPage";
+import RegisterPage from "@/pages/public/registerPage";
+import DashboardPage from "@/pages/authenticated/dashboardPage";
+import SettingsPage from "@/pages/authenticated/settingsPage";
+import ContactsPage from "@/pages/public/contactsPage";
+import ProtectedRoute from "@/components/auth/protectedRoute";
+import Footer from "@/components/footer";
+import ThemeToggle from "@/components/themeToggle";
 
 export default function App() {
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
   return (
-    <>
+    <div className="flex min-h-screen flex-col bg-linear-to-br from-background via-background to-muted/30">
       <div className="fixed z-50 right-[max(0.75rem,env(safe-area-inset-right))] top-[max(0.75rem,env(safe-area-inset-top))]">
         <ThemeToggle />
       </div>
-
-      <Header />
-
-      <main className="pb-16">
+      <main className="flex-1">
         <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/tasks" element={<Tasks />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/sitemap" element={<SitemapPage />} />
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <LandingPage />
+              )
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <LoginPage />
+              )
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <RegisterPage />
+              )
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/contacts" element={<ContactsPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="*" element={<Navigate to="/home" replace />} />
+          <Route
+            path="*"
+            element={
+              <Navigate to={isAuthenticated ? "/dashboard" : "/"} replace />
+            }
+          />
         </Routes>
       </main>
-
-      <StickyFooter />
-    </>
+      <Footer />
+    </div>
   );
 }

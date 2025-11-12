@@ -1,4 +1,3 @@
-// client/src/lib/api.ts
 /**
  * @file api.ts
  * @description Cliente HTTP configurado para comunicarse con el backend.

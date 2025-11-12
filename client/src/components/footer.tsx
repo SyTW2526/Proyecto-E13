@@ -1,23 +1,26 @@
-// client/src/components/StickyFooter.tsx
 /**
- * @file StickyFooter.tsx
+ * @file footer.tsx
  * @description Componente de pie de página fijo que proporciona enlaces rápidos
  * y un botón para volver al inicio de la página.
  */
 import { ArrowUp, Map, Settings, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export default function StickyFooter() {
+export default function Footer() {
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const linkCls =
     "inline-flex items-center gap-1.5 hover:text-foreground transition-colors";
 
   return (
-    <footer className="fixed inset-x-0 bottom-0 z-50 border-t bg-background/90 backdrop-blur">
+    <footer className="border-t bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60">
       <div className="mx-auto max-w-4xl px-3">
         <div className="relative flex h-10 items-center justify-center text-sm text-muted-foreground">
-          <Link to="/sitemap" className={linkCls} aria-label="Mapa del sitio">
-            <Map className="h-4 w-4" /> Mapa del sitio
+          <Link
+            to={localStorage.getItem("token") ? "/dashboard" : "/"}
+            className={linkCls}
+            aria-label="Inicio"
+          >
+            <Map className="h-4 w-4" /> Inicio
           </Link>
           <span className="mx-3 opacity-50">|</span>
           <Link to="/contacts" className={linkCls} aria-label="Contacto">
