@@ -5,7 +5,7 @@ import FeatureCard from "@/components/ui/featureCard";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen">
+    // <div className="min-h-screen">
       <div className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-4">
           Bienvenido a <span className="text-primary">TaskGrid</span>
@@ -41,6 +41,6 @@ export default function LandingPage() {
           ))}
         </div>
       </div>
-    </div>
+    // </div>
   );
 }

@@ -4,20 +4,50 @@
  * y un botón para volver al inicio de la página.
  */
 import { useNavigate } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "./ui/icon";
 import { Button } from "./ui/button";
 import { getFooterLinks } from "@/config/footerLinks";
 
 const links = getFooterLinks();
 
-export default function Footer({
-  scrollToTop = true,
-}: {
-  scrollToTop?: boolean;
-}) {
+export default function Footer() {
   const navigate = useNavigate();
+  const [isScrollable, setIsScrollable] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+  useEffect(() => {
+    // detect whether the page is scrollable and whether the user scrolled down
+    const checkScrollable = () => {
+      const doc = document.documentElement || document.body;
+      const scrollHeight = doc.scrollHeight || document.body.scrollHeight;
+      setIsScrollable(scrollHeight > window.innerHeight + 2); // small tolerance
+    };
+
+    const onScroll = () => setIsScrolled(window.scrollY > 0);
+
+    checkScrollable();
+    onScroll();
+
+    window.addEventListener("resize", checkScrollable, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // observe DOM changes that might affect scroll height (async content)
+    const observer = new MutationObserver(() => checkScrollable());
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    return () => {
+      window.removeEventListener("resize", checkScrollable);
+      window.removeEventListener("scroll", onScroll);
+      observer.disconnect();
+    };
+  }, []);
   const linkCls =
     "inline-flex items-center gap-1.5 hover:text-foreground transition-colors";
 
@@ -41,7 +71,7 @@ export default function Footer({
             </React.Fragment>
           ))}
         </div>
-        {scrollToTop && (
+        {isScrollable && isScrolled && (
           <Button
             variant="default"
             onClick={scrollTop}
