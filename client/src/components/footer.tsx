@@ -3,10 +3,45 @@
  * @description Componente de pie de página fijo que proporciona enlaces rápidos
  * y un botón para volver al inicio de la página.
  */
-import { ArrowUp, Map, Settings, Users } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import React from "react";
+import Icon from "./ui/icon";
+import { Button } from "./ui/button";
+import {
+  IconMap,
+  IconUser,
+  IconSettings,
+  IconArrowUp,
+  IconCopyright,
+} from "@tabler/icons-react";
 
-export default function Footer() {
+const links = [
+  {
+    to: localStorage.getItem("token") ? "/dashboard" : "/",
+    label: "Inicio",
+    icon: IconMap,
+    ariaLabel: "Inicio",
+  },
+  {
+    to: "/contacts",
+    label: "Contacto",
+    icon: IconUser,
+    ariaLabel: "Contacto",
+  },
+  {
+    to: "/settings",
+    label: "Ajustes",
+    icon: IconSettings,
+    ariaLabel: "Ajustes",
+  },
+];
+
+export default function Footer({
+  scrollToTop = false,
+}: {
+  scrollToTop?: boolean;
+}) {
+  const navigate = useNavigate();
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const linkCls =
     "inline-flex items-center gap-1.5 hover:text-foreground transition-colors";
@@ -15,33 +50,44 @@ export default function Footer() {
     <footer className="border-t bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60">
       <div className="mx-auto max-w-4xl px-3">
         <div className="relative flex h-10 items-center justify-center text-sm text-muted-foreground">
-          <Link
-            to={localStorage.getItem("token") ? "/dashboard" : "/"}
-            className={linkCls}
-            aria-label="Inicio"
-          >
-            <Map className="h-4 w-4" /> Inicio
-          </Link>
-          <span className="mx-3 opacity-50">|</span>
-          <Link to="/contacts" className={linkCls} aria-label="Contacto">
-            <Users className="h-4 w-4" /> Contacto
-          </Link>
-          <span className="mx-3 opacity-50">|</span>
-          <Link to="/settings" className={linkCls} aria-label="Ajustes">
-            <Settings className="h-4 w-4" /> Ajustes
-          </Link>
-          <button
-            type="button"
-            onClick={scrollTop}
-            aria-label="Volver arriba"
-            className="absolute right-0 inline-flex items-center rounded-md border px-2 py-1 text-xs hover:text-foreground"
-            title="Arriba"
-          >
-            <ArrowUp className="h-4 w-4" />
-          </button>
+          {links.map((link, index) => (
+            <React.Fragment key={index}>
+              <Button
+                variant="link"
+                className={linkCls + " p-1"}
+                onClick={() => navigate(link.to)}
+              >
+                <Icon as={link.icon} size={12} ariaLabel={link.ariaLabel} />
+                {link.label}
+              </Button>
+              {index < links.length - 1 && (
+                <span className="mx-3 opacity-50">|</span>
+              )}
+            </React.Fragment>
+          ))}
+          {scrollToTop && (
+            <Button
+              variant="outline"
+              onClick={scrollTop}
+              aria-label="Volver arriba"
+              className="absolute right-0"
+            >
+              <Icon
+                as={IconArrowUp}
+                ariaLabel="Volver arriba"
+                className="inline-block"
+              />
+            </Button>
+          )}
         </div>
-        <div className="h-7 text-center text-xs text-muted-foreground">
-          © 2025 Equipo 13 — Proyecto-E13
+        <div className="h-7 text-center align-middle gap-2 flex items-center justify-center text-xs text-muted-foreground">
+          <Icon
+            as={IconCopyright}
+            size={12}
+            ariaLabel="Copyright"
+            className="inline-flex items-center"
+          />
+          2025 Equipo 13 — Proyecto-E13
         </div>
       </div>
     </footer>

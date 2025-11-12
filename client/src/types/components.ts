@@ -8,3 +8,19 @@ export interface LoginFormProps {
   forceMode?: AuthenticateMode;
   linkTo?: string;
 }
+
+export type IconType = React.ComponentType<{
+  size?: number;
+  stroke?: number;
+  className?: string;
+}>;
+
+export interface FeatureCardProps {
+  icon: IconType;
+  title: string;
+  description?: string;
+  className?: string;
+  iconSize?: number;
+  iconLabel?: string;
+  children?: React.ReactNode;
+}
