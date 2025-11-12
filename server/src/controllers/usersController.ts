@@ -1,10 +1,29 @@
 import { Request, Response } from "express";
-import prisma from "../database/database";
+import { Prisma } from "@prisma/client";
+import prisma from "../database/prisma";
 
-export const getUserById = async (req: Request, res: Response) => {
+export const getProfile = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const user = await prisma.user.findUnique({ where: { id } });
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        image: true,
+        emailNotifications: true,
+        pushNotifications: true,
+        emailVerifiedAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -12,24 +31,112 @@ export const getUserById = async (req: Request, res: Response) => {
 
     res.status(200).json(user);
   } catch (error) {
+    console.error("Error getting profile:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const updateName = async (req: Request, res: Response) => {
   try {
-    const userID = req.user?.id;
-    const { id } = req.params;
+    const userId = req.user?.id;
+    const { name } = req.body;
 
-    if (!userID || userID !== id) {
-      return res
-        .status(403)
-        .json({ error: "You do not have permission to delete this user" });
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const user = await prisma.user.delete({ where: { id } });
-    res.status(200).json({ message: "User deleted", user });
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { name },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    res.status(200).json(user);
   } catch (error) {
+    console.error("Error updating name:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const updateEmailNotificationSetting = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const userId = req.user?.id;
+    const emailNotification = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { emailNotifications: emailNotification },
+      select: {
+        id: true,
+        emailNotifications: true,
+      },
+    });
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating settings:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const updatePushNotificationSetting = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const userId = req.user?.id;
+    const pushNotification = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { pushNotifications: pushNotification },
+      select: {
+        id: true,
+        pushNotifications: true,
+      },
+    });
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating settings:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const deleteAccount = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    await prisma.user.delete({ where: { id: userId } });
+
+    res.status(200).json({
+      message: "Account deleted successfully",
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        return res.status(404).json({ error: "User not found" });
+      }
+    }
+    console.error("Error deleting account:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
