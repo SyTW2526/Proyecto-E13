@@ -16,6 +16,8 @@ model User {
   googleSub       String?          @unique
   image           String?
   emailVerifiedAt DateTime?
+  emailNotifications Boolean        @default(true)
+  pushNotifications  Boolean        @default(false)
 
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt

@@ -1,4 +1,3 @@
-// client/src/components/ThemeToggle.tsx
 /**
  * @file ThemeToggle.tsx
  * @description Componente para alternar entre temas claro y oscuro.

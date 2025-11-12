@@ -1,4 +1,3 @@
-// client/src/hooks/usePathname.ts
 /**
  * @file usePathname.ts
  * @description Hook personalizado para obtener la ruta actual del navegador.

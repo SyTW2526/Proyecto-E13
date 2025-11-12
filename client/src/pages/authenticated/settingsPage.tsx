@@ -1,4 +1,3 @@
-// client/src/pages/SettingsPage.tsx
 /**
  * @file SettingsPage.tsx
  * @description Página de ajustes donde los usuarios pueden modificar su perfil,
@@ -15,6 +14,9 @@ import {
   Shield,
   Trash2,
 } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
+import { selectUser } from "@/store/slices/authSlice";
+import { selectIsDark, toggleTheme } from "@/store/slices/themeSlice";
 import {
   Card,
   CardHeader,
@@ -25,18 +27,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "../components/ui/switch";
+import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 
 export default function SettingsPage() {
-  // Estado local de ejemplo; conecta con tu backend cuando esté listo
-  const [name, setName] = useState("Laura");
-  const [email, setEmail] = useState("laura@example.com");
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+  const isDark = useAppSelector(selectIsDark);
+  const [name, setName] = useState(user?.name || "");
   const [currPass, setCurrPass] = useState("");
   const [newPass, setNewPass] = useState("");
   const [notifEmail, setNotifEmail] = useState(true);
   const [notifPush, setNotifPush] = useState(false);
-  const [darkPref, setDarkPref] = useState(false);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -50,11 +52,8 @@ export default function SettingsPage() {
     setMsg("Cambios guardados.");
   }
 
-  function applyTheme(toggle: boolean) {
-    setDarkPref(toggle);
-    const root = document.documentElement;
-    if (toggle) root.classList.add("dark");
-    else root.classList.remove("dark");
+  function handleToggleTheme() {
+    dispatch(toggleTheme());
   }
 
   return (
@@ -66,7 +65,6 @@ export default function SettingsPage() {
         </p>
       </header>
 
-      {/* Perfil */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -95,9 +93,9 @@ export default function SettingsPage() {
               <Input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={user?.email || "No disponible"}
                 disabled
+                readOnly
               />
             </div>
 
@@ -139,7 +137,6 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Preferencias */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -155,12 +152,11 @@ export default function SettingsPage() {
                 Activa el modo oscuro en la interfaz.
               </div>
             </div>
-            <Switch checked={darkPref} onCheckedChange={applyTheme} />
+            <Switch checked={isDark} onCheckedChange={handleToggleTheme} />
           </div>
         </CardContent>
       </Card>
 
-      {/* Notificaciones */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -190,7 +186,6 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Privacidad */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

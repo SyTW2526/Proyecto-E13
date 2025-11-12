@@ -1,36 +1,32 @@
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "../types/jwt";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+const JWT_EXPIRES_IN = "7d";
+const JWT_ISSUER = "taskgrid-api";
+const JWT_ALGORITHM = "HS256";
 
-// Verifica que JWT_SECRET esté configurado
-if (!JWT_SECRET) {
-  console.error(
-    "⚠️  ADVERTENCIA: JWT_SECRET no está configurado en las variables de entorno",
-  );
-  console.error("   Se usará un valor por defecto (NO SEGURO PARA PRODUCCIÓN)");
+if (process.env.NODE_ENV === "production" && JWT_SECRET === "dev-secret") {
+  throw new Error("JWT_SECRET must be set in production environment");
 }
 
-const jwtConfig = {
-  secret: JWT_SECRET || "dev_secret_e13_sytw_please_change_in_prod",
-  expiresIn: "7d" as string | number,
-  algorithm: "HS256" as const,
-  issuer: "taskgrid-api",
-};
+if (process.env.NODE_ENV !== "production" && JWT_SECRET === "dev-secret") {
+  console.warn(
+    "⚠️  Using default JWT_SECRET. Set JWT_SECRET in .env for security.",
+  );
+}
 
 /**
  * Genera un token JWT para un usuario
  * @param payload Datos del usuario a incluir en el token
  * @returns Token JWT firmado
  */
-export const generateToken = (
-  payload: Omit<JwtPayload, "exp" | "iat">,
-): string => {
-  return jwt.sign(payload, jwtConfig.secret, {
-    expiresIn: "7d",
-    algorithm: "HS256",
-    issuer: jwtConfig.issuer,
-  } as jwt.SignOptions);
+export const generateToken = (payload: JwtPayload): string => {
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN,
+    algorithm: JWT_ALGORITHM,
+    issuer: JWT_ISSUER,
+  });
 };
 
 /**
@@ -41,16 +37,16 @@ export const generateToken = (
  */
 export const verifyToken = (token: string): JwtPayload => {
   try {
-    return jwt.verify(token, jwtConfig.secret, {
-      algorithms: [jwtConfig.algorithm],
-      issuer: jwtConfig.issuer,
+    return jwt.verify(token, JWT_SECRET, {
+      algorithms: [JWT_ALGORITHM],
+      issuer: JWT_ISSUER,
     }) as JwtPayload;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      throw new Error("El token ha expirado");
+      throw new Error("Token has expired");
     }
     if (error instanceof jwt.JsonWebTokenError) {
-      throw new Error("Token inválido");
+      throw new Error("Invalid token");
     }
     throw error;
   }

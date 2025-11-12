@@ -1,31 +1,39 @@
-// client/src/hooks/useTheme.ts
 /**
  * @file useTheme.ts
  * @description Hook personalizado para manejar el tema de la aplicación (claro/oscuro).
- * Gestiona la persistencia del tema y sincroniza con las preferencias del sistema.
+ * Ahora usa Redux para gestionar el estado global del tema.
  */
 
-import { useEffect, useState } from "react";
-
-type Theme = "light" | "dark";
-
-function getInitial(): Theme {
-  const saved = localStorage.getItem("theme") as Theme | null;
-  if (saved === "light" || saved === "dark") return saved;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "./useRedux";
+import {
+  selectTheme,
+  setTheme as setThemeAction,
+} from "@/store/slices/themeSlice";
+import { Theme } from "@/types/theme";
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(getInitial);
-
+  const dispatch = useAppDispatch();
+  const theme = useAppSelector(selectTheme);
+  /**
+   * Aplicar el tema al DOM cuando se monta el componente
+   * Esto asegura que el tema se aplique correctamente al cargar la página
+   */
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === "dark") root.classList.add("dark");
-    else root.classList.remove("dark");
-    localStorage.setItem("theme", theme);
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
   }, [theme]);
+  /**
+   * Función para cambiar el tema
+   * Usa Redux para que el cambio se propague a toda la aplicación
+   */
+  const setTheme = (newTheme: Theme) => {
+    dispatch(setThemeAction(newTheme));
+  };
 
   return { theme, setTheme };
 }
