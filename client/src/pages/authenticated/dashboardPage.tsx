@@ -9,6 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { IconUser } from "@tabler/icons-react";
+import Icon from "@/components/ui/icon";
 
 export default function DashboardPage() {
   const user = useAppSelector(selectUser);
@@ -23,7 +25,8 @@ export default function DashboardPage() {
       <div className="flex justify-between items-start mb-8">
         <div>
           <h1 className="text-4xl font-bold mb-2">
-            ¡Bienvenido, {user?.name || "Usuario"}! 👋
+            ¡Bienvenido, {user?.name || "Usuario"}!{" "}
+            <Icon as={IconUser} size={26} className="inline-block" />
           </h1>
           <p className="text-muted-foreground">
             Aquí está el resumen de tus tareas

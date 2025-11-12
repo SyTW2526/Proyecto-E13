@@ -31,4 +31,7 @@ Thumbs.db
 # Prisma generated files (server)
 server/src/generated/prisma
 # VSCode extensions config exception
-!.vscode/extensions.json
+/package.json
+/package-lock.json
+# En subdirectorios solo ignorar los lockfiles (mantener package.json trackeado)
+**/package-lock.json
