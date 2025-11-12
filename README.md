@@ -3,9 +3,9 @@
 Aplicación fullstack para la gestión colaborativa de tareas.
 
 ## Autores
-- Laura
-- Tomás
-- Joel
+[![Integrante2](https://img.shields.io/badge/Laura%20Álvarez%20Zamora-alu0101349824-white?style=for-the-badge)](https://github.com/alu0101349824)
+[![Integrante1](https://img.shields.io/badge/Tomás%20Pino%20Pérez-alu0101474311-white?style=for-the-badge)](https://github.com/tomas2p)
+[![Integrante3](https://img.shields.io/badge/Joel%20Saavedra%20Páez-alu0101437415-white?style=for-the-badge)](https://github.com/Joelsaav)
 
 ## Sprint 1 - Configuración Inicial y Primeros Pasos
 - Configuración del proyecto(backend, frontend y base de datos(Prisma))
