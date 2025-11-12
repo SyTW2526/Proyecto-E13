@@ -7,37 +7,12 @@ import { useNavigate } from "react-router-dom";
 import React from "react";
 import Icon from "./ui/icon";
 import { Button } from "./ui/button";
-import {
-  IconMap,
-  IconUser,
-  IconSettings,
-  IconArrowUp,
-  IconCopyright,
-} from "@tabler/icons-react";
+import { getFooterLinks } from "@/config/footerLinks";
 
-const links = [
-  {
-    to: localStorage.getItem("token") ? "/dashboard" : "/",
-    label: "Inicio",
-    icon: IconMap,
-    ariaLabel: "Inicio",
-  },
-  {
-    to: "/contacts",
-    label: "Contacto",
-    icon: IconUser,
-    ariaLabel: "Contacto",
-  },
-  {
-    to: "/settings",
-    label: "Ajustes",
-    icon: IconSettings,
-    ariaLabel: "Ajustes",
-  },
-];
+const links = getFooterLinks();
 
 export default function Footer({
-  scrollToTop = false,
+  scrollToTop = true,
 }: {
   scrollToTop?: boolean;
 }) {
@@ -65,24 +40,24 @@ export default function Footer({
               )}
             </React.Fragment>
           ))}
-          {scrollToTop && (
-            <Button
-              variant="outline"
-              onClick={scrollTop}
-              aria-label="Volver arriba"
-              className="absolute right-0"
-            >
-              <Icon
-                as={IconArrowUp}
-                ariaLabel="Volver arriba"
-                className="inline-block"
-              />
-            </Button>
-          )}
         </div>
+        {scrollToTop && (
+          <Button
+            variant="default"
+            onClick={scrollTop}
+            aria-label="Volver arriba"
+            className="absolute z-50 right-[max(0.75rem,env(safe-area-inset-right))] bottom-[max(0.75rem,env(safe-area-inset-top))]"
+          >
+            <Icon
+              as="IconArrowUp"
+              ariaLabel="Volver arriba"
+              className="inline-block"
+            />
+          </Button>
+        )}
         <div className="h-7 text-center align-middle gap-2 flex items-center justify-center text-xs text-muted-foreground">
           <Icon
-            as={IconCopyright}
+            as="IconCopyright"
             size={12}
             ariaLabel="Copyright"
             className="inline-flex items-center"
