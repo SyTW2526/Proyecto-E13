@@ -3,13 +3,8 @@
 // import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/hooks/useRedux";
 import { selectUser } from "@/store/slices/authSlice";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { dashboardCards } from "@/config/dashboardCards";
+import FeatureCard from "@/components/ui/featureCard";
 // import { Button } from "@/components/ui/button";
 import { IconUser } from "@tabler/icons-react";
 import Icon from "@/components/ui/icon";
@@ -54,49 +49,19 @@ export default function DashboardPage() {
         </Button> */}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Tareas Pendientes</CardTitle>
-            <CardDescription>Por completar</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-primary">5</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Completadas</CardTitle>
-            <CardDescription>Esta semana</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-green-600">12</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Categorías</CardTitle>
-            <CardDescription>Proyectos activos</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-blue-600">3</div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:grid-rows-3 gap-6">
+        {dashboardCards.map((card, index) => (
+          <FeatureCard
+            key={index}
+            icon={card.icon}
+            title={card.title}
+            description={card.description}
+            bigDetails={card.bigDetails}
+            details={card.details}
+            className={`hover:shadow-lg transition-shadow ${card.span}`}
+          />
+        ))}
       </div>
-
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle>Tareas Recientes</CardTitle>
-          <CardDescription>Últimas actualizaciones</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Aquí aparecerán tus tareas más recientes...
-          </p>
-        </CardContent>
-      </Card>
     </div>
   );
 }
