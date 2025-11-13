@@ -12,6 +12,8 @@ export default function FeatureCard({
   icon,
   title,
   description,
+  bigDetails = false,
+  details,
   className = "",
   iconSize = 40,
   iconLabel,
@@ -20,17 +22,32 @@ export default function FeatureCard({
   return (
     <Card className={className}>
       <CardHeader>
-        <div className="text-4xl mb-2">
-          <Icon
-            as={icon}
-            size={iconSize}
-            ariaLabel={iconLabel}
-            className="inline-block"
-          />
-        </div>
+        {icon ? (
+          <div className="text-4xl mb-2">
+            <Icon
+              as={icon}
+              size={iconSize}
+              ariaLabel={iconLabel}
+              className="inline-block"
+            />
+          </div>
+        ) : null}
         <CardTitle>{title}</CardTitle>
         {description ? <CardDescription>{description}</CardDescription> : null}
       </CardHeader>
+      {bigDetails && details ? (
+        <CardContent>
+          <span className="text-4xl leading-none font-bold text-foreground">
+            {details}
+          </span>
+        </CardContent>
+      ) : (
+        details && (
+          <CardContent>
+            <p className="text-sm text-muted-foreground">{details}</p>
+          </CardContent>
+        )
+      )}
       {children ? <CardContent>{children}</CardContent> : null}
     </Card>
   );

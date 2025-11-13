@@ -16,10 +16,12 @@ export type IconType = React.ComponentType<{
 }>;
 
 export interface FeatureCardProps {
-  icon: IconType | string;
+  icon?: IconType | string;
   title: string;
   description?: string;
   className?: string;
+  bigDetails?: boolean;
+  details?: string | React.ReactNode;
   iconSize?: number;
   iconLabel?: string;
   children?: React.ReactNode;
