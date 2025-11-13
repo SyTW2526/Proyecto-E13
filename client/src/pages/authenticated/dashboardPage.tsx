@@ -1,6 +1,8 @@
-import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
-import { logout, selectUser } from "@/store/slices/authSlice";
-import { useNavigate } from "react-router-dom";
+// import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
+// import { logout, selectUser } from "@/store/slices/authSlice";
+// import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "@/hooks/useRedux";
+import { selectUser } from "@/store/slices/authSlice";
 import {
   Card,
   CardContent,
@@ -8,18 +10,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { IconUser } from "@tabler/icons-react";
 import Icon from "@/components/ui/icon";
 
 export default function DashboardPage() {
   const user = useAppSelector(selectUser);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/", { replace: true });
-  };
+  // const dispatch = useAppDispatch();
+  // const navigate = useNavigate();
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  //   navigate("/", { replace: true });
+  // };
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-start mb-8">
@@ -32,7 +34,7 @@ export default function DashboardPage() {
             Aquí está el resumen de tus tareas
           </p>
         </div>
-        <Button variant="outline" onClick={handleLogout} className="gap-2">
+        {/* <Button variant="outline" onClick={handleLogout} className="gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -49,7 +51,7 @@ export default function DashboardPage() {
             <line x1="21" y1="12" x2="9" y2="12" />
           </svg>
           Cerrar Sesión
-        </Button>
+        </Button> */}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

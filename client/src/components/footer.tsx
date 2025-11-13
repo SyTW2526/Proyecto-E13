@@ -28,7 +28,6 @@ export default function Footer() {
         <Button
           variant="link"
           leftIcon="IconMail"
-          iconSize={16}
           className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring rounded p-0"
           aria-label="Contacto"
           onClick={() => navigate("/contacts")}
