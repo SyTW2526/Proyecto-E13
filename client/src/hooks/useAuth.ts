@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "./useRedux";
 import {
   loginRequest,
@@ -24,84 +25,96 @@ export function useAuth() {
   const isLoading = useAppSelector(selectAuthLoading);
   const error = useAppSelector(selectAuthError);
 
-  const login = async (email: string, password: string) => {
-    dispatch(loginRequest());
-    try {
-      const { data } = await api.post<{
-        token: string;
-        user: { id: string; email: string; name: string; avatar?: string };
-      }>("/auth/login", { email, password });
+  const login = useCallback(
+    async (email: string, password: string) => {
+      dispatch(loginRequest());
+      try {
+        const { data } = await api.post<{
+          token: string;
+          user: { id: string; email: string; name: string; avatar?: string };
+        }>("/auth/login", { email, password });
 
-      dispatch(
-        loginSuccess({
-          user: data.user,
-          token: data.token,
-        }),
-      );
-      return { success: true };
-    } catch (err: unknown) {
-      const errorMsg = apiErrorMessage(err);
-      dispatch(loginFailure(errorMsg));
-      return { success: false, error: errorMsg };
-    }
-  };
+        dispatch(
+          loginSuccess({
+            user: data.user,
+            token: data.token,
+          }),
+        );
+        return { success: true };
+      } catch (err: unknown) {
+        const errorMsg = apiErrorMessage(err);
+        dispatch(loginFailure(errorMsg));
+        return { success: false, error: errorMsg };
+      }
+    },
+    [dispatch],
+  );
 
-  const register = async (name: string, email: string, password: string) => {
-    dispatch(loginRequest());
-    try {
-      await api.post("/auth/register", { name, email, password });
-      const { data } = await api.post<{
-        token: string;
-        user: { id: string; email: string; name: string; avatar?: string };
-      }>("/auth/login", { email, password });
+  const register = useCallback(
+    async (name: string, email: string, password: string) => {
+      dispatch(loginRequest());
+      try {
+        await api.post("/auth/register", { name, email, password });
+        const { data } = await api.post<{
+          token: string;
+          user: { id: string; email: string; name: string; avatar?: string };
+        }>("/auth/login", { email, password });
 
-      dispatch(
-        loginSuccess({
-          user: data.user,
-          token: data.token,
-        }),
-      );
-      return { success: true };
-    } catch (err: unknown) {
-      const errorMsg = apiErrorMessage(err);
-      dispatch(loginFailure(errorMsg));
-      return { success: false, error: errorMsg };
-    }
-  };
+        dispatch(
+          loginSuccess({
+            user: data.user,
+            token: data.token,
+          }),
+        );
+        return { success: true };
+      } catch (err: unknown) {
+        const errorMsg = apiErrorMessage(err);
+        dispatch(loginFailure(errorMsg));
+        return { success: false, error: errorMsg };
+      }
+    },
+    [dispatch],
+  );
 
-  const loginWithGoogle = async (idToken: string) => {
-    dispatch(loginRequest());
-    try {
-      const { data } = await api.post<{
-        token: string;
-        user: { id: string; email: string; name: string; avatar?: string };
-      }>("/auth/google", { idToken });
+  const loginWithGoogle = useCallback(
+    async (idToken: string) => {
+      dispatch(loginRequest());
+      try {
+        const { data } = await api.post<{
+          token: string;
+          user: { id: string; email: string; name: string; avatar?: string };
+        }>("/auth/google", { idToken });
 
-      dispatch(
-        loginSuccess({
-          user: data.user,
-          token: data.token,
-        }),
-      );
-      return { success: true };
-    } catch (err: unknown) {
-      const errorMsg = apiErrorMessage(err);
-      dispatch(loginFailure(errorMsg));
-      return { success: false, error: errorMsg };
-    }
-  };
+        dispatch(
+          loginSuccess({
+            user: data.user,
+            token: data.token,
+          }),
+        );
+        return { success: true };
+      } catch (err: unknown) {
+        const errorMsg = apiErrorMessage(err);
+        dispatch(loginFailure(errorMsg));
+        return { success: false, error: errorMsg };
+      }
+    },
+    [dispatch],
+  );
 
-  const signOut = () => {
+  const signOut = useCallback(() => {
     dispatch(logout());
-  };
+  }, [dispatch]);
 
-  const updateUserProfile = (updates: Partial<User>) => {
-    dispatch(updateUser(updates));
-  };
+  const updateUserProfile = useCallback(
+    (updates: Partial<User>) => {
+      dispatch(updateUser(updates));
+    },
+    [dispatch],
+  );
 
-  const clearAuthError = () => {
+  const clearAuthError = useCallback(() => {
     dispatch(clearError());
-  };
+  }, [dispatch]);
 
   return {
     user,

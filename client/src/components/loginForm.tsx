@@ -34,7 +34,11 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
   const googleClientId =
     (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined) ?? undefined;
   const [gisReady, setGisReady] = useState(false);
+  const [googleBtnRendered, setGoogleBtnRendered] = useState(false);
   const googleBtnRef = useRef<HTMLDivElement | null>(null);
+  const loginWithGoogleRef = useRef<
+    ((idToken: string) => Promise<{ success: boolean; error?: string }>) | null
+  >(null);
 
   const navigate = useNavigate();
 
@@ -47,6 +51,9 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     register,
     clearAuthError,
   } = useAuth();
+
+  // Mantener la referencia actualizada de loginWithGoogle
+  loginWithGoogleRef.current = loginWithGoogle;
 
   const error = localError || authError;
 
@@ -61,6 +68,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     if (forceMode) setMode(forceMode);
     clearAuthError();
     setLocalError(null);
+    setGoogleBtnRendered(false);
   }, [forceMode, clearAuthError]);
 
   useEffect(() => {
@@ -81,7 +89,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
       return () => window.clearInterval(i);
     }
   }, []);
-  
+
   useEffect(() => {
     const apiG = getGis();
     if (!apiG || !googleBtnRef.current) return;
@@ -92,7 +100,8 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
       );
       return;
     }
-    if (!gisReady) return;
+    if (!gisReady || googleBtnRendered) return;
+
     googleBtnRef.current.innerHTML = "";
     try {
       apiG.initialize({
@@ -105,11 +114,14 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
             );
             return;
           }
-          const result = await loginWithGoogle(idToken);
-          if (result.success) {
+          // Usar la referencia en lugar de la función directa
+          const result = await loginWithGoogleRef.current?.(idToken);
+          if (result?.success) {
             setOk("Login con Google exitoso");
           } else {
-            setLocalError(result.error || "Error al iniciar sesión con Google");
+            setLocalError(
+              result?.error || "Error al iniciar sesión con Google",
+            );
           }
         },
         ux_mode: "popup",
@@ -121,17 +133,19 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
         size: "large",
         width: 240,
         theme: "outline",
-        text: ok ? "continue_with" : "signin_with",
+        text: "signin_with",
         shape: "rectangular",
         locale: "es",
       });
+
+      setGoogleBtnRendered(true);
     } catch (error) {
       console.error("Error al inicializar Google Sign-In:", error);
       setLocalError(
         "Error al inicializar Google Sign-In. Verifica la configuración.",
       );
     }
-  }, [googleClientId, gisReady, ok, loginWithGoogle]);
+  }, [googleClientId, gisReady, googleBtnRendered]);
 
   function validate(): string | null {
     if (!email.includes("@")) return "Email inválido";
@@ -273,10 +287,17 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     </span>
                   </div>
                 </div>
-                <div
-                  ref={googleBtnRef}
-                  className="w-full flex justify-center"
-                />
+                <div className="w-full flex justify-center h-11 relative">
+                  {!googleBtnRendered && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-60 h-11 bg-muted/50 animate-pulse rounded-md" />
+                    </div>
+                  )}
+                  <div
+                    ref={googleBtnRef}
+                    className={`w-full flex justify-center ${googleBtnRendered ? "opacity-100" : "opacity-0"} transition-opacity duration-300`}
+                  />
+                </div>
                 <FieldDescription className="text-center text-xs text-muted-foreground">
                   Al continuar acepto los Términos y la Política de privacidad
                 </FieldDescription>
