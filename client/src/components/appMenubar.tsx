@@ -1,15 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
 import NavigationMenuWithActiveItem from "@/components/customized/navigation-menu/navigation-menu-05";
 import ThemeToggle from "@/components/themeToggle";
-import { Button } from "./ui/button";
 import { useAppDispatch } from "@/hooks/useRedux";
 import { logout } from "@/store/slices/authSlice";
 import { useAppSelector } from "@/hooks/useRedux";
 import { selectIsAuthenticated } from "@/store/slices/authSlice";
+import DropdownMenuWithIcon from "@/components/customized/dropdown-menu/dropdown-menu-02";
+import { selectUser } from "@/store/slices/authSlice";
 
 export default function AppMenubar() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const user = useAppSelector(selectUser);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const handleLogout = () => {
     dispatch(logout());
@@ -30,22 +32,14 @@ export default function AppMenubar() {
 
           <div className="flex items-center gap-2">
             {isAuthenticated && (
-              <>
-                <Button
-                  variant="secondary"
-                  leftIcon="IconLogout"
-                  aria-label="Cerrar sesión"
-                  onClick={handleLogout}
-                >
-                  <span>Cerrar sesión</span>
-                </Button>
-                <Button
-                  variant="secondary"
-                  leftIcon="IconSettings"
-                  aria-label="Ajustes"
-                  onClick={() => navigate("/settings")}
-                />
-              </>
+              <DropdownMenuWithIcon
+                onLogout={handleLogout}
+                userName={user?.name}
+                userEmail={user?.email}
+                userInitial={user?.avatar ? user.avatar : (user?.name && user.name.charAt(0).toUpperCase())}
+                onSettings={() => navigate("/settings")}
+                // onProfile={() => navigate("/dashboard")}
+              />
             )}
             <ThemeToggle />
           </div>
