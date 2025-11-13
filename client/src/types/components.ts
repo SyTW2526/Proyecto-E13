@@ -16,7 +16,6 @@ export type IconType = React.ComponentType<{
 }>;
 
 export interface FeatureCardProps {
-  // allow either a component or the name of an icon (resolved at render time)
   icon: IconType | string;
   title: string;
   description?: string;

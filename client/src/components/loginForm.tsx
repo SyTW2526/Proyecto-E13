@@ -13,19 +13,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { api, apiErrorMessage } from "@/lib/api";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
-import {
-  loginRequest,
-  loginSuccess,
-  loginFailure,
-  selectAuthLoading,
-  selectAuthError,
-  selectIsAuthenticated,
-  clearError,
-} from "@/store/slices/authSlice";
+import { useAuth } from "@/hooks/useAuth";
 import { AuthenticateMode } from "@/types/components";
 import { LoginFormProps } from "@/types/components";
 
@@ -46,13 +36,19 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
   const [gisReady, setGisReady] = useState(false);
   const googleBtnRef = useRef<HTMLDivElement | null>(null);
 
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const isLoading = useAppSelector(selectAuthLoading);
-  const reduxError = useAppSelector(selectAuthError);
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const error = localError || reduxError;
+  const {
+    isAuthenticated,
+    isLoading,
+    error: authError,
+    loginWithGoogle,
+    login,
+    register,
+    clearAuthError,
+  } = useAuth();
+
+  const error = localError || authError;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -63,9 +59,9 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
 
   useEffect(() => {
     if (forceMode) setMode(forceMode);
-    dispatch(clearError());
+    clearAuthError();
     setLocalError(null);
-  }, [forceMode, dispatch]);
+  }, [forceMode, clearAuthError]);
 
   useEffect(() => {
     const checkGisLoaded = () => {
@@ -85,12 +81,15 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
       return () => window.clearInterval(i);
     }
   }, []);
-
+  
   useEffect(() => {
     const apiG = getGis();
     if (!apiG || !googleBtnRef.current) return;
     if (!googleClientId) {
       console.error("Google Client ID no configurado");
+      setLocalError(
+        "Google Client ID no configurado. Verifica tu archivo .env",
+      );
       return;
     }
     if (!gisReady) return;
@@ -102,41 +101,19 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
           const idToken = resp?.credential;
           if (!idToken) {
             setLocalError(
-              "Google no devolvió credencial. Revisa cookies/orígenes.",
+              "Error de autorización de Google. Verifica que tu origen (localhost:5173) esté autorizado en Google Cloud Console.",
             );
             return;
           }
-          dispatch(loginRequest());
-          try {
-            const { data } = await api.post<{
-              token: string;
-              user: {
-                id: string;
-                email: string;
-                name: string;
-                avatar?: string;
-              };
-            }>(
-              "/auth/google",
-              { idToken },
-              {
-                headers: { "Content-Type": "application/json" },
-              },
-            );
-            dispatch(
-              loginSuccess({
-                user: data.user,
-                token: data.token,
-              }),
-            );
+          const result = await loginWithGoogle(idToken);
+          if (result.success) {
             setOk("Login con Google exitoso");
-          } catch (error) {
-            const errorMsg = apiErrorMessage(error);
-            dispatch(loginFailure(errorMsg));
+          } else {
+            setLocalError(result.error || "Error al iniciar sesión con Google");
           }
         },
         ux_mode: "popup",
-        use_fedcm_for_prompt: true,
+        use_fedcm_for_prompt: false,
       });
 
       apiG.renderButton(googleBtnRef.current, {
@@ -150,9 +127,11 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
       });
     } catch (error) {
       console.error("Error al inicializar Google Sign-In:", error);
-      setLocalError("Error al inicializar Google Sign-In.");
+      setLocalError(
+        "Error al inicializar Google Sign-In. Verifica la configuración.",
+      );
     }
-  }, [googleClientId, gisReady, ok, dispatch]);
+  }, [googleClientId, gisReady, ok, loginWithGoogle]);
 
   function validate(): string | null {
     if (!email.includes("@")) return "Email inválido";
@@ -166,52 +145,26 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLocalError(null);
-    dispatch(clearError());
+    clearAuthError();
     setOk(null);
+
     const validationError = validate();
     if (validationError) {
       setLocalError(validationError);
       return;
     }
-    dispatch(loginRequest());
-    try {
-      if (mode === "register") {
-        await api.post("/auth/register", { name, email, password });
-        const { data } = await api.post<{
-          token: string;
-          user: { id: string; email: string; name: string; avatar?: string };
-        }>("/auth/login", {
-          email,
-          password,
-        });
-        dispatch(
-          loginSuccess({
-            user: data.user,
-            token: data.token,
-          }),
-        );
-
-        setOk("Registro exitoso. Redirigiendo al dashboard...");
-      } else {
-        const { data } = await api.post<{
-          token: string;
-          user: { id: string; email: string; name: string; avatar?: string };
-        }>("/auth/login", {
-          email,
-          password,
-        });
-        dispatch(
-          loginSuccess({
-            user: data.user,
-            token: data.token,
-          }),
-        );
-        setOk("Login correcto. Redirigiendo...");
-      }
-    } catch (err: unknown) {
-      console.error("Error en login/register:", err);
-      const errorMsg = apiErrorMessage(err);
-      dispatch(loginFailure(errorMsg));
+    const result =
+      mode === "register"
+        ? await register(name, email, password)
+        : await login(email, password);
+    if (result.success) {
+      setOk(
+        mode === "register"
+          ? "Registro exitoso. Redirigiendo al dashboard..."
+          : "Login correcto. Redirigiendo...",
+      );
+    } else {
+      setLocalError(result.error || "Error al autenticar");
     }
   }
   const otherHref = linkTo ?? (mode === "login" ? "/register" : "/login");
@@ -302,7 +255,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     type="button"
                     onClick={() => {
                       setMode(mode === "login" ? "register" : "login");
-                      dispatch(clearError());
+                      clearAuthError();
                     }}
                     disabled={isLoading}
                     className="w-full"
