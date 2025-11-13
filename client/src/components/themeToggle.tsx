@@ -5,18 +5,20 @@
  */
 import { useTheme } from "@/hooks/useTheme";
 import { Button } from "./ui/button";
-import Icon from "./ui/icon";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const next = theme === "dark" ? "light" : "dark";
   return (
-    <Button variant="default" onClick={() => setTheme(next)}>
-      <Icon
-        as={next === "dark" ? "IconSun" : "IconMoon"}
-        size={20}
-        stroke={2}
-      />
+    <Button
+      variant="default"
+      leftIcon={next === "dark" ? "IconSun" : "IconMoon"}
+      iconSize={20}
+      aria-label={`Cambiar a tema ${next}`}
+      className="mr-0"
+      onClick={() => setTheme(next)}
+    >
+      <span className="ml-0 sr-only">Cambiar a tema {next}</span>
     </Button>
   );
 }
