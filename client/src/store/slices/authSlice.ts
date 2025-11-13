@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { User, AuthState } from "@/types/auth";
+import type { User, AuthState } from "@/types/auth/auth";
+import { setAuthToken } from "@/lib/api";
 
 const getUserFromLocalStorage = (): User | null => {
   try {
@@ -36,7 +37,7 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.isLoading = false;
       state.error = null;
-      localStorage.setItem("token", action.payload.token);
+      setAuthToken(action.payload.token);
       localStorage.setItem("user", JSON.stringify(action.payload.user));
     },
     loginRequest: (state) => {
@@ -56,7 +57,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.isLoading = false;
       state.error = null;
-      localStorage.removeItem("token");
+      setAuthToken();
       localStorage.removeItem("user");
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
