@@ -53,7 +53,7 @@ export default function SettingsPage() {
   const [passwordMsg, setPasswordMsg] = useState<string | null>(null);
   const [savingPassword, setSavingPassword] = useState(false);
 
-  // Notificaciones (inicializadas desde el user del store)
+  // Notificaciones
   const [notifEmail, setNotifEmail] = useState(
     user?.emailNotifications ?? false,
   );
@@ -66,9 +66,7 @@ export default function SettingsPage() {
   const [privacyMsg, setPrivacyMsg] = useState<string | null>(null);
   const [deletingAccount, setDeletingAccount] = useState(false);
 
-  // ----------------------------------------
   // Perfil: actualizar nombre
-  // ----------------------------------------
   async function onSaveProfile(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) {

@@ -135,8 +135,7 @@ export const changePassword = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    // If the user signed up via Google OAuth they won't have a password
-    // and may have a googleSub field — prevent password changes for them.
+    // Los usuarios de Google OAuth no pueden cambiar la contraseña
     if (user.googleSub || !user.password) {
       return res
         .status(400)
