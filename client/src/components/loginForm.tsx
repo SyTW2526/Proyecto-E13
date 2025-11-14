@@ -205,7 +205,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                       autoComplete="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Laura Álvarez"
+                      placeholder="John Doe"
                       disabled={isLoading}
                       required
                     />
@@ -219,7 +219,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="laura@example.com"
+                    placeholder="JohnDoe@example.com"
                     disabled={isLoading}
                     required
                   />

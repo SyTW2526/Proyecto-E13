@@ -67,15 +67,23 @@ export const updateEmailNotificationSetting = async (
 ) => {
   try {
     const userId = req.user?.id;
-    const emailNotification = req.body;
+    const { emailNotifications } = req.body as {
+      emailNotifications?: boolean;
+    };
 
     if (!userId) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+    if (typeof emailNotifications !== "boolean") {
+      return res
+        .status(400)
+        .json({ error: "emailNotifications must be a boolean" });
+    }
+
     const user = await prisma.user.update({
       where: { id: userId },
-      data: { emailNotifications: emailNotification },
+      data: { emailNotifications },
       select: {
         id: true,
         emailNotifications: true,
@@ -84,7 +92,7 @@ export const updateEmailNotificationSetting = async (
 
     res.status(200).json(user);
   } catch (error) {
-    console.error("Error updating settings:", error);
+    console.error("Error updating email notification setting:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -95,15 +103,23 @@ export const updatePushNotificationSetting = async (
 ) => {
   try {
     const userId = req.user?.id;
-    const pushNotification = req.body;
+    const { pushNotifications } = req.body as {
+      pushNotifications?: boolean;
+    };
 
     if (!userId) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
+    if (typeof pushNotifications !== "boolean") {
+      return res
+        .status(400)
+        .json({ error: "pushNotifications must be a boolean" });
+    }
+
     const user = await prisma.user.update({
       where: { id: userId },
-      data: { pushNotifications: pushNotification },
+      data: { pushNotifications },
       select: {
         id: true,
         pushNotifications: true,
@@ -112,7 +128,7 @@ export const updatePushNotificationSetting = async (
 
     res.status(200).json(user);
   } catch (error) {
-    console.error("Error updating settings:", error);
+    console.error("Error updating push notification setting:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
