@@ -1,7 +1,7 @@
+import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { OAuth2Client } from "google-auth-library";
 import prisma from "../database/prisma";
-import bcrypt from "bcrypt";
 import { generateToken } from "../utils/jwt";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -135,10 +135,12 @@ export const changePassword = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    if (!user.password) {
+    // If the user signed up via Google OAuth they won't have a password
+    // and may have a googleSub field — prevent password changes for them.
+    if (user.googleSub || !user.password) {
       return res
         .status(400)
-        .json({ error: "Cannot change password for OAuth users" });
+        .json({ error: "Cannot change password for OAuth (Google) users" });
     }
 
     const isValid = await bcrypt.compare(currentPassword, user.password);
