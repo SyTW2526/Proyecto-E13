@@ -5,7 +5,6 @@ import type { IconType as CompIconType } from "@/types/components";
 type IconComponent = CompIconType;
 
 interface IconProps {
-  // 'as' can be a component or the name of an icon exported by @tabler/icons-react
   as: IconComponent | string;
   size?: number;
   stroke?: number;
@@ -24,7 +23,6 @@ export default function Icon({
     ? { role: "img", "aria-label": ariaLabel }
     : { "aria-hidden": true };
 
-  // resolve icon if a string is provided
   const icons = TablerIcons as unknown as Record<string, IconComponent>;
   const As: IconComponent =
     typeof as === "string"

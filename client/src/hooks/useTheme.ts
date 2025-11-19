@@ -15,10 +15,7 @@ import { Theme } from "@/types/theme";
 export function useTheme() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme);
-  /**
-   * Aplicar el tema al DOM cuando se monta el componente
-   * Esto asegura que el tema se aplique correctamente al cargar la página
-   */
+
   useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") {
@@ -27,10 +24,7 @@ export function useTheme() {
       root.classList.remove("dark");
     }
   }, [theme]);
-  /**
-   * Función para cambiar el tema
-   * Usa Redux para que el cambio se propague a toda la aplicación
-   */
+  
   const setTheme = (newTheme: Theme) => {
     dispatch(setThemeAction(newTheme));
   };

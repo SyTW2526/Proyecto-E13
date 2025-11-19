@@ -1,6 +1,6 @@
 /**
- * Footer links configuration.
- * Icons are strings that will be resolved by the `Icon` component.
+ * Enlaces de navegación para el footer.
+ * Proporciona enlaces rápidos a diferentes secciones de la aplicación.
  */
 
 export const getFooterLinks = () => {

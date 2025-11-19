@@ -18,6 +18,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthenticateMode } from "@/types/components";
 import { LoginFormProps } from "@/types/components";
+import { firstZodIssueMessage } from "@/lib/utils";
+import {
+  googleAuthSchema,
+  loginSchema,
+  registerSchema,
+} from "@/schemas/validationSchemas";
 
 function getGis() {
   return window.google?.accounts?.id;
@@ -36,9 +42,6 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
   const [gisReady, setGisReady] = useState(false);
   const [googleBtnRendered, setGoogleBtnRendered] = useState(false);
   const googleBtnRef = useRef<HTMLDivElement | null>(null);
-  const loginWithGoogleRef = useRef<
-    ((idToken: string) => Promise<{ success: boolean; error?: string }>) | null
-  >(null);
 
   const navigate = useNavigate();
 
@@ -51,9 +54,6 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     register,
     clearAuthError,
   } = useAuth();
-
-  // Mantener la referencia actualizada de loginWithGoogle
-  loginWithGoogleRef.current = loginWithGoogle;
 
   const error = localError || authError;
 
@@ -114,14 +114,17 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
             );
             return;
           }
-          // Usar la referencia en lugar de la función directa
-          const result = await loginWithGoogleRef.current?.(idToken);
-          if (result?.success) {
+
+          const tokenValidation = googleAuthSchema.safeParse({ idToken });
+          if (!tokenValidation.success) {
+            setLocalError(firstZodIssueMessage(tokenValidation.error));
+            return;
+          }
+          const result = await loginWithGoogle(tokenValidation.data.idToken);
+          if (result.success) {
             setOk("Login con Google exitoso");
           } else {
-            setLocalError(
-              result?.error || "Error al iniciar sesión con Google",
-            );
+            setLocalError(result.error || "Error al iniciar sesión con Google");
           }
         },
         ux_mode: "popup",
@@ -145,16 +148,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
         "Error al inicializar Google Sign-In. Verifica la configuración.",
       );
     }
-  }, [googleClientId, gisReady, googleBtnRendered]);
-
-  function validate(): string | null {
-    if (!email.includes("@")) return "Email inválido";
-    if (mode === "register" && name.trim().length < 2)
-      return "Nombre demasiado corto";
-    if (password.length < 6)
-      return "La contraseña debe tener al menos 6 caracteres";
-    return null;
-  }
+  }, [googleClientId, gisReady, googleBtnRendered, loginWithGoogle]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -162,21 +156,34 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     clearAuthError();
     setOk(null);
 
-    const validationError = validate();
-    if (validationError) {
-      setLocalError(validationError);
+    if (mode === "register") {
+      const parsed = registerSchema.safeParse({ name, email, password });
+      if (!parsed.success) {
+        setLocalError(firstZodIssueMessage(parsed.error));
+        return;
+      }
+      const result = await register(
+        parsed.data.name,
+        parsed.data.email,
+        parsed.data.password,
+      );
+      if (result.success) {
+        setOk("Registro exitoso. Redirigiendo al dashboard...");
+      } else {
+        setLocalError(result.error || "Error al autenticar");
+      }
       return;
     }
-    const result =
-      mode === "register"
-        ? await register(name, email, password)
-        : await login(email, password);
+
+    const parsed = loginSchema.safeParse({ email, password });
+    if (!parsed.success) {
+      setLocalError(firstZodIssueMessage(parsed.error));
+      return;
+    }
+
+    const result = await login(parsed.data.email, parsed.data.password);
     if (result.success) {
-      setOk(
-        mode === "register"
-          ? "Registro exitoso. Redirigiendo al dashboard..."
-          : "Login correcto. Redirigiendo...",
-      );
+      setOk("Login correcto. Redirigiendo...");
     } else {
       setLocalError(result.error || "Error al autenticar");
     }
@@ -190,9 +197,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
             <CardTitle className="text-2xl tracking-tight">
               {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
             </CardTitle>
-            <CardDescription>
-              Gestiona tus tareas y notificaciones
-            </CardDescription>
+            <CardDescription>Bienvenido a TaskGrid</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={onSubmit} className="space-y-4">
@@ -207,7 +212,6 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                       onChange={(e) => setName(e.target.value)}
                       placeholder="John Doe"
                       disabled={isLoading}
-                      required
                     />
                   </Field>
                 )}
@@ -277,16 +281,6 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     {mode === "login" ? "Crear una cuenta" : "Ya tengo cuenta"}
                   </Button>
                 )}
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">
-                      o
-                    </span>
-                  </div>
-                </div>
                 <div className="w-full flex justify-center h-11 relative">
                   {!googleBtnRendered && (
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -299,7 +293,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                   />
                 </div>
                 <FieldDescription className="text-center text-xs text-muted-foreground">
-                  Al continuar acepto los Términos y la Política de privacidad
+                  Al continuar aceptas los Términos y la Política de Privacidad
                 </FieldDescription>
               </FieldGroup>
             </form>

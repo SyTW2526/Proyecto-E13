@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +8,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Icon from "@/components/ui/icon";
-import React from "react";
 
 type Props = {
   onProfile?: () => void;
@@ -17,6 +16,7 @@ type Props = {
   userName?: string;
   userEmail?: string;
   userInitial?: string;
+  userImage?: string;
 };
 
 export default function DropdownMenuWithIcon({
@@ -26,11 +26,15 @@ export default function DropdownMenuWithIcon({
   userEmail,
   onLogout,
   userInitial = "A",
+  userImage,
 }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-full">
         <Avatar>
+          {userImage && (
+            <AvatarImage src={userImage} alt={userName} />
+          )}
           <AvatarFallback>{userInitial}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

@@ -3,6 +3,7 @@
  * @description Hook personalizado para obtener la ruta actual del navegador.
  * Escucha los cambios en la URL y actualiza el valor retornado en consecuencia.
  */
+
 import { useEffect, useState } from "react";
 
 export function usePathname(): string {

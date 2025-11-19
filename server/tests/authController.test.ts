@@ -174,6 +174,7 @@ describe("AuthController", () => {
           emailNotifications: mockUser.emailNotifications,
           pushNotifications: mockUser.pushNotifications,
           image: mockUser.image,
+          isGoogleAuthUser: false,
         },
       });
     });

@@ -3,6 +3,7 @@
  * @description Configuración de las tarjetas del panel de control.
  * Define las tarjetas que se mostrarán en el panel de control.
  */
+
 export const dashboardCards = [
   {
     icon: "IconBell",
@@ -16,8 +17,7 @@ export const dashboardCards = [
     icon: "IconChecklist",
     title: "Tareas Completadas",
     description: "Esta semana",
-    details:
-      "12",
+    details: "12",
     bigDetails: true,
     span: "md:col-span-2 lg:col-span-1",
   },
@@ -50,5 +50,5 @@ export const dashboardCards = [
     description: "Resumen de la semana",
     details: "Aquí aparecerán tus estadísticas de progreso...",
     span: "md:col-span-2 lg:col-span-2 row-span-2",
-  }
+  },
 ];

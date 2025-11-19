@@ -3,9 +3,9 @@
  * @description Configuración de las tarjetas de la página de inicio.
  * Define las tarjetas que se mostrarán en la página de inicio.
  */
+
 export const landingCards = [
   {
-    // use the icon component name as a string and resolve it dynamically where needed
     icon: "IconClipboard",
     title: "Gestión de tareas inteligente",
     description: "Crea, organiza y prioriza tareas con facilidad",
