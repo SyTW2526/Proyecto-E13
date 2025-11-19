@@ -9,15 +9,15 @@ import {
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthenticateMode, LoginFormProps } from "@/types/components";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { AuthenticateMode } from "@/types/components";
-import { LoginFormProps } from "@/types/components";
 
 function getGis() {
   return window.google?.accounts?.id;
@@ -29,6 +29,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [ok, setOk] = useState<string | null>(null);
 
   const googleClientId =
@@ -68,6 +69,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     if (forceMode) setMode(forceMode);
     clearAuthError();
     setLocalError(null);
+    setFieldErrors({});
     setGoogleBtnRendered(false);
   }, [forceMode, clearAuthError]);
 
@@ -147,30 +149,18 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     }
   }, [googleClientId, gisReady, googleBtnRendered]);
 
-  function validate(): string | null {
-    if (!email.includes("@")) return "Email inválido";
-    if (mode === "register" && name.trim().length < 2)
-      return "Nombre demasiado corto";
-    if (password.length < 6)
-      return "La contraseña debe tener al menos 6 caracteres";
-    return null;
-  }
-
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLocalError(null);
+    setFieldErrors({});
     clearAuthError();
     setOk(null);
 
-    const validationError = validate();
-    if (validationError) {
-      setLocalError(validationError);
-      return;
-    }
     const result =
       mode === "register"
         ? await register(name, email, password)
         : await login(email, password);
+
     if (result.success) {
       setOk(
         mode === "register"
@@ -178,7 +168,13 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
           : "Login correcto. Redirigiendo...",
       );
     } else {
-      setLocalError(result.error || "Error al autenticar");
+      // Intentar extraer errores de validación por campo
+      if (result.validationErrors) {
+        setFieldErrors(result.validationErrors);
+        setLocalError(null); // No mostrar error general si hay errores de campo
+      } else {
+        setLocalError(result.error || "Error al autenticar");
+      }
     }
   }
   const otherHref = linkTo ?? (mode === "login" ? "/register" : "/login");
@@ -209,6 +205,11 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                       disabled={isLoading}
                       required
                     />
+                    {fieldErrors.name && (
+                      <FieldError className="text-center">
+                        {fieldErrors.name}
+                      </FieldError>
+                    )}
                   </Field>
                 )}
 
@@ -223,6 +224,11 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     disabled={isLoading}
                     required
                   />
+                  {fieldErrors.email && (
+                    <FieldError className="text-center">
+                      {fieldErrors.email}
+                    </FieldError>
+                  )}
                 </Field>
 
                 <Field>
@@ -238,6 +244,11 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     disabled={isLoading}
                     required
                   />
+                  {fieldErrors.password && (
+                    <FieldError className="text-center">
+                      {fieldErrors.password}
+                    </FieldError>
+                  )}
                 </Field>
                 {error && (
                   <FieldDescription className="text-center text-destructive">

@@ -4,10 +4,9 @@
  * y un botón para volver al inicio de la página.
  */
 
-import React from "react";
 import { useNavigate } from "react-router-dom";
-import Icon from "./ui/icon";
 import { Button } from "./ui/button";
+import Icon from "./ui/icon";
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -21,7 +20,7 @@ export default function Footer() {
         <div className="flex items-center gap-2">
           <Icon as="IconCopyright" size={16} className="inline-block" />
           <span className="whitespace-nowrap">
-            {new Date().getFullYear()} — Equipo 13 · Proyecto-E13
+            {new Date().getFullYear()} — Equipo 13 · TaskGrid
           </span>
         </div>
 

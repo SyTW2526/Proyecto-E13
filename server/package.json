@@ -14,6 +14,7 @@
     "check:watch": "tsc --noEmit --watch",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prettier": "prettier --write .",
     "prisma:studio": "prisma studio"
   },
   "keywords": [],

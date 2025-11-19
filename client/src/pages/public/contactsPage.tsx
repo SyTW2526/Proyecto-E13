@@ -11,8 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Mail, ExternalLink } from "lucide-react";
 import { team } from "@/config/team";
+import { ExternalLink, Mail } from "lucide-react";
 
 export default function ContactsPage() {
   return (
@@ -22,7 +22,7 @@ export default function ContactsPage() {
           Nuestro equipo
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Contacto directo del equipo de Proyecto-E13.
+          Contacto directo del equipo de TaskGrid.
         </p>
       </header>
 

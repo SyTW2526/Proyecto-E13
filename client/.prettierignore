@@ -20,5 +20,6 @@ typedoc.json
 .vscode
 .github/workflows
 .github/workflows/**
-vitest.config.js
 sonar-project.properties
+tsconfig.app.json
+tsconfig.node.json

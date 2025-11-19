@@ -23,7 +23,7 @@ export default function AppMenubar() {
       <div className="mx-auto flex max-w-7xl h-full items-center gap-4 px-3">
         <div className="flex items-center justify-between gap-6 w-full">
           <Link to="/" className="text-lg font-semibold">
-            Proyecto-E13
+            TaskGrid
           </Link>
 
           <div className="hidden md:block">
@@ -36,7 +36,11 @@ export default function AppMenubar() {
                 onLogout={handleLogout}
                 userName={user?.name}
                 userEmail={user?.email}
-                userInitial={user?.avatar ? user.avatar : (user?.name && user.name.charAt(0).toUpperCase())}
+                userInitial={
+                  user?.avatar
+                    ? user.avatar
+                    : user?.name && user.name.charAt(0).toUpperCase()
+                }
                 onSettings={() => navigate("/settings")}
                 // onProfile={() => navigate("/dashboard")}
               />

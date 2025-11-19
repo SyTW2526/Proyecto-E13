@@ -4,6 +4,7 @@
  * Incluye manejo de tokens de autenticación y normalización de errores.
  */
 import axios, { AxiosError } from "axios";
+import { translateError } from "./errorTranslations";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
@@ -23,10 +24,22 @@ export function setAuthToken(token?: string) {
 const existing = localStorage.getItem("token");
 if (existing) setAuthToken(existing);
 
+/** Detalle de un error de validación de campo. */
+export interface ValidationDetail {
+  field: string;
+  message: string;
+}
+
 /** Error normalizado para la app, sin `any`. */
 export type AppError =
   | { kind: "network"; message: string }
   | { kind: "api"; status: number; message: string; data?: unknown }
+  | {
+      kind: "validation";
+      status: number;
+      message: string;
+      details: ValidationDetail[];
+    }
   | { kind: "unknown"; message: string };
 
 /** Convierte cualquier error en un `AppError` tipado. */
@@ -45,6 +58,32 @@ export function toAppError(err: unknown): AppError {
     let serverMsg = ax.message;
     if (typeof data === "object" && data !== null) {
       const rec = data as Record<string, unknown>;
+
+      // Detectar errores de validación de Zod
+      if (
+        Array.isArray(rec.details) &&
+        rec.details.length > 0 &&
+        typeof rec.details[0] === "object" &&
+        rec.details[0] !== null
+      ) {
+        const details = rec.details as ValidationDetail[];
+        const errorMsg =
+          typeof rec.error === "string" ? rec.error : "Validation failed";
+
+        // Traducir mensajes de error a español
+        const translatedDetails = details.map((detail) => ({
+          field: detail.field,
+          message: translateError(detail.message),
+        }));
+
+        return {
+          kind: "validation",
+          status,
+          message: translateError(errorMsg),
+          details: translatedDetails,
+        };
+      }
+
       if (typeof rec.error === "string") {
         serverMsg = rec.error;
       } else if (typeof rec.message === "string") {
@@ -52,7 +91,7 @@ export function toAppError(err: unknown): AppError {
       }
     }
 
-    return { kind: "api", status, message: serverMsg, data };
+    return { kind: "api", status, message: translateError(serverMsg), data };
   }
 
   return {
@@ -64,4 +103,31 @@ export function toAppError(err: unknown): AppError {
 /** Mensaje legible desde un `unknown`. */
 export function apiErrorMessage(err: unknown): string {
   return toAppError(err).message;
+}
+
+/** Obtiene el mensaje de error para un campo específico desde errores de validación. */
+export function getFieldError(err: unknown, fieldName: string): string | null {
+  const appError = toAppError(err);
+  if (appError.kind === "validation") {
+    const detail = appError.details.find((d) => d.field === fieldName);
+    return detail?.message ?? null;
+  }
+  return null;
+}
+
+/** Obtiene todos los errores de validación agrupados por campo. */
+export function getValidationErrors(
+  err: unknown,
+): Record<string, string> | null {
+  const appError = toAppError(err);
+  if (appError.kind === "validation") {
+    return appError.details.reduce(
+      (acc, detail) => {
+        acc[detail.field] = detail.message;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+  }
+  return null;
 }

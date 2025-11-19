@@ -1,20 +1,20 @@
-import { useCallback } from "react";
-import { useAppDispatch, useAppSelector } from "./useRedux";
+import { api, apiErrorMessage, getValidationErrors } from "@/lib/api";
 import {
+  clearError,
+  loginFailure,
   loginRequest,
   loginSuccess,
-  loginFailure,
   logout,
-  updateUser,
-  clearError,
-  selectUser,
+  selectAuthError,
+  selectAuthLoading,
   selectIsAuthenticated,
   selectToken,
-  selectAuthLoading,
-  selectAuthError,
+  selectUser,
+  updateUser,
 } from "@/store/slices/authSlice";
-import { api, apiErrorMessage } from "@/lib/api";
 import type { User } from "@/types/auth/auth";
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "./useRedux";
 
 export function useAuth() {
   const dispatch = useAppDispatch();
@@ -43,8 +43,13 @@ export function useAuth() {
         return { success: true };
       } catch (err: unknown) {
         const errorMsg = apiErrorMessage(err);
+        const validationErrors = getValidationErrors(err);
         dispatch(loginFailure(errorMsg));
-        return { success: false, error: errorMsg };
+        return {
+          success: false,
+          error: errorMsg,
+          validationErrors: validationErrors ?? undefined,
+        };
       }
     },
     [dispatch],
@@ -69,8 +74,13 @@ export function useAuth() {
         return { success: true };
       } catch (err: unknown) {
         const errorMsg = apiErrorMessage(err);
+        const validationErrors = getValidationErrors(err);
         dispatch(loginFailure(errorMsg));
-        return { success: false, error: errorMsg };
+        return {
+          success: false,
+          error: errorMsg,
+          validationErrors: validationErrors ?? undefined,
+        };
       }
     },
     [dispatch],

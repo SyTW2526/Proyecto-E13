@@ -3,39 +3,35 @@
  * @description Página de ajustes donde los usuarios pueden modificar su perfil,
  * preferencias, notificaciones y privacidad.
  */
-import { useState } from "react";
 import {
-  Save,
-  User,
-  Mail,
-  KeyRound,
   Bell,
+  KeyRound,
+  Mail,
   Palette,
+  Save,
   Shield,
   Trash2,
+  User,
 } from "lucide-react";
+import { useState } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
-import {
-  selectUser,
-  updateUser,
-  logout,
-} from "@/store/slices/authSlice";
+import { logout, selectUser, updateUser } from "@/store/slices/authSlice";
 import { selectIsDark, toggleTheme } from "@/store/slices/themeSlice";
 
+import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { api, apiErrorMessage } from "@/lib/api";
+import { Switch } from "@/components/ui/switch";
+import { api, apiErrorMessage, getValidationErrors } from "@/lib/api";
 
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
@@ -51,15 +47,16 @@ export default function SettingsPage() {
   const [currPass, setCurrPass] = useState("");
   const [newPass, setNewPass] = useState("");
   const [passwordMsg, setPasswordMsg] = useState<string | null>(null);
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>(
+    {},
+  );
   const [savingPassword, setSavingPassword] = useState(false);
 
   // Notificaciones
   const [notifEmail, setNotifEmail] = useState(
     user?.emailNotifications ?? false,
   );
-  const [notifPush, setNotifPush] = useState(
-    user?.pushNotifications ?? false,
-  );
+  const [notifPush, setNotifPush] = useState(user?.pushNotifications ?? false);
   const [notifMsg, setNotifMsg] = useState<string | null>(null);
 
   // Privacidad
@@ -96,14 +93,11 @@ export default function SettingsPage() {
   // ----------------------------------------
   async function onSavePassword(e: React.FormEvent) {
     e.preventDefault();
-    if (!currPass || !newPass) {
-      setPasswordMsg("Debes rellenar la contraseña actual y la nueva.");
-      return;
-    }
+    setPasswordMsg(null);
+    setPasswordErrors({});
 
     try {
       setSavingPassword(true);
-      setPasswordMsg(null);
 
       await api.put("/auth/password", {
         currentPassword: currPass,
@@ -114,7 +108,12 @@ export default function SettingsPage() {
       setNewPass("");
       setPasswordMsg("Contraseña actualizada correctamente.");
     } catch (err: unknown) {
-      setPasswordMsg(apiErrorMessage(err));
+      const validationErrors = getValidationErrors(err);
+      if (validationErrors) {
+        setPasswordErrors(validationErrors);
+      } else {
+        setPasswordMsg(apiErrorMessage(err));
+      }
     } finally {
       setSavingPassword(false);
     }
@@ -219,10 +218,7 @@ export default function SettingsPage() {
 
         <CardContent className="space-y-6">
           {/* Formulario 1: sólo nombre */}
-          <form
-            onSubmit={onSaveProfile}
-            className="grid gap-4 sm:grid-cols-2"
-          >
+          <form onSubmit={onSaveProfile} className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="name">Nombre</Label>
               <Input
@@ -247,9 +243,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="sm:col-span-2 flex items-center justify-between gap-4 pt-2">
-              <div className="text-sm text-muted-foreground">
-                {profileMsg}
-              </div>
+              <div className="text-sm text-muted-foreground">{profileMsg}</div>
               <Button
                 type="submit"
                 disabled={savingProfile}
@@ -264,10 +258,7 @@ export default function SettingsPage() {
           <Separator />
 
           {/* Formulario 2: contraseña independiente */}
-          <form
-            onSubmit={onSavePassword}
-            className="grid gap-4 sm:grid-cols-2"
-          >
+          <form onSubmit={onSavePassword} className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="curr">Contraseña actual</Label>
               <Input
@@ -276,6 +267,11 @@ export default function SettingsPage() {
                 value={currPass}
                 onChange={(e) => setCurrPass(e.target.value)}
               />
+              {passwordErrors.currentPassword && (
+                <p className="text-destructive text-sm">
+                  {passwordErrors.currentPassword}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="new" className="inline-flex items-center gap-2">
@@ -287,12 +283,15 @@ export default function SettingsPage() {
                 value={newPass}
                 onChange={(e) => setNewPass(e.target.value)}
               />
+              {passwordErrors.newPassword && (
+                <p className="text-destructive text-sm">
+                  {passwordErrors.newPassword}
+                </p>
+              )}
             </div>
 
             <div className="sm:col-span-2 flex items-center justify-between gap-4 pt-2">
-              <div className="text-sm text-muted-foreground">
-                {passwordMsg}
-              </div>
+              <div className="text-sm text-muted-foreground">{passwordMsg}</div>
               <Button
                 type="submit"
                 disabled={savingPassword}
@@ -343,10 +342,7 @@ export default function SettingsPage() {
                 Resumen diario de actividad.
               </div>
             </div>
-            <Switch
-              checked={notifEmail}
-              onCheckedChange={handleToggleEmail}
-            />
+            <Switch checked={notifEmail} onCheckedChange={handleToggleEmail} />
           </div>
           <div className="flex items-center justify-between">
             <div>
@@ -355,10 +351,7 @@ export default function SettingsPage() {
                 Avisos en tiempo real del navegador.
               </div>
             </div>
-            <Switch
-              checked={notifPush}
-              onCheckedChange={handleTogglePush}
-            />
+            <Switch checked={notifPush} onCheckedChange={handleTogglePush} />
           </div>
           {notifMsg && (
             <div className="text-sm text-muted-foreground">{notifMsg}</div>

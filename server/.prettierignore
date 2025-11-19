@@ -8,3 +8,9 @@ package-lock.json
 package.json
 README.md
 tsconfig.json
+tsconfig.node.json
+vite.config.ts
+prisma
+src/middleware
+src/schemas
+vitest.config.ts
