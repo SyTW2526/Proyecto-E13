@@ -22,7 +22,7 @@ export default function ContactsPage() {
           Nuestro equipo
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Contacto directo del equipo de Proyecto-E13.
+          Contacto directo del equipo de TaskGrid.
         </p>
       </header>
 

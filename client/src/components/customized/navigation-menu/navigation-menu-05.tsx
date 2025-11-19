@@ -5,14 +5,13 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-// Icon is provided to buttons via `leftIcon` prop (resolved by Button component)
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { navigationItems } from "@/config/navigation";
+import { usePathname } from "@/hooks/usePathname";
 
 export default function NavigationMenuWithActiveItem() {
-  const location = useLocation();
-  const pathname = location.pathname;
+  const pathname = usePathname();
   const navigate = useNavigate();
 
   return (
@@ -42,7 +41,7 @@ export default function NavigationMenuWithActiveItem() {
                   variant="ghost"
                   leftIcon={item.icon}
                   iconSize={20}
-                  className="flex-row items-center gap-2.5 inline-flex items-center p-0"
+                  className="flex-row items-center gap-2.5 inline-flex p-0"
                   onClick={() => navigate(item.href)}
                 >
                   {item.title}

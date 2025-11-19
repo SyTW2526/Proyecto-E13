@@ -2,9 +2,10 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  avatar?: string;
+  image?: string;
   emailNotifications?: boolean;
   pushNotifications?: boolean;
+  isGoogleAuthUser?: boolean;
 }
 
 export interface AuthState {

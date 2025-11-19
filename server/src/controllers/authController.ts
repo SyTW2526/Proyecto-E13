@@ -58,7 +58,9 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
         emailNotifications: user.emailNotifications,
         pushNotifications: user.pushNotifications,
         image: user.image,
+        isGoogleAuthUser: Boolean(user.googleSub),
       },
+      
     });
   } catch (error) {
     return res.status(500).json({ error: "Error logging in user." });
@@ -116,6 +118,7 @@ export async function googleSignIn(req: Request, res: Response) {
         image: user.image,
         emailNotifications: user.emailNotifications,
         pushNotifications: user.pushNotifications,
+        isGoogleAuthUser: Boolean(user.googleSub),
       },
     });
   } catch (error) {
@@ -135,7 +138,7 @@ export const changePassword = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    // Los usuarios de Google OAuth no pueden cambiar la contraseña
+    
     if (user.googleSub || !user.password) {
       return res
         .status(400)

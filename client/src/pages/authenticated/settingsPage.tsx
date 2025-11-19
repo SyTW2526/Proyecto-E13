@@ -3,7 +3,7 @@
  * @description Página de ajustes donde los usuarios pueden modificar su perfil,
  * preferencias, notificaciones y privacidad.
  */
-import { useState } from "react";
+
 import {
   Save,
   User,
@@ -14,15 +14,9 @@ import {
   Shield,
   Trash2,
 } from "lucide-react";
-
-import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
-import {
-  selectUser,
-  updateUser,
-  logout,
-} from "@/store/slices/authSlice";
-import { selectIsDark, toggleTheme } from "@/store/slices/themeSlice";
-
+import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/hooks/useTheme";
 import {
   Card,
   CardHeader,
@@ -35,164 +29,141 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "react-router-dom";
+import { firstZodIssueMessage } from "@/lib/utils";
+import {
+  updateNameSchema,
+  changePasswordSchema,
+} from "@/schemas/validationSchemas";
 import { api, apiErrorMessage } from "@/lib/api";
 
 export default function SettingsPage() {
-  const dispatch = useAppDispatch();
-  const user = useAppSelector(selectUser);
-  const isDark = useAppSelector(selectIsDark);
-
-  // Perfil
-  const [name, setName] = useState(user?.name || "");
-  const [profileMsg, setProfileMsg] = useState<string | null>(null);
-  const [savingProfile, setSavingProfile] = useState(false);
-
-  // Contraseña
-  const [currPass, setCurrPass] = useState("");
-  const [newPass, setNewPass] = useState("");
+  const { user, updateUserProfile, signOut } = useAuth();
+  const navigate = useNavigate();
   const [passwordMsg, setPasswordMsg] = useState<string | null>(null);
-  const [savingPassword, setSavingPassword] = useState(false);
+  const [nameProfileMsg, setNameProfileMsg] = useState<string | null>(null);
+  const [name, setName] = useState(user?.name ?? "");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [notificationsMsg, setNotificationsMsg] = useState<string | null>(null);
+  const [deleteAccountMsg, setDeleteAccountMsg] = useState<string | null>(null);
 
-  // Notificaciones
-  const [notifEmail, setNotifEmail] = useState(
-    user?.emailNotifications ?? false,
-  );
-  const [notifPush, setNotifPush] = useState(
-    user?.pushNotifications ?? false,
-  );
-  const [notifMsg, setNotifMsg] = useState<string | null>(null);
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === "dark";
 
-  // Privacidad
-  const [privacyMsg, setPrivacyMsg] = useState<string | null>(null);
-  const [deletingAccount, setDeletingAccount] = useState(false);
+  const passwordHelperText = user?.isGoogleAuthUser
+    ? "Los usuarios que acceden con Google no pueden cambiar su contraseña desde la aplicación."
+    : passwordMsg;
 
-  // Perfil: actualizar nombre
+  // Actualizar nombre
   async function onSaveProfile(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim()) {
-      setProfileMsg("El nombre no puede estar vacío.");
+    const validation = updateNameSchema.safeParse({ name });
+    if (!validation.success) {
+      const errorMsg = firstZodIssueMessage(validation.error);
+      setNameProfileMsg(errorMsg);
       return;
     }
-
     try {
-      setSavingProfile(true);
-      setProfileMsg(null);
-
-      await api.put("/users/me/name", { name });
-
-      // Actualizo el usuario en el store
-      dispatch(updateUser({ name }));
-
-      setProfileMsg("Nombre actualizado correctamente.");
+      await api.put("/users/me/name", { name: validation.data.name });
+      updateUserProfile({ name: validation.data.name });
+      setNameProfileMsg("Nombre actualizado correctamente.");
     } catch (err: unknown) {
-      setProfileMsg(apiErrorMessage(err));
-    } finally {
-      setSavingProfile(false);
+      const errorMsg = apiErrorMessage(err);
+      setNameProfileMsg(errorMsg);
     }
   }
 
-  // ----------------------------------------
-  // Contraseña: cambiar contraseña
-  // ----------------------------------------
+  // Cambiar contraseña
   async function onSavePassword(e: React.FormEvent) {
     e.preventDefault();
-    if (!currPass || !newPass) {
-      setPasswordMsg("Debes rellenar la contraseña actual y la nueva.");
+    if (user?.isGoogleAuthUser) {
+      setPasswordMsg(
+        "Los usuarios que acceden con Google no pueden cambiar su contraseña desde la aplicación.",
+      );
       return;
     }
-
+    const validation = changePasswordSchema.safeParse({
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    });
+    if (!validation.success) {
+      const errorMsg = firstZodIssueMessage(validation.error);
+      setPasswordMsg(errorMsg);
+      return;
+    }
     try {
-      setSavingPassword(true);
-      setPasswordMsg(null);
-
       await api.put("/auth/password", {
-        currentPassword: currPass,
-        newPassword: newPass,
+        currentPassword: currentPassword,
+        newPassword: newPassword,
       });
-
-      setCurrPass("");
-      setNewPass("");
       setPasswordMsg("Contraseña actualizada correctamente.");
+      setCurrentPassword("");
+      setNewPassword("");
     } catch (err: unknown) {
-      setPasswordMsg(apiErrorMessage(err));
-    } finally {
-      setSavingPassword(false);
+      const errorMsg = apiErrorMessage(err);
+      setPasswordMsg(errorMsg);
     }
   }
 
-  // ----------------------------------------
-  // Preferencias: tema
-  // ----------------------------------------
+  // Cambiar tema (oscuro/claro)
   function handleToggleTheme() {
-    dispatch(toggleTheme());
+    setTheme(isDark ? "light" : "dark");
   }
 
-  // ----------------------------------------
   // Notificaciones: email
-  // ----------------------------------------
-  async function handleToggleEmail(checked: boolean) {
-    const previous = notifEmail;
-    setNotifEmail(checked);
-    setNotifMsg(null);
-
+  async function handleToggleEmail() {
+    const previous = user?.emailNotifications ?? false;
+    const newValue = !previous;
+    updateUserProfile({ emailNotifications: newValue });
     try {
       await api.put("/users/me/email-notifications", {
-        emailNotifications: checked,
+        emailNotifications: newValue,
       });
-
-      dispatch(updateUser({ emailNotifications: checked }));
-      setNotifMsg("Preferencias de correo actualizadas.");
+      setNotificationsMsg(
+        `Notificaciones por correo ${newValue ? "activadas" : "desactivadas"}.`,
+      );
     } catch (err: unknown) {
-      // Revertir en caso de error
-      setNotifEmail(previous);
-      setNotifMsg(apiErrorMessage(err));
+      const errorMsg = apiErrorMessage(err);
+      setNotificationsMsg(errorMsg);
     }
   }
 
-  // ----------------------------------------
   // Notificaciones: push
-  // ----------------------------------------
-  async function handleTogglePush(checked: boolean) {
-    const previous = notifPush;
-    setNotifPush(checked);
-    setNotifMsg(null);
-
+  async function handleTogglePush() {
+    const previous = user?.pushNotifications ?? false;
+    const newValue = !previous;
+    updateUserProfile({ pushNotifications: newValue });
     try {
       await api.put("/users/me/push-notifications", {
-        pushNotifications: checked,
+        pushNotifications: newValue,
       });
-
-      dispatch(updateUser({ pushNotifications: checked }));
-      setNotifMsg("Preferencias de notificaciones push actualizadas.");
+      setNotificationsMsg(
+        `Notificaciones push ${newValue ? "activadas" : "desactivadas"}.`,
+      );
     } catch (err: unknown) {
-      setNotifPush(previous);
-      setNotifMsg(apiErrorMessage(err));
+      const errorMsg = apiErrorMessage(err);
+      setNotificationsMsg(errorMsg);
     }
   }
 
-  // ----------------------------------------
-  // Privacidad: eliminar cuenta
-  // ----------------------------------------
+  // Eliminar cuenta
   async function handleDeleteAccount() {
     const confirmDelete = window.confirm(
       "Esta acción es irreversible. ¿Seguro que quieres eliminar tu cuenta?",
     );
-    if (!confirmDelete) return;
-
+    if (!confirmDelete) {
+      setDeleteAccountMsg("Eliminación de cuenta cancelada.");
+      return;
+    }
     try {
-      setDeletingAccount(true);
-      setPrivacyMsg(null);
-
       await api.delete("/users/me");
-
-      // Logout local y redirección básica
-      dispatch(logout());
-      setPrivacyMsg("Cuenta eliminada correctamente.");
-      window.location.href = "/";
+      signOut();
+      setDeleteAccountMsg("Cuenta eliminada correctamente.");
+      navigate("/", { replace: true });
     } catch (err: unknown) {
-      setPrivacyMsg(apiErrorMessage(err));
-    } finally {
-      setDeletingAccount(false);
+      const errorMsg = apiErrorMessage(err);
+      setDeleteAccountMsg(errorMsg);
     }
   }
 
@@ -205,31 +176,24 @@ export default function SettingsPage() {
         </p>
       </header>
 
-      {/* PERFIL: nombre (formulario 1) + contraseña (formulario 2) */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" /> Perfil
           </CardTitle>
-          <CardDescription>
-            Actualiza tu nombre y correo. El correo puede estar bloqueado por el
-            sistema.
-          </CardDescription>
+          <CardDescription>Actualiza tu nombre y contraseña.</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Formulario 1: sólo nombre */}
-          <form
-            onSubmit={onSaveProfile}
-            className="grid gap-4 sm:grid-cols-2"
-          >
+          {/* Nombre y email */}
+          <form onSubmit={onSaveProfile} className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="name">Nombre</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Tu nombre"
+                placeholder="Introduce tu nombre"
               />
             </div>
 
@@ -248,13 +212,9 @@ export default function SettingsPage() {
 
             <div className="sm:col-span-2 flex items-center justify-between gap-4 pt-2">
               <div className="text-sm text-muted-foreground">
-                {profileMsg}
+                {nameProfileMsg}
               </div>
-              <Button
-                type="submit"
-                disabled={savingProfile}
-                className="inline-flex items-center gap-2"
-              >
+              <Button type="submit" className="inline-flex items-center gap-2">
                 <Save className="h-4 w-4" />
                 Guardar cambios
               </Button>
@@ -263,18 +223,16 @@ export default function SettingsPage() {
 
           <Separator />
 
-          {/* Formulario 2: contraseña independiente */}
-          <form
-            onSubmit={onSavePassword}
-            className="grid gap-4 sm:grid-cols-2"
-          >
+          {/* Contraseña */}
+          <form onSubmit={onSavePassword} className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="curr">Contraseña actual</Label>
               <Input
                 id="curr"
                 type="password"
-                value={currPass}
-                onChange={(e) => setCurrPass(e.target.value)}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                disabled={user?.isGoogleAuthUser}
               />
             </div>
             <div className="space-y-2">
@@ -284,18 +242,19 @@ export default function SettingsPage() {
               <Input
                 id="new"
                 type="password"
-                value={newPass}
-                onChange={(e) => setNewPass(e.target.value)}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                disabled={user?.isGoogleAuthUser}
               />
             </div>
 
             <div className="sm:col-span-2 flex items-center justify-between gap-4 pt-2">
               <div className="text-sm text-muted-foreground">
-                {passwordMsg}
+                {passwordHelperText}
               </div>
               <Button
                 type="submit"
-                disabled={savingPassword}
+                disabled={user?.isGoogleAuthUser}
                 className="inline-flex items-center gap-2"
               >
                 <Save className="h-4 w-4" />
@@ -319,7 +278,8 @@ export default function SettingsPage() {
             <div>
               <div className="font-medium">Tema oscuro</div>
               <div className="text-sm text-muted-foreground">
-                Activa el modo oscuro en la interfaz.
+                Activa el modo oscuro para una experiencia visual más cómoda
+                en entornos con poca luz.
               </div>
             </div>
             <Switch checked={isDark} onCheckedChange={handleToggleTheme} />
@@ -340,11 +300,11 @@ export default function SettingsPage() {
             <div>
               <div className="font-medium">Correo electrónico</div>
               <div className="text-sm text-muted-foreground">
-                Resumen diario de actividad.
+                Recibe correos electrónicos con la información acerca de tus tareas.
               </div>
             </div>
             <Switch
-              checked={notifEmail}
+              checked={user?.emailNotifications}
               onCheckedChange={handleToggleEmail}
             />
           </div>
@@ -352,39 +312,42 @@ export default function SettingsPage() {
             <div>
               <div className="font-medium">Notificaciones push</div>
               <div className="text-sm text-muted-foreground">
-                Avisos en tiempo real del navegador.
+                Recibe notificaciones emergentes en tiempo real cuando alguien
+                te comparta una tarea o alguna tarea esté por vencer.
               </div>
             </div>
             <Switch
-              checked={notifPush}
+              checked={user?.pushNotifications}
               onCheckedChange={handleTogglePush}
             />
           </div>
-          {notifMsg && (
-            <div className="text-sm text-muted-foreground">{notifMsg}</div>
+          {notificationsMsg && (
+            <div className="text-sm text-muted-foreground">
+              {notificationsMsg}
+            </div>
           )}
         </CardContent>
       </Card>
 
-      {/* PRIVACIDAD: sin botón de exportar, sólo eliminar cuenta */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" /> Privacidad
           </CardTitle>
           <CardDescription>
-            Controla el tratamiento de tus datos y la eliminación de la cuenta.
+            Elimina tu cuenta de forma irreversible.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {privacyMsg && (
-            <div className="text-sm text-muted-foreground">{privacyMsg}</div>
+          {deleteAccountMsg && (
+            <div className="text-sm text-muted-foreground">
+              {deleteAccountMsg}
+            </div>
           )}
           <Button
             variant="destructive"
             className="inline-flex items-center gap-2"
             onClick={handleDeleteAccount}
-            disabled={deletingAccount}
           >
             <Trash2 className="h-4 w-4" />
             Eliminar cuenta

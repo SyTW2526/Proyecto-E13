@@ -1,10 +1,9 @@
 /**
- * Navigation configuration for the top menu.
- * Each item uses an Icon name string resolved by `Icon` component.
+ * Configuración de navegación para la aplicación.
+ * Define los elementos del menú de navegación principal.
  */
 
 export const navigationItems = [
   { title: "Dashboard", href: "/dashboard", icon: "IconDashboard" },
   { title: "Tabla", href: "/tabla", icon: "IconTable" },
-  // { title: "Ajustes", href: "/settings", icon: "IconSettings" },
 ];

@@ -3,6 +3,7 @@
  * @description Cliente HTTP configurado para comunicarse con el backend.
  * Incluye manejo de tokens de autenticación y normalización de errores.
  */
+
 import axios, { AxiosError } from "axios";
 
 export const api = axios.create({
@@ -23,45 +24,29 @@ export function setAuthToken(token?: string) {
 const existing = localStorage.getItem("token");
 if (existing) setAuthToken(existing);
 
-/** Error normalizado para la app, sin `any`. */
-export type AppError =
-  | { kind: "network"; message: string }
-  | { kind: "api"; status: number; message: string; data?: unknown }
-  | { kind: "unknown"; message: string };
-
-/** Convierte cualquier error en un `AppError` tipado. */
-export function toAppError(err: unknown): AppError {
-  if (axios.isAxiosError(err)) {
-    const ax = err as AxiosError;
-
-    // Sin respuesta => caída del server o sin Internet
-    if (!ax.response) {
-      return { kind: "network", message: "Sin conexión con el servidor." };
-    }
-
-    const { status, data } = ax.response;
-
-    // Intenta extraer `error` estándar del backend
-    let serverMsg = ax.message;
-    if (typeof data === "object" && data !== null) {
-      const rec = data as Record<string, unknown>;
-      if (typeof rec.error === "string") {
-        serverMsg = rec.error;
-      } else if (typeof rec.message === "string") {
-        serverMsg = rec.message;
-      }
-    }
-
-    return { kind: "api", status, message: serverMsg, data };
+export function apiErrorMessage(err: unknown): string {
+  if (!axios.isAxiosError(err)) {
+    return err instanceof Error ? err.message : "Error desconocido";
   }
 
-  return {
-    kind: "unknown",
-    message: err instanceof Error ? err.message : "Error desconocido",
-  };
-}
+  const ax = err as AxiosError;
+  if (!ax.response) {
+    return "Sin conexión con el servidor.";
+  }
 
-/** Mensaje legible desde un `unknown`. */
-export function apiErrorMessage(err: unknown): string {
-  return toAppError(err).message;
+  const { data, statusText } = ax.response;
+
+  if (typeof data === "string" && data.trim().length > 0) {
+    return data;
+  }
+
+  if (data && typeof data === "object") {
+    const rec = data as Record<string, unknown>;
+    const serverMsg = rec.error ?? rec.message ?? rec.detail;
+    if (typeof serverMsg === "string" && serverMsg.trim().length > 0) {
+      return serverMsg;
+    }
+  }
+
+  return ax.message || statusText || "Error inesperado en la API.";
 }

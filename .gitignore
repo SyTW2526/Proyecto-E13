@@ -35,3 +35,4 @@ server/src/generated/prisma
 /package-lock.json
 # En subdirectorios solo ignorar los lockfiles (mantener package.json trackeado)
 **/package-lock.json
+coverage/

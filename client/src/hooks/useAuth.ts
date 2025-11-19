@@ -31,7 +31,15 @@ export function useAuth() {
       try {
         const { data } = await api.post<{
           token: string;
-          user: { id: string; email: string; name: string; avatar?: string };
+          user: {
+            id: string;
+            email: string;
+            name: string;
+            image?: string;
+            emailNotifications?: boolean;
+            pushNotifications?: boolean;
+            isGoogleAuthUser?: boolean;
+          };
         }>("/auth/login", { email, password });
 
         dispatch(
@@ -41,7 +49,7 @@ export function useAuth() {
           }),
         );
         return { success: true };
-      } catch (err: unknown) {
+      } catch (err) {
         const errorMsg = apiErrorMessage(err);
         dispatch(loginFailure(errorMsg));
         return { success: false, error: errorMsg };
@@ -57,7 +65,15 @@ export function useAuth() {
         await api.post("/auth/register", { name, email, password });
         const { data } = await api.post<{
           token: string;
-          user: { id: string; email: string; name: string; avatar?: string };
+          user: {
+            id: string;
+            email: string;
+            name: string;
+            image?: string;
+            emailNotifications?: boolean;
+            pushNotifications?: boolean;
+            isGoogleAuthUser?: boolean;
+          };
         }>("/auth/login", { email, password });
 
         dispatch(
@@ -82,7 +98,15 @@ export function useAuth() {
       try {
         const { data } = await api.post<{
           token: string;
-          user: { id: string; email: string; name: string; avatar?: string };
+          user: {
+            id: string;
+            email: string;
+            name: string;
+            image?: string;
+            emailNotifications?: boolean;
+            pushNotifications?: boolean;
+            isGoogleAuthUser?: boolean;
+          };
         }>("/auth/google", { idToken });
 
         dispatch(

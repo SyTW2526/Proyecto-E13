@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useAppSelector } from "@/hooks/useRedux";
-import { selectIsAuthenticated } from "@/store/slices/authSlice";
+import { useAuth } from "@/hooks/useAuth";
 import LandingPage from "@/pages/public/landingPage";
 import LoginPage from "@/pages/public/loginPage";
 import RegisterPage from "@/pages/public/registerPage";
@@ -12,7 +11,7 @@ import Footer from "@/components/footer";
 import AppMenubar from "@/components/appMenubar";
 
 export default function App() {
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const { isAuthenticated } = useAuth();
   const publicRoute = (Page: React.ComponentType) =>
     isAuthenticated ? <Navigate to="/dashboard" replace /> : <Page />;
 
