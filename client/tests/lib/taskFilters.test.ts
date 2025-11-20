@@ -15,7 +15,6 @@ import {
 import type { Task } from "@/types/task/task";
 import { describe, expect, it } from "vitest";
 
-// Helper para crear tareas de prueba
 const createTask = (overrides: Partial<Task> = {}): Task => ({
   id: "test-id",
   name: "Test Task",
