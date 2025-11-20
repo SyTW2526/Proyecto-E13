@@ -13,6 +13,7 @@ export type ButtonProps = React.ComponentProps<"button"> &
     leftIcon?: IconType | string;
     rightIcon?: IconType | string;
     iconSize?: number;
+    text?: React.ReactNode;
   };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -26,6 +27,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       iconSize = 16,
       children,
+      text,
       ...props
     },
     ref,
@@ -42,7 +44,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {leftIcon ? (
           <Icon as={leftIcon} size={iconSize} className="shrink-0" />
         ) : null}
-        {children}
+        {text || children}
         {rightIcon ? (
           <Icon as={rightIcon} size={iconSize} className="shrink-0" />
         ) : null}

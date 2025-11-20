@@ -14,7 +14,11 @@ import { CreateListDialog } from "@/components/createDialogs/createListDialog";
 import { useTaskForm } from "@/hooks/useTaskForm";
 import { taskFormLabels } from "@/config/taskConfig";
 
-export default function CreateTaskDialog() {
+interface CreateTaskDialogProps {
+  children?: React.ReactNode;
+}
+
+export default function CreateTaskDialog({ children }: CreateTaskDialogProps) {
   const [open, setOpen] = useState(false);
 
   const {
@@ -43,9 +47,11 @@ export default function CreateTaskDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" leftIcon={taskFormLabels.createTask.icon}>
-          {taskFormLabels.createTask.iconText}
-        </Button>
+        {children || (
+          <Button variant="secondary" leftIcon={taskFormLabels.createTask.icon}>
+            {taskFormLabels.createTask.iconText}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="overflow-y-auto max-h-[90vh] sm:max-w-3xl">
         <DialogHeader className="text-center">

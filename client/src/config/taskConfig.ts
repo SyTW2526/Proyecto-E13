@@ -138,4 +138,18 @@ export const tasksPageLabels = {
     dueLabel: "Vence:",
     noDate: "Sin fecha",
   },
+  createButtons: {
+    task: {
+      icon: "IconTask",
+      text: "Tarea",
+    },
+    category: {
+      icon: "IconCategory",
+      text: "Categoría",
+    },
+    list: {
+      icon: "IconList",
+      text: "Lista",
+    },
+  },
 } as const;

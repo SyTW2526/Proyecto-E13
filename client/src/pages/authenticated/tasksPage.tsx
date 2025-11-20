@@ -2,6 +2,10 @@ import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { FilterableList } from "@/components/tasks/FilterableList";
 import { tasksPageLabels } from "@/config/taskConfig";
+import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
+import CreateCategoryDialogStandalone from "@/components/createDialogs/createCategoryDialogStandalone";
+import CreateListDialogStandalone from "@/components/createDialogs/createListDialogStandalone";
+import { Button } from "@/components/ui/button";
 
 export default function TasksPage() {
   const {
@@ -29,16 +33,42 @@ export default function TasksPage() {
     <div className="max-w-(--breakpoint-xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-start gap-12">
       <div className="flex-1">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">
-            {tasksPageLabels.title}
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            {displayTasks.length}{" "}
-            {displayTasks.length === 1
-              ? tasksPageLabels.taskCount.singular
-              : tasksPageLabels.taskCount.plural}{" "}
-            {tasksPageLabels.taskCount.suffix}
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">
+                {tasksPageLabels.title}
+              </h1>
+              <p className="text-muted-foreground mt-2">
+                {displayTasks.length}{" "}
+                {displayTasks.length === 1
+                  ? tasksPageLabels.taskCount.singular
+                  : tasksPageLabels.taskCount.plural}{" "}
+                {tasksPageLabels.taskCount.suffix}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <CreateTaskDialog>
+                <Button
+                  leftIcon={tasksPageLabels.createButtons.task.icon}
+                  text={tasksPageLabels.createButtons.task.text}
+                />
+              </CreateTaskDialog>
+              <CreateCategoryDialogStandalone>
+                <Button
+                  variant="outline"
+                  leftIcon={tasksPageLabels.createButtons.category.icon}
+                  text={tasksPageLabels.createButtons.category.text}
+                />
+              </CreateCategoryDialogStandalone>
+              <CreateListDialogStandalone>
+                <Button
+                  variant="outline"
+                  leftIcon={tasksPageLabels.createButtons.list.icon}
+                  text={tasksPageLabels.createButtons.list.text}
+                />
+              </CreateListDialogStandalone>
+            </div>
+          </div>
         </div>
 
         {displayTasks.length === 0 ? (
