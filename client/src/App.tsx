@@ -5,6 +5,7 @@ import LoginPage from "@/pages/public/loginPage";
 import RegisterPage from "@/pages/public/registerPage";
 import DashboardPage from "@/pages/authenticated/dashboardPage";
 import SettingsPage from "@/pages/authenticated/settingsPage";
+import TasksPage from "@/pages/authenticated/tasksPage";
 import ContactsPage from "@/pages/public/contactsPage";
 import ProtectedRoute from "@/components/auth/protectedRoute";
 import Footer from "@/components/footer";
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/register" element={publicRoute(RegisterPage)} />
 
           <Route path="/dashboard" element={protectedRoute(DashboardPage)} />
+          <Route path="/tasks" element={protectedRoute(TasksPage)} />
           <Route path="/settings" element={protectedRoute(SettingsPage)} />
 
           <Route path="/contacts" element={<ContactsPage />} />
