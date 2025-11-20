@@ -63,4 +63,3 @@ describe("ProtectedRoute", () => {
     expect(screen.queryByText("Protected Content")).not.toBeInTheDocument();
   });
 });
-

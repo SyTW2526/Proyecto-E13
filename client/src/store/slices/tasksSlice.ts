@@ -1,6 +1,11 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { Task, TaskStatus, TaskPriority, TasksState } from "@/types/task/task";
 import type { TaskShare } from "@/types/task/shareTask";
+import type {
+  Task,
+  TaskPriority,
+  TasksState,
+  TaskStatus,
+} from "@/types/task/task";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: TasksState = {
   tasks: [],
@@ -109,7 +114,7 @@ const tasksSlice = createSlice({
     setSorting: (
       state,
       action: PayloadAction<{
-        field: "name" | "dueDate" | "priority" | "createdAt";
+        field: "name" | "dueDate" | "priority" | "createdAt" | "updatedAt";
         order: "asc" | "desc";
       }>,
     ) => {
@@ -252,6 +257,10 @@ export const selectFilteredTasks = (state: { tasks: TasksState }) => {
         bValue = priorityOrder[b.priority];
         break;
       }
+      case "updatedAt":
+        aValue = a.updatedAt;
+        bValue = b.updatedAt;
+        break;
       case "createdAt":
       default:
         aValue = a.createdAt;

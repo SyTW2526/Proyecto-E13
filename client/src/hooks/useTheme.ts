@@ -24,7 +24,7 @@ export function useTheme() {
       root.classList.remove("dark");
     }
   }, [theme]);
-  
+
   const setTheme = (newTheme: Theme) => {
     dispatch(setThemeAction(newTheme));
   };

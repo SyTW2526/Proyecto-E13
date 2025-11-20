@@ -37,9 +37,7 @@ describe("api", () => {
       const axios = await import("axios");
       vi.mocked(axios.isAxiosError).mockReturnValue(true);
 
-      expect(apiErrorMessage(axiosError)).toBe(
-        "Sin conexión con el servidor.",
-      );
+      expect(apiErrorMessage(axiosError)).toBe("Sin conexión con el servidor.");
     });
 
     it("prefers `error` field from server payload", async () => {

@@ -173,7 +173,8 @@ describe("useAuth", () => {
 
     const { result } = renderHook(() => useAuth(), { wrapper });
 
-    const googleResult = await result.current.loginWithGoogle("google-id-token");
+    const googleResult =
+      await result.current.loginWithGoogle("google-id-token");
 
     await waitFor(() => {
       expect(googleResult.success).toBe(true);
@@ -188,7 +189,8 @@ describe("useAuth", () => {
 
     const { result } = renderHook(() => useAuth(), { wrapper });
 
-    const googleResult = await result.current.loginWithGoogle("google-id-token");
+    const googleResult =
+      await result.current.loginWithGoogle("google-id-token");
 
     await waitFor(() => {
       expect(googleResult.success).toBe(false);
@@ -316,4 +318,3 @@ describe("useAuth", () => {
     });
   });
 });
-

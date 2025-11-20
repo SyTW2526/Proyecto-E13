@@ -61,16 +61,14 @@ export function useLists() {
   const setErrorState = (error: string | null) => dispatch(setError(error));
 
   const state = useAppSelector((state) => state);
-  
+
   const getPermission = (listId: string): SharePermission | null =>
     getListPermission(listId)(state);
   const canAccess = (
     listId: string,
     permission: SharePermission = "VIEW",
-  ): boolean =>
-    canAccessList(listId, permission)(state);
-  const isOwner = (listId: string): boolean =>
-    isListOwner(listId)(state);
+  ): boolean => canAccessList(listId, permission)(state);
+  const isOwner = (listId: string): boolean => isListOwner(listId)(state);
 
   return {
     lists,

@@ -13,7 +13,13 @@
     "strict": true,
     "baseUrl": ".",
     "paths": { "@/*": ["src/*"] },
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "declaration": true,
+    "strictPropertyInitialization": true
   },
   "include": ["src", "tests"]
 }

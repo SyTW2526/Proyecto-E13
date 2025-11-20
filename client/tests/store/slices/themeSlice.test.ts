@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import themeReducer, { setTheme, toggleTheme, selectTheme, selectIsDark } from "@/store/slices/themeSlice";
+import themeReducer, {
+  setTheme,
+  toggleTheme,
+  selectTheme,
+  selectIsDark,
+} from "@/store/slices/themeSlice";
 import type { ThemeState } from "@/types/theme";
 
 describe("themeSlice", () => {
@@ -73,4 +78,3 @@ describe("themeSlice", () => {
     });
   });
 });
-

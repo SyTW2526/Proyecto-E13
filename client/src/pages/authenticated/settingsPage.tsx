@@ -278,8 +278,8 @@ export default function SettingsPage() {
             <div>
               <div className="font-medium">Tema oscuro</div>
               <div className="text-sm text-muted-foreground">
-                Activa el modo oscuro para una experiencia visual más cómoda
-                en entornos con poca luz.
+                Activa el modo oscuro para una experiencia visual más cómoda en
+                entornos con poca luz.
               </div>
             </div>
             <Switch checked={isDark} onCheckedChange={handleToggleTheme} />
@@ -300,7 +300,8 @@ export default function SettingsPage() {
             <div>
               <div className="font-medium">Correo electrónico</div>
               <div className="text-sm text-muted-foreground">
-                Recibe correos electrónicos con la información acerca de tus tareas.
+                Recibe correos electrónicos con la información acerca de tus
+                tareas.
               </div>
             </div>
             <Switch

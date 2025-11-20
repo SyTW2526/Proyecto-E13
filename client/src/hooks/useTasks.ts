@@ -1,47 +1,54 @@
-import { useAppDispatch, useAppSelector } from "./useRedux";
 import {
-  selectTasks,
-  selectTasksLoading,
-  selectTasksError,
-  selectSelectedTaskId,
-  selectSelectedTask,
-  selectTasksByCategoryId,
+  getCompletedTasksLastNDays,
+  getFavoriteTasks,
+  getMostRecentTasks,
+  getNextDueTasks,
+} from "@/lib/taskFilters";
+import {
+  addTask,
+  addTaskShare,
+  clearFilters,
+  deleteTask,
+  removeTaskShare,
   selectFilteredTasks,
-  selectTasksByStatus,
-  selectTasksByPriority,
+  selectSelectedTask,
+  selectSelectedTaskId,
   selectSharedTasks,
   selectTaskFilters,
+  selectTasks,
+  selectTasksByCategoryId,
+  selectTasksByPriority,
+  selectTasksByStatus,
+  selectTasksError,
+  selectTasksLoading,
   selectTaskSorting,
-  setTasks,
-  addTask,
-  updateTask,
-  deleteTask,
-  toggleTaskComplete,
-  setTaskStatus,
-  setSelectedTask,
-  setStatusFilter,
   setCategoryFilter,
-  setSearchFilter,
-  setPriorityFilter,
-  clearFilters,
-  setSorting,
-  toggleSortOrder,
-  addTaskShare,
-  updateTaskShare,
-  removeTaskShare,
-  setLoading,
   setError,
+  setLoading,
+  setPriorityFilter,
+  setSearchFilter,
+  setSelectedTask,
+  setSorting,
+  setStatusFilter,
+  setTasks,
+  setTaskStatus,
+  toggleSortOrder,
+  toggleTaskComplete,
+  updateTask,
+  updateTaskShare,
 } from "@/store/slices/tasksSlice";
+import { useAppDispatch, useAppSelector } from "./useRedux";
+
 import { selectUser } from "@/store/slices/authSlice";
 import {
+  canAccessTask,
+  getTaskPermission,
   selectAccessibleTasks,
   selectAccessibleTasksByCategory,
-  getTaskPermission,
-  canAccessTask,
 } from "@/store/slices/permissionsSelectors";
-import type { Task, TaskStatus, TaskPriority } from "@/types/task/task";
-import type { TaskShare } from "@/types/task/shareTask";
 import type { SharePermission } from "@/types/permissions";
+import type { TaskShare } from "@/types/task/shareTask";
+import type { Task, TaskPriority, TaskStatus } from "@/types/task/task";
 
 export function useTasks(categoryId?: string) {
   const dispatch = useAppDispatch();
@@ -61,9 +68,17 @@ export function useTasks(categoryId?: string) {
   const accessibleTasksByCategory = categoryId
     ? useAppSelector(selectAccessibleTasksByCategory(categoryId))
     : [];
+
+  // NUEVOS DERIVADOS PARA LOS FILTROS
+  const completedLastWeekCount = getCompletedTasksLastNDays(accessibleTasks, 7);
+  const nextDueTasks = getNextDueTasks(accessibleTasks, 5);
+  const recentTasks = getMostRecentTasks(accessibleTasks, 5);
+  const favoriteTasks = getFavoriteTasks(accessibleTasks);
+
   const taskStats = useAppSelector(selectTasksByStatus);
   const priorityStats = useAppSelector(selectTasksByPriority);
   const sharedTasks = useAppSelector(selectSharedTasks(user?.id || ""));
+
   const loadTasks = (tasksData: Task[]) => dispatch(setTasks(tasksData));
   const createTask = (task: Task) => dispatch(addTask(task));
   const editTask = (data: Partial<Task> & { id: string }) =>
@@ -82,7 +97,7 @@ export function useTasks(categoryId?: string) {
     dispatch(setPriorityFilter(priority));
   const resetFilters = () => dispatch(clearFilters());
   const sortBy = (
-    field: "name" | "dueDate" | "priority" | "createdAt",
+    field: "name" | "dueDate" | "priority" | "createdAt" | "updatedAt",
     order: "asc" | "desc",
   ) => dispatch(setSorting({ field, order }));
   const toggleSort = () => dispatch(toggleSortOrder());
@@ -94,16 +109,15 @@ export function useTasks(categoryId?: string) {
     dispatch(removeTaskShare({ taskId, shareId }));
   const setLoadingState = (loading: boolean) => dispatch(setLoading(loading));
   const setErrorState = (error: string | null) => dispatch(setError(error));
-  
+
   const state = useAppSelector((state) => state);
-  
+
   const getPermission = (taskId: string): SharePermission | null =>
     getTaskPermission(taskId)(state);
   const canAccess = (
     taskId: string,
     permission: SharePermission = "VIEW",
-  ): boolean =>
-    canAccessTask(taskId, permission)(state);
+  ): boolean => canAccessTask(taskId, permission)(state);
 
   return {
     tasks,
@@ -120,6 +134,10 @@ export function useTasks(categoryId?: string) {
     taskStats,
     priorityStats,
     sharedTasks,
+    completedLastWeekCount,
+    nextDueTasks,
+    recentTasks,
+    favoriteTasks,
     loadTasks,
     createTask,
     editTask,
