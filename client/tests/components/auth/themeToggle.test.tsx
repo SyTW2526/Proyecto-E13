@@ -2,12 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ThemeToggle from "@/components/themeToggle";
+import { useTheme } from "@/hooks/useTheme";
 
 vi.mock("@/hooks/useTheme", () => ({
   useTheme: vi.fn(),
 }));
-
-const { useTheme } = await import("@/hooks/useTheme");
 
 describe("ThemeToggle", () => {
   beforeEach(() => {
