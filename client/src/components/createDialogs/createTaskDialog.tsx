@@ -19,10 +19,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Combobox } from "@/components/ui/combobox";
+import { CreateCategoryDialog } from "@/components/createDialogs/createCategoryDialog";
+import { CreateListDialog } from "@/components/createDialogs/createListDialog";
 import { useTasks } from "@/hooks/useTasks";
 import { useCategories } from "@/hooks/useCategories";
 import { useLists } from "@/hooks/useLists";
-import { IconPlus } from "@tabler/icons-react";
+import { useAuth } from "@/hooks/useAuth";
 import {
   priorityConfig,
   statusConfig,
@@ -31,12 +33,14 @@ import {
 import type { Task, TaskPriority, TaskStatus } from "@/types/task/task";
 import type { Category } from "@/types/category/categories";
 
-export default function CreateTaskSheet() {
+export default function CreateTaskDialog() {
   const [open, setOpen] = useState(false);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [listDialogOpen, setListDialogOpen] = useState(false);
   const { createTask } = useTasks();
   const { accessibleCategories, createCategory } = useCategories();
-  const { accessibleLists } = useLists();
+  const { accessibleLists, createList } = useLists();
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -48,42 +52,26 @@ export default function CreateTaskSheet() {
     favorite: false,
   });
 
-  const [newCategoryData, setNewCategoryData] = useState({
-    name: "",
-    description: "",
-    listId: "",
-  });
+  const handleCategoryCreated = (category: Category) => {
+    createCategory(category);
+    setFormData({ ...formData, categoryId: category.id });
+  };
 
-  const handleCreateCategory = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleListCreated = (
+    listData: Omit<import("@/types/list/list").List, "id" | "createdAt" | "categories" | "shares">
+  ) => {
+    if (!user?.id) return;
 
-    if (!newCategoryData.name.trim() || !newCategoryData.listId) {
-      return;
-    }
-
-    const newCategory: Category = {
+    const newList = {
       id: crypto.randomUUID(),
-      name: newCategoryData.name.trim(),
-      description: newCategoryData.description.trim() || undefined,
-      listId: newCategoryData.listId,
+      ...listData,
+      ownerId: user.id,
       createdAt: new Date().toISOString(),
-      tasks: [],
+      categories: [],
       shares: [],
     };
 
-    createCategory(newCategory);
-
-    // Seleccionar automáticamente la nueva categoría
-    setFormData({ ...formData, categoryId: newCategory.id });
-
-    // Reset category form
-    setNewCategoryData({
-      name: "",
-      description: "",
-      listId: "",
-    });
-
-    setCategoryDialogOpen(false);
+    createList(newList);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -127,9 +115,8 @@ export default function CreateTaskSheet() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" className="gap-2">
-          <IconPlus className="h-4 w-4" />
-          Nueva Tarea
+        <Button variant="secondary" leftIcon={taskFormLabels.createTask.icon}>
+          {taskFormLabels.createTask.iconText}
         </Button>
       </DialogTrigger>
       <DialogContent className="overflow-y-auto max-h-[90vh] sm:max-w-3xl">
@@ -177,111 +164,27 @@ export default function CreateTaskSheet() {
                   setFormData({ ...formData, categoryId })
                 }
                 onCreateNew={() => setCategoryDialogOpen(true)}
+                placeholder={taskFormLabels.fields.category.placeholder}
+                searchPlaceholder={taskFormLabels.fields.category.searchPlaceholder}
+                emptyMessage={taskFormLabels.fields.category.emptyMessage}
+                createNewLabel={taskFormLabels.fields.category.createNew}
               />
             </div>
           </div>
 
-          <Dialog
+          <CreateCategoryDialog
             open={categoryDialogOpen}
             onOpenChange={setCategoryDialogOpen}
-          >
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{taskFormLabels.createCategory.title}</DialogTitle>
-                <DialogDescription>
-                  {taskFormLabels.createCategory.description}
-                </DialogDescription>
-              </DialogHeader>
+            accessibleLists={accessibleLists}
+            onCreateCategory={handleCategoryCreated}
+            onOpenListDialog={() => setListDialogOpen(true)}
+          />
 
-              <form onSubmit={handleCreateCategory} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="categoryName">
-                    {taskFormLabels.fields.categoryName.label}{" "}
-                    {taskFormLabels.fields.categoryName.required && (
-                      <span className="text-red-500">*</span>
-                    )}
-                  </Label>
-                  <Input
-                    id="categoryName"
-                    placeholder={taskFormLabels.fields.categoryName.placeholder}
-                    value={newCategoryData.name}
-                    onChange={(e) =>
-                      setNewCategoryData({
-                        ...newCategoryData,
-                        name: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="categoryDescription">
-                    {taskFormLabels.fields.categoryDescription.label}
-                  </Label>
-                  <Textarea
-                    id="categoryDescription"
-                    placeholder={
-                      taskFormLabels.fields.categoryDescription.placeholder
-                    }
-                    value={newCategoryData.description}
-                    onChange={(e) =>
-                      setNewCategoryData({
-                        ...newCategoryData,
-                        description: e.target.value,
-                      })
-                    }
-                    rows={2}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="categoryList">
-                    {taskFormLabels.fields.list.label}{" "}
-                    {taskFormLabels.fields.list.required && (
-                      <span className="text-red-500">*</span>
-                    )}
-                  </Label>
-                  <Select
-                    value={newCategoryData.listId}
-                    onValueChange={(value) =>
-                      setNewCategoryData({
-                        ...newCategoryData,
-                        listId: value,
-                      })
-                    }
-                    required
-                  >
-                    <SelectTrigger id="categoryList">
-                      <SelectValue
-                        placeholder={taskFormLabels.fields.list.placeholder}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {accessibleLists.map((list) => (
-                        <SelectItem key={list.id} value={list.id}>
-                          {list.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex gap-2 pt-2">
-                  <Button type="submit" className="flex-1">
-                    {taskFormLabels.createCategory.submitButton}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setCategoryDialogOpen(false)}
-                  >
-                    {taskFormLabels.createCategory.cancelButton}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <CreateListDialog
+            open={listDialogOpen}
+            onOpenChange={setListDialogOpen}
+            onCreateList={handleListCreated}
+          />
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -316,10 +219,10 @@ export default function CreateTaskSheet() {
                   }
                   required
                 >
-                  <SelectTrigger id="priority">
+                  <SelectTrigger id="priority" className="w-full max-w-full">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-w-full">
                     {Object.entries(priorityConfig).map(([key, config]) => (
                       <SelectItem key={key} value={key}>
                         <span className={config.color}>{config.label}</span>
@@ -343,10 +246,10 @@ export default function CreateTaskSheet() {
                   }
                   required
                 >
-                  <SelectTrigger id="status">
+                  <SelectTrigger id="status" className="w-full max-w-full">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-w-full">
                     {Object.entries(statusConfig).map(([key, config]) => (
                       <SelectItem key={key} value={key}>
                         <span className={config.color}>{config.label}</span>

@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/command";
 import { IconCheck, IconChevronDown, IconPlus } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { taskFormLabels } from "@/config/taskConfig";
 
 interface Category {
   id: string;
@@ -27,6 +26,10 @@ interface ComboboxProps {
   value: string;
   onValueChange: (value: string) => void;
   onCreateNew: () => void;
+  placeholder?: string;
+  searchPlaceholder?: string;
+  emptyMessage?: string;
+  createNewLabel?: string;
 }
 
 export function Combobox({
@@ -34,6 +37,10 @@ export function Combobox({
   value,
   onValueChange,
   onCreateNew,
+  placeholder = "Seleccionar...",
+  searchPlaceholder = "Buscar...",
+  emptyMessage = "No se encontraron resultados.",
+  createNewLabel = "Crear nuevo",
 }: ComboboxProps) {
   const [open, setOpen] = useState(false);
 
@@ -48,20 +55,15 @@ export function Combobox({
         >
           {value
             ? categories.find((category) => category.id === value)?.name
-            : taskFormLabels.fields.category.placeholder}
+            : placeholder}
           <IconChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput
-            placeholder={taskFormLabels.fields.category.searchPlaceholder}
-            className="h-9"
-          />
+          <CommandInput placeholder={searchPlaceholder} className="h-9" />
           <CommandList>
-            <CommandEmpty>
-              {taskFormLabels.fields.category.emptyMessage}
-            </CommandEmpty>
+            <CommandEmpty>{emptyMessage}</CommandEmpty>
             <CommandGroup>
               {categories.map((category) => (
                 <CommandItem
@@ -91,7 +93,7 @@ export function Combobox({
                 className="text-primary"
               >
                 <IconPlus className="mr-2 h-4 w-4" />
-                {taskFormLabels.fields.category.createNew}
+                {createNewLabel}
               </CommandItem>
             </CommandGroup>
           </CommandList>

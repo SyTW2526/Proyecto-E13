@@ -42,6 +42,8 @@ export const taskFormLabels = {
   createTask: {
     title: "Crear Nueva Tarea",
     description: "Completa los campos para crear una nueva tarea",
+    icon: "IconPlus",
+    iconText: "Nueva Tarea",
     submitButton: "Crear Tarea",
     cancelButton: "Cancelar",
   },
@@ -49,6 +51,12 @@ export const taskFormLabels = {
     title: "Nueva Categoría",
     description: "Crea una nueva categoría para organizar tus tareas",
     submitButton: "Crear Categoría",
+    cancelButton: "Cancelar",
+  },
+  createList: {
+    title: "Nueva Lista",
+    description: "Crea una nueva lista para organizar tus categorías",
+    submitButton: "Crear Lista",
     cancelButton: "Cancelar",
   },
   fields: {
@@ -95,7 +103,20 @@ export const taskFormLabels = {
     list: {
       label: "Lista",
       placeholder: "Selecciona una lista",
+      searchPlaceholder: "Buscar lista...",
+      emptyMessage: "No se encontró ninguna lista.",
+      createNew: "Crear nueva lista",
       required: true,
+    },
+    listName: {
+      label: "Nombre",
+      placeholder: "Nombre de la lista",
+      required: true,
+    },
+    listDescription: {
+      label: "Descripción",
+      placeholder: "Descripción (opcional)",
+      required: false,
     },
   },
 } as const;

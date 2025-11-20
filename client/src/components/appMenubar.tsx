@@ -3,7 +3,7 @@ import NavigationMenuWithActiveItem from "@/components/customized/navigation-men
 import ThemeToggle from "@/components/themeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import DropdownMenuWithIcon from "@/components/customized/dropdown-menu/dropdown-menu-02";
-import CreateTaskSheet from "@/components/createTaskSheet";
+import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
 
 export default function AppMenubar() {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ export default function AppMenubar() {
           <div className="flex items-center gap-2">
             {isAuthenticated && (
               <>
-                <CreateTaskSheet />
+                <CreateTaskDialog />
                 <DropdownMenuWithIcon
                   onLogout={handleLogout}
                   userName={user?.name}
