@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { AxiosError } from "axios";
-import { apiErrorMessage } from "@/lib/api";
+import { apiErrorMessage, setAuthToken, api } from "@/lib/api";
 
 vi.mock("axios", () => {
   const mockIsAxiosError = vi.fn();
@@ -24,6 +24,18 @@ describe("api", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+  });
+
+  describe("setAuthToken", () => {
+    it("sets and removes token correctly", () => {
+      setAuthToken("my-token");
+      expect(localStorage.getItem("token")).toBe("my-token");
+      expect(api.defaults.headers.common.Authorization).toBe("Bearer my-token");
+
+      setAuthToken();
+      expect(localStorage.getItem("token")).toBeNull();
+      expect(api.defaults.headers.common.Authorization).toBeUndefined();
+    });
   });
 
   describe("apiErrorMessage", () => {
@@ -92,6 +104,21 @@ describe("api", () => {
 
       expect(apiErrorMessage(new Error("Boom"))).toBe("Boom");
       expect(apiErrorMessage("string error")).toBe("Error desconocido");
+    });
+
+    it("falls back to AxiosError message when no payload info", async () => {
+      const error = {
+        isAxiosError: true,
+        message: "Generic Axios error",
+        response: {
+          status: 418,
+          data: {},
+        },
+      } as AxiosError;
+      const axios = await import("axios");
+      vi.mocked(axios.isAxiosError).mockReturnValue(true);
+
+      expect(apiErrorMessage(error)).toBe("Generic Axios error");
     });
   });
 });
