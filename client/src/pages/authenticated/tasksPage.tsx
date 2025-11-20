@@ -4,45 +4,16 @@ import Icon from "@/components/ui/icon";
 import { useTasks } from "@/hooks/useTasks";
 import { useCategories } from "@/hooks/useCategories";
 import {
+  priorityConfig,
+  statusConfig,
+  tasksPageLabels,
+} from "@/config/taskConfig";
+import {
   IconCalendar,
   IconAlertCircle,
   IconStar,
   IconCheck,
 } from "@tabler/icons-react";
-
-const priorityConfig = {
-  LOW: {
-    color: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
-    label: "Baja",
-  },
-  MEDIUM: {
-    color: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400",
-    label: "Media",
-  },
-  HIGH: {
-    color: "bg-orange-500/10 text-orange-700 dark:text-orange-400",
-    label: "Alta",
-  },
-  URGENT: {
-    color: "bg-red-500/10 text-red-700 dark:text-red-400",
-    label: "Urgente",
-  },
-};
-
-const statusConfig = {
-  PENDING: {
-    color: "bg-gray-500/10 text-gray-700 dark:text-gray-400",
-    label: "Pendiente",
-  },
-  IN_PROGRESS: {
-    color: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
-    label: "En Progreso",
-  },
-  COMPLETED: {
-    color: "bg-green-500/10 text-green-700 dark:text-green-400",
-    label: "Completada",
-  },
-};
 
 export default function TasksPage() {
   const { accessibleTasks } = useTasks();
@@ -56,7 +27,7 @@ export default function TasksPage() {
   }));
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return "Sin fecha";
+    if (!dateString) return tasksPageLabels.taskCard.noDate;
     const date = new Date(dateString);
     return date.toLocaleDateString("es-ES", {
       day: "numeric",
@@ -69,16 +40,23 @@ export default function TasksPage() {
     <div className="max-w-(--breakpoint-xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-start gap-12">
       <div className="flex-1">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">Mis Tareas</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {tasksPageLabels.title}
+          </h1>
           <p className="text-muted-foreground mt-2">
             {accessibleTasks.length}{" "}
-            {accessibleTasks.length === 1 ? "tarea" : "tareas"} en total
+            {accessibleTasks.length === 1
+              ? tasksPageLabels.taskCount.singular
+              : tasksPageLabels.taskCount.plural}{" "}
+            {tasksPageLabels.taskCount.suffix}
           </p>
         </div>
 
         {accessibleTasks.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No hay tareas disponibles</p>
+            <p className="text-muted-foreground">
+              {tasksPageLabels.emptyState}
+            </p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -132,11 +110,13 @@ export default function TasksPage() {
                       {task.dueDate && (
                         <div className="flex items-center gap-2">
                           <IconCalendar className="h-4 w-4" />
-                          Vence: {formatDate(task.dueDate)}
+                          {tasksPageLabels.taskCard.dueLabel}{" "}
+                          {formatDate(task.dueDate)}
                         </div>
                       )}
                       <div className="flex items-center gap-2">
-                        Creada: {formatDate(task.createdAt)}
+                        {tasksPageLabels.taskCard.createdLabel}{" "}
+                        {formatDate(task.createdAt)}
                       </div>
                     </div>
                   </CardContent>
@@ -148,10 +128,14 @@ export default function TasksPage() {
       </div>
 
       <aside className="sticky top-8 shrink-0 lg:max-w-sm w-full">
-        <h3 className="text-xl font-semibold tracking-tight">Categorías</h3>
+        <h3 className="text-xl font-semibold tracking-tight">
+          {tasksPageLabels.sidebar.title}
+        </h3>
         <div className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2">
           {categoryTaskCounts.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No hay categorías</p>
+            <p className="text-sm text-muted-foreground">
+              {tasksPageLabels.sidebar.emptyState}
+            </p>
           ) : (
             categoryTaskCounts.map((category) => (
               <div
