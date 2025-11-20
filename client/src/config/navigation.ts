@@ -6,5 +6,4 @@
 export const navigationItems = [
   { title: "Dashboard", href: "/dashboard", icon: "IconDashboard" },
   { title: "Tareas", href: "/tasks", icon: "IconChecklist" },
-  { title: "Tabla", href: "/tabla", icon: "IconTable" },
 ];

@@ -2,7 +2,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import { blogCategories } from "@/config/blogCategories";
-import { IconCalendar, IconClock } from "@tabler/icons-react";
 
 const Blog = () => {
   return (
@@ -33,10 +32,10 @@ const Blog = () => {
                 </p>
                 <div className="mt-4 flex items-center gap-6 text-muted-foreground text-sm font-medium">
                   <div className="flex items-center gap-2">
-                    <IconClock className="h-4 w-4" /> 5 min read
+                    <Icon as="IconClock" size={16} /> 5 min read
                   </div>
                   <div className="flex items-center gap-2">
-                    <IconCalendar className="h-4 w-4" /> Nov 20, 2024
+                    <Icon as="IconCalendar" size={16} /> Nov 20, 2024
                   </div>
                 </div>
               </CardContent>

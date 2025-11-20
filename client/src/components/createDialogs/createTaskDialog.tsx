@@ -58,7 +58,10 @@ export default function CreateTaskDialog() {
   };
 
   const handleListCreated = (
-    listData: Omit<import("@/types/list/list").List, "id" | "createdAt" | "categories" | "shares">
+    listData: Omit<
+      import("@/types/list/list").List,
+      "id" | "createdAt" | "categories" | "shares"
+    >,
   ) => {
     if (!user?.id) return;
 
@@ -165,26 +168,14 @@ export default function CreateTaskDialog() {
                 }
                 onCreateNew={() => setCategoryDialogOpen(true)}
                 placeholder={taskFormLabels.fields.category.placeholder}
-                searchPlaceholder={taskFormLabels.fields.category.searchPlaceholder}
+                searchPlaceholder={
+                  taskFormLabels.fields.category.searchPlaceholder
+                }
                 emptyMessage={taskFormLabels.fields.category.emptyMessage}
                 createNewLabel={taskFormLabels.fields.category.createNew}
               />
             </div>
           </div>
-
-          <CreateCategoryDialog
-            open={categoryDialogOpen}
-            onOpenChange={setCategoryDialogOpen}
-            accessibleLists={accessibleLists}
-            onCreateCategory={handleCategoryCreated}
-            onOpenListDialog={() => setListDialogOpen(true)}
-          />
-
-          <CreateListDialog
-            open={listDialogOpen}
-            onOpenChange={setListDialogOpen}
-            onCreateList={handleListCreated}
-          />
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -291,6 +282,20 @@ export default function CreateTaskDialog() {
           </div>
         </form>
       </DialogContent>
+
+      <CreateCategoryDialog
+        open={categoryDialogOpen}
+        onOpenChange={setCategoryDialogOpen}
+        accessibleLists={accessibleLists}
+        onCreateCategory={handleCategoryCreated}
+        onOpenListDialog={() => setListDialogOpen(true)}
+      />
+
+      <CreateListDialog
+        open={listDialogOpen}
+        onOpenChange={setListDialogOpen}
+        onCreateList={handleListCreated}
+      />
     </Dialog>
   );
 }

@@ -13,7 +13,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { IconCheck, IconChevronDown, IconPlus } from "@tabler/icons-react";
+import Icon from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 
 interface Category {
@@ -56,7 +56,11 @@ export function Combobox({
           {value
             ? categories.find((category) => category.id === value)?.name
             : placeholder}
-          <IconChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <Icon
+            as="IconChevronDown"
+            size={16}
+            className="ml-2 shrink-0 opacity-50"
+          />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
@@ -75,9 +79,11 @@ export function Combobox({
                   }}
                 >
                   {category.name}
-                  <IconCheck
+                  <Icon
+                    as="IconCheck"
+                    size={16}
                     className={cn(
-                      "ml-auto h-4 w-4",
+                      "ml-auto",
                       value === category.id ? "opacity-100" : "opacity-0",
                     )}
                   />
@@ -92,7 +98,7 @@ export function Combobox({
                 }}
                 className="text-primary"
               >
-                <IconPlus className="mr-2 h-4 w-4" />
+                <Icon as="IconPlus" size={16} className="mr-2" />
                 {createNewLabel}
               </CommandItem>
             </CommandGroup>

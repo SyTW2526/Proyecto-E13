@@ -1,16 +1,29 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import NavigationMenuWithActiveItem from "@/components/customized/navigation-menu/navigation-menu-05";
 import ThemeToggle from "@/components/themeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import DropdownMenuWithIcon from "@/components/customized/dropdown-menu/dropdown-menu-02";
 import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
+import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/icon";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function AppMenubar() {
   const navigate = useNavigate();
   const { user, isAuthenticated, signOut } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const handleLogout = () => {
     signOut();
     navigate("/", { replace: true });
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -40,8 +53,70 @@ export default function AppMenubar() {
                   }
                   userImage={user?.image}
                   onSettings={() => navigate("/settings")}
-                  // onProfile={() => navigate("/dashboard")}
                 />
+                <div className="md:hidden">
+                  <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                    <SheetTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <Icon as="IconMenu2" size={20} />
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right">
+                      <SheetHeader>
+                        <SheetTitle>Menú</SheetTitle>
+                      </SheetHeader>
+                      <div className="flex flex-col gap-4 mt-6">
+                        <div className="flex flex-col gap-2">
+                          <Button
+                            variant="ghost"
+                            className="justify-start"
+                            onClick={() => {
+                              navigate("/dashboard");
+                              setMobileMenuOpen(false);
+                            }}
+                          >
+                            Dashboard
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="justify-start"
+                            onClick={() => {
+                              navigate("/tasks");
+                              setMobileMenuOpen(false);
+                            }}
+                          >
+                            Tareas
+                          </Button>
+                        </div>
+                        <div className="border-t pt-4 flex flex-col gap-2">
+                          <div className="px-3 py-2">
+                            <p className="font-medium">{user?.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {user?.email}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            className="justify-start"
+                            onClick={() => {
+                              navigate("/settings");
+                              setMobileMenuOpen(false);
+                            }}
+                          >
+                            Configuración
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="justify-start text-destructive"
+                            onClick={handleLogout}
+                          >
+                            Cerrar sesión
+                          </Button>
+                        </div>
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                </div>
               </>
             )}
             <ThemeToggle />

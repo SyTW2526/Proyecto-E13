@@ -1,7 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { dashboardCards } from "@/config/dashboardCards";
 import FeatureCard from "@/components/ui/featureCard";
-import { IconUser } from "@tabler/icons-react";
 import Icon from "@/components/ui/icon";
 
 export default function DashboardPage() {
@@ -12,7 +11,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-4xl font-bold mb-2">
             ¡Bienvenido, {user?.name || "Usuario"}!{" "}
-            <Icon as={IconUser} size={26} className="inline-block" />
+            <Icon as="IconUser" size={26} className="inline-block" />
           </h1>
           <p className="text-muted-foreground">
             Aquí está el resumen de tus tareas

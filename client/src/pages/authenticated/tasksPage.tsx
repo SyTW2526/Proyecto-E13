@@ -3,28 +3,61 @@ import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import { useTasks } from "@/hooks/useTasks";
 import { useCategories } from "@/hooks/useCategories";
+import { useLists } from "@/hooks/useLists";
+import { useState } from "react";
 import {
   priorityConfig,
   statusConfig,
   tasksPageLabels,
 } from "@/config/taskConfig";
-import {
-  IconCalendar,
-  IconAlertCircle,
-  IconStar,
-  IconCheck,
-} from "@tabler/icons-react";
 
 export default function TasksPage() {
-  const { accessibleTasks } = useTasks();
+  const { accessibleTasks, filteredTasks, filterByCategory, filters } =
+    useTasks();
   const { accessibleCategories } = useCategories();
+  const { accessibleLists } = useLists();
+  const [selectedListId, setSelectedListId] = useState<string | null>(null);
+
+  // Filtrar categorías por lista seleccionada
+  const filteredCategories = selectedListId
+    ? accessibleCategories.filter((cat) => cat.listId === selectedListId)
+    : accessibleCategories;
+
+  // Determinar qué tareas mostrar: filtradas si hay filtro de categoría, o filtradas por lista si hay filtro de lista
+  const displayTasks = filters.categoryId
+    ? filteredTasks
+    : selectedListId
+      ? accessibleTasks.filter((task) => {
+          const category = accessibleCategories.find(
+            (cat) => cat.id === task.categoryId,
+          );
+          return category?.listId === selectedListId;
+        })
+      : accessibleTasks;
 
   // Contar tareas por categoría
-  const categoryTaskCounts = accessibleCategories.map((category) => ({
+  const categoryTaskCounts = filteredCategories.map((category) => ({
     ...category,
     taskCount: accessibleTasks.filter((task) => task.categoryId === category.id)
       .length,
   }));
+
+  // Contar categorías por lista
+  const listCategoryCounts = accessibleLists.map((list) => ({
+    ...list,
+    categoryCount: accessibleCategories.filter(
+      (category) => category.listId === list.id,
+    ).length,
+  }));
+
+  const handleListFilter = (listId: string | null) => {
+    setSelectedListId(listId);
+    filterByCategory(null); // Reset category filter when changing list
+  };
+
+  const handleCategoryFilter = (categoryId: string | null) => {
+    filterByCategory(categoryId);
+  };
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return tasksPageLabels.taskCard.noDate;
@@ -44,23 +77,23 @@ export default function TasksPage() {
             {tasksPageLabels.title}
           </h1>
           <p className="text-muted-foreground mt-2">
-            {accessibleTasks.length}{" "}
-            {accessibleTasks.length === 1
+            {displayTasks.length}{" "}
+            {displayTasks.length === 1
               ? tasksPageLabels.taskCount.singular
               : tasksPageLabels.taskCount.plural}{" "}
             {tasksPageLabels.taskCount.suffix}
           </p>
         </div>
 
-        {accessibleTasks.length === 0 ? (
+        {displayTasks.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
               {tasksPageLabels.emptyState}
             </p>
           </div>
         ) : (
-          <div className="space-y-6">
-            {accessibleTasks.map((task) => {
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {displayTasks.map((task) => {
               const category = accessibleCategories.find(
                 (cat) => cat.id === task.categoryId,
               );
@@ -82,19 +115,23 @@ export default function TasksPage() {
                       <Badge
                         className={`${priorityStyle.color} hover:${priorityStyle.color} shadow-none`}
                       >
-                        <IconAlertCircle className="h-3 w-3 mr-1" />
+                        <Icon as="IconAlertCircle" size={12} className="mr-1" />
                         {priorityStyle.label}
                       </Badge>
                       <Badge
                         className={`${statusStyle.color} hover:${statusStyle.color} shadow-none`}
                       >
                         {task.completed && (
-                          <IconCheck className="h-3 w-3 mr-1" />
+                          <Icon as="IconCheck" size={12} className="mr-1" />
                         )}
                         {statusStyle.label}
                       </Badge>
                       {task.favorite && (
-                        <IconStar className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                        <Icon
+                          as="IconStar"
+                          size={16}
+                          className="text-yellow-500 fill-yellow-500"
+                        />
                       )}
                     </div>
 
@@ -109,7 +146,7 @@ export default function TasksPage() {
                     <div className="mt-4 flex items-center gap-6 text-muted-foreground text-sm font-medium">
                       {task.dueDate && (
                         <div className="flex items-center gap-2">
-                          <IconCalendar className="h-4 w-4" />
+                          <Icon as="IconCalendar" size={16} />
                           {tasksPageLabels.taskCard.dueLabel}{" "}
                           {formatDate(task.dueDate)}
                         </div>
@@ -127,31 +164,77 @@ export default function TasksPage() {
         )}
       </div>
 
-      <aside className="sticky top-8 shrink-0 lg:max-w-sm w-full">
-        <h3 className="text-xl font-semibold tracking-tight">
-          {tasksPageLabels.sidebar.title}
-        </h3>
-        <div className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2">
-          {categoryTaskCounts.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {tasksPageLabels.sidebar.emptyState}
-            </p>
-          ) : (
-            categoryTaskCounts.map((category) => (
-              <div
-                key={category.id}
-                className="flex items-center justify-between gap-2 bg-muted p-3 rounded-md bg-opacity-15 dark:bg-opacity-25"
-              >
-                <div className="flex items-center gap-3">
-                  <Icon as="IconFolder" size={20} />
-                  <span className="font-medium">{category.name}</span>
+      <aside className="sticky top-8 shrink-0 lg:max-w-sm w-full space-y-8">
+        <div>
+          <h3 className="text-xl font-semibold tracking-tight">Listas</h3>
+          <div className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2">
+            {listCategoryCounts.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No hay listas disponibles
+              </p>
+            ) : (
+              listCategoryCounts.map((list) => (
+                <div
+                  key={list.id}
+                  onClick={() =>
+                    handleListFilter(
+                      selectedListId === list.id ? null : list.id,
+                    )
+                  }
+                  className={`flex items-center justify-between gap-2 p-3 rounded-md cursor-pointer transition-colors ${
+                    selectedListId === list.id
+                      ? "bg-primary/20 dark:bg-primary/30"
+                      : "bg-muted bg-opacity-15 dark:bg-opacity-25 hover:bg-opacity-25 dark:hover:bg-opacity-35"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon as="IconList" size={20} />
+                    <span className="font-medium">{list.name}</span>
+                  </div>
+                  <Badge className="px-1.5 rounded-full bg-foreground/7 text-foreground">
+                    {list.categoryCount}
+                  </Badge>
                 </div>
-                <Badge className="px-1.5 rounded-full bg-foreground/7 text-foreground">
-                  {category.taskCount}
-                </Badge>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-xl font-semibold tracking-tight">
+            {tasksPageLabels.sidebar.title}
+          </h3>
+          <div className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2">
+            {categoryTaskCounts.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                {tasksPageLabels.sidebar.emptyState}
+              </p>
+            ) : (
+              categoryTaskCounts.map((category) => (
+                <div
+                  key={category.id}
+                  onClick={() =>
+                    handleCategoryFilter(
+                      filters.categoryId === category.id ? null : category.id,
+                    )
+                  }
+                  className={`flex items-center justify-between gap-2 p-3 rounded-md cursor-pointer transition-colors ${
+                    filters.categoryId === category.id
+                      ? "bg-primary/20 dark:bg-primary/30"
+                      : "bg-muted bg-opacity-15 dark:bg-opacity-25 hover:bg-opacity-25 dark:hover:bg-opacity-35"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon as="IconFolder" size={20} />
+                    <span className="font-medium">{category.name}</span>
+                  </div>
+                  <Badge className="px-1.5 rounded-full bg-foreground/7 text-foreground">
+                    {category.taskCount}
+                  </Badge>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </aside>
     </div>
