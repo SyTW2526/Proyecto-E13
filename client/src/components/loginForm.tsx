@@ -88,6 +88,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
       }, 300);
       return () => window.clearInterval(i);
     }
+    return;
   }, []);
 
   useEffect(() => {
