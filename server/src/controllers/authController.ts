@@ -60,7 +60,6 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
         image: user.image,
         isGoogleAuthUser: Boolean(user.googleSub),
       },
-      
     });
   } catch (error) {
     return res.status(500).json({ error: "Error logging in user." });
@@ -138,7 +137,7 @@ export const changePassword = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    
+
     if (user.googleSub || !user.password) {
       return res
         .status(400)

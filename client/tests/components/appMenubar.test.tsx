@@ -93,4 +93,3 @@ describe("AppMenubar", () => {
     expect(screen.getByText("TaskGrid")).toBeDefined();
   });
 });
-

@@ -71,14 +71,13 @@ export function useCategories(listId?: string) {
   const setErrorState = (error: string | null) => dispatch(setError(error));
 
   const state = useAppSelector((state) => state);
-  
+
   const getPermission = (categoryId: string): SharePermission | null =>
     getCategoryPermission(categoryId)(state);
   const canAccess = (
     categoryId: string,
     permission: SharePermission = "VIEW",
-  ): boolean =>
-    canAccessCategory(categoryId, permission)(state);
+  ): boolean => canAccessCategory(categoryId, permission)(state);
 
   return {
     categories,

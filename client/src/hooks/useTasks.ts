@@ -94,16 +94,15 @@ export function useTasks(categoryId?: string) {
     dispatch(removeTaskShare({ taskId, shareId }));
   const setLoadingState = (loading: boolean) => dispatch(setLoading(loading));
   const setErrorState = (error: string | null) => dispatch(setError(error));
-  
+
   const state = useAppSelector((state) => state);
-  
+
   const getPermission = (taskId: string): SharePermission | null =>
     getTaskPermission(taskId)(state);
   const canAccess = (
     taskId: string,
     permission: SharePermission = "VIEW",
-  ): boolean =>
-    canAccessTask(taskId, permission)(state);
+  ): boolean => canAccessTask(taskId, permission)(state);
 
   return {
     tasks,

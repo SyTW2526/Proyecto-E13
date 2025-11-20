@@ -82,4 +82,3 @@ describe("useTheme", () => {
     expect(document.documentElement.classList.contains("dark")).toBe(true);
   });
 });
-

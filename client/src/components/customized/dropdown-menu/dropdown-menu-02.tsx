@@ -32,9 +32,7 @@ export default function DropdownMenuWithIcon({
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-full">
         <Avatar>
-          {userImage && (
-            <AvatarImage src={userImage} alt={userName} />
-          )}
+          {userImage && <AvatarImage src={userImage} alt={userName} />}
           <AvatarFallback>{userInitial}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

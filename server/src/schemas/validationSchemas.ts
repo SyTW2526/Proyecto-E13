@@ -40,7 +40,6 @@ export const changePasswordSchema = z.object({
     .regex(/[0-9]/, "Password must contain a number"),
 });
 
-
 // User
 export const updateNameSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
