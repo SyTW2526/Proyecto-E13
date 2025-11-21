@@ -21,7 +21,7 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
     css: true,
     coverage: {
-      provider: "istanbul",
+      provider: "v8",
       reporter: ["text", "lcov", "html"],
       exclude: [
         "node_modules/",
