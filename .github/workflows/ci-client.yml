@@ -1,4 +1,4 @@
-name: CI Tests
+name: CI Tests (Client)
 
 on:
   push:
@@ -23,5 +23,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Installing dependencies
         run: npm ci
+        working-directory: client
       - name: Running tests
         run: npm test
+        working-directory: client
