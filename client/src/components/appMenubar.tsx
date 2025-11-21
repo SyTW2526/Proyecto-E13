@@ -14,6 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import LogoTaskGrid from "@/assets/Logo_TaskGrid.svg";
 
 export default function AppMenubar() {
   const navigate = useNavigate();
@@ -30,8 +31,9 @@ export default function AppMenubar() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b h-12">
       <div className="mx-auto flex max-w-7xl h-full items-center gap-4 px-3">
         <div className="flex items-center justify-between gap-6 w-full">
-          <Link to="/" className="text-lg font-semibold">
-            TaskGrid
+          <Link to="/" className="flex items-center gap-2">
+            <img src={LogoTaskGrid} alt="TaskGrid Logo" className="h-8 w-8" />
+            <span className="text-lg font-semibold">TaskGrid</span>
           </Link>
 
           <div className="hidden md:block">
@@ -43,16 +45,16 @@ export default function AppMenubar() {
               <>
                 <div className="hidden md:flex md:items-center">
                   <DropdownMenuWithIcon
-                  onLogout={handleLogout}
-                  userName={user?.name}
-                  userEmail={user?.email}
-                  userInitial={
-                    user?.image
-                    ? undefined
-                    : user?.name && user.name.charAt(0).toUpperCase()
-                  }
-                  userImage={user?.image}
-                  onSettings={() => navigate("/settings")}
+                    onLogout={handleLogout}
+                    userName={user?.name}
+                    userEmail={user?.email}
+                    userInitial={
+                      user?.image
+                        ? undefined
+                        : user?.name && user.name.charAt(0).toUpperCase()
+                    }
+                    userImage={user?.image}
+                    onSettings={() => navigate("/settings")}
                   />
                 </div>
 

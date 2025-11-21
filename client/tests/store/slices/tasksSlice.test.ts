@@ -150,10 +150,7 @@ describe("tasksSlice reducer", () => {
     expect(state.tasks[0].completed).toBe(true);
     expect(state.tasks[0].completedAt).toBe("2024-03-02T00:00:00.000Z");
 
-    state = reducer(
-      state,
-      setTaskStatus({ id: "t1", status: "IN_PROGRESS" }),
-    );
+    state = reducer(state, setTaskStatus({ id: "t1", status: "IN_PROGRESS" }));
     expect(state.tasks[0].completed).toBe(false);
     expect(state.tasks[0].completedAt).toBeUndefined();
     expect(state.tasks[0].status).toBe("IN_PROGRESS");
@@ -175,9 +172,7 @@ describe("tasksSlice reducer", () => {
     expect(selectTaskSorting({ tasks: state }).order).toBe("desc");
 
     state = reducer(state, clearFilters());
-    expect(selectTaskFilters({ tasks: state })).toEqual(
-      initialState.filters,
-    );
+    expect(selectTaskFilters({ tasks: state })).toEqual(initialState.filters);
   });
 
   it("setSelectedTask guarda id", () => {
@@ -193,16 +188,10 @@ describe("tasksSlice reducer", () => {
     expect(state.tasks[0].shares).toEqual([share]);
 
     const updated = { ...share, permission: "EDIT" };
-    state = reducer(
-      state,
-      updateTaskShare({ taskId: "t1", share: updated }),
-    );
+    state = reducer(state, updateTaskShare({ taskId: "t1", share: updated }));
     expect(state.tasks[0].shares[0]).toEqual(updated);
 
-    state = reducer(
-      state,
-      removeTaskShare({ taskId: "t1", shareId: "sh1" }),
-    );
+    state = reducer(state, removeTaskShare({ taskId: "t1", shareId: "sh1" }));
     expect(state.tasks[0].shares).toHaveLength(0);
   });
 
