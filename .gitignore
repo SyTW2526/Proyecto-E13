@@ -32,4 +32,5 @@ Thumbs.db
 server/src/generated/prisma
 # VSCode extensions config exception
 /package.json
+./package-lock.json
 coverage/
