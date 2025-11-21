@@ -148,10 +148,7 @@ describe("categoriesSlice selectors", () => {
   it("selectCategoriesByListId filtra por listId", () => {
     const state = withState({
       ...initialState,
-      categories: [
-        baseCategory,
-        { ...baseCategory, id: "c2", listId: "l2" },
-      ],
+      categories: [baseCategory, { ...baseCategory, id: "c2", listId: "l2" }],
     });
     expect(selectCategoriesByListId("l1")(state)).toHaveLength(1);
     expect(selectCategoriesByListId("l2")(state)).toHaveLength(1);

@@ -159,4 +159,5 @@ export const changePassword = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
+  return;
 };
