@@ -4,6 +4,6 @@
  */
 
 export const navigationItems = [
-  { title: "Dashboard", href: "/dashboard", icon: "IconDashboard" },
-  { title: "Tabla", href: "/tabla", icon: "IconTable" },
+  { title: "Resumen", href: "/dashboard", icon: "IconDashboard" },
+  { title: "Tareas", href: "/tasks", icon: "IconTask" },
 ];
