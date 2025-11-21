@@ -10,9 +10,8 @@ import {
   getTasksDueThisWeek,
   getTasksSharedWithUser,
   getTodayTasks,
-  groupTasksByCategory,
 } from "@/lib/taskFilters";
-import type { Task } from "@/types/task/task";
+import type { Task } from "@/types/tasks-system/task";
 import { describe, expect, it } from "vitest";
 
 const createTask = (overrides: Partial<Task> = {}): Task => ({
@@ -23,7 +22,7 @@ const createTask = (overrides: Partial<Task> = {}): Task => ({
   priority: "MEDIUM",
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
-  categoryId: "category-1",
+  listId: "list-1",
   completed: false,
   shares: [],
   favorite: false,
@@ -603,37 +602,6 @@ describe("taskFilters", () => {
       const tasks = [createTask({ shares: [] }), createTask({ shares: [] })];
 
       expect(getTasksSharedWithUser(tasks, "user-123")).toHaveLength(0);
-    });
-  });
-
-  describe("groupTasksByCategory", () => {
-    it("agrupa tareas por categoryId", () => {
-      const tasks = [
-        createTask({ id: "1", categoryId: "cat-1" }),
-        createTask({ id: "2", categoryId: "cat-1" }),
-        createTask({ id: "3", categoryId: "cat-2" }),
-      ];
-
-      const result = groupTasksByCategory(tasks);
-      expect(result["cat-1"]).toHaveLength(2);
-      expect(result["cat-2"]).toHaveLength(1);
-      expect(result["cat-1"][0].id).toBe("1");
-      expect(result["cat-1"][1].id).toBe("2");
-    });
-
-    it("devuelve objeto vacío cuando no hay tareas", () => {
-      expect(groupTasksByCategory([])).toEqual({});
-    });
-
-    it("maneja tareas de una sola categoría", () => {
-      const tasks = [
-        createTask({ id: "1", categoryId: "cat-1" }),
-        createTask({ id: "2", categoryId: "cat-1" }),
-      ];
-
-      const result = groupTasksByCategory(tasks);
-      expect(Object.keys(result)).toHaveLength(1);
-      expect(result["cat-1"]).toHaveLength(2);
     });
   });
 });

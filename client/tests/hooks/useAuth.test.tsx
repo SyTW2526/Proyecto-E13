@@ -7,7 +7,6 @@ import { useAuth } from "@/hooks/useAuth";
 import authReducer from "@/store/slices/authSlice";
 import themeReducer from "@/store/slices/themeSlice";
 import listsReducer from "@/store/slices/listsSlice";
-import categoriesReducer from "@/store/slices/categoriesSlice";
 import tasksReducer from "@/store/slices/tasksSlice";
 import { api } from "@/lib/api";
 
@@ -34,7 +33,6 @@ describe("useAuth", () => {
         auth: authReducer,
         theme: themeReducer,
         lists: listsReducer,
-        categories: categoriesReducer,
         tasks: tasksReducer,
       },
     });
@@ -206,7 +204,6 @@ describe("useAuth", () => {
         auth: authReducer,
         theme: themeReducer,
         lists: listsReducer,
-        categories: categoriesReducer,
         tasks: tasksReducer,
       },
       preloadedState: {
@@ -246,7 +243,6 @@ describe("useAuth", () => {
         auth: authReducer,
         theme: themeReducer,
         lists: listsReducer,
-        categories: categoriesReducer,
         tasks: tasksReducer,
       },
       preloadedState: {
@@ -284,7 +280,6 @@ describe("useAuth", () => {
         auth: authReducer,
         theme: themeReducer,
         lists: listsReducer,
-        categories: categoriesReducer,
         tasks: tasksReducer,
       },
       preloadedState: {

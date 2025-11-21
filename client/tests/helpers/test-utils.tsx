@@ -7,7 +7,6 @@ import type { RootState, AppStore } from "@/store/store";
 import authReducer from "@/store/slices/authSlice";
 import themeReducer from "@/store/slices/themeSlice";
 import listsReducer from "@/store/slices/listsSlice";
-import categoriesReducer from "@/store/slices/categoriesSlice";
 import tasksReducer from "@/store/slices/tasksSlice";
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
@@ -24,7 +23,6 @@ export function renderWithProviders(
         auth: authReducer,
         theme: themeReducer,
         lists: listsReducer,
-        categories: categoriesReducer,
         tasks: tasksReducer,
       },
       preloadedState,

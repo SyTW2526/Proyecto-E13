@@ -7,16 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useLists } from "@/hooks/useLists";
 import { useAuth } from "@/hooks/useAuth";
 import { taskFormLabels } from "@/config/taskConfig";
-import type { List } from "@/types/list/list";
+import type { List } from "@/types/tasks-system/list";
 
 // Props para modo controlado (usado como diálogo anidado)
 interface ControlledProps {
   mode: "controlled";
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreateList: (
-    list: Omit<List, "id" | "createdAt" | "categories" | "shares">,
-  ) => void;
+  onCreateList: (list: Omit<List, "id" | "createdAt" | "tasks" | "shares">) => void;
 }
 
 // Props para modo standalone (usado como componente independiente)
@@ -46,7 +44,7 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
       description: formData.description.trim() || undefined,
       ownerId: user.id,
       createdAt: new Date().toISOString(),
-      categories: [],
+      tasks: [],
       shares: [],
     });
 

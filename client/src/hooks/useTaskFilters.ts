@@ -1,88 +1,57 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useTasks } from "./useTasks";
-import { useCategories } from "./useCategories";
 import { useLists } from "./useLists";
 
 export function useTaskFilters() {
-  const { accessibleTasks, filteredTasks, filterByCategory, filters } =
-    useTasks();
-  const { accessibleCategories } = useCategories();
+  const { accessibleTasks, filteredTasks, filterByList, filters } = useTasks();
   const { accessibleLists } = useLists();
-  const [selectedListId, setSelectedListId] = useState<string | null>(null);
 
-  // Filtrar categorías por lista seleccionada
-  const filteredCategories = useMemo(
-    () =>
-      selectedListId
-        ? accessibleCategories.filter((cat) => cat.listId === selectedListId)
-        : accessibleCategories,
-    [selectedListId, accessibleCategories],
-  );
+  // Usar el listId de los filtros de Redux en lugar de estado local
+  const selectedListId = filters.listId;
 
-  // Determinar qué tareas mostrar
-  const displayTasks = useMemo(() => {
-    if (filters.categoryId) {
-      return filteredTasks;
-    }
-    if (selectedListId) {
-      return accessibleTasks.filter((task) => {
-        const category = accessibleCategories.find(
-          (cat) => cat.id === task.categoryId,
-        );
-        return category?.listId === selectedListId;
-      });
-    }
-    return accessibleTasks;
-  }, [
-    filters.categoryId,
-    selectedListId,
-    filteredTasks,
-    accessibleTasks,
-    accessibleCategories,
-  ]);
-
-  // Contar tareas por categoría
-  const categoryTaskCounts = useMemo(
-    () =>
-      filteredCategories.map((category) => ({
-        id: category.id,
-        name: category.name,
-        count: accessibleTasks.filter((task) => task.categoryId === category.id)
-          .length,
-      })),
-    [filteredCategories, accessibleTasks],
-  );
-
-  // Contar categorías por lista
-  const listCategoryCounts = useMemo(
+  // Contar tareas por lista (mostrar todas las listas, no filtrar)
+  const listTaskCounts = useMemo(
     () =>
       accessibleLists.map((list) => ({
         id: list.id,
         name: list.name,
-        count: accessibleCategories.filter(
-          (category) => category.listId === list.id,
-        ).length,
+        count: accessibleTasks.filter((task) => task.listId === list.id).length,
+        description: list.description,
       })),
-    [accessibleLists, accessibleCategories],
+    [accessibleLists, accessibleTasks],
+  );
+
+  // Determinar qué tareas mostrar
+  const displayTasks = useMemo(() => {
+    // Si hay filtro de lista activo, mostrar tareas filtradas
+    if (filters.listId) {
+      return filteredTasks;
+    }
+    // Si no hay filtro, mostrar todas las tareas accesibles
+    return accessibleTasks;
+  }, [filters.listId, filteredTasks, accessibleTasks]);
+
+  // Contar listas (esto parece redundante, revisar si se usa)
+  const listListCounts = useMemo(
+    () =>
+      accessibleLists.map((list) => ({
+        id: list.id,
+        name: list.name,
+        count: accessibleLists.filter((list) => list.id === list.id).length,
+      })),
+    [accessibleLists, accessibleLists],
   );
 
   const handleListFilter = (listId: string | null) => {
-    setSelectedListId(listId);
-    filterByCategory(null); // Reset category filter when changing list
-  };
-
-  const handleCategoryFilter = (categoryId: string | null) => {
-    filterByCategory(categoryId);
+    filterByList(listId);
   };
 
   return {
     displayTasks,
-    categoryTaskCounts,
-    listCategoryCounts,
+    listTaskCounts,
+    listListCounts,
     selectedListId,
-    selectedCategoryId: filters.categoryId,
     handleListFilter,
-    handleCategoryFilter,
-    accessibleCategories,
+    accessibleLists,
   };
 }

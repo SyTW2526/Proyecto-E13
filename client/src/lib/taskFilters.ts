@@ -1,4 +1,4 @@
-import type { Task, TaskPriority } from "@/types/task/task";
+import type { Task, TaskPriority } from "@/types/tasks-system/task";
 
 /**
  * Helpers de fechas.
@@ -195,9 +195,9 @@ export function getTasksSharedWithUser(tasks: Task[], userId: string): Task[] {
  * Devuelve un objeto donde las claves son los IDs de categoría
  * y los valores son arrays de tareas pertenecientes a esa categoría.
  */
-export function groupTasksByCategory(tasks: Task[]): Record<string, Task[]> {
+export function groupTasksByList(tasks: Task[]): Record<string, Task[]> {
   return tasks.reduce<Record<string, Task[]>>((acc, task) => {
-    const key = task.categoryId;
+    const key = task.listId;
     if (!acc[key]) acc[key] = [];
     acc[key].push(task);
     return acc;

@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { List, ListsState } from "@/types/list/list";
-import type { ListShare } from "@/types/list/shareList";
+import type { List, ListsState, ListShare } from "@/types/tasks-system/list";
 
 const initialState: ListsState = {
   lists: [],

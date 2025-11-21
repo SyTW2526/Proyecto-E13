@@ -17,7 +17,7 @@ import reducer, {
   updateList,
   updateListShare,
 } from "@/store/slices/listsSlice";
-import type { ListsState, List } from "@/types/list/list";
+import type { ListsState, List } from "@/types/tasks-system/list";
 import type { ListShare } from "@/types/list/shareList";
 
 const baseList: List = {
@@ -25,7 +25,7 @@ const baseList: List = {
   name: "Inbox",
   description: "default",
   createdAt: "2024-01-01",
-  categories: [],
+  tasks: [],
   ownerId: "owner-1",
   shares: [],
 };
