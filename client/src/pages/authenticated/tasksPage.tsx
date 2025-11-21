@@ -3,20 +3,17 @@ import { TaskCard } from "@/components/tasks/TaskCard";
 import { FilterableList } from "@/components/tasks/FilterableList";
 import { tasksPageLabels } from "@/config/taskConfig";
 import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
-import { CreateCategoryDialogStandalone } from "@/components/createDialogs/createCategoryDialog";
 import { CreateListDialogStandalone } from "@/components/createDialogs/createListDialog";
 import { Button } from "@/components/ui/button";
+import type { Task } from "@/types/tasks-system/task";
 
 export default function TasksPage() {
   const {
     displayTasks,
-    categoryTaskCounts,
-    listCategoryCounts,
+    listTaskCounts,
     selectedListId,
-    selectedCategoryId,
     handleListFilter,
-    handleCategoryFilter,
-    accessibleCategories,
+    accessibleLists,
   } = useTaskFilters();
 
   const formatDate = (dateString?: string) => {
@@ -47,19 +44,14 @@ export default function TasksPage() {
               </p>
             </div>
             <div className="flex gap-2">
+              {/* Boton de crear tareas */}
               <CreateTaskDialog>
                 <Button
                   leftIcon={tasksPageLabels.createButtons.task.icon}
                   text={tasksPageLabels.createButtons.task.text}
                 />
               </CreateTaskDialog>
-              <CreateCategoryDialogStandalone>
-                <Button
-                  variant="outline"
-                  leftIcon={tasksPageLabels.createButtons.category.icon}
-                  text={tasksPageLabels.createButtons.category.text}
-                />
-              </CreateCategoryDialogStandalone>
+              {/* Boton de crear listas */}
               <CreateListDialogStandalone>
                 <Button
                   variant="outline"
@@ -79,15 +71,15 @@ export default function TasksPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {displayTasks.map((task) => {
-              const category = accessibleCategories.find(
-                (cat) => cat.id === task.categoryId,
+            {displayTasks.map((task: Task) => {
+              const list = accessibleLists.find(
+                (list) => list.id === task.listId,
               );
               return (
                 <TaskCard
                   key={task.id}
                   task={task}
-                  category={category}
+                  list={list}
                   formatDate={formatDate}
                 />
               );
@@ -98,21 +90,12 @@ export default function TasksPage() {
 
       <aside className="sticky top-8 shrink-0 lg:max-w-sm w-full space-y-8">
         <FilterableList
-          title="Listas"
-          items={listCategoryCounts}
+          title={tasksPageLabels.sidebar.title}
+          items={listTaskCounts}
           selectedId={selectedListId}
           onItemClick={handleListFilter}
-          emptyMessage="No hay listas disponibles"
-          icon={tasksPageLabels.createButtons.list.icon}
-        />
-
-        <FilterableList
-          title={tasksPageLabels.sidebar.title}
-          items={categoryTaskCounts}
-          selectedId={selectedCategoryId}
-          onItemClick={handleCategoryFilter}
           emptyMessage={tasksPageLabels.sidebar.emptyState}
-          icon={tasksPageLabels.createButtons.category.icon}
+          icon={tasksPageLabels.createButtons.list.icon}
         />
       </aside>
     </div>

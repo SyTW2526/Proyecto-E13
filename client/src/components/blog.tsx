@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
-import { blogCategories } from "@/config/blogCategories";
 
 const Blog = () => {
   return (

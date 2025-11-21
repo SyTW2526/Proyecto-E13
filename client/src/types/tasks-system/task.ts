@@ -1,4 +1,4 @@
-import { TaskShare } from "../task/shareTask";
+import { SharePermission } from "../permissions";
 
 export type TaskStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED";
 export type TaskPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
@@ -12,7 +12,7 @@ export interface Task {
   dueDate?: string; // Fecha límite para completar la tarea
   completedAt?: string; // Fecha en que se completó la tarea
   createdAt: string; // Fecha de creación de la tarea
-  categoryId: string; // Identificador de la categoría
+  listId: string; // Identificador de la lista a la que pertenece la tarea
   completed: boolean; // Indica si la tarea está completada
   shares: TaskShare[]; // Lista de comparticiones de la tarea
   favorite: boolean; // Indica si la tarea está en favoritos
@@ -26,7 +26,7 @@ export interface TasksState {
   error: string | null;
   filters: {
     status: "all" | TaskStatus;
-    categoryId: string | null;
+    listId: string | null;
     search: string;
     priority: "all" | TaskPriority;
   };
@@ -34,4 +34,11 @@ export interface TasksState {
     field: "name" | "dueDate" | "priority" | "createdAt" | "updatedAt";
     order: "asc" | "desc";
   };
+}
+
+export interface TaskShare {
+  id: string;
+  permission: SharePermission;
+  taskId: string;
+  userId: string;
 }

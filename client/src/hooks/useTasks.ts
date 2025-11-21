@@ -16,13 +16,13 @@ import {
   selectSharedTasks,
   selectTaskFilters,
   selectTasks,
-  selectTasksByCategoryId,
+  selectTasksByListId,
   selectTasksByPriority,
   selectTasksByStatus,
   selectTasksError,
   selectTasksLoading,
   selectTaskSorting,
-  setCategoryFilter,
+  setListFilter,
   setError,
   setLoading,
   setPriorityFilter,
@@ -44,13 +44,12 @@ import {
   canAccessTask,
   getTaskPermission,
   selectAccessibleTasks,
-  selectAccessibleTasksByCategory,
+  selectAccessibleTasksByList,
 } from "@/store/slices/permissionsSelectors";
 import type { SharePermission } from "@/types/permissions";
-import type { TaskShare } from "@/types/task/shareTask";
-import type { Task, TaskPriority, TaskStatus } from "@/types/task/task";
+import type { Task, TaskPriority, TaskStatus, TaskShare } from "@/types/tasks-system/task";
 
-export function useTasks(categoryId?: string) {
+export function useTasks(listId?: string) {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
   const tasks = useAppSelector(selectTasks);
@@ -62,11 +61,11 @@ export function useTasks(categoryId?: string) {
   const sorting = useAppSelector(selectTaskSorting);
   const filteredTasks = useAppSelector(selectFilteredTasks);
   const accessibleTasks = useAppSelector(selectAccessibleTasks);
-  const tasksByCategory = categoryId
-    ? useAppSelector(selectTasksByCategoryId(categoryId))
+  const tasksByList = listId
+    ? useAppSelector(selectTasksByListId(listId))
     : [];
-  const accessibleTasksByCategory = categoryId
-    ? useAppSelector(selectAccessibleTasksByCategory(categoryId))
+  const accessibleTasksByList = listId
+    ? useAppSelector(selectAccessibleTasksByList(listId))
     : [];
 
   // NUEVOS DERIVADOS PARA LOS FILTROS
@@ -90,8 +89,8 @@ export function useTasks(categoryId?: string) {
     dispatch(setTaskStatus({ id, status }));
   const filterByStatus = (status: "all" | TaskStatus) =>
     dispatch(setStatusFilter(status));
-  const filterByCategory = (categoryId: string | null) =>
-    dispatch(setCategoryFilter(categoryId));
+  const filterByList = (listId: string | null) =>
+    dispatch(setListFilter(listId));
   const filterBySearch = (search: string) => dispatch(setSearchFilter(search));
   const filterByPriority = (priority: "all" | TaskPriority) =>
     dispatch(setPriorityFilter(priority));
@@ -123,8 +122,8 @@ export function useTasks(categoryId?: string) {
     tasks,
     filteredTasks,
     accessibleTasks,
-    tasksByCategory,
-    accessibleTasksByCategory,
+    tasksByList,
+    accessibleTasksByList,
     isLoading,
     error,
     selectedTaskId,
@@ -146,7 +145,7 @@ export function useTasks(categoryId?: string) {
     toggleComplete,
     changeStatus,
     filterByStatus,
-    filterByCategory,
+    filterByList,
     filterBySearch,
     filterByPriority,
     resetFilters,

@@ -25,8 +25,7 @@ import {
   canAccessList,
   isListOwner,
 } from "@/store/slices/permissionsSelectors";
-import type { List } from "@/types/list/list";
-import type { ListShare } from "@/types/list/shareList";
+import type { List, ListShare } from "@/types/tasks-system/list";
 import type { SharePermission } from "@/types/permissions";
 
 export function useLists() {

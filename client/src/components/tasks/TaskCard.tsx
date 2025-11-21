@@ -6,16 +6,16 @@ import {
   statusConfig,
   tasksPageLabels,
 } from "@/config/taskConfig";
-import type { Task } from "@/types/task/task";
-import type { Category } from "@/types/category/categories";
+import type { Task } from "@/types/tasks-system/task";
+import type { List } from "@/types/tasks-system/list";
 
 interface TaskCardProps {
   task: Task;
-  category?: Category;
+  list?: List;
   formatDate: (dateString?: string) => string;
 }
 
-export function TaskCard({ task, category, formatDate }: TaskCardProps) {
+export function TaskCard({ task, list, formatDate }: TaskCardProps) {
   const priorityStyle = priorityConfig[task.priority];
   const statusStyle = statusConfig[task.status];
 
@@ -23,9 +23,9 @@ export function TaskCard({ task, category, formatDate }: TaskCardProps) {
     <Card className="flex flex-col sm:flex-row sm:items-start shadow-none overflow-hidden rounded-md border py-4">
       <CardContent className="px-6 py-0 flex flex-col flex-1">
         <div className="flex items-center gap-3 flex-wrap">
-          {category && (
+          {list && (
             <Badge className="bg-primary/10 text-primary hover:bg-primary/10 shadow-none">
-              {category.name}
+              {list.name}
             </Badge>
           )}
           <Badge

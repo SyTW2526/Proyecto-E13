@@ -1,6 +1,5 @@
 import { CreateDialog } from "@/components/ui/createDialog";
 import { TaskFormFields } from "@/components/forms/TaskFormFields";
-import { CreateCategoryDialog } from "@/components/createDialogs/createCategoryDialog";
 import { CreateListDialog } from "@/components/createDialogs/createListDialog";
 import { useTaskForm } from "@/hooks/useTaskForm";
 import { taskFormLabels } from "@/config/taskConfig";
@@ -13,13 +12,9 @@ export default function CreateTaskDialog({ children }: CreateTaskDialogProps) {
   const {
     formData,
     updateField,
-    accessibleCategories,
     accessibleLists,
-    categoryDialogOpen,
-    setCategoryDialogOpen,
     listDialogOpen,
     setListDialogOpen,
-    handleCategoryCreated,
     handleListCreated,
     handleSubmit,
   } = useTaskForm();
@@ -37,18 +32,10 @@ export default function CreateTaskDialog({ children }: CreateTaskDialogProps) {
         <TaskFormFields
           formData={formData}
           updateField={updateField}
-          accessibleCategories={accessibleCategories}
-          onCreateCategory={() => setCategoryDialogOpen(true)}
+          accessibleLists={accessibleLists}
+          onCreateList={() => setListDialogOpen(true)}
         />
       </CreateDialog>
-
-      <CreateCategoryDialog
-        open={categoryDialogOpen}
-        onOpenChange={setCategoryDialogOpen}
-        accessibleLists={accessibleLists}
-        onCreateCategory={handleCategoryCreated}
-        onOpenListDialog={() => setListDialogOpen(true)}
-      />
 
       <CreateListDialog
         open={listDialogOpen}

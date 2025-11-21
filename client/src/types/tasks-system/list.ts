@@ -1,12 +1,12 @@
-import { Category } from "../category/categories";
-import { ListShare } from "./shareList";
+import { Task } from "./task";
+import { SharePermission } from "../permissions";
 
 export interface List {
   id: string;
   name: string;
   description?: string;
   createdAt: string;
-  categories: Category[];
+  tasks: Task[];
   ownerId: string;
   shares: ListShare[];
 }
@@ -16,4 +16,11 @@ export interface ListsState {
   selectedListId: string | null;
   isLoading: boolean;
   error: string | null;
+}
+
+export interface ListShare {
+  id: string;
+  permission: SharePermission;
+  listId: string;
+  userId: string;
 }

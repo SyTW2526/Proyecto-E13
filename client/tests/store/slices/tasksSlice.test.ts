@@ -12,10 +12,9 @@ import reducer, {
   selectTaskFilters,
   selectTaskSorting,
   selectTasks,
-  selectTasksByCategoryId,
+  selectTasksByListId,
   selectTasksByPriority,
   selectTasksByStatus,
-  setCategoryFilter,
   setError,
   setLoading,
   setPriorityFilter,
@@ -23,6 +22,7 @@ import reducer, {
   setSelectedTask,
   setSorting,
   setStatusFilter,
+  setListFilter,
   setTaskStatus,
   setTasks,
   toggleSortOrder,
@@ -30,8 +30,8 @@ import reducer, {
   updateTask,
   updateTaskShare,
 } from "@/store/slices/tasksSlice";
-import type { Task, TasksState } from "@/types/task/task";
-import type { TaskShare } from "@/types/task/shareTask";
+import type { Task, TasksState } from "@/types/tasks-system/task";
+import type { TaskShare } from "@/types/tasks-system/shareTask";
 
 const baseTask: Task = {
   id: "t1",
@@ -43,7 +43,7 @@ const baseTask: Task = {
   completedAt: undefined,
   createdAt: "2024-01-01",
   updatedAt: "2024-01-05",
-  categoryId: "c1",
+  listId: "l1",
   completed: false,
   shares: [],
   favorite: false,
@@ -63,7 +63,7 @@ const initialState: TasksState = {
   error: null,
   filters: {
     status: "all",
-    categoryId: null,
+    listId: null,
     search: "",
     priority: "all",
   },
@@ -158,12 +158,12 @@ describe("tasksSlice reducer", () => {
 
   it("actualiza filtros y sorting, y los restablece con clearFilters/toggleSortOrder", () => {
     let state = reducer(initialState, setStatusFilter("PENDING"));
-    state = reducer(state, setCategoryFilter("c1"));
+    state = reducer(state, setListFilter("l1"));
     state = reducer(state, setSearchFilter("comprar"));
     state = reducer(state, setPriorityFilter("HIGH"));
     state = reducer(state, setSorting({ field: "name", order: "asc" }));
     expect(selectTaskFilters({ tasks: state }).status).toBe("PENDING");
-    expect(selectTaskFilters({ tasks: state }).categoryId).toBe("c1");
+    expect(selectTaskFilters({ tasks: state }).listId).toBe("l1");
     expect(selectTaskFilters({ tasks: state }).search).toBe("comprar");
     expect(selectTaskFilters({ tasks: state }).priority).toBe("HIGH");
     expect(selectTaskSorting({ tasks: state }).order).toBe("asc");
@@ -230,17 +230,17 @@ describe("tasksSlice selectors", () => {
     expect(selectTaskById("t2")(state)?.id).toBe("t2");
   });
 
-  it("selectTasksByCategoryId filtra por categoria", () => {
+  it("selectTasksByListId filtra por lista", () => {
     const state = wrap({
       ...initialState,
       tasks: [
         baseTask,
-        { ...baseTask, id: "t2", categoryId: "c2" },
-        { ...baseTask, id: "t3", categoryId: "c1" },
+        { ...baseTask, id: "t2", listId: "l2" },
+        { ...baseTask, id: "t3", listId: "l1" },
       ],
     });
-    expect(selectTasksByCategoryId("c1")(state)).toHaveLength(2);
-    expect(selectTasksByCategoryId("c2")(state)).toHaveLength(1);
+    expect(selectTasksByListId("l1")(state)).toHaveLength(2);
+    expect(selectTasksByListId("l2")(state)).toHaveLength(1);
   });
 
   it("selectFilteredTasks aplica filtros y ordenamiento", () => {
@@ -261,7 +261,7 @@ describe("tasksSlice selectors", () => {
       tasks,
       filters: {
         status: "IN_PROGRESS",
-        categoryId: "c1",
+        listId: "l1",
         search: "algo",
         priority: "HIGH",
       },

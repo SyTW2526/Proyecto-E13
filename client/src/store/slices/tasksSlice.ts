@@ -1,10 +1,10 @@
-import type { TaskShare } from "@/types/task/shareTask";
 import type {
   Task,
   TaskPriority,
   TasksState,
   TaskStatus,
-} from "@/types/task/task";
+  TaskShare,
+} from "@/types/tasks-system/task";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: TasksState = {
@@ -14,7 +14,7 @@ const initialState: TasksState = {
   error: null,
   filters: {
     status: "all",
-    categoryId: null,
+    listId: null,
     search: "",
     priority: "all",
   },
@@ -94,8 +94,8 @@ const tasksSlice = createSlice({
     setStatusFilter: (state, action: PayloadAction<"all" | TaskStatus>) => {
       state.filters.status = action.payload;
     },
-    setCategoryFilter: (state, action: PayloadAction<string | null>) => {
-      state.filters.categoryId = action.payload;
+    setListFilter: (state, action: PayloadAction<string | null>) => {
+      state.filters.listId = action.payload;
     },
     setSearchFilter: (state, action: PayloadAction<string>) => {
       state.filters.search = action.payload;
@@ -106,7 +106,7 @@ const tasksSlice = createSlice({
     clearFilters: (state) => {
       state.filters = {
         status: "all",
-        categoryId: null,
+        listId: null,
         search: "",
         priority: "all",
       };
@@ -172,7 +172,7 @@ export const {
   setTaskStatus,
   setSelectedTask,
   setStatusFilter,
-  setCategoryFilter,
+  setListFilter,
   setSearchFilter,
   setPriorityFilter,
   clearFilters,
@@ -207,9 +207,9 @@ export const selectTaskById =
   (taskId: string) => (state: { tasks: TasksState }) =>
     state.tasks.tasks.find((task) => task.id === taskId) || null;
 
-export const selectTasksByCategoryId =
-  (categoryId: string) => (state: { tasks: TasksState }) =>
-    state.tasks.tasks.filter((task) => task.categoryId === categoryId);
+export const selectTasksByListId =
+  (listId: string) => (state: { tasks: TasksState }) =>
+    state.tasks.tasks.filter((task) => task.listId === listId);
 
 export const selectFilteredTasks = (state: { tasks: TasksState }) => {
   const { tasks, filters, sorting } = state.tasks;
@@ -219,9 +219,9 @@ export const selectFilteredTasks = (state: { tasks: TasksState }) => {
     filtered = filtered.filter((task) => task.status === filters.status);
   }
 
-  if (filters.categoryId) {
+  if (filters.listId) {
     filtered = filtered.filter(
-      (task) => task.categoryId === filters.categoryId,
+      (task) => task.listId === filters.listId,
     );
   }
 

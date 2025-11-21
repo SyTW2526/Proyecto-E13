@@ -1,18 +1,16 @@
 import { useState, useCallback } from "react";
 import { useTasks } from "./useTasks";
-import { useCategories } from "./useCategories";
 import { useLists } from "./useLists";
 import { useAuth } from "./useAuth";
-import type { Task, TaskPriority, TaskStatus } from "@/types/task/task";
-import type { Category } from "@/types/category/categories";
-import type { List } from "@/types/list/list";
+import type { Task, TaskPriority, TaskStatus } from "@/types/tasks-system/task";
+import type { List } from "@/types/tasks-system/list";
 
 interface TaskFormData {
   name: string;
   description: string;
   priority: TaskPriority;
   status: TaskStatus;
-  categoryId: string;
+  listId: string;
   dueDate: string;
   favorite: boolean;
 }
@@ -22,18 +20,16 @@ const initialFormData: TaskFormData = {
   description: "",
   priority: "MEDIUM",
   status: "PENDING",
-  categoryId: "",
+  listId: "",
   dueDate: "",
   favorite: false,
 };
 
 export function useTaskForm() {
   const [formData, setFormData] = useState<TaskFormData>(initialFormData);
-  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [listDialogOpen, setListDialogOpen] = useState(false);
 
   const { createTask } = useTasks();
-  const { accessibleCategories, createCategory } = useCategories();
   const { accessibleLists, createList } = useLists();
   const { user } = useAuth();
 
@@ -45,16 +41,8 @@ export function useTaskForm() {
     setFormData(initialFormData);
   }, []);
 
-  const handleCategoryCreated = useCallback(
-    (category: Category) => {
-      createCategory(category);
-      updateField("categoryId", category.id);
-    },
-    [createCategory, updateField],
-  );
-
   const handleListCreated = useCallback(
-    (listData: Omit<List, "id" | "createdAt" | "categories" | "shares">) => {
+    (listData: Omit<List, "id" | "createdAt" | "shares" | "tasks">) => {
       if (!user?.id) return;
 
       const newList: List = {
@@ -62,18 +50,19 @@ export function useTaskForm() {
         ...listData,
         ownerId: user.id,
         createdAt: new Date().toISOString(),
-        categories: [],
+        tasks: [],
         shares: [],
       };
 
       createList(newList);
+      updateField("listId", newList.id);
     },
-    [user, createList],
+    [user, createList, updateField],
   );
 
   const handleSubmit = useCallback(
     (onSuccess?: () => void) => {
-      if (!formData.name.trim() || !formData.categoryId) {
+      if (!formData.name.trim() || !formData.listId) {
         return false;
       }
 
@@ -84,7 +73,7 @@ export function useTaskForm() {
         status: formData.status,
         priority: formData.priority,
         dueDate: formData.dueDate || undefined,
-        categoryId: formData.categoryId,
+        listId: formData.listId,
         completed: formData.status === "COMPLETED",
         favorite: formData.favorite,
         createdAt: new Date().toISOString(),
@@ -104,13 +93,9 @@ export function useTaskForm() {
     formData,
     updateField,
     resetForm,
-    accessibleCategories,
     accessibleLists,
-    categoryDialogOpen,
-    setCategoryDialogOpen,
     listDialogOpen,
     setListDialogOpen,
-    handleCategoryCreated,
     handleListCreated,
     handleSubmit,
   };

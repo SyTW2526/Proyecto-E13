@@ -45,15 +45,9 @@ export const taskFormLabels = {
     submitButton: "Crear Tarea",
     cancelButton: "Cancelar",
   },
-  createCategory: {
-    title: "Nueva Categoría",
-    description: "Crea una nueva categoría para organizar tus tareas",
-    submitButton: "Crear Categoría",
-    cancelButton: "Cancelar",
-  },
   createList: {
     title: "Nueva Lista",
-    description: "Crea una nueva lista para organizar tus categorías",
+    description: "Crea una nueva lista para organizar tus tareas",
     submitButton: "Crear Lista",
     cancelButton: "Cancelar",
   },
@@ -68,12 +62,12 @@ export const taskFormLabels = {
       placeholder: "Descripción de la tarea (opcional)",
       required: false,
     },
-    category: {
-      label: "Categoría",
-      placeholder: "Selecciona una categoría",
-      searchPlaceholder: "Buscar categoría...",
-      emptyMessage: "No se encontró ninguna categoría.",
-      createNew: "Crear nueva categoría",
+    list: {
+      label: "Lista",
+      placeholder: "Selecciona una lista",
+      searchPlaceholder: "Buscar lista...",
+      emptyMessage: "No se encontró ninguna lista.",
+      createNew: "Crear nueva lista",
       required: true,
     },
     priority: {
@@ -87,24 +81,6 @@ export const taskFormLabels = {
     dueDate: {
       label: "Fecha de vencimiento",
       required: false,
-    },
-    categoryName: {
-      label: "Nombre",
-      placeholder: "Nombre de la categoría",
-      required: true,
-    },
-    categoryDescription: {
-      label: "Descripción",
-      placeholder: "Descripción (opcional)",
-      required: false,
-    },
-    list: {
-      label: "Lista",
-      placeholder: "Selecciona una lista",
-      searchPlaceholder: "Buscar lista...",
-      emptyMessage: "No se encontró ninguna lista.",
-      createNew: "Crear nueva lista",
-      required: true,
     },
     listName: {
       label: "Nombre",
@@ -128,8 +104,8 @@ export const tasksPageLabels = {
   },
   emptyState: "No hay tareas disponibles",
   sidebar: {
-    title: "Categorías",
-    emptyState: "No hay categorías",
+    title: "Listas",
+    emptyState: "No hay listas",
   },
   taskCard: {
     createdLabel: "Creada:",
@@ -140,10 +116,6 @@ export const tasksPageLabels = {
     task: {
       icon: "IconTask",
       text: "Tarea",
-    },
-    category: {
-      icon: "IconCategory",
-      text: "Categoría",
     },
     list: {
       icon: "IconList",

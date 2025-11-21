@@ -16,13 +16,13 @@ import {
 import Icon from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 
-interface Category {
+interface Item {
   id: string;
   name: string;
 }
 
 interface ComboboxProps {
-  categories: Category[];
+  items: Item[];
   value: string;
   onValueChange: (value: string) => void;
   onCreateNew: () => void;
@@ -33,7 +33,7 @@ interface ComboboxProps {
 }
 
 export function Combobox({
-  categories,
+  items,
   value,
   onValueChange,
   onCreateNew,
@@ -54,7 +54,7 @@ export function Combobox({
           className="w-full justify-between"
         >
           {value
-            ? categories.find((category) => category.id === value)?.name
+            ? items.find((item) => item.id === value)?.name
             : placeholder}
           <Icon
             as="IconChevronDown"
@@ -69,22 +69,22 @@ export function Combobox({
           <CommandList>
             <CommandEmpty>{emptyMessage}</CommandEmpty>
             <CommandGroup>
-              {categories.map((category) => (
+              {items.map((item) => (
                 <CommandItem
-                  key={category.id}
-                  value={category.name}
+                  key={item.id}
+                  value={item.name}
                   onSelect={() => {
-                    onValueChange(category.id);
+                    onValueChange(item.id);
                     setOpen(false);
                   }}
                 >
-                  {category.name}
+                  {item.name}
                   <Icon
                     as="IconCheck"
                     size={16}
                     className={cn(
                       "ml-auto",
-                      value === category.id ? "opacity-100" : "opacity-0",
+                      value === item.id ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>

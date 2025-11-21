@@ -14,8 +14,8 @@ import {
   statusConfig,
   taskFormLabels,
 } from "@/config/taskConfig";
-import type { TaskPriority, TaskStatus } from "@/types/task/task";
-import type { Category } from "@/types/category/categories";
+import type { TaskPriority, TaskStatus } from "@/types/tasks-system/task";
+import type { List } from "@/types/tasks-system/list";
 
 interface TaskFormFieldsProps {
   formData: {
@@ -23,19 +23,19 @@ interface TaskFormFieldsProps {
     description: string;
     priority: TaskPriority;
     status: TaskStatus;
-    categoryId: string;
+    listId: string;
     dueDate: string;
   };
   updateField: (field: string, value: string) => void;
-  accessibleCategories: Category[];
-  onCreateCategory: () => void;
+  accessibleLists: List[];
+  onCreateList: () => void;
 }
 
 export function TaskFormFields({
   formData,
   updateField,
-  accessibleCategories,
-  onCreateCategory,
+  accessibleLists,
+  onCreateList,
 }: TaskFormFieldsProps) {
   return (
     <>
@@ -56,21 +56,19 @@ export function TaskFormFields({
         </FormField>
 
         <FormField
-          label={taskFormLabels.fields.category.label}
-          htmlFor="category"
-          required={taskFormLabels.fields.category.required}
+          label={taskFormLabels.fields.list.label}
+          htmlFor="list"
+          required={taskFormLabels.fields.list.required}
         >
           <Combobox
-            categories={accessibleCategories}
-            value={formData.categoryId}
-            onValueChange={(categoryId) =>
-              updateField("categoryId", categoryId)
-            }
-            onCreateNew={onCreateCategory}
-            placeholder={taskFormLabels.fields.category.placeholder}
-            searchPlaceholder={taskFormLabels.fields.category.searchPlaceholder}
-            emptyMessage={taskFormLabels.fields.category.emptyMessage}
-            createNewLabel={taskFormLabels.fields.category.createNew}
+            items={accessibleLists}
+            value={formData.listId}
+            onValueChange={(listId) => updateField("listId", listId)}
+            onCreateNew={onCreateList}
+            placeholder={taskFormLabels.fields.list.placeholder}
+            searchPlaceholder={taskFormLabels.fields.list.searchPlaceholder}
+            emptyMessage={taskFormLabels.fields.list.emptyMessage}
+            createNewLabel={taskFormLabels.fields.list.createNew}
           />
         </FormField>
       </div>
