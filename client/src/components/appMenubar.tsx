@@ -38,7 +38,7 @@ export default function AppMenubar() {
             {isAuthenticated && <NavigationMenuWithActiveItem />}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             {isAuthenticated && (
               <>
                 <div className="hidden md:flex md:items-center">
