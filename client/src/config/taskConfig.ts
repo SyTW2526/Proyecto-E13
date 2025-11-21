@@ -42,8 +42,6 @@ export const taskFormLabels = {
   createTask: {
     title: "Crear Nueva Tarea",
     description: "Completa los campos para crear una nueva tarea",
-    icon: "IconPlus",
-    iconText: "Nueva Tarea",
     submitButton: "Crear Tarea",
     cancelButton: "Cancelar",
   },

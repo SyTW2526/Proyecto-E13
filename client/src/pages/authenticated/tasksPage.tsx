@@ -3,8 +3,8 @@ import { TaskCard } from "@/components/tasks/TaskCard";
 import { FilterableList } from "@/components/tasks/FilterableList";
 import { tasksPageLabels } from "@/config/taskConfig";
 import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
-import CreateCategoryDialogStandalone from "@/components/createDialogs/createCategoryDialogStandalone";
-import CreateListDialogStandalone from "@/components/createDialogs/createListDialogStandalone";
+import { CreateCategoryDialogStandalone } from "@/components/createDialogs/createCategoryDialog";
+import { CreateListDialogStandalone } from "@/components/createDialogs/createListDialog";
 import { Button } from "@/components/ui/button";
 
 export default function TasksPage() {
@@ -103,7 +103,7 @@ export default function TasksPage() {
           selectedId={selectedListId}
           onItemClick={handleListFilter}
           emptyMessage="No hay listas disponibles"
-          icon="IconList"
+          icon={tasksPageLabels.createButtons.list.icon}
         />
 
         <FilterableList
@@ -112,7 +112,7 @@ export default function TasksPage() {
           selectedId={selectedCategoryId}
           onItemClick={handleCategoryFilter}
           emptyMessage={tasksPageLabels.sidebar.emptyState}
-          icon="IconFolder"
+          icon={tasksPageLabels.createButtons.category.icon}
         />
       </aside>
     </div>

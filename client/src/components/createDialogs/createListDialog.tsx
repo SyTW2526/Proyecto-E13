@@ -1,12 +1,17 @@
 import { useState } from "react";
+import { CreateDialog } from "@/components/ui/createDialog";
+import { FormDialog } from "@/components/ui/formDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { FormDialog } from "@/components/ui/formDialog";
+import { useLists } from "@/hooks/useLists";
+import { useAuth } from "@/hooks/useAuth";
 import { taskFormLabels } from "@/config/taskConfig";
 import type { List } from "@/types/list/list";
 
-interface CreateListDialogProps {
+// Props para modo controlado (usado como diálogo anidado)
+interface ControlledProps {
+  mode: "controlled";
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreateList: (
@@ -14,48 +19,62 @@ interface CreateListDialogProps {
   ) => void;
 }
 
-export function CreateListDialog({
-  open,
-  onOpenChange,
-  onCreateList,
-}: CreateListDialogProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-  });
+// Props para modo standalone (usado como componente independiente)
+interface StandaloneProps {
+  mode?: "standalone";
+  trigger?: React.ReactNode;
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+type CreateListDialogUnifiedProps = ControlledProps | StandaloneProps;
 
-    if (!formData.name.trim()) {
-      return;
-    }
+function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
+  const [formData, setFormData] = useState({ name: "", description: "" });
+  const { createList } = useLists();
+  const { user } = useAuth();
 
-    onCreateList({
+  const isControlled = props.mode === "controlled";
+
+  const resetForm = () => setFormData({ name: "", description: "" });
+
+  // Handler para modo standalone
+  const handleStandaloneSubmit = () => {
+    if (!formData.name.trim() || !user?.id) return false;
+
+    createList({
+      id: crypto.randomUUID(),
       name: formData.name.trim(),
       description: formData.description.trim() || undefined,
-      ownerId: "", // Will be set by parent
+      ownerId: user.id,
+      createdAt: new Date().toISOString(),
+      categories: [],
+      shares: [],
     });
 
-    // Reset form
-    setFormData({
-      name: "",
-      description: "",
-    });
-
-    onOpenChange(false);
+    resetForm();
+    return true;
   };
 
-  return (
-    <FormDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title={taskFormLabels.createList.title}
-      description={taskFormLabels.createList.description}
-      onSubmit={handleSubmit}
-      submitLabel={taskFormLabels.createList.submitButton}
-      cancelLabel={taskFormLabels.createList.cancelButton}
-    >
+  // Handler para modo controlado
+  const handleControlledSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name.trim()) return;
+
+    if (isControlled) {
+      props.onCreateList({
+        name: formData.name.trim(),
+        description: formData.description.trim() || undefined,
+        ownerId: "",
+      });
+    }
+
+    resetForm();
+    if (isControlled) {
+      props.onOpenChange(false);
+    }
+  };
+
+  const formFields = (
+    <>
       <div className="space-y-2">
         <Label htmlFor="listName">
           {taskFormLabels.fields.listName.label}{" "}
@@ -67,12 +86,7 @@ export function CreateListDialog({
           id="listName"
           placeholder={taskFormLabels.fields.listName.placeholder}
           value={formData.name}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              name: e.target.value,
-            })
-          }
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           required
         />
       </div>
@@ -86,14 +100,58 @@ export function CreateListDialog({
           placeholder={taskFormLabels.fields.listDescription.placeholder}
           value={formData.description}
           onChange={(e) =>
-            setFormData({
-              ...formData,
-              description: e.target.value,
-            })
+            setFormData({ ...formData, description: e.target.value })
           }
           rows={2}
         />
       </div>
-    </FormDialog>
+    </>
   );
+
+  // Modo controlado: usa FormDialog
+  if (isControlled) {
+    return (
+      <FormDialog
+        open={props.open}
+        onOpenChange={props.onOpenChange}
+        title={taskFormLabels.createList.title}
+        description={taskFormLabels.createList.description}
+        onSubmit={handleControlledSubmit}
+        submitLabel={taskFormLabels.createList.submitButton}
+        cancelLabel={taskFormLabels.createList.cancelButton}
+        className="max-h-[85vh] sm:max-h-[90vh]"
+      >
+        {formFields}
+      </FormDialog>
+    );
+  }
+
+  // Modo standalone: usa CreateDialog
+  return (
+    <CreateDialog
+      trigger={props.trigger}
+      title={taskFormLabels.createList.title}
+      description={taskFormLabels.createList.description}
+      onSubmit={handleStandaloneSubmit}
+      submitLabel={taskFormLabels.createList.submitButton}
+      cancelLabel={taskFormLabels.createList.cancelButton}
+    >
+      {formFields}
+    </CreateDialog>
+  );
+}
+
+// Export por defecto: modo standalone
+export default CreateListDialogUnified;
+
+// Export nombrado para modo controlado
+export function CreateListDialog(props: Omit<ControlledProps, "mode">) {
+  return <CreateListDialogUnified mode="controlled" {...props} />;
+}
+
+// Export nombrado para modo standalone (alias)
+export function CreateListDialogStandalone(props: {
+  children?: React.ReactNode;
+}) {
+  return <CreateListDialogUnified mode="standalone" trigger={props.children} />;
 }

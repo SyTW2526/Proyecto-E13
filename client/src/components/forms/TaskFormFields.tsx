@@ -39,7 +39,8 @@ export function TaskFormFields({
 }: TaskFormFieldsProps) {
   return (
     <>
-      <div className="grid grid-cols-2 gap-4">
+      {/* Nombre y Categoría - 1 columna en móvil, 2 en desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <FormField
           label={taskFormLabels.fields.name.label}
           htmlFor="name"
@@ -74,72 +75,70 @@ export function TaskFormFields({
         </FormField>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      {/* Fecha de vencimiento */}
+      <FormField label={taskFormLabels.fields.dueDate.label} htmlFor="dueDate">
+        <Input
+          id="dueDate"
+          type="date"
+          value={formData.dueDate}
+          onChange={(e) => updateField("dueDate", e.target.value)}
+        />
+      </FormField>
+
+      {/* Prioridad y Estado - 1 columna en móvil, 2 en desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <FormField
-          label={taskFormLabels.fields.dueDate.label}
-          htmlFor="dueDate"
+          label={taskFormLabels.fields.priority.label}
+          htmlFor="priority"
+          required={taskFormLabels.fields.priority.required}
         >
-          <Input
-            id="dueDate"
-            type="date"
-            value={formData.dueDate}
-            onChange={(e) => updateField("dueDate", e.target.value)}
-          />
+          <Select
+            value={formData.priority}
+            onValueChange={(value) =>
+              updateField("priority", value as TaskPriority)
+            }
+            required
+          >
+            <SelectTrigger id="priority" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(priorityConfig).map(([key, config]) => (
+                <SelectItem key={key} value={key}>
+                  <span className={config.color}>{config.label}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </FormField>
 
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            label={taskFormLabels.fields.priority.label}
-            htmlFor="priority"
-            required={taskFormLabels.fields.priority.required}
+        <FormField
+          label={taskFormLabels.fields.status.label}
+          htmlFor="status"
+          required={taskFormLabels.fields.status.required}
+        >
+          <Select
+            value={formData.status}
+            onValueChange={(value) =>
+              updateField("status", value as TaskStatus)
+            }
+            required
           >
-            <Select
-              value={formData.priority}
-              onValueChange={(value) =>
-                updateField("priority", value as TaskPriority)
-              }
-              required
-            >
-              <SelectTrigger id="priority" className="w-full max-w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="max-w-full">
-                {Object.entries(priorityConfig).map(([key, config]) => (
-                  <SelectItem key={key} value={key}>
-                    <span className={config.color}>{config.label}</span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormField>
-
-          <FormField
-            label={taskFormLabels.fields.status.label}
-            htmlFor="status"
-            required={taskFormLabels.fields.status.required}
-          >
-            <Select
-              value={formData.status}
-              onValueChange={(value) =>
-                updateField("status", value as TaskStatus)
-              }
-              required
-            >
-              <SelectTrigger id="status" className="w-full max-w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="max-w-full">
-                {Object.entries(statusConfig).map(([key, config]) => (
-                  <SelectItem key={key} value={key}>
-                    <span className={config.color}>{config.label}</span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormField>
-        </div>
+            <SelectTrigger id="status" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(statusConfig).map(([key, config]) => (
+                <SelectItem key={key} value={key}>
+                  <span className={config.color}>{config.label}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormField>
       </div>
 
+      {/* Descripción */}
       <FormField
         label={taskFormLabels.fields.description.label}
         htmlFor="description"
@@ -149,7 +148,8 @@ export function TaskFormFields({
           placeholder={taskFormLabels.fields.description.placeholder}
           value={formData.description}
           onChange={(e) => updateField("description", e.target.value)}
-          rows={2}
+          rows={3}
+          className="resize-none"
         />
       </FormField>
     </>
