@@ -15,40 +15,50 @@ export default function FeatureCard({
   bigDetails = false,
   details,
   className = "",
-  iconSize = 40,
   iconLabel,
   children,
+  chart = false,
 }: FeatureCardProps) {
   return (
     <Card className={className}>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center gap-3 pb-3 sm:pb-6">
         {icon ? (
-          <div className="text-4xl mb-2">
+          <div className="text-xl shrink-0">
             <Icon
               as={icon}
-              size={iconSize}
+              size={24}
               ariaLabel={iconLabel}
               className="inline-block"
             />
           </div>
         ) : null}
-        <CardTitle>{title}</CardTitle>
-        {description ? <CardDescription>{description}</CardDescription> : null}
+        <div className="min-w-0">
+          <CardTitle className="text-base sm:text-lg">{title}</CardTitle>
+          {description ? (
+            <CardDescription className="text-xs sm:text-sm">
+              {description}
+            </CardDescription>
+          ) : null}
+        </div>
       </CardHeader>
+
       {bigDetails && details ? (
-        <CardContent>
-          <span className="text-4xl leading-none font-bold text-foreground">
+        <CardContent className="pt-0">
+          <span className="text-3xl sm:text-4xl leading-none font-bold text-foreground">
             {details}
           </span>
         </CardContent>
-      ) : (
-        details && (
-          <CardContent>
-            <p className="text-sm text-muted-foreground">{details}</p>
-          </CardContent>
-        )
+      ) : details && !chart ? (
+        <CardContent className="pt-0">
+          <p className="text-xs sm:text-sm text-muted-foreground whitespace-pre-line">
+            {details}
+          </p>
+        </CardContent>
+      ) : null}
+
+      {children && (
+        <CardContent className="pt-0 pb-4 sm:pb-6">{children}</CardContent>
       )}
-      {children ? <CardContent>{children}</CardContent> : null}
     </Card>
   );
 }

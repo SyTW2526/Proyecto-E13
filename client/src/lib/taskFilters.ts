@@ -53,6 +53,24 @@ export function getCompletedTasksLastNDays(
 }
 
 /**
+ * Obtiene tareas completadas en un día específico.
+ * @param tasks Array de tareas
+ * @param date Fecha del día a consultar
+ * @return Array de tareas completadas ese día
+ */
+export function getCompletedTasksForDay(tasks: Task[], date: Date): Task[] {
+  const dayStart = startOfDay(date);
+  const dayEnd = endOfDay(date);
+
+  return tasks.filter((task) => {
+    if (!task.completed || !task.completedAt) return false;
+    const completedAt = parseDate(task.completedAt);
+    if (!completedAt) return false;
+    return completedAt >= dayStart && completedAt < dayEnd;
+  });
+}
+
+/**
  * Devuelve las tareas con fecha de vencimiento más próxima.
  * Solo tiene en cuenta tareas con dueDate válido y futuro/actual.
  * Ordena de más cercano a más lejano.
@@ -202,4 +220,109 @@ export function groupTasksByList(tasks: Task[]): Record<string, Task[]> {
     acc[key].push(task);
     return acc;
   }, {});
+}
+
+/**
+ * Obtiene el inicio de la semana actual (lunes 00:00:00)
+ */
+function getStartOfWeek(): Date {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = day === 0 ? -6 : 1 - day; // Si es domingo (0), retrocede 6 días; sino, calcula días hasta el lunes
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diff);
+  return startOfDay(monday);
+}
+
+/**
+ * Número de tareas pendientes (no completadas) de esta semana.
+ * Incluye tareas con dueDate en esta semana o antes (aún no completadas)
+ * y tareas sin dueDate creadas esta semana.
+ */
+export function getPendingTasksThisWeek(tasks: Task[]): number {
+  const weekStart = getStartOfWeek();
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 7);
+
+  return tasks.filter((task) => {
+    if (task.status !== "PENDING") return false;
+
+    const due = parseDate(task.dueDate);
+    if (due && due < weekEnd) return true;
+
+    // Tareas sin dueDate: incluir solo si fueron creadas esta semana
+    const created = parseDate(task.createdAt);
+    if (created && created >= weekStart && created < weekEnd && !task.dueDate)
+      return true;
+
+    return false;
+  }).length;
+}
+
+/**
+ * Número de tareas completadas esta semana.
+ */
+export function getCompletedTasksThisWeek(tasks: Task[]): number {
+  const weekStart = getStartOfWeek();
+  const now = new Date();
+
+  return tasks.filter((task) => {
+    if (!task.completed || !task.completedAt) return false;
+    const completedAt = parseDate(task.completedAt);
+    if (!completedAt) return false;
+    return completedAt >= weekStart && completedAt <= now;
+  }).length;
+}
+
+/**
+ * Obtiene las tareas más recientes de esta semana según `createdAt`,
+ * ordenadas de más nueva a más antigua.
+ */
+export function getRecentTasksThisWeek(
+  tasks: Task[],
+  limit: number = 5,
+): Task[] {
+  const weekStart = getStartOfWeek();
+  const now = new Date();
+
+  return tasks
+    .filter((task) => {
+      const created = parseDate(task.createdAt);
+      if (!created) return false;
+      return created >= weekStart && created <= now;
+    })
+    .sort((a, b) => {
+      const dateA = parseDate(a.createdAt);
+      const dateB = parseDate(b.createdAt);
+      if (!dateA || !dateB) return 0;
+      return dateB.getTime() - dateA.getTime();
+    })
+    .slice(0, limit);
+}
+
+/**
+ * Obtiene las próximas tareas de esta semana con dueDate.
+ * Filtra tareas que vencen desde ahora hasta el final de esta semana.
+ */
+export function getNextDueTasksThisWeek(tasks: Task[], limit?: number): Task[] {
+  const now = new Date();
+  const weekStart = getStartOfWeek();
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 7);
+
+  const filtered = tasks
+    .map((task) => {
+      const due = parseDate(task.dueDate);
+      return { task, due };
+    })
+    .filter((entry): entry is { task: Task; due: Date } => entry.due !== null)
+    .filter(({ due, task }) => {
+      // Solo tareas no completadas que vencen desde ahora hasta el final de la semana
+      return task.status !== "COMPLETED" && due >= now && due < weekEnd;
+    })
+    .sort((a, b) => a.due.getTime() - b.due.getTime());
+
+  return limit
+    ? filtered.slice(0, limit).map(({ task }) => task)
+    : filtered.map(({ task }) => task);
 }
