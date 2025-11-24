@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useTasks } from "./useTasks";
 import { useLists } from "./useLists";
 import { useAuth } from "./useAuth";
@@ -32,6 +32,13 @@ export function useTaskForm() {
   const { createTask } = useTasks();
   const { accessibleLists, createList } = useLists();
   const { user } = useAuth();
+
+  // Establecer la primera lista por defecto si existe y no hay ninguna seleccionada
+  useEffect(() => {
+    if (accessibleLists.length > 0 && !formData.listId) {
+      setFormData((prev) => ({ ...prev, listId: accessibleLists[0].id }));
+    }
+  }, [accessibleLists, formData.listId]);
 
   const updateField = useCallback((field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
