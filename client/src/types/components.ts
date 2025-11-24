@@ -15,12 +15,26 @@ export type IconType = React.ComponentType<{
   className?: string;
 }>;
 
+export interface ChartDataItem {
+  [key: string]: string | number;
+}
+
+export interface ChartConfigType {
+  [key: string]: {
+    label?: string;
+    color?: string;
+  };
+}
+
 export interface FeatureCardProps {
   icon?: IconType | string;
   title: string;
   description?: string;
   className?: string;
   bigDetails?: boolean;
+  chart?: boolean;
+  chartData?: ChartDataItem[];
+  chartConfig?: ChartConfigType;
   details?: string | React.ReactNode;
   iconSize?: number;
   iconLabel?: string;

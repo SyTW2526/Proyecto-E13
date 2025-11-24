@@ -1,36 +1,112 @@
 import { useAuth } from "@/hooks/useAuth";
-import { dashboardCards } from "@/config/dashboardCards";
+import { dashboardConfig, dashboardCards } from "@/config/dashboardConfig";
 import FeatureCard from "@/components/ui/featureCard";
 import Icon from "@/components/ui/icon";
+import { useTasks } from "@/hooks/useTasks";
+import { useLists } from "@/hooks/useLists";
+import { useDashboardCharts } from "@/hooks/useDashboardCharts";
+import {
+  PriorityChart,
+  WeeklyTasksChart,
+  // ProgressChart,
+} from "@/components/dashboard/DashboardCharts";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { accessibleTasks } = useTasks();
+  const { accessibleLists } = useLists();
+
+  const {
+    priorityChartData,
+    priorityChartConfig,
+    progressChartData,
+    progressChartConfig,
+    weeklyTasksData,
+    weeklyTasksConfig,
+    // tasksPerListData,
+    // tasksPerListConfig,
+    weekStats,
+  } = useDashboardCharts({
+    accessibleTasks,
+    accessibleLists,
+  });
+
+  // Mapa de datos para cada tipo de tarjeta
+  const cardDataMap: Record<
+    string,
+    {
+      details?: string | number;
+      chartData?: unknown;
+      chartConfig?: unknown;
+      chartComponent?: React.ReactNode;
+    }
+  > = {
+    "Tareas Pendientes": { details: weekStats.pendingTasks },
+    "Tareas Completadas": { details: weekStats.completedTasks },
+    "Próximas Tareas": { details: weekStats.upcomingTasks },
+    "Tareas Por Lista": {
+        details:
+          weekStats.tasksPerList
+            .map((item) => `${item.listName}: ${item.count} tareas`)
+            .join(", ") || "Sin tareas",
+      // chartComponent: (
+      //   <ProgressChart data={tasksPerListData} config={tasksPerListConfig} />
+      // ),
+    },
+    "Tareas Por Prioridad": {
+      chartComponent: (
+        <PriorityChart data={priorityChartData} config={priorityChartConfig} />
+      ),
+    },
+    "Tareas Por Estado": {
+      chartComponent: (
+        <PriorityChart data={progressChartData} config={progressChartConfig} />
+      ),
+    },
+    "Semana Actual": {
+      chartComponent: (
+        <WeeklyTasksChart data={weeklyTasksData} config={weeklyTasksConfig} />
+      ),
+    },
+  };
+
+  // ==================== Renderizado Principal ====================
+
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-start mb-8">
         <div>
           <h1 className="text-4xl font-bold mb-2">
-            ¡Bienvenido, {user?.name || "Usuario"}!{" "}
+            {dashboardConfig.welcome}
+            {user?.name || "Usuario"}!{" "}
             <Icon as="IconUser" size={26} className="inline-block" />
           </h1>
           <p className="text-muted-foreground">
-            Aquí está el resumen de tus tareas
+            {dashboardConfig.description} - {weekStats.weekNumber}
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:grid-rows-3 gap-6">
-        {dashboardCards.map((card, index) => (
-          <FeatureCard
-            key={index}
-            icon={card.icon}
-            title={card.title}
-            description={card.description}
-            bigDetails={card.bigDetails}
-            details={card.details}
-            className={`hover:shadow-lg transition-shadow ${card.span}`}
-          />
-        ))}
+        {dashboardCards.map((card, index) => {
+          const cardData = cardDataMap[card.title] || {};
+          const details = String(cardData.details ?? card.details ?? "");
+
+          return (
+            <FeatureCard
+              key={index}
+              icon={card.icon}
+              title={card.title}
+              description={card.description}
+              bigDetails={card.bigDetails}
+              chart={card.chart}
+              details={details}
+              className={`hover:shadow-lg transition-shadow ${card.span}`}
+            >
+              {cardData.chartComponent}
+            </FeatureCard>
+          );
+        })}
       </div>
     </div>
   );
