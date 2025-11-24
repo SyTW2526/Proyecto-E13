@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { dashboardCards } from "@/config/dashboardCards";
+import { dashboardConfig, dashboardCards } from "@/config/dashboardConfig";
 import FeatureCard from "@/components/ui/featureCard";
 import Icon from "@/components/ui/icon";
 
@@ -10,11 +10,11 @@ export default function DashboardPage() {
       <div className="flex justify-between items-start mb-8">
         <div>
           <h1 className="text-4xl font-bold mb-2">
-            ¡Bienvenido, {user?.name || "Usuario"}!{" "}
+            {dashboardConfig.welcome}{user?.name || "Usuario"}!{" "}
             <Icon as="IconUser" size={26} className="inline-block" />
           </h1>
           <p className="text-muted-foreground">
-            Aquí está el resumen de tus tareas
+            {dashboardConfig.description}
           </p>
         </div>
       </div>

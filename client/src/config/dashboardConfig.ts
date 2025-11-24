@@ -1,8 +1,15 @@
 /**
- * @file dashboardCards.ts
- * @description Configuración de las tarjetas del panel de control.
- * Define las tarjetas que se mostrarán en el panel de control.
+ * @file dashboardConfig.ts
+ * @description Configuración del panel de control de la aplicación de gestión de tareas.
+ * Aquí se definen las tarjetas que se mostrarán en el dashboard, incluyendo
+ * iconos, títulos, descripciones y detalles específicos para cada tarjeta.
  */
+
+export const dashboardConfig = {
+  title: "Panel de Control",
+  welcome: "¡Bienvenido, ",
+  description: "Resumen de tus tareas y actividades",
+};
 
 export const dashboardCards = [
   {
