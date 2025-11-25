@@ -9,7 +9,6 @@ vi.mock("@prisma/client", () => {
       $disconnect = vi.fn();
       user = {};
       task = {};
-      category = {};
       list = {};
       share = {};
       notification = {};
@@ -65,7 +64,6 @@ describe("Prisma Client Configuration", () => {
 
     expect(prisma.default).toHaveProperty("user");
     expect(prisma.default).toHaveProperty("task");
-    expect(prisma.default).toHaveProperty("category");
     expect(prisma.default).toHaveProperty("list");
     expect(prisma.default).toHaveProperty("share");
     expect(prisma.default).toHaveProperty("notification");
