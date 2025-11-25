@@ -209,9 +209,9 @@ export function getTasksSharedWithUser(tasks: Task[], userId: string): Task[] {
 }
 
 /**
- * Agrupa tareas por categoría.
- * Devuelve un objeto donde las claves son los IDs de categoría
- * y los valores son arrays de tareas pertenecientes a esa categoría.
+ * Agrupa tareas por lista.
+ * Devuelve un objeto donde las claves son los IDs de lista
+ * y los valores son arrays de tareas pertenecientes a esa lista.
  */
 export function groupTasksByList(tasks: Task[]): Record<string, Task[]> {
   return tasks.reduce<Record<string, Task[]>>((acc, task) => {
