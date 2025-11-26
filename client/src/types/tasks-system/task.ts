@@ -4,19 +4,19 @@ export type TaskStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED";
 export type TaskPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
 export interface Task {
-  id: string; // Identificador único de la tarea
-  name: string; // Nombre o título de la tarea
-  description?: string; // Descripción detallada de la tarea
-  status: TaskStatus; // Estado actual de la tarea
-  priority: TaskPriority; // Prioridad de la tarea
-  dueDate?: string; // Fecha límite para completar la tarea
-  completedAt?: string; // Fecha en que se completó la tarea
-  createdAt: string; // Fecha de creación de la tarea
-  listId: string; // Identificador de la lista a la que pertenece la tarea
-  completed: boolean; // Indica si la tarea está completada
-  shares: TaskShare[]; // Lista de comparticiones de la tarea
-  favorite: boolean; // Indica si la tarea está en favoritos
-  updatedAt: string; // Fecha de la última actualización de la tarea
+  id: string;
+  name: string;
+  description?: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  dueDate?: string;
+  completedAt?: string;
+  createdAt: string;
+  listId: string;
+  completed: boolean;
+  shares: TaskShare[];
+  favorite: boolean;
+  updatedAt: string;
 }
 
 export interface TasksState {

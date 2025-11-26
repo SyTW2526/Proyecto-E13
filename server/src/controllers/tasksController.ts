@@ -13,6 +13,10 @@ export const createTask = async (req: Request, res: Response) => {
         priority,
         dueDate,
       },
+      include: {
+        shares: true,
+        list: true,
+      },
     });
     return res.json(task);
   } catch (error) {
@@ -42,8 +46,12 @@ export const getUserTasks = async (req: Request, res: Response) => {
     const tasks = await prisma.task.findMany({
       where: {
         list: {
-          ownerId: userId
+          ownerId: userId,
         },
+      },
+      include: {
+        shares: true,
+        list: true,
       },
     });
     return res.json(tasks);

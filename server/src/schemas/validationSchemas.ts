@@ -54,6 +54,12 @@ export const createTaskSchema = z.object({
   status: TaskStatus.optional(),
   listId: z.string(),
   priority: Priority.optional(),
-  dueDate: z.date().optional(),
+  dueDate: z.coerce.date().optional(),
   favorite: z.boolean().optional(),
+});
+
+// List
+export const createListSchema = z.object({
+  name: z.string().min(1, "El nombre es obligatorio"),
+  description: z.string().optional(),
 });

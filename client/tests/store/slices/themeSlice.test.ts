@@ -29,19 +29,7 @@ describe("themeSlice", () => {
       const state = themeReducer(initialState, action);
 
       expect(state.theme).toBe("dark");
-      expect(localStorage.getItem("theme")).toBe("dark");
-      expect(document.documentElement.classList.contains("dark")).toBe(true);
-    });
-
-    
-
-    
-
-    it("should update localStorage when theme changes", () => {
-      const action = setTheme("dark");
-      themeReducer(initialState, action);
-
-      expect(localStorage.getItem("theme")).toBe("dark");
+      // Side effects are now handled by store subscription, not reducer
     });
   });
 

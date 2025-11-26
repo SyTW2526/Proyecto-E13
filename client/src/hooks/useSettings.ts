@@ -1,7 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./useAuth";
-import { api, apiErrorMessage } from "@/lib/api";
+import { useAppDispatch } from "./useRedux";
+import {
+  updateUserProfile,
+  changeUserPassword,
+  deleteUserAccount,
+} from "@/store/slices/authSlice";
 import {
   updateNameSchema,
   changePasswordSchema,
@@ -10,8 +15,9 @@ import { firstZodIssueMessage } from "@/lib/utils";
 
 export function useSettings() {
   const navigate = useNavigate();
-  const { user, updateUserProfile, signOut } = useAuth();
-  
+  const dispatch = useAppDispatch();
+  const { user, signOut } = useAuth();
+
   const [name, setName] = useState(user?.name || "");
   const email = user?.email;
   const [profileMsg, setProfileMsg] = useState<string | null>(null);
@@ -33,15 +39,18 @@ export function useSettings() {
       return;
     }
 
-    try {
-      setSavingProfile(true);
-      await api.patch("/users/me", { name: validation.data.name });
-      updateUserProfile({ name: validation.data.name });
+    setSavingProfile(true);
+    const result = await dispatch(
+      updateUserProfile({ name: validation.data.name }),
+    );
+    setSavingProfile(false);
+
+    if (updateUserProfile.fulfilled.match(result)) {
       setProfileMsg("Nombre actualizado correctamente.");
-    } catch (err) {
-      setProfileMsg(apiErrorMessage(err));
-    } finally {
-      setSavingProfile(false);
+    } else {
+      setProfileMsg(
+        (result.payload as string) || "Error al actualizar el perfil.",
+      );
     }
   };
 
@@ -65,48 +74,55 @@ export function useSettings() {
       return;
     }
 
-    try {
-      setSavingPassword(true);
-      await api.put("/auth/password", validation.data);
+    setSavingPassword(true);
+    const result = await dispatch(changeUserPassword(validation.data));
+    setSavingPassword(false);
+
+    if (changeUserPassword.fulfilled.match(result)) {
       setPasswordMsg("Contraseña actualizada correctamente.");
       setCurrPass("");
       setNewPass("");
-    } catch (err) {
-      setPasswordMsg(apiErrorMessage(err));
-    } finally {
-      setSavingPassword(false);
+    } else {
+      setPasswordMsg(
+        (result.payload as string) || "Error al actualizar la contraseña.",
+      );
     }
   };
 
   const toggleEmailNotifications = async () => {
     const newValue = !user?.emailNotifications;
     setNotifMsg(null);
-    updateUserProfile({ emailNotifications: newValue }); // Optimistic update
+    const result = await dispatch(
+      updateUserProfile({ emailNotifications: newValue }),
+    );
 
-    try {
-      await api.patch("/users/me", { emailNotifications: newValue });
+    if (updateUserProfile.fulfilled.match(result)) {
       setNotifMsg(
         `Notificaciones por correo ${newValue ? "activadas" : "desactivadas"}.`,
       );
-    } catch (err) {
-      updateUserProfile({ emailNotifications: !newValue }); // Rollback
-      setNotifMsg(apiErrorMessage(err));
+    } else {
+      setNotifMsg(
+        (result.payload as string) || "Error al cambiar notificaciones.",
+      );
     }
   };
 
   const togglePushNotifications = async () => {
     const newValue = !user?.pushNotifications;
     setNotifMsg(null);
-    updateUserProfile({ pushNotifications: newValue }); // Optimistic update
 
-    try {
-      await api.patch("/users/me", { pushNotifications: newValue });
+    const result = await dispatch(
+      updateUserProfile({ pushNotifications: newValue }),
+    );
+
+    if (updateUserProfile.fulfilled.match(result)) {
       setNotifMsg(
         `Notificaciones push ${newValue ? "activadas" : "desactivadas"}.`,
       );
-    } catch (err) {
-      updateUserProfile({ pushNotifications: !newValue }); // Rollback
-      setNotifMsg(apiErrorMessage(err));
+    } else {
+      setNotifMsg(
+        (result.payload as string) || "Error al cambiar notificaciones.",
+      );
     }
   };
 
@@ -119,13 +135,16 @@ export function useSettings() {
       return;
     }
 
-    try {
-      setDeleteAccountMsg(null);
-      await api.delete("/users/me");
+    setDeleteAccountMsg(null);
+    const result = await dispatch(deleteUserAccount());
+
+    if (deleteUserAccount.fulfilled.match(result)) {
       signOut();
       navigate("/", { replace: true });
-    } catch (err) {
-      setDeleteAccountMsg(apiErrorMessage(err));
+    } else {
+      setDeleteAccountMsg(
+        (result.payload as string) || "Error al eliminar la cuenta.",
+      );
     }
   };
 

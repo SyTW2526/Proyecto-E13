@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { User, AuthState } from "@/types/auth/auth";
-import { api, setAuthToken, apiErrorMessage } from "@/lib/api";
+import { api, apiErrorMessage } from "@/lib/api";
 
 const getUserFromLocalStorage = () => {
   try {
@@ -19,10 +19,12 @@ const initialState: AuthState = {
   isInitializing: false,
 };
 
-// Async Thunks
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
+  async (
+    { email, password }: { email: string; password: string },
+    { rejectWithValue },
+  ) => {
     try {
       const { data } = await api.post<{
         token: string;
@@ -32,12 +34,19 @@ export const loginUser = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(apiErrorMessage(err));
     }
-  }
+  },
 );
 
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async ({ name, email, password }: { name: string; email: string; password: string }, { rejectWithValue }) => {
+  async (
+    {
+      name,
+      email,
+      password,
+    }: { name: string; email: string; password: string },
+    { rejectWithValue },
+  ) => {
     try {
       await api.post("/auth/register", { name, email, password });
       const { data } = await api.post<{
@@ -48,7 +57,7 @@ export const registerUser = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(apiErrorMessage(err));
     }
-  }
+  },
 );
 
 export const loginWithGoogleUser = createAsyncThunk(
@@ -63,7 +72,43 @@ export const loginWithGoogleUser = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(apiErrorMessage(err));
     }
-  }
+  },
+);
+
+export const updateUserProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (updates: Partial<User>, { rejectWithValue }) => {
+    try {
+      const { data } = await api.patch<User>("/users/me", updates);
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const changeUserPassword = createAsyncThunk(
+  "auth/changePassword",
+  async (passwordData: any, { rejectWithValue }) => {
+    try {
+      await api.put("/auth/password", passwordData);
+      return true;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const deleteUserAccount = createAsyncThunk(
+  "auth/deleteAccount",
+  async (_, { rejectWithValue }) => {
+    try {
+      await api.delete("/users/me");
+      return true;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
 );
 
 const authSlice = createSlice({
@@ -76,19 +121,9 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.isLoading = false;
       state.error = null;
-      setAuthToken();
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-    },
-    updateUser: (state, action: PayloadAction<Partial<User>>) => {
-      if (state.user) {
-        state.user = { ...state.user, ...action.payload };
-        localStorage.setItem("user", JSON.stringify(state.user));
-      }
     },
   },
   extraReducers: (builder) => {
-    // Login
     builder
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
@@ -99,9 +134,6 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        setAuthToken(action.payload.token);
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
-        localStorage.setItem("token", action.payload.token);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -109,7 +141,6 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       });
 
-    // Register
     builder
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
@@ -120,9 +151,6 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        setAuthToken(action.payload.token);
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
-        localStorage.setItem("token", action.payload.token);
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -130,7 +158,6 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       });
 
-    // Google Login
     builder
       .addCase(loginWithGoogleUser.pending, (state) => {
         state.isLoading = true;
@@ -141,19 +168,61 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        setAuthToken(action.payload.token);
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
-        localStorage.setItem("token", action.payload.token);
       })
       .addCase(loginWithGoogleUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
         state.isAuthenticated = false;
       });
+
+    builder
+      .addCase(updateUserProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (state.user) {
+          state.user = { ...state.user, ...action.payload };
+        }
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    builder
+      .addCase(changeUserPassword.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(changeUserPassword.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(changeUserPassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    builder
+      .addCase(deleteUserAccount.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(deleteUserAccount.fulfilled, (state) => {
+        state.isLoading = false;
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(deleteUserAccount.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const { logout, updateUser } = authSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;
 export const selectUser = (state: { auth: AuthState }) => state.auth.user;
 export const selectIsAuthenticated = (state: { auth: AuthState }) =>

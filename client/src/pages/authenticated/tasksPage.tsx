@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useTasks } from "@/hooks/useTasks";
+import { useLists } from "@/hooks/useLists";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { FilterableList } from "@/components/tasks/FilterableList";
@@ -15,6 +18,14 @@ export default function TasksPage() {
     handleListFilter,
     accessibleLists,
   } = useTaskFilters();
+
+  const { fetchAllTasks, isLoading } = useTasks();
+  const { fetchAllLists, isLoading: isLoadingLists } = useLists();
+
+  useEffect(() => {
+    fetchAllTasks();
+    fetchAllLists();
+  }, []);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return tasksPageLabels.taskCard.noDate;
@@ -36,11 +47,17 @@ export default function TasksPage() {
                 {tasksPageLabels.title}
               </h1>
               <p className="text-muted-foreground mt-2">
-                {displayTasks.length}{" "}
-                {displayTasks.length === 1
-                  ? tasksPageLabels.taskCount.singular
-                  : tasksPageLabels.taskCount.plural}{" "}
-                {tasksPageLabels.taskCount.suffix}
+                {isLoading ? (
+                  <span className="inline-block h-4 w-24 bg-muted rounded animate-pulse" />
+                ) : (
+                  <>
+                    {displayTasks.length}{" "}
+                    {displayTasks.length === 1
+                      ? tasksPageLabels.taskCount.singular
+                      : tasksPageLabels.taskCount.plural}{" "}
+                    {tasksPageLabels.taskCount.suffix}
+                  </>
+                )}
               </p>
             </div>
             <div className="flex gap-2">
@@ -63,7 +80,20 @@ export default function TasksPage() {
           </div>
         </div>
 
-        {displayTasks.length === 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="rounded-md border p-4 h-[160px] animate-pulse bg-muted/20"
+              >
+                <div className="h-6 w-1/3 bg-muted rounded mb-4" />
+                <div className="h-4 w-2/3 bg-muted rounded mb-2" />
+                <div className="h-4 w-1/2 bg-muted rounded" />
+              </div>
+            ))}
+          </div>
+        ) : displayTasks.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
               {tasksPageLabels.emptyState}
@@ -96,6 +126,7 @@ export default function TasksPage() {
           onItemClick={handleListFilter}
           emptyMessage={tasksPageLabels.sidebar.emptyState}
           icon={tasksPageLabels.createButtons.list.icon}
+          isLoading={isLoadingLists}
         />
       </aside>
     </div>

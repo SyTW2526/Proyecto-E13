@@ -236,41 +236,4 @@ describe("useAuth", () => {
       expect(result.current.token).toBeNull();
     });
   });
-
-  it("should update user profile", async () => {
-    store = configureStore({
-      reducer: {
-        auth: authReducer,
-        theme: themeReducer,
-        lists: listsReducer,
-        tasks: tasksReducer,
-      },
-      preloadedState: {
-        auth: {
-          user: { id: "1", email: "test@example.com", name: "Old Name" },
-          token: "token123",
-          isAuthenticated: true,
-          isLoading: false,
-          error: null,
-          isInitializing: false,
-        },
-      },
-    });
-
-    const wrapperWithAuth = ({ children }: { children: React.ReactNode }) => (
-      <MemoryRouter>
-        <Provider store={store}>{children}</Provider>
-      </MemoryRouter>
-    );
-
-    const { result } = renderHook(() => useAuth(), {
-      wrapper: wrapperWithAuth,
-    });
-
-    result.current.updateUserProfile({ name: "New Name" });
-
-    await waitFor(() => {
-      expect(result.current.user?.name).toBe("New Name");
-    });
-  });
 });

@@ -13,6 +13,7 @@ interface FilterableListProps {
   onItemClick: (id: string | null) => void;
   emptyMessage: string;
   icon: string;
+  isLoading?: boolean;
 }
 
 export function FilterableList({
@@ -22,12 +23,23 @@ export function FilterableList({
   onItemClick,
   emptyMessage,
   icon,
+  isLoading,
 }: FilterableListProps) {
   return (
     <div>
       <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
       <div className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2">
-        {items.length === 0 ? (
+        {isLoading ? (
+          [...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-2 p-3 rounded-md border h-[52px] animate-pulse bg-muted/20"
+            >
+              <div className="h-5 w-5 bg-muted rounded-full" />
+              <div className="h-4 w-2/3 bg-muted rounded" />
+            </div>
+          ))
+        ) : items.length === 0 ? (
           <p className="text-sm text-muted-foreground">{emptyMessage}</p>
         ) : (
           items.map((item) => (

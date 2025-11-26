@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import type { List, ListsState, ListShare } from "@/types/tasks-system/list";
+import { api, apiErrorMessage } from "@/lib/api";
 
 const initialState: ListsState = {
   lists: [],
@@ -7,6 +8,58 @@ const initialState: ListsState = {
   isLoading: false,
   error: null,
 };
+
+// Async Thunks
+export const fetchLists = createAsyncThunk(
+  "lists/fetchLists",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get<List[]>("/lists");
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const createList = createAsyncThunk(
+  "lists/createList",
+  async (listData: Partial<List>, { rejectWithValue }) => {
+    try {
+      const { data } = await api.post<List>("/lists", listData);
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const updateList = createAsyncThunk(
+  "lists/updateList",
+  async (
+    { id, ...updates }: Partial<List> & { id: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const { data } = await api.patch<List>(`/lists/${id}`, updates);
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const deleteList = createAsyncThunk(
+  "lists/deleteList",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await api.delete(`/lists/${id}`);
+      return id;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
 
 const listsSlice = createSlice({
   name: "lists",
@@ -19,32 +72,7 @@ const listsSlice = createSlice({
       state.error = action.payload;
       state.isLoading = false;
     },
-    setLists: (state, action: PayloadAction<List[]>) => {
-      state.lists = action.payload;
-      state.isLoading = false;
-      state.error = null;
-    },
-    addList: (state, action: PayloadAction<List>) => {
-      state.lists.unshift(action.payload);
-      state.error = null;
-    },
-    updateList: (
-      state,
-      action: PayloadAction<Partial<List> & { id: string }>,
-    ) => {
-      const index = state.lists.findIndex((l) => l.id === action.payload.id);
-      if (index !== -1) {
-        state.lists[index] = { ...state.lists[index], ...action.payload };
-      }
-      state.error = null;
-    },
-    deleteList: (state, action: PayloadAction<string>) => {
-      state.lists = state.lists.filter((list) => list.id !== action.payload);
-      if (state.selectedListId === action.payload) {
-        state.selectedListId = null;
-      }
-      state.error = null;
-    },
+
     setSelectedList: (state, action: PayloadAction<string | null>) => {
       state.selectedListId = action.payload;
     },
@@ -84,15 +112,82 @@ const listsSlice = createSlice({
     },
     resetListsState: () => initialState,
   },
+  extraReducers: (builder) => {
+    // Fetch Lists
+    builder
+      .addCase(fetchLists.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchLists.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.lists = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchLists.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Create List
+    builder
+      .addCase(createList.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(createList.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.lists.unshift(action.payload);
+        state.error = null;
+      })
+      .addCase(createList.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Update List
+    builder
+      .addCase(updateList.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateList.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const index = state.lists.findIndex((l) => l.id === action.payload.id);
+        if (index !== -1) {
+          state.lists[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(updateList.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Delete List
+    builder
+      .addCase(deleteList.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(deleteList.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.lists = state.lists.filter((list) => list.id !== action.payload);
+        if (state.selectedListId === action.payload) {
+          state.selectedListId = null;
+        }
+        state.error = null;
+      })
+      .addCase(deleteList.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+  },
 });
 
 export const {
   setLoading,
   setError,
-  setLists,
-  addList,
-  updateList,
-  deleteList,
   setSelectedList,
   addListShare,
   updateListShare,
@@ -122,5 +217,5 @@ export const selectOwnedLists =
 export const selectSharedLists =
   (userId: string) => (state: { lists: ListsState }) =>
     state.lists.lists.filter((list) =>
-      list.shares.some((share) => share.userId === userId),
+      list.shares?.some((share) => share.userId === userId),
     );

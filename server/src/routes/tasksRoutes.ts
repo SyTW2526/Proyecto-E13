@@ -2,8 +2,6 @@ import { Router } from "express";
 import {
   createTask,
   getUserTasks,
-  // getTaskById,
-  // updateTask,
   deleteTask,
 } from "../controllers/tasksController";
 import { authenticate } from "../middleware/authMiddleware";

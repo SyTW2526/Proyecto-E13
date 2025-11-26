@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLists } from "@/hooks/useLists";
-import { useAuth } from "@/hooks/useAuth";
 import { taskFormLabels } from "@/config/taskConfig";
 import type { List } from "@/types/tasks-system/list";
 
@@ -30,7 +29,6 @@ type CreateListDialogUnifiedProps = ControlledProps | StandaloneProps;
 function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
   const [formData, setFormData] = useState({ name: "", description: "" });
   const { createList } = useLists();
-  const { user } = useAuth();
 
   const isControlled = props.mode === "controlled";
 
@@ -38,16 +36,11 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
 
   // Handler para modo standalone
   const handleStandaloneSubmit = () => {
-    if (!formData.name.trim() || !user?.id) return false;
+    if (!formData.name.trim()) return false;
 
     createList({
-      id: crypto.randomUUID(),
       name: formData.name.trim(),
       description: formData.description.trim() || undefined,
-      ownerId: user.id,
-      createdAt: new Date().toISOString(),
-      tasks: [],
-      shares: [],
     });
 
     resetForm();

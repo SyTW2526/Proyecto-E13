@@ -12,7 +12,7 @@ export default function ThemeToggle() {
   const next = theme === "dark" ? "light" : "dark";
   return (
     <Button
-      leftIcon={next === "dark" ? "IconSun" : "IconMoon"}
+      leftIcon={next === "dark" ? "IconMoon" : "IconSun"}
       aria-label={`Cambiar a tema ${next}`}
       onClick={() => setTheme(next)}
     />
