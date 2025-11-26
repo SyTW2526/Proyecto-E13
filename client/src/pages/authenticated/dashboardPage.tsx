@@ -45,10 +45,10 @@ export default function DashboardPage() {
     "Tareas Completadas": { details: weekStats.completedTasks },
     "Próximas Tareas": { details: weekStats.upcomingTasks },
     "Tareas Por Lista": {
-        details:
-          weekStats.tasksPerList
-            .map((item) => `${item.listName}: ${item.count} tareas`)
-            .join(", ") || "Sin tareas",
+      details:
+        weekStats.tasksPerList
+          .map((item) => `${item.listName}: ${item.count} tareas`)
+          .join(", ") || "Sin tareas",
       // chartComponent: (
       //   <ProgressChart data={tasksPerListData} config={tasksPerListConfig} />
       // ),

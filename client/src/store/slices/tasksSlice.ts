@@ -220,9 +220,7 @@ export const selectFilteredTasks = (state: { tasks: TasksState }) => {
   }
 
   if (filters.listId) {
-    filtered = filtered.filter(
-      (task) => task.listId === filters.listId,
-    );
+    filtered = filtered.filter((task) => task.listId === filters.listId);
   }
 
   if (filters.priority !== "all") {

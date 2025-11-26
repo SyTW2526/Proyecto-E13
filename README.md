@@ -1,18 +1,85 @@
 # Gestor de Tareas Colaborativo
 
-Aplicación fullstack para la gestión colaborativa de tareas.
+Aplicación Fullstack colaborativa para crear, organizar y compartir tareas de forma visual y sencilla, combinando el estilo de _Google Tasks_ y _Trello_.
 
 ## Autores
 
-[![Integrante2](https://img.shields.io/badge/Laura%20Álvarez%20Zamora-alu0101349824-white?style=for-the-badge)](https://github.com/alu0101349824)
-[![Integrante1](https://img.shields.io/badge/Tomás%20Pino%20Pérez-alu0101474311-white?style=for-the-badge)](https://github.com/tomas2p)
+[![Integrante1](https://img.shields.io/badge/Laura%20Álvarez%20Zamora-alu0101349824-white?style=for-the-badge)](https://github.com/alu0101349824)
+[![Integrante2](https://img.shields.io/badge/Tomás%20Pino%20Pérez-alu0101474311-white?style=for-the-badge)](https://github.com/tomas2p)
 [![Integrante3](https://img.shields.io/badge/Joel%20Saavedra%20Páez-alu0101437415-white?style=for-the-badge)](https://github.com/Joelsaav)
+
+## Insignias de estado
+
+[![CI Tests (Client)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-client.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-client.yml)
+[![CI Tests (Server)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-server.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-server.yml)
+
+---
 
 ## Sprint 1 - Configuración Inicial y Primeros Pasos
 
-- Configuración del proyecto(backend, frontend y base de datos(Prisma))
-- Gestión de usuarios (registro, inicio de sesión)
-- Primeros endpoints
+- Configurar backend
+- Configurar frontend
+- Configurar base de datos local–remota (Prisma)
+- Crear modelos Prisma
+- Autenticación JWT
+- Frontend Login/Registro
+- Endpoints usuario
+- Endpoint página de inicio
+
+![Sprint 1](./docs/Images/sprint1.png)
+
+## Sprint 2 – Estructura Visual y Validación
+
+- Crear header
+- Crear footer
+- Schema de datos para validación con Zod en backend
+- Middlewares de validación con Zod en backend
+- Autenticación JWT (completada)
+- Frontend Login/Registro (completado)
+- Diseño frontend del BentoGrid de la página principal
+
+![Sprint 2](./docs/Images/sprint2.png)
+
+## Sprint 3 – Integración Visual y Estado
+
+- Manejo de estados con Redux
+- Implementación de BentoGrid
+- Endpoints settings
+- Frontend settings
+- Integrar Google OAuth
+- **Quedaron pendientes para el siguiente sprint:**
+  - Middlewares de validación con Zod en backend
+  - Diseño frontend del Bento Grid de la página principal
+
+![Sprint 3](./docs/Images/sprint3.png)
+
+## Sprint 4 – Tests y Funcionalidades Clave
+
+- Frontend página de tareas
+- Tests unitarios frontend
+- Tests E2E – Selenium
+- Tests unitarios backend
+- Manejo de errores a usuario
+- Funciones de filtrado para dashboard resumen
+- Validación Zod frontend
+
+![Sprint 4](./docs/Images/sprint4.png)
+
+## Sprint 5 – Finalización de Funcionalidades
+
+- Filtros de búsqueda de tareas
+- Colaboración de usuarios en tareas
+- Notificaciones
+- Integración continua
+- Permisos listas y tareas
+- Implementación página de tareas
+- Terminar de implementar filtros Dashboard
+- Refactorizar modelos (quitar categorías)
+- _Inconveniente:_ No se pudo completar la integración con Coveralls debido a falta de permisos para hacer el repositorio público. Solicitud de acceso pendiente por parte de la organización de la asignatura.
+
+![Sprint 5](./docs/Images/sprint5.png)
+
+---
 
 ## Stack Tecnológico
 
