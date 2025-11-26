@@ -4,6 +4,7 @@ import NavigationMenuWithActiveItem from "@/components/customized/navigation-men
 import ThemeToggle from "@/components/themeToggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import {
   Sheet,
   SheetContent,
@@ -47,6 +48,10 @@ export default function AppMenubar() {
           <div className="flex items-center gap-4">
             {isAuthenticated && (
               <>
+                {/* Campana de notificaciones (desktop y móvil) */}
+                <NotificationBell />
+
+                {/* Desktop: menú de usuario */}
                 <div className="hidden md:flex md:items-center">
                   <DropdownMenuWithIcon
                     onLogout={handleLogout}

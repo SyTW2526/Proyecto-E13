@@ -14,7 +14,9 @@ interface ControlledProps {
   mode: "controlled";
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreateList: (list: Omit<List, "id" | "createdAt" | "tasks" | "shares">) => void;
+  onCreateList: (
+    list: Omit<List, "id" | "createdAt" | "tasks" | "shares">,
+  ) => void;
 }
 
 // Props para modo standalone (usado como componente independiente)

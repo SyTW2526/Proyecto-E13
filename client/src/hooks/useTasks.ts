@@ -47,7 +47,12 @@ import {
   selectAccessibleTasksByList,
 } from "@/store/slices/permissionsSelectors";
 import type { SharePermission } from "@/types/permissions";
-import type { Task, TaskPriority, TaskStatus, TaskShare } from "@/types/tasks-system/task";
+import type {
+  Task,
+  TaskPriority,
+  TaskStatus,
+  TaskShare,
+} from "@/types/tasks-system/task";
 
 export function useTasks(listId?: string) {
   const dispatch = useAppDispatch();
@@ -61,9 +66,7 @@ export function useTasks(listId?: string) {
   const sorting = useAppSelector(selectTaskSorting);
   const filteredTasks = useAppSelector(selectFilteredTasks);
   const accessibleTasks = useAppSelector(selectAccessibleTasks);
-  const tasksByList = listId
-    ? useAppSelector(selectTasksByListId(listId))
-    : [];
+  const tasksByList = listId ? useAppSelector(selectTasksByListId(listId)) : [];
   const accessibleTasksByList = listId
     ? useAppSelector(selectAccessibleTasksByList(listId))
     : [];
