@@ -78,6 +78,7 @@ export function TaskFormFields({
         <Input
           id="dueDate"
           type="date"
+          min={new Date(Date.now()).toISOString().split("T")[0]}
           value={formData.dueDate}
           onChange={(e) => updateField("dueDate", e.target.value)}
         />

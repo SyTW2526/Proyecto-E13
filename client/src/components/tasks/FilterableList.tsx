@@ -1,5 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
+import { tasksPageLabels } from "@/config/taskConfig";
+import { CreateListDialogStandalone } from "../createDialogs/createListDialog";
+import { Button } from "@/components/ui/button";
 
 interface FilterableListProps {
   title: string;
@@ -27,8 +30,16 @@ export function FilterableList({
 }: FilterableListProps) {
   return (
     <div>
-      <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
-      <div className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-2">
+      <div className="flex flex-row items-center justify-between gap-4">
+        <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
+        <div className="flex gap-2">
+          {/* Boton de crear listas */}
+          <CreateListDialogStandalone>
+            <Button leftIcon={tasksPageLabels.createButtons.list.icon} />
+          </CreateListDialogStandalone>
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:flex sm:flex-col sm:gap-2">
         {isLoading ? (
           [...Array(3)].map((_, i) => (
             <div
@@ -48,21 +59,40 @@ export function FilterableList({
               onClick={() =>
                 onItemClick(selectedId === item.id ? null : item.id)
               }
-              className={`flex items-center justify-between gap-2 p-3 rounded-md cursor-pointer transition-colors ${
+              className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border ${
                 selectedId === item.id
-                  ? "bg-primary/20 dark:bg-primary/30 hover:bg-primary/25 dark:hover:bg-primary/35"
-                  : "bg-muted bg-opacity-15 dark:bg-opacity-25 hover:bg-opacity-25 dark:hover:bg-opacity-35"
+                  ? "bg-primary/10 text-primary font-medium border-transparent"
+                  : "bg-card/50 dark:bg-card/20 hover:bg-muted/50 text-muted-foreground hover:text-foreground border-transparent dark:border-border/30"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <Icon as={icon} size={20} />
-                <span className="font-medium">
+              <div className="flex items-center gap-3 overflow-hidden">
+                <Icon
+                  as={icon}
+                  size={18}
+                  className={
+                    selectedId === item.id
+                      ? "text-primary"
+                      : "text-muted-foreground group-hover:text-foreground"
+                  }
+                />
+                <span className="font-medium truncate">
                   {item.name}
                   {item.description && ":"}
                 </span>
-                <p>{item.description}</p>
+                {item.description && (
+                  <p className="text-xs text-muted-foreground truncate hidden sm:block">
+                    {item.description}
+                  </p>
+                )}
               </div>
-              <Badge className="px-1.5 rounded-full bg-foreground/7 text-foreground">
+              <Badge
+                variant="secondary"
+                className={`ml-auto px-1.5 min-w-[1.5rem] justify-center rounded-full ${
+                  selectedId === item.id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
                 {item.count}
               </Badge>
             </div>
