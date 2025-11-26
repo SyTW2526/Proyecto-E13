@@ -155,9 +155,9 @@ export const changePassword = async (req: Request, res: Response) => {
       data: { password: hashedPassword },
     });
 
-    res.status(200).json({ message: "Password changed successfully" });
+    return res.status(200).json({ message: "Password changed successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
   return;
 };

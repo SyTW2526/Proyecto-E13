@@ -273,43 +273,4 @@ describe("useAuth", () => {
       expect(result.current.user?.name).toBe("New Name");
     });
   });
-
-  it("should clear auth error", async () => {
-    store = configureStore({
-      reducer: {
-        auth: authReducer,
-        theme: themeReducer,
-        lists: listsReducer,
-        tasks: tasksReducer,
-      },
-      preloadedState: {
-        auth: {
-          user: null,
-          token: null,
-          isAuthenticated: false,
-          isLoading: false,
-          error: "Some error",
-          isInitializing: false,
-        },
-      },
-    });
-
-    const wrapperWithError = ({ children }: { children: React.ReactNode }) => (
-      <MemoryRouter>
-        <Provider store={store}>{children}</Provider>
-      </MemoryRouter>
-    );
-
-    const { result } = renderHook(() => useAuth(), {
-      wrapper: wrapperWithError,
-    });
-
-    expect(result.current.error).toBe("Some error");
-
-    result.current.clearAuthError();
-
-    await waitFor(() => {
-      expect(result.current.error).toBeNull();
-    });
-  });
 });

@@ -52,7 +52,6 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     loginWithGoogle,
     login,
     register,
-    clearAuthError,
   } = useAuth();
 
   const error = localError || authError;
@@ -66,10 +65,9 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
 
   useEffect(() => {
     if (forceMode) setMode(forceMode);
-    clearAuthError();
     setLocalError(null);
     setGoogleBtnRendered(false);
-  }, [forceMode, clearAuthError]);
+  }, [forceMode]);
 
   useEffect(() => {
     const checkGisLoaded = () => {
@@ -154,7 +152,6 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLocalError(null);
-    clearAuthError();
     setOk(null);
 
     if (mode === "register") {
@@ -274,7 +271,6 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     type="button"
                     onClick={() => {
                       setMode(mode === "login" ? "register" : "login");
-                      clearAuthError();
                     }}
                     disabled={isLoading}
                     className="w-full"

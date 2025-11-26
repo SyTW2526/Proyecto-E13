@@ -23,7 +23,6 @@ describe("ProtectedRoute", () => {
       loginWithGoogle: vi.fn(),
       signOut: vi.fn(),
       updateUserProfile: vi.fn(),
-      clearAuthError: vi.fn(),
     });
 
     renderWithProviders(
@@ -49,7 +48,6 @@ describe("ProtectedRoute", () => {
       loginWithGoogle: vi.fn(),
       signOut: vi.fn(),
       updateUserProfile: vi.fn(),
-      clearAuthError: vi.fn(),
     });
 
     renderWithProviders(

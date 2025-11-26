@@ -29,107 +29,59 @@ export const getProfile = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json(user);
+    return res.status(200).json(user);
   } catch (error) {
     console.error("Error getting profile:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const updateName = async (req: Request, res: Response) => {
+export const updateProfile = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
-    const { name } = req.body;
+    const { name, emailNotifications, pushNotifications } = req.body;
 
     if (!userId) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: { name },
-      select: {
-        id: true,
-        name: true,
-      },
-    });
-
-    res.status(200).json(user);
-  } catch (error) {
-    console.error("Error updating name:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-export const updateEmailNotificationSetting = async (
-  req: Request,
-  res: Response,
-) => {
-  try {
-    const userId = req.user?.id;
-    const { emailNotifications } = req.body as {
+    const dataToUpdate: {
+      name?: string;
       emailNotifications?: boolean;
-    };
-
-    if (!userId) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    if (typeof emailNotifications !== "boolean") {
-      return res
-        .status(400)
-        .json({ error: "emailNotifications must be a boolean" });
-    }
-
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: { emailNotifications },
-      select: {
-        id: true,
-        emailNotifications: true,
-      },
-    });
-
-    res.status(200).json(user);
-  } catch (error) {
-    console.error("Error updating email notification setting:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-export const updatePushNotificationSetting = async (
-  req: Request,
-  res: Response,
-) => {
-  try {
-    const userId = req.user?.id;
-    const { pushNotifications } = req.body as {
       pushNotifications?: boolean;
-    };
+    } = {};
+    
+    if (name !== undefined) dataToUpdate.name = name;
+    if (emailNotifications !== undefined)
+      dataToUpdate.emailNotifications = emailNotifications;
+    if (pushNotifications !== undefined)
+      dataToUpdate.pushNotifications = pushNotifications;
 
-    if (!userId) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    if (typeof pushNotifications !== "boolean") {
-      return res
-        .status(400)
-        .json({ error: "pushNotifications must be a boolean" });
+    if (Object.keys(dataToUpdate).length === 0) {
+      return res.status(400).json({ error: "No fields to update" });
     }
 
     const user = await prisma.user.update({
       where: { id: userId },
-      data: { pushNotifications },
+      data: dataToUpdate,
       select: {
         id: true,
+        email: true,
+        name: true,
+        image: true,
+        emailNotifications: true,
         pushNotifications: true,
+        googleSub: true,
       },
     });
 
-    res.status(200).json(user);
+    return res.status(200).json({
+      ...user,
+      isGoogleAuthUser: Boolean(user.googleSub),
+    });
   } catch (error) {
-    console.error("Error updating push notification setting:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error updating profile:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -143,7 +95,7 @@ export const deleteAccount = async (req: Request, res: Response) => {
 
     await prisma.user.delete({ where: { id: userId } });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Account deleted successfully",
     });
   } catch (error) {
@@ -153,6 +105,6 @@ export const deleteAccount = async (req: Request, res: Response) => {
       }
     }
     console.error("Error deleting account:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };

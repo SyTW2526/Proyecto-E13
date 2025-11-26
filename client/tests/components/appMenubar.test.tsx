@@ -54,7 +54,6 @@ describe("AppMenubar", () => {
       loginWithGoogle: vi.fn(),
       signOut: mockSignOut,
       updateUserProfile: vi.fn(),
-      clearAuthError: vi.fn(),
     });
 
     renderWithProviders(
@@ -80,7 +79,6 @@ describe("AppMenubar", () => {
       loginWithGoogle: vi.fn(),
       signOut: mockSignOut,
       updateUserProfile: vi.fn(),
-      clearAuthError: vi.fn(),
     });
 
     mockNavigate = newNavigate;
@@ -109,7 +107,6 @@ describe("AppMenubar", () => {
       loginWithGoogle: vi.fn(),
       signOut: mockSignOut,
       updateUserProfile: vi.fn(),
-      clearAuthError: vi.fn(),
     });
 
     renderWithProviders(
@@ -134,7 +131,6 @@ describe("AppMenubar", () => {
       loginWithGoogle: vi.fn(),
       signOut: mockSignOut,
       updateUserProfile: vi.fn(),
-      clearAuthError: vi.fn(),
     });
 
     renderWithProviders(
@@ -160,7 +156,6 @@ describe("AppMenubar", () => {
       loginWithGoogle: vi.fn(),
       signOut: mockSignOut,
       updateUserProfile: vi.fn(),
-      clearAuthError: vi.fn(),
     });
 
     mockNavigate = newNavigate;

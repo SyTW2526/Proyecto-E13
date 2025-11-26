@@ -41,14 +41,19 @@ export const changePasswordSchema = z.object({
 });
 
 // User
-export const updateNameSchema = z.object({
+export const updateProfileSchema = z.object({
+  name: z.string().min(1, "El nombre es obligatorio").optional(),
+  emailNotifications: z.boolean().optional(),
+  pushNotifications: z.boolean().optional(),
+});
+
+// Task
+export const createTaskSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
-});
-
-export const updateEmailNotificationSettingSchema = z.object({
-  emailNotifications: z.boolean(),
-});
-
-export const updatePushNotificationSettingSchema = z.object({
-  pushNotifications: z.boolean(),
+  description: z.string().optional(),
+  status: TaskStatus.optional(),
+  listId: z.string(),
+  priority: Priority.optional(),
+  dueDate: z.date().optional(),
+  favorite: z.boolean().optional(),
 });

@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import authReducer, {
-  loginSuccess,
-  loginRequest,
-  loginFailure,
+  loginUser,
+  registerUser,
+  loginWithGoogleUser,
   logout,
   updateUser,
-  clearError,
   selectUser,
   selectIsAuthenticated,
   selectToken,
@@ -18,6 +17,10 @@ import type { User } from "@/types/auth/auth";
 
 vi.mock("@/lib/api", () => ({
   setAuthToken: vi.fn(),
+  api: {
+    post: vi.fn(),
+  },
+  apiErrorMessage: vi.fn(),
 }));
 
 describe("authSlice", () => {
@@ -50,16 +53,20 @@ describe("authSlice", () => {
       });
     });
 
-    it("should handle loginRequest action", () => {
-      const action = loginRequest();
+    // Login Thunk
+    it("should handle loginUser.pending", () => {
+      const action = { type: loginUser.pending.type };
       const state = authReducer(initialState, action);
 
       expect(state.isLoading).toBe(true);
       expect(state.error).toBeNull();
     });
 
-    it("should handle loginSuccess action", () => {
-      const action = loginSuccess({ user: mockUser, token: "token123" });
+    it("should handle loginUser.fulfilled", () => {
+      const action = {
+        type: loginUser.fulfilled.type,
+        payload: { user: mockUser, token: "token123" },
+      };
       const state = authReducer(initialState, action);
 
       expect(state.user).toEqual(mockUser);
@@ -71,15 +78,86 @@ describe("authSlice", () => {
       expect(localStorage.getItem("user")).toBe(JSON.stringify(mockUser));
     });
 
-    it("should handle loginFailure action", () => {
-      const action = loginFailure("Invalid credentials");
+    it("should handle loginUser.rejected", () => {
+      const action = {
+        type: loginUser.rejected.type,
+        payload: "Invalid credentials",
+      };
       const state = authReducer(initialState, action);
 
       expect(state.isLoading).toBe(false);
       expect(state.error).toBe("Invalid credentials");
       expect(state.isAuthenticated).toBe(false);
-      expect(state.user).toBeNull();
-      expect(state.token).toBeNull();
+    });
+
+    // Register Thunk
+    it("should handle registerUser.pending", () => {
+      const action = { type: registerUser.pending.type };
+      const state = authReducer(initialState, action);
+
+      expect(state.isLoading).toBe(true);
+      expect(state.error).toBeNull();
+    });
+
+    it("should handle registerUser.fulfilled", () => {
+      const action = {
+        type: registerUser.fulfilled.type,
+        payload: { user: mockUser, token: "token123" },
+      };
+      const state = authReducer(initialState, action);
+
+      expect(state.user).toEqual(mockUser);
+      expect(state.token).toBe("token123");
+      expect(state.isAuthenticated).toBe(true);
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBeNull();
+    });
+
+    it("should handle registerUser.rejected", () => {
+      const action = {
+        type: registerUser.rejected.type,
+        payload: "Registration failed",
+      };
+      const state = authReducer(initialState, action);
+
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBe("Registration failed");
+      expect(state.isAuthenticated).toBe(false);
+    });
+
+    // Google Login Thunk
+    it("should handle loginWithGoogleUser.pending", () => {
+      const action = { type: loginWithGoogleUser.pending.type };
+      const state = authReducer(initialState, action);
+
+      expect(state.isLoading).toBe(true);
+      expect(state.error).toBeNull();
+    });
+
+    it("should handle loginWithGoogleUser.fulfilled", () => {
+      const action = {
+        type: loginWithGoogleUser.fulfilled.type,
+        payload: { user: mockUser, token: "token123" },
+      };
+      const state = authReducer(initialState, action);
+
+      expect(state.user).toEqual(mockUser);
+      expect(state.token).toBe("token123");
+      expect(state.isAuthenticated).toBe(true);
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBeNull();
+    });
+
+    it("should handle loginWithGoogleUser.rejected", () => {
+      const action = {
+        type: loginWithGoogleUser.rejected.type,
+        payload: "Google login failed",
+      };
+      const state = authReducer(initialState, action);
+
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBe("Google login failed");
+      expect(state.isAuthenticated).toBe(false);
     });
 
     it("should handle logout action", () => {
@@ -127,18 +205,6 @@ describe("authSlice", () => {
       const state = authReducer(initialState, action);
 
       expect(state.user).toBeNull();
-    });
-
-    it("should handle clearError action", () => {
-      const errorState: AuthState = {
-        ...initialState,
-        error: "Some error",
-      };
-
-      const action = clearError();
-      const state = authReducer(errorState, action);
-
-      expect(state.error).toBeNull();
     });
   });
 

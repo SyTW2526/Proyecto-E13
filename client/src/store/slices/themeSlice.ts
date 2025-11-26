@@ -30,21 +30,11 @@ const themeSlice = createSlice({
         root.classList.remove("dark");
       }
     },
-    toggleTheme: (state) => {
-      const newTheme = state.theme === "dark" ? "light" : "dark";
-      state.theme = newTheme;
-      localStorage.setItem("theme", newTheme);
-      const root = document.documentElement;
-      if (newTheme === "dark") {
-        root.classList.add("dark");
-      } else {
-        root.classList.remove("dark");
-      }
-    },
+    
   },
 });
 
-export const { setTheme, toggleTheme } = themeSlice.actions;
+export const { setTheme } = themeSlice.actions;
 export default themeSlice.reducer;
 export const selectTheme = (state: { theme: ThemeState }) => state.theme.theme;
 export const selectIsDark = (state: { theme: ThemeState }) =>

@@ -7,9 +7,7 @@ import {
   loginSchema,
   googleAuthSchema,
   changePasswordSchema,
-  updateNameSchema,
-  updateEmailNotificationSettingSchema,
-  updatePushNotificationSettingSchema,
+  updateProfileSchema,
 } from "../src/schemas/validationSchemas";
 
 describe("Validation Schemas", () => {
@@ -240,75 +238,14 @@ describe("Validation Schemas", () => {
   });
 
   describe("User Schemas", () => {
-    describe("updateNameSchema", () => {
-      it("should accept valid name", () => {
-        const validData = { name: "John Doe" };
-        expect(updateNameSchema.parse(validData)).toEqual(validData);
-      });
-
-      it("should reject empty name", () => {
-        const invalidData = { name: "" };
-        expect(() => updateNameSchema.parse(invalidData)).toThrow(
-          "El nombre es obligatorio",
-        );
-      });
-
-      it("should reject missing name", () => {
-        expect(() => updateNameSchema.parse({})).toThrow();
-      });
-    });
-
-    describe("updateEmailNotificationSettingSchema", () => {
-      it("should accept true value", () => {
-        const validData = { emailNotifications: true };
-        expect(updateEmailNotificationSettingSchema.parse(validData)).toEqual(
-          validData,
-        );
-      });
-
-      it("should accept false value", () => {
-        const validData = { emailNotifications: false };
-        expect(updateEmailNotificationSettingSchema.parse(validData)).toEqual(
-          validData,
-        );
-      });
-
-      it("should reject non-boolean value", () => {
-        const invalidData = { emailNotifications: "true" };
-        expect(() =>
-          updateEmailNotificationSettingSchema.parse(invalidData),
-        ).toThrow();
-      });
-
-      it("should reject missing value", () => {
-        expect(() => updateEmailNotificationSettingSchema.parse({})).toThrow();
-      });
-    });
-
-    describe("updatePushNotificationSettingSchema", () => {
-      it("should accept true value", () => {
-        const validData = { pushNotifications: true };
-        expect(updatePushNotificationSettingSchema.parse(validData)).toEqual(
-          validData,
-        );
-      });
-
-      it("should accept false value", () => {
-        const validData = { pushNotifications: false };
-        expect(updatePushNotificationSettingSchema.parse(validData)).toEqual(
-          validData,
-        );
-      });
-
-      it("should reject non-boolean value", () => {
-        const invalidData = { pushNotifications: "true" };
-        expect(() =>
-          updatePushNotificationSettingSchema.parse(invalidData),
-        ).toThrow();
-      });
-
-      it("should reject missing value", () => {
-        expect(() => updatePushNotificationSettingSchema.parse({})).toThrow();
+    describe("updateProfileSchema", () => {
+      it("should accept valid profile data", () => {
+        const validData = {
+          name: "John Doe",
+          emailNotifications: true,
+          pushNotifications: false,
+        };
+        expect(updateProfileSchema.parse(validData)).toEqual(validData);
       });
     });
   });

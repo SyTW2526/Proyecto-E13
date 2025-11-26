@@ -8,11 +8,7 @@ vi.mock("../src/controllers/usersController", () => ({
   deleteAccount: vi.fn((req, res) =>
     res.status(200).json({ message: "Deleted" }),
   ),
-  updateName: vi.fn((req, res) => res.status(200).json({ message: "Updated" })),
-  updateEmailNotificationSetting: vi.fn((req, res) =>
-    res.status(200).json({ message: "Updated" }),
-  ),
-  updatePushNotificationSetting: vi.fn((req, res) =>
+  updateProfile: vi.fn((req, res) =>
     res.status(200).json({ message: "Updated" }),
   ),
 }));
@@ -29,9 +25,7 @@ vi.mock("../src/middleware/validationMiddleware", () => ({
 }));
 
 vi.mock("../src/schemas/validationSchemas", () => ({
-  updateNameSchema: {},
-  updateEmailNotificationSettingSchema: {},
-  updatePushNotificationSettingSchema: {},
+  updateProfileSchema: {},
 }));
 
 import usersRoutes from "../src/routes/usersRoutes";
@@ -73,41 +67,41 @@ describe("Users Routes", () => {
     });
   });
 
-  describe("PUT /users/me/name", () => {
-    it("should call updateName controller with authentication", async () => {
+  describe("PATCH /users/me name", () => {
+    it("should call updateProfile controller with authentication", async () => {
       const response = await request(app)
-        .put("/users/me/name")
+        .patch("/users/me")
         .set("Authorization", "Bearer token")
         .send({ name: "New Name" });
 
       expect(authMiddleware.authenticate).toHaveBeenCalled();
-      expect(usersController.updateName).toHaveBeenCalled();
+      expect(usersController.updateProfile).toHaveBeenCalled();
       expect(response.status).toBe(200);
     });
   });
 
-  describe("PUT /users/me/email-notifications", () => {
-    it("should call updateEmailNotificationSetting controller", async () => {
+  describe("PATCH /users/me email-notifications", () => {
+    it("should call updateProfile controller", async () => {
       const response = await request(app)
-        .put("/users/me/email-notifications")
+        .patch("/users/me")
         .set("Authorization", "Bearer token")
         .send({ emailNotifications: true });
 
       expect(authMiddleware.authenticate).toHaveBeenCalled();
-      expect(usersController.updateEmailNotificationSetting).toHaveBeenCalled();
+      expect(usersController.updateProfile).toHaveBeenCalled();
       expect(response.status).toBe(200);
     });
   });
 
-  describe("PUT /users/me/push-notifications", () => {
-    it("should call updatePushNotificationSetting controller", async () => {
+  describe("PATCH /users/me push-notifications", () => {
+    it("should call updateProfile controller", async () => {
       const response = await request(app)
-        .put("/users/me/push-notifications")
+        .patch("/users/me")
         .set("Authorization", "Bearer token")
         .send({ pushNotifications: false });
 
       expect(authMiddleware.authenticate).toHaveBeenCalled();
-      expect(usersController.updatePushNotificationSetting).toHaveBeenCalled();
+      expect(usersController.updateProfile).toHaveBeenCalled();
       expect(response.status).toBe(200);
     });
   });

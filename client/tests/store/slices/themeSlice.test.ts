@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import themeReducer, {
   setTheme,
-  toggleTheme,
   selectTheme,
   selectIsDark,
 } from "@/store/slices/themeSlice";
@@ -34,24 +33,9 @@ describe("themeSlice", () => {
       expect(document.documentElement.classList.contains("dark")).toBe(true);
     });
 
-    it("should handle toggleTheme action from light to dark", () => {
-      const action = toggleTheme();
-      const state = themeReducer(initialState, action);
+    
 
-      expect(state.theme).toBe("dark");
-      expect(localStorage.getItem("theme")).toBe("dark");
-      expect(document.documentElement.classList.contains("dark")).toBe(true);
-    });
-
-    it("should handle toggleTheme action from dark to light", () => {
-      const darkState: ThemeState = { theme: "dark" };
-      const action = toggleTheme();
-      const state = themeReducer(darkState, action);
-
-      expect(state.theme).toBe("light");
-      expect(localStorage.getItem("theme")).toBe("light");
-      expect(document.documentElement.classList.contains("dark")).toBe(false);
-    });
+    
 
     it("should update localStorage when theme changes", () => {
       const action = setTheme("dark");

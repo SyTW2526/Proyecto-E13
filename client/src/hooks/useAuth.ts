@@ -1,19 +1,17 @@
 import { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "./useRedux";
 import {
-  loginRequest,
-  loginSuccess,
-  loginFailure,
+  loginUser,
+  registerUser,
+  loginWithGoogleUser,
   logout,
   updateUser,
-  clearError,
   selectUser,
   selectIsAuthenticated,
   selectToken,
   selectAuthLoading,
   selectAuthError,
 } from "@/store/slices/authSlice";
-import { api, apiErrorMessage } from "@/lib/api";
 import type { User } from "@/types/auth/auth";
 
 export function useAuth() {
@@ -27,32 +25,11 @@ export function useAuth() {
 
   const login = useCallback(
     async (email: string, password: string) => {
-      dispatch(loginRequest());
       try {
-        const { data } = await api.post<{
-          token: string;
-          user: {
-            id: string;
-            email: string;
-            name: string;
-            image?: string;
-            emailNotifications?: boolean;
-            pushNotifications?: boolean;
-            isGoogleAuthUser?: boolean;
-          };
-        }>("/auth/login", { email, password });
-
-        dispatch(
-          loginSuccess({
-            user: data.user,
-            token: data.token,
-          }),
-        );
+        await dispatch(loginUser({ email, password })).unwrap();
         return { success: true };
       } catch (err) {
-        const errorMsg = apiErrorMessage(err);
-        dispatch(loginFailure(errorMsg));
-        return { success: false, error: errorMsg };
+        return { success: false, error: err as string };
       }
     },
     [dispatch],
@@ -60,33 +37,11 @@ export function useAuth() {
 
   const register = useCallback(
     async (name: string, email: string, password: string) => {
-      dispatch(loginRequest());
       try {
-        await api.post("/auth/register", { name, email, password });
-        const { data } = await api.post<{
-          token: string;
-          user: {
-            id: string;
-            email: string;
-            name: string;
-            image?: string;
-            emailNotifications?: boolean;
-            pushNotifications?: boolean;
-            isGoogleAuthUser?: boolean;
-          };
-        }>("/auth/login", { email, password });
-
-        dispatch(
-          loginSuccess({
-            user: data.user,
-            token: data.token,
-          }),
-        );
+        await dispatch(registerUser({ name, email, password })).unwrap();
         return { success: true };
-      } catch (err: unknown) {
-        const errorMsg = apiErrorMessage(err);
-        dispatch(loginFailure(errorMsg));
-        return { success: false, error: errorMsg };
+      } catch (err) {
+        return { success: false, error: err as string };
       }
     },
     [dispatch],
@@ -94,32 +49,11 @@ export function useAuth() {
 
   const loginWithGoogle = useCallback(
     async (idToken: string) => {
-      dispatch(loginRequest());
       try {
-        const { data } = await api.post<{
-          token: string;
-          user: {
-            id: string;
-            email: string;
-            name: string;
-            image?: string;
-            emailNotifications?: boolean;
-            pushNotifications?: boolean;
-            isGoogleAuthUser?: boolean;
-          };
-        }>("/auth/google", { idToken });
-
-        dispatch(
-          loginSuccess({
-            user: data.user,
-            token: data.token,
-          }),
-        );
+        await dispatch(loginWithGoogleUser(idToken)).unwrap();
         return { success: true };
-      } catch (err: unknown) {
-        const errorMsg = apiErrorMessage(err);
-        dispatch(loginFailure(errorMsg));
-        return { success: false, error: errorMsg };
+      } catch (err) {
+        return { success: false, error: err as string };
       }
     },
     [dispatch],
@@ -136,10 +70,6 @@ export function useAuth() {
     [dispatch],
   );
 
-  const clearAuthError = useCallback(() => {
-    dispatch(clearError());
-  }, [dispatch]);
-
   return {
     user,
     isAuthenticated,
@@ -151,6 +81,5 @@ export function useAuth() {
     loginWithGoogle,
     signOut,
     updateUserProfile,
-    clearAuthError,
   };
 }

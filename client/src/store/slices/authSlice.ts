@@ -1,16 +1,11 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import type { User, AuthState } from "@/types/auth/auth";
-import { setAuthToken } from "@/lib/api";
+import { api, setAuthToken, apiErrorMessage } from "@/lib/api";
 
-const getUserFromLocalStorage = (): User | null => {
+const getUserFromLocalStorage = () => {
   try {
-    const userStr = localStorage.getItem("user");
-    if (userStr && userStr !== "undefined") {
-      return JSON.parse(userStr);
-    }
-    return null;
-  } catch (error) {
-    console.error("Error al recuperar usuario de localStorage:", error);
+    return JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
     return null;
   }
 };
@@ -24,33 +19,57 @@ const initialState: AuthState = {
   isInitializing: false,
 };
 
+// Async Thunks
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
+    try {
+      const { data } = await api.post<{
+        token: string;
+        user: User;
+      }>("/auth/login", { email, password });
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  }
+);
+
+export const registerUser = createAsyncThunk(
+  "auth/register",
+  async ({ name, email, password }: { name: string; email: string; password: string }, { rejectWithValue }) => {
+    try {
+      await api.post("/auth/register", { name, email, password });
+      const { data } = await api.post<{
+        token: string;
+        user: User;
+      }>("/auth/login", { email, password });
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  }
+);
+
+export const loginWithGoogleUser = createAsyncThunk(
+  "auth/loginWithGoogle",
+  async (idToken: string, { rejectWithValue }) => {
+    try {
+      const { data } = await api.post<{
+        token: string;
+        user: User;
+      }>("/auth/google", { idToken });
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginSuccess: (
-      state,
-      action: PayloadAction<{ user: User; token: string }>,
-    ) => {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-      state.isAuthenticated = true;
-      state.isLoading = false;
-      state.error = null;
-      setAuthToken(action.payload.token);
-      localStorage.setItem("user", JSON.stringify(action.payload.user));
-    },
-    loginRequest: (state) => {
-      state.isLoading = true;
-      state.error = null;
-    },
-    loginFailure: (state, action: PayloadAction<string>) => {
-      state.isLoading = false;
-      state.error = action.payload;
-      state.isAuthenticated = false;
-      state.user = null;
-      state.token = null;
-    },
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -59,6 +78,7 @@ const authSlice = createSlice({
       state.error = null;
       setAuthToken();
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
@@ -66,20 +86,74 @@ const authSlice = createSlice({
         localStorage.setItem("user", JSON.stringify(state.user));
       }
     },
-    clearError: (state) => {
-      state.error = null;
-    },
+  },
+  extraReducers: (builder) => {
+    // Login
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        setAuthToken(action.payload.token);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("token", action.payload.token);
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+        state.isAuthenticated = false;
+      });
+
+    // Register
+    builder
+      .addCase(registerUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        setAuthToken(action.payload.token);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("token", action.payload.token);
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+        state.isAuthenticated = false;
+      });
+
+    // Google Login
+    builder
+      .addCase(loginWithGoogleUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginWithGoogleUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        setAuthToken(action.payload.token);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("token", action.payload.token);
+      })
+      .addCase(loginWithGoogleUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+        state.isAuthenticated = false;
+      });
   },
 });
 
-export const {
-  loginSuccess,
-  loginRequest,
-  loginFailure,
-  logout,
-  updateUser,
-  clearError,
-} = authSlice.actions;
+export const { logout, updateUser } = authSlice.actions;
 export default authSlice.reducer;
 export const selectUser = (state: { auth: AuthState }) => state.auth.user;
 export const selectIsAuthenticated = (state: { auth: AuthState }) =>
