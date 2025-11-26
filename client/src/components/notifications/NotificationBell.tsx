@@ -1,5 +1,3 @@
-import { useMemo, useState } from "react";
-import { Bell, Circle } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,96 +8,70 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { useNotifications } from "@/hooks/useNotifications";
+import type { NotificationType } from "@/types/notification";
+import { Bell, Circle } from "lucide-react";
+import { useMemo, useState } from "react";
 
-type NotificationTab = "general" | "mentions" | "inbox" | "files";
-
-export interface Notification {
-  id: string;
-  tab: NotificationTab;
-  actor: string;
-  title: string;
-  description: string;
-  createdAt: string; // texto tipo "Hace 2 horas"
-  read: boolean;
-}
-
-/**
- * Datos de ejemplo.
- * Se deben sustituir por datos reales desde la API.
- */
-const INITIAL_NOTIFICATIONS: Notification[] = [
-  {
-    id: "1",
-    tab: "general",
-    actor: "alu0101xxxxx1",
-    title: "Compartió archivos",
-    description: "alu0101xxxxx1 compartió 2 archivos en TaskGrid",
-    createdAt: "Hace 2 horas",
-    read: false,
-  },
-  {
-    id: "2",
-    tab: "mentions",
-    actor: "alu0101xxxxx2",
-    title: "Nueva mención",
-    description: "alu0101xxxxx2 comentó y te mencionó en una tarea",
-    createdAt: "Hace 3 horas",
-    read: false,
-  },
-  {
-    id: "3",
-    tab: "inbox",
-    actor: "alu0101xxxxx3",
-    title: "Solicitud de acceso",
-    description: "alu0101xxxxx3 pidió acceso a una lista en TaskGrid",
-    createdAt: "Hace 6 horas",
-    read: true,
-  },
-  {
-    id: "4",
-    tab: "files",
-    actor: "alu0101xxxxx2",
-    title: "Actualización de archivo",
-    description: "alu0101xxxxx2 actualizó un archivo asociado a tu tarea",
-    createdAt: "Hace 10 horas",
-    read: true,
-  },
-];
+type NotificationTab = "GENERAL" | "MENTION" | "INBOX" | "FILE";
 
 const TAB_LABELS: Record<NotificationTab, string> = {
-  general: "General",
-  mentions: "Menciones",
-  inbox: "Buzón",
-  files: "Archivos",
+  GENERAL: "General",
+  MENTION: "Menciones",
+  INBOX: "Buzón",
+  FILE: "Archivos",
 };
+
+/**
+ * Formatear fecha relativa (ej: "Hace 2 horas")
+ */
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "Ahora mismo";
+  if (diffMins < 60) return `Hace ${diffMins} min`;
+  if (diffHours < 24) return `Hace ${diffHours} horas`;
+  if (diffDays < 7) return `Hace ${diffDays} días`;
+  return date.toLocaleDateString();
+}
 
 export function NotificationBell() {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<NotificationTab>("general");
-  const [notifications, setNotifications] = useState<Notification[]>(
-    INITIAL_NOTIFICATIONS,
-  );
-
-  const unreadCount = useMemo(
-    () => notifications.filter((n) => !n.read).length,
-    [notifications],
-  );
+  const [activeTab, setActiveTab] = useState<NotificationTab>("GENERAL");
+  const {
+    loading,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    getNotificationsByType,
+  } = useNotifications();
 
   const hasUnread = unreadCount > 0;
 
   const filteredNotifications = useMemo(
-    () => notifications.filter((n) => n.tab === activeTab),
-    [notifications, activeTab],
+    () => getNotificationsByType(activeTab as NotificationType),
+    [getNotificationsByType, activeTab],
   );
 
-  const handleMarkAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  const handleMarkAllRead = async () => {
+    try {
+      await markAllAsRead();
+    } catch (error) {
+      console.error("Error al marcar todas como leídas:", error);
+    }
   };
 
-  const handleMarkAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
-    );
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      await markAsRead(id);
+    } catch (error) {
+      console.error("Error al marcar como leída:", error);
+    }
   };
 
   return (
@@ -159,7 +131,7 @@ export function NotificationBell() {
                 ].join(" ")}
               >
                 <span>{TAB_LABELS[tab]}</span>
-                {tab === "general" && hasUnread && (
+                {tab === "GENERAL" && hasUnread && (
                   <Circle className="ml-1 h-2 w-2 fill-primary-foreground text-primary-foreground" />
                 )}
               </button>
@@ -168,7 +140,11 @@ export function NotificationBell() {
 
           {/* Lista de notificaciones */}
           <div className="max-h-80 space-y-1 overflow-y-auto px-2 py-2">
-            {filteredNotifications.length === 0 ? (
+            {loading ? (
+              <div className="px-3 py-6 text-center text-xs text-muted-foreground">
+                Cargando notificaciones...
+              </div>
+            ) : filteredNotifications.length === 0 ? (
               <div className="px-3 py-6 text-center text-xs text-muted-foreground">
                 No hay notificaciones en esta pestaña.
               </div>
@@ -187,17 +163,17 @@ export function NotificationBell() {
                 >
                   <Avatar className="mt-0.5 h-8 w-8">
                     <AvatarFallback className="text-xs">
-                      {notification.actor.slice(0, 2).toUpperCase()}
+                      {notification.actorName.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="flex flex-1 flex-col gap-0.5">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-semibold">
-                        {notification.actor}
+                        {notification.actorName}
                       </span>
                       <span className="text-[11px] text-muted-foreground">
-                        {notification.createdAt}
+                        {formatRelativeTime(notification.createdAt)}
                       </span>
                     </div>
 
@@ -211,7 +187,7 @@ export function NotificationBell() {
                         variant="secondary"
                         className="h-5 rounded-full px-2 text-[10px] uppercase tracking-wide"
                       >
-                        {TAB_LABELS[notification.tab]}
+                        {TAB_LABELS[notification.type as NotificationTab]}
                       </Badge>
                       {!notification.read && (
                         <span className="flex h-1.5 w-1.5 rounded-full bg-primary" />
