@@ -13,55 +13,73 @@ Aplicación Fullstack colaborativa para crear, organizar y compartir tareas de f
 [![CI Tests (Client)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-client.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-client.yml)
 [![CI Tests (Server)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-server.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-server.yml)
 
+---
+
 ## Sprint 1 - Configuración Inicial y Primeros Pasos
 
-- Configuración del proyecto (backend, frontend y base de datos con Prisma)
-- Configuración del repositorio y tablero Jira
-- Gestión de usuarios (registro, inicio de sesión)
-- Primeros endpoints
-- Base del diseño inicial del frontend
+- Configurar backend
+- Configurar frontend
+- Configurar base de datos local–remota (Prisma)
+- Crear modelos Prisma
+- Autenticación JWT
+- Frontend Login/Registro
+- Endpoints usuario
+- Endpoint página de inicio
 
-![Sprint 1](./docs/Images/it1.png)
+![Sprint 1](./docs/Images/sprint1.png)
 
-## Sprint 2 - Autenticación y Control de Sesión
+## Sprint 2 – Estructura Visual y Validación
 
-- Implementación de login y registro funcionales
-- Autenticación con Google/Auth0
-- Control de sesión mediante JWT
-- Gestión de estado global con React Redux
-- Diseño responsivo de pantallas de login y registro
-- Integración inicial del Dashboard
+- Crear header
+- Crear footer
+- Schema de datos para validación con Zod en backend
+- Middlewares de validación con Zod en backend
+- Autenticación JWT (completada)
+- Frontend Login/Registro (completado)
+- Diseño frontend del BentoGrid de la página principal
+
+![Sprint 2](./docs/Images/sprint2.png)
+
+## Sprint 3 – Integración Visual y Estado
+
+- Manejo de estados con Redux
+- Implementación de BentoGrid
+- Endpoints settings
+- Frontend settings
+- Integrar Google OAuth
 - **Quedaron pendientes para el siguiente sprint:**
   - Middlewares de validación con Zod en backend
   - Diseño frontend del Bento Grid de la página principal
 
-![Sprint 2](./docs/Images/it2.png)
+![Sprint 3](./docs/Images/sprint3.png)
 
-## Sprint 3 - Pruebas y Calidad del Software
+## Sprint 4 – Tests y Funcionalidades Clave
 
-- Creación de tests unitarios frontend y backend con Vitest
-- Creación de tests end-to-end con Selenium IDE
-- Verificación de flujos completos de usuario (login, navegación, logout)
-- Implementación de mocks de backend y frontend
-- Finalización del Dashboard del sprint
-- Cambio de alcance en Jira (renombrado y reorganización de tareas)
+- Frontend página de tareas
+- Tests unitarios frontend
+- Tests E2E – Selenium
+- Tests unitarios backend
+- Manejo de errores a usuario
+- Funciones de filtrado para dashboard resumen
+- Validación Zod frontend
 
-![Sprint 3](./docs/Images/it3.png)
+![Sprint 4](./docs/Images/sprint4.png)
 
-## Sprint 4 - Integración Continua y Base de la Página de Tareas
+## Sprint 5 – Finalización de Funcionalidades
 
-- Configuración de GitHub Actions para cliente y servidor
-- Ejecución automática de pruebas en cada actualización del repositorio
-- Finalización de integración de Google Auth0
-- Manejo de estado con Redux aplicado a más secciones
-- Implementación de endpoints necesarios para el Bento Grid
-- Diseño frontend del Bento Grid de la página principal
-- Ajustes de usuario (nombre, contraseña, notificaciones)
-- Preparación de la base del frontend para la página de tareas
-- Inicio de implementación de funcionalidades de tareas
-- _Inconveniente:_ No se pudo completar la integración con Coveralls debido a falta de permisos para hacer el repositorio público. Solicitud de acceso pendiente por parte de la organización de la asignatura
+- Filtros de búsqueda de tareas
+- Colaboración de usuarios en tareas
+- Notificaciones
+- Integración continua
+- Permisos listas y tareas
+- Implementación página de tareas
+- Terminar de implementar filtros Dashboard
+- Refactorizar modelos (quitar categorías)
+- _Inconveniente:_ No se pudo completar la integración con Coveralls debido a falta de permisos para hacer el repositorio público. Solicitud de acceso pendiente por parte de la organización de la asignatura.
 
-![Sprint 4](./docs/Images/it4.png)
+![Sprint 5](./docs/Images/sprint5.png)
+
+---
 
 ## Stack Tecnológico
 
