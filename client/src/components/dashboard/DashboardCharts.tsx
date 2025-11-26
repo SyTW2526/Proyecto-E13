@@ -251,7 +251,10 @@ export function ProgressChart({ data, config }: ProgressChartProps) {
           label={{ position: "right", fontSize: 12, fontWeight: "bold" }}
         >
           {data.map((entry, idx) => (
-            <Cell key={`cell-${idx}`} fill={entry.fill ? entry.fill as string : "#fff"} />
+            <Cell
+              key={`cell-${idx}`}
+              fill={entry.fill ? (entry.fill as string) : "#fff"}
+            />
           ))}
         </Bar>
       </BarChart>

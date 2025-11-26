@@ -25,6 +25,7 @@ model User {
   listsOwned      List[]           @relation("ListOwner")
   listShares      ListShare[]
   taskShares      TaskShare[]
+  notifications   Notification[]
 
   @@map("users")
 }
@@ -118,4 +119,28 @@ enum SharePermission {
   VIEW
   EDIT
   ADMIN
+}
+
+model Notification {
+  id          String            @id @default(uuid())
+  type        NotificationType
+  title       String
+  description String
+  actorName   String
+  read        Boolean           @default(false)
+  createdAt   DateTime          @default(now())
+  
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([read])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  GENERAL
+  MENTION
+  INBOX
+  FILE
 }

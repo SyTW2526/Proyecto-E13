@@ -29,6 +29,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^7.0.11",
     "zod": "^4.1.12"
   },
   "devDependencies": {
@@ -38,6 +39,7 @@
     "@types/express": "^5.0.4",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.9.1",
+    "@types/nodemailer": "^7.0.4",
     "@types/supertest": "^6.0.3",
     "@vitest/coverage-v8": "^4.0.12",
     "eslint": "^9.38.0",

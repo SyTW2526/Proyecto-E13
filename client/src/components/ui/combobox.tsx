@@ -53,9 +53,7 @@ export function Combobox({
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value
-            ? items.find((item) => item.id === value)?.name
-            : placeholder}
+          {value ? items.find((item) => item.id === value)?.name : placeholder}
           <Icon
             as="IconChevronDown"
             size={16}
