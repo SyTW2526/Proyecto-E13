@@ -23,4 +23,10 @@ export interface ListShare {
   permission: SharePermission;
   listId: string;
   userId: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    image?: string | null;
+  };
 }

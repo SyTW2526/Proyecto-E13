@@ -12,9 +12,9 @@ import {
   updateList,
   deleteList,
   setSelectedList,
-  addListShare,
-  updateListShare,
-  removeListShare,
+  shareList as shareListThunk,
+  updateListSharePermission,
+  unshareList,
   setLoading,
   setError,
 } from "@/store/slices/listsSlice";
@@ -50,11 +50,23 @@ export function useLists() {
   const selectList = (id: string | null) => dispatch(setSelectedList(id));
 
   const shareList = (listId: string, share: ListShare) =>
-    dispatch(addListShare({ listId, share }));
+    dispatch(
+      shareListThunk({
+        listId,
+        email: share.user?.email || "",
+        permission: share.permission,
+      }),
+    );
   const updateShare = (listId: string, share: ListShare) =>
-    dispatch(updateListShare({ listId, share }));
+    dispatch(
+      updateListSharePermission({
+        listId,
+        userId: share.userId,
+        permission: share.permission,
+      }),
+    );
   const removeShare = (listId: string, shareId: string) =>
-    dispatch(removeListShare({ listId, shareId }));
+    dispatch(unshareList({ listId, userId: shareId }));
 
   const setLoadingState = (loading: boolean) => dispatch(setLoading(loading));
   const setErrorState = (error: string | null) => dispatch(setError(error));

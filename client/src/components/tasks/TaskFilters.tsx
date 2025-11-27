@@ -105,9 +105,10 @@ export function TaskSortFilter({
   sortOrder,
   onSortFieldChange,
   onToggleOrder,
-}: TaskSortFilterProps) {
+  className,
+}: TaskSortFilterProps & { className?: string }) {
   return (
-    <div className="flex items-center gap-2 ml-auto">
+    <div className={`flex items-center gap-2 ${className}`}>
       <Select
         value={sortField}
         onValueChange={(value) => onSortFieldChange(value as SortField)}

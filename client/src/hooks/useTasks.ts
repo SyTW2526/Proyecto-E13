@@ -5,12 +5,13 @@ import {
   getNextDueTasks,
 } from "@/lib/taskFilters";
 import {
-  addTaskShare,
+  shareTask as shareTaskThunk,
+  unshareTask as unshareTaskThunk,
+  updateTaskSharePermission as updateTaskSharePermissionThunk,
   clearFilters,
   createTask,
   deleteTask,
   fetchTasks,
-  removeTaskShare,
   selectFilteredTasks,
   selectSelectedTask,
   selectSelectedTaskId,
@@ -33,10 +34,7 @@ import {
   setStatusFilter,
   setTaskStatus,
   toggleSortOrder,
-  toggleTaskComplete,
-  toggleTaskFavorite,
   updateTask,
-  updateTaskShare,
 } from "@/store/slices/tasksSlice";
 import { useAppDispatch, useAppSelector } from "./useRedux";
 
@@ -72,7 +70,6 @@ export function useTasks(listId?: string) {
     ? useAppSelector(selectAccessibleTasksByList(listId))
     : [];
 
-  // NUEVOS DERIVADOS PARA LOS FILTROS
   const completedLastWeekCount = getCompletedTasksLastNDays(accessibleTasks, 7);
   const nextDueTasks = getNextDueTasks(accessibleTasks, 5);
   const recentTasks = getMostRecentTasks(accessibleTasks, 5);
@@ -88,8 +85,23 @@ export function useTasks(listId?: string) {
     dispatch(updateTask(data));
   const removeTask = (id: string) => dispatch(deleteTask(id));
   const selectTask = (id: string | null) => dispatch(setSelectedTask(id));
-  const toggleComplete = (id: string) => dispatch(toggleTaskComplete(id));
-  const toggleFavorite = (id: string) => dispatch(toggleTaskFavorite(id));
+  const toggleComplete = (id: string) => {
+    const task = tasks.find((t) => t.id === id);
+    if (task) {
+      dispatch(
+        updateTask({
+          id,
+          status: task.status === "COMPLETED" ? "PENDING" : "COMPLETED",
+        }),
+      );
+    }
+  };
+  const toggleFavorite = (id: string) => {
+    const task = tasks.find((t) => t.id === id);
+    if (task) {
+      dispatch(updateTask({ id, favorite: !task.favorite }));
+    }
+  };
   const changeStatus = (id: string, status: TaskStatus) =>
     dispatch(setTaskStatus({ id, status }));
   const filterByStatus = (status: "all" | TaskStatus) =>
@@ -105,12 +117,12 @@ export function useTasks(listId?: string) {
     order: "asc" | "desc",
   ) => dispatch(setSorting({ field, order }));
   const toggleSort = () => dispatch(toggleSortOrder());
-  const shareTask = (taskId: string, share: TaskShare) =>
-    dispatch(addTaskShare({ taskId, share }));
-  const updateShare = (taskId: string, share: TaskShare) =>
-    dispatch(updateTaskShare({ taskId, share }));
-  const removeShare = (taskId: string, shareId: string) =>
-    dispatch(removeTaskShare({ taskId, shareId }));
+  const shareTask = (taskId: string, email: string, permission: string) =>
+    dispatch(shareTaskThunk({ taskId, email, permission }));
+  const removeShare = (taskId: string, userId: string) =>
+    dispatch(unshareTaskThunk({ taskId, userId }));
+  const updateShare = (taskId: string, userId: string, permission: string) =>
+    dispatch(updateTaskSharePermissionThunk({ taskId, userId, permission }));
   const setLoadingState = (loading: boolean) => dispatch(setLoading(loading));
   const setErrorState = (error: string | null) => dispatch(setError(error));
 

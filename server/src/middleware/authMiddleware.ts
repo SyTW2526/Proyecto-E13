@@ -12,10 +12,8 @@ export const authenticate = (
       res.status(401).json({ error: "No token provided" });
       return;
     }
-
     const token = authHeader.substring(7);
     const payload = verifyToken(token);
-
     req.user = { id: payload.userId };
     next();
   } catch (error) {

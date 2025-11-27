@@ -78,23 +78,30 @@ export default function TasksPage() {
           </div>
 
           {/* Filtros */}
-          <div className="flex flex-wrap gap-3">
-            <TaskStatusFilter
-              value={filters.status}
-              onChange={filterByStatus}
-            />
+          <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <TaskStatusFilter
+                value={filters.status}
+                onChange={filterByStatus}
+                className="w-full sm:w-[180px]"
+              />
 
-            <TaskPriorityFilter
-              value={filters.priority}
-              onChange={filterByPriority}
-            />
+              <TaskPriorityFilter
+                value={filters.priority}
+                onChange={filterByPriority}
+                className="w-full sm:w-[180px]"
+              />
+            </div>
 
-            <TaskSortFilter
-              sortField={sorting.field}
-              sortOrder={sorting.order}
-              onSortFieldChange={(field) => sortBy(field, sorting.order)}
-              onToggleOrder={toggleSort}
-            />
+            <div className="w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
+              <TaskSortFilter
+                sortField={sorting.field}
+                sortOrder={sorting.order}
+                onSortFieldChange={(field) => sortBy(field, sorting.order)}
+                onToggleOrder={toggleSort}
+                className="w-full sm:w-auto justify-between sm:justify-end"
+              />
+            </div>
           </div>
         </div>
 
