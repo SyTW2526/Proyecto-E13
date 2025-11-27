@@ -1,11 +1,9 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import reducer, {
   createTask,
-  addTaskShare,
   clearFilters,
   deleteTask,
   fetchTasks,
-  removeTaskShare,
   resetTasksState,
   selectFilteredTasks,
   selectSelectedTask,
@@ -26,9 +24,7 @@ import reducer, {
   setListFilter,
   setTaskStatus,
   toggleSortOrder,
-  toggleTaskComplete,
   updateTask,
-  updateTaskShare,
 } from "@/store/slices/tasksSlice";
 import type { Task, TasksState, TaskShare } from "@/types/tasks-system/task";
 
@@ -135,23 +131,6 @@ describe("tasksSlice reducer", () => {
     expect(state.selectedTaskId).toBeNull();
   });
 
-  it("toggleTaskComplete.fulfilled actualiza tarea", () => {
-    const updatedTask = {
-      ...baseTask,
-      completed: true,
-      status: "COMPLETED" as const,
-      completedAt: "2024-03-01T00:00:00.000Z",
-    };
-    const action = {
-      type: toggleTaskComplete.fulfilled.type,
-      payload: updatedTask,
-    };
-    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
-    expect(state.tasks[0].completed).toBe(true);
-    expect(state.tasks[0].status).toBe("COMPLETED");
-    expect(state.tasks[0].completedAt).toBe("2024-03-01T00:00:00.000Z");
-  });
-
   it("setTaskStatus ajusta status y completed/completedAt", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-03-02T00:00:00.000Z"));
@@ -190,21 +169,6 @@ describe("tasksSlice reducer", () => {
   it("setSelectedTask guarda id", () => {
     const state = reducer(initialState, setSelectedTask("t1"));
     expect(state.selectedTaskId).toBe("t1");
-  });
-
-  it("gestiona compartidos: add/update/remove", () => {
-    let state = reducer(
-      { ...initialState, tasks: [{ ...baseTask, shares: [] }] },
-      addTaskShare({ taskId: "t1", share }),
-    );
-    expect(state.tasks[0].shares).toEqual([share]);
-
-    const updated = { ...share, permission: "EDIT" as const };
-    state = reducer(state, updateTaskShare({ taskId: "t1", share: updated }));
-    expect(state.tasks[0].shares[0]).toEqual(updated);
-
-    state = reducer(state, removeTaskShare({ taskId: "t1", shareId: "sh1" }));
-    expect(state.tasks[0].shares).toHaveLength(0);
   });
 
   it("resetTasksState vuelve al inicial", () => {

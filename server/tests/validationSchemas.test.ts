@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   TaskStatus,
-  Priority,
+  TaskPriority,
   SharePermission,
   registerSchema,
   loginSchema,
@@ -26,18 +26,18 @@ describe("Validation Schemas", () => {
       });
     });
 
-    describe("Priority", () => {
+    describe("TaskPriority", () => {
       it("should accept valid priorities", () => {
-        expect(Priority.parse("LOW")).toBe("LOW");
-        expect(Priority.parse("MEDIUM")).toBe("MEDIUM");
-        expect(Priority.parse("HIGH")).toBe("HIGH");
-        expect(Priority.parse("URGENT")).toBe("URGENT");
+        expect(TaskPriority.parse("LOW")).toBe("LOW");
+        expect(TaskPriority.parse("MEDIUM")).toBe("MEDIUM");
+        expect(TaskPriority.parse("HIGH")).toBe("HIGH");
+        expect(TaskPriority.parse("URGENT")).toBe("URGENT");
       });
 
       it("should reject invalid priorities", () => {
-        expect(() => Priority.parse("INVALID")).toThrow();
-        expect(() => Priority.parse("low")).toThrow();
-        expect(() => Priority.parse("")).toThrow();
+        expect(() => TaskPriority.parse("INVALID")).toThrow();
+        expect(() => TaskPriority.parse("low")).toThrow();
+        expect(() => TaskPriority.parse("")).toThrow();
       });
     });
 

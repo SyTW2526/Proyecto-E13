@@ -77,11 +77,21 @@ export const deleteTask = createAsyncThunk(
   },
 );
 
-export const toggleTaskComplete = createAsyncThunk(
-  "tasks/toggleComplete",
-  async (id: string, { rejectWithValue }) => {
+export const shareTask = createAsyncThunk(
+  "tasks/shareTask",
+  async (
+    {
+      taskId,
+      email,
+      permission,
+    }: { taskId: string; email: string; permission?: string },
+    { rejectWithValue },
+  ) => {
     try {
-      const { data } = await api.patch<Task>(`/tasks/${id}/toggle-complete`);
+      const { data } = await api.post<Task>(`/tasks/${taskId}/share`, {
+        email,
+        permission,
+      });
       return data;
     } catch (err) {
       return rejectWithValue(apiErrorMessage(err));
@@ -89,11 +99,40 @@ export const toggleTaskComplete = createAsyncThunk(
   },
 );
 
-export const toggleTaskFavorite = createAsyncThunk(
-  "tasks/toggleFavorite",
-  async (id: string, { rejectWithValue }) => {
+export const updateTaskSharePermission = createAsyncThunk(
+  "tasks/updateTaskSharePermission",
+  async (
+    {
+      taskId,
+      userId,
+      permission,
+    }: { taskId: string; userId: string; permission: string },
+    { rejectWithValue },
+  ) => {
     try {
-      const { data } = await api.patch<Task>(`/tasks/${id}/toggle-favorite`);
+      const { data } = await api.patch<Task>(
+        `/tasks/${taskId}/share/${userId}`,
+        {
+          permission,
+        },
+      );
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const unshareTask = createAsyncThunk(
+  "tasks/unshareTask",
+  async (
+    { taskId, userId }: { taskId: string; userId: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const { data } = await api.delete<Task>(
+        `/tasks/${taskId}/share/${userId}`,
+      );
       return data;
     } catch (err) {
       return rejectWithValue(apiErrorMessage(err));
@@ -112,7 +151,6 @@ const tasksSlice = createSlice({
       state.error = action.payload;
       state.isLoading = false;
     },
-
     setTasks: (state, action: PayloadAction<Task[]>) => {
       state.tasks = action.payload;
       state.isLoading = false;
@@ -169,40 +207,6 @@ const tasksSlice = createSlice({
     toggleSortOrder: (state) => {
       state.sorting.order = state.sorting.order === "asc" ? "desc" : "asc";
     },
-    addTaskShare: (
-      state,
-      action: PayloadAction<{ taskId: string; share: TaskShare }>,
-    ) => {
-      const task = state.tasks.find((t) => t.id === action.payload.taskId);
-      if (task) {
-        task.shares.push(action.payload.share);
-      }
-    },
-    updateTaskShare: (
-      state,
-      action: PayloadAction<{ taskId: string; share: TaskShare }>,
-    ) => {
-      const task = state.tasks.find((t) => t.id === action.payload.taskId);
-      if (task) {
-        const shareIndex = task.shares.findIndex(
-          (s) => s.id === action.payload.share.id,
-        );
-        if (shareIndex !== -1) {
-          task.shares[shareIndex] = action.payload.share;
-        }
-      }
-    },
-    removeTaskShare: (
-      state,
-      action: PayloadAction<{ taskId: string; shareId: string }>,
-    ) => {
-      const task = state.tasks.find((t) => t.id === action.payload.taskId);
-      if (task) {
-        task.shares = task.shares.filter(
-          (s) => s.id !== action.payload.shareId,
-        );
-      }
-    },
     resetTasksState: () => initialState,
   },
   extraReducers: (builder) => {
@@ -240,12 +244,23 @@ const tasksSlice = createSlice({
 
     // Update Task
     builder
-      .addCase(updateTask.pending, (state) => {
-        state.isLoading = true;
+      .addCase(updateTask.pending, (state, action) => {
         state.error = null;
+        const index = state.tasks.findIndex((t) => t.id === action.meta.arg.id);
+        if (index !== -1) {
+          state.tasks[index] = { ...state.tasks[index], ...action.meta.arg };
+          if (action.meta.arg.status) {
+            if (action.meta.arg.status === "COMPLETED") {
+              state.tasks[index].completed = true;
+              state.tasks[index].completedAt = new Date().toISOString();
+            } else {
+              state.tasks[index].completed = false;
+              state.tasks[index].completedAt = undefined;
+            }
+          }
+        }
       })
       .addCase(updateTask.fulfilled, (state, action) => {
-        state.isLoading = false;
         const index = state.tasks.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) {
           state.tasks[index] = action.payload;
@@ -253,7 +268,6 @@ const tasksSlice = createSlice({
         state.error = null;
       })
       .addCase(updateTask.rejected, (state, action) => {
-        state.isLoading = false;
         state.error = action.payload as string;
       });
 
@@ -276,19 +290,62 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Toggle Complete
-    builder.addCase(toggleTaskComplete.fulfilled, (state, action) => {
-      const index = state.tasks.findIndex((t) => t.id === action.payload.id);
-      if (index !== -1) {
-        state.tasks[index] = action.payload;
-      }
-    });
-    builder.addCase(toggleTaskFavorite.fulfilled, (state, action) => {
-      const index = state.tasks.findIndex((t) => t.id === action.payload.id);
-      if (index !== -1) {
-        state.tasks[index] = action.payload;
-      }
-    });
+    // Share Task
+    builder
+      .addCase(shareTask.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(shareTask.fulfilled, (state, action) => {
+        const index = state.tasks.findIndex((t) => t.id === action.payload.id);
+        if (index !== -1) {
+          state.tasks[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(shareTask.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Update Share Permission
+    builder
+      .addCase(updateTaskSharePermission.pending, (state, action) => {
+        state.error = null;
+        const task = state.tasks.find((t) => t.id === action.meta.arg.taskId);
+        if (task && task.shares) {
+          const share = task.shares.find(
+            (s) => s.userId === action.meta.arg.userId,
+          );
+          if (share) {
+            share.permission = action.meta.arg.permission as any;
+          }
+        }
+      })
+      .addCase(updateTaskSharePermission.fulfilled, (state, action) => {
+        const index = state.tasks.findIndex((t) => t.id === action.payload.id);
+        if (index !== -1) {
+          state.tasks[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(updateTaskSharePermission.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Unshare Task
+    builder
+      .addCase(unshareTask.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(unshareTask.fulfilled, (state, action) => {
+        const index = state.tasks.findIndex((t) => t.id === action.payload.id);
+        if (index !== -1) {
+          state.tasks[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(unshareTask.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
   },
 });
 
@@ -304,9 +361,6 @@ export const {
   clearFilters,
   setSorting,
   toggleSortOrder,
-  addTaskShare,
-  updateTaskShare,
-  removeTaskShare,
   resetTasksState,
 } = tasksSlice.actions;
 

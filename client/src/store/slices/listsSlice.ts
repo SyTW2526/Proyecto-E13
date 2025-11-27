@@ -61,6 +61,69 @@ export const deleteList = createAsyncThunk(
   },
 );
 
+export const shareList = createAsyncThunk(
+  "lists/shareList",
+  async (
+    {
+      listId,
+      email,
+      permission,
+    }: { listId: string; email: string; permission?: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const { data } = await api.post<List>(`/lists/${listId}/share`, {
+        email,
+        permission,
+      });
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const updateListSharePermission = createAsyncThunk(
+  "lists/updateListSharePermission",
+  async (
+    {
+      listId,
+      userId,
+      permission,
+    }: { listId: string; userId: string; permission: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const { data } = await api.patch<List>(
+        `/lists/${listId}/share/${userId}`,
+        {
+          permission,
+        },
+      );
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const unshareList = createAsyncThunk(
+  "lists/unshareList",
+  async (
+    { listId, userId }: { listId: string; userId: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const { data } = await api.delete<List>(
+        `/lists/${listId}/share/${userId}`,
+      );
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
 const listsSlice = createSlice({
   name: "lists",
   initialState,
@@ -75,40 +138,6 @@ const listsSlice = createSlice({
 
     setSelectedList: (state, action: PayloadAction<string | null>) => {
       state.selectedListId = action.payload;
-    },
-    addListShare: (
-      state,
-      action: PayloadAction<{ listId: string; share: ListShare }>,
-    ) => {
-      const list = state.lists.find((l) => l.id === action.payload.listId);
-      if (list) {
-        list.shares.push(action.payload.share);
-      }
-    },
-    updateListShare: (
-      state,
-      action: PayloadAction<{ listId: string; share: ListShare }>,
-    ) => {
-      const list = state.lists.find((l) => l.id === action.payload.listId);
-      if (list) {
-        const shareIndex = list.shares.findIndex(
-          (s) => s.id === action.payload.share.id,
-        );
-        if (shareIndex !== -1) {
-          list.shares[shareIndex] = action.payload.share;
-        }
-      }
-    },
-    removeListShare: (
-      state,
-      action: PayloadAction<{ listId: string; shareId: string }>,
-    ) => {
-      const list = state.lists.find((l) => l.id === action.payload.listId);
-      if (list) {
-        list.shares = list.shares.filter(
-          (s) => s.id !== action.payload.shareId,
-        );
-      }
     },
     resetListsState: () => initialState,
   },
@@ -182,18 +211,68 @@ const listsSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       });
+
+    // Share List
+    builder
+      .addCase(shareList.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(shareList.fulfilled, (state, action) => {
+        const index = state.lists.findIndex((l) => l.id === action.payload.id);
+        if (index !== -1) {
+          state.lists[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(shareList.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Update Share Permission
+    builder
+      .addCase(updateListSharePermission.pending, (state, action) => {
+        state.error = null;
+        const list = state.lists.find((l) => l.id === action.meta.arg.listId);
+        if (list && list.shares) {
+          const share = list.shares.find(
+            (s) => s.userId === action.meta.arg.userId,
+          );
+          if (share) {
+            share.permission = action.meta.arg.permission as any;
+          }
+        }
+      })
+      .addCase(updateListSharePermission.fulfilled, (state, action) => {
+        const index = state.lists.findIndex((l) => l.id === action.payload.id);
+        if (index !== -1) {
+          state.lists[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(updateListSharePermission.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Unshare List
+    builder
+      .addCase(unshareList.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(unshareList.fulfilled, (state, action) => {
+        const index = state.lists.findIndex((l) => l.id === action.payload.id);
+        if (index !== -1) {
+          state.lists[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(unshareList.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const {
-  setLoading,
-  setError,
-  setSelectedList,
-  addListShare,
-  updateListShare,
-  removeListShare,
-  resetListsState,
-} = listsSlice.actions;
+export const { setLoading, setError, setSelectedList, resetListsState } =
+  listsSlice.actions;
 
 export default listsSlice.reducer;
 

@@ -12,7 +12,6 @@ import {
   googleAuthSchema,
   changePasswordSchema,
 } from "../schemas/validationSchemas";
-
 import { authenticate } from "../middleware/authMiddleware";
 
 const router = Router();

@@ -7,10 +7,10 @@ vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => ({ user: { name: "Tomás" } }),
 }));
 vi.mock("@/hooks/useTasks", () => ({
-  useTasks: () => ({ accessibleTasks: [] }),
+  useTasks: () => ({ accessibleTasks: [], fetchAllTasks: vi.fn() }),
 }));
 vi.mock("@/hooks/useLists", () => ({
-  useLists: () => ({ accessibleLists: [] }),
+  useLists: () => ({ accessibleLists: [], fetchAllLists: vi.fn() }),
 }));
 vi.mock("@/hooks/useDashboardCharts", () => ({
   useDashboardCharts: () => ({

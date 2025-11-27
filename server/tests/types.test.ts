@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { JwtPayload } from "../src/types/jwt";
-import { TaskStatus, Priority } from "../src/types/task";
+import { TaskStatus, TaskPriority } from "../src/types/task";
 import { SharePermission } from "../src/types/user";
 
 describe("Type Definitions", () => {
@@ -56,28 +56,28 @@ describe("Type Definitions", () => {
 
   describe("Priority Enum", () => {
     it("should have LOW priority", () => {
-      expect(Priority.LOW).toBe("LOW");
+      expect(TaskPriority.LOW).toBe("LOW");
     });
 
     it("should have MEDIUM priority", () => {
-      expect(Priority.MEDIUM).toBe("MEDIUM");
+      expect(TaskPriority.MEDIUM).toBe("MEDIUM");
     });
 
     it("should have HIGH priority", () => {
-      expect(Priority.HIGH).toBe("HIGH");
+      expect(TaskPriority.HIGH).toBe("HIGH");
     });
 
     it("should have URGENT priority", () => {
-      expect(Priority.URGENT).toBe("URGENT");
+      expect(TaskPriority.URGENT).toBe("URGENT");
     });
 
     it("should have exactly 4 values", () => {
-      const values = Object.values(Priority);
+      const values = Object.values(TaskPriority);
       expect(values).toHaveLength(4);
     });
 
     it("should contain all expected priority values", () => {
-      const values = Object.values(Priority);
+      const values = Object.values(TaskPriority);
       expect(values).toContain("LOW");
       expect(values).toContain("MEDIUM");
       expect(values).toContain("HIGH");
@@ -85,8 +85,8 @@ describe("Type Definitions", () => {
     });
 
     it("should work in type checking", () => {
-      const priority: Priority = Priority.HIGH;
-      expect(priority).toBe(Priority.HIGH);
+      const priority: TaskPriority = TaskPriority.HIGH;
+      expect(priority).toBe(TaskPriority.HIGH);
     });
   });
 
@@ -125,16 +125,16 @@ describe("Type Definitions", () => {
     it("should allow using enums together in a task object", () => {
       interface Task {
         status: TaskStatus;
-        priority: Priority;
+        priority: TaskPriority;
       }
 
       const task: Task = {
         status: TaskStatus.IN_PROGRESS,
-        priority: Priority.HIGH,
+        priority: TaskPriority.HIGH,
       };
 
       expect(task.status).toBe(TaskStatus.IN_PROGRESS);
-      expect(task.priority).toBe(Priority.HIGH);
+      expect(task.priority).toBe(TaskPriority.HIGH);
     });
 
     it("should allow using SharePermission in a share object", () => {

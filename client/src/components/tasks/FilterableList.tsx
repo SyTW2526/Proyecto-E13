@@ -3,6 +3,26 @@ import Icon from "@/components/ui/icon";
 import { tasksPageLabels } from "@/config/taskConfig";
 import { CreateListDialogStandalone } from "../createDialogs/createListDialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useLists } from "@/hooks/useLists";
+import { useState } from "react";
+import EditListDialog from "../createDialogs/editListDialog";
+import ShareListDialog from "../lists/ShareListDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface FilterableListProps {
   title: string;
@@ -28,8 +48,60 @@ export function FilterableList({
   icon,
   isLoading,
 }: FilterableListProps) {
+  const { lists, removeList, isOwner } = useLists();
+  const [editingListId, setEditingListId] = useState<string | null>(null);
+  const [sharingListId, setSharingListId] = useState<string | null>(null);
+  const [deletingListId, setDeletingListId] = useState<string | null>(null);
+
+  const getList = (id: string) => lists.find((l) => l.id === id);
+
   return (
     <div>
+      {/* Dialogs */}
+      {editingListId && getList(editingListId) && (
+        <EditListDialog
+          open={!!editingListId}
+          onOpenChange={(open) => !open && setEditingListId(null)}
+          list={getList(editingListId)!}
+        />
+      )}
+
+      {sharingListId && getList(sharingListId) && (
+        <ShareListDialog
+          open={!!sharingListId}
+          onOpenChange={(open) => !open && setSharingListId(null)}
+          list={getList(sharingListId)!}
+        />
+      )}
+
+      <AlertDialog
+        open={!!deletingListId}
+        onOpenChange={(open) => !open && setDeletingListId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción eliminará la lista y todas sus tareas permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (deletingListId) {
+                  removeList(deletingListId);
+                  setDeletingListId(null);
+                }
+              }}
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="flex flex-row items-center justify-between gap-4">
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
         <div className="flex gap-2">
@@ -85,16 +157,63 @@ export function FilterableList({
                   </p>
                 )}
               </div>
-              <Badge
-                variant="secondary"
-                className={`ml-auto px-1.5 min-w-[1.5rem] justify-center rounded-full ${
-                  selectedId === item.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
-                }`}
-              >
-                {item.count}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge
+                  variant="secondary"
+                  className={`px-1.5 min-w-[1.5rem] justify-center rounded-full ${
+                    selectedId === item.id
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {item.count}
+                </Badge>
+
+                {isOwner(item.id) && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-muted-foreground/50 hover:text-foreground"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Icon as="IconDotsVertical" className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingListId(item.id);
+                        }}
+                      >
+                        <Icon as="IconEdit" className="mr-2 h-4 w-4" />
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSharingListId(item.id);
+                        }}
+                      >
+                        <Icon as="IconShare" className="mr-2 h-4 w-4" />
+                        Compartir
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive focus:text-destructive"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeletingListId(item.id);
+                        }}
+                      >
+                        <Icon as="IconTrash" className="mr-2 h-4 w-4" />
+                        Eliminar
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
             </div>
           ))
         )}

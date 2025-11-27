@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 import reducer, {
   createList,
-  addListShare,
   deleteList,
   fetchLists,
-  removeListShare,
   resetListsState,
   selectLists,
   selectListById,
@@ -15,7 +13,6 @@ import reducer, {
   setLoading,
   setSelectedList,
   updateList,
-  updateListShare,
 } from "@/store/slices/listsSlice";
 import type { ListsState, List, ListShare } from "@/types/tasks-system/list";
 
@@ -108,27 +105,6 @@ describe("listsSlice reducer", () => {
   it("setSelectedList guarda el id", () => {
     const state = reducer(initialState, setSelectedList("l1"));
     expect(state.selectedListId).toBe("l1");
-  });
-
-  it("gestiona compartidos: add/update/remove", () => {
-    let state = reducer(
-      { ...initialState, lists: [{ ...baseList, shares: [] }] },
-      addListShare({ listId: "l1", share }),
-    );
-    expect(state.lists[0].shares).toEqual([share]);
-
-    const updatedShare = { ...share, permission: "EDIT" as const };
-    state = reducer(
-      state,
-      updateListShare({ listId: "l1", share: updatedShare }),
-    );
-    expect(state.lists[0].shares[0]).toEqual(updatedShare);
-
-    state = reducer(
-      state,
-      removeListShare({ listId: "l1", shareId: "share-1" }),
-    );
-    expect(state.lists[0].shares).toHaveLength(0);
   });
 
   it("resetListsState vuelve al estado inicial", () => {

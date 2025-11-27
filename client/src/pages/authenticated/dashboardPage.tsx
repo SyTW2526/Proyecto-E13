@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { dashboardConfig, dashboardCards } from "@/config/dashboardConfig";
 import FeatureCard from "@/components/ui/featureCard";
@@ -8,13 +9,17 @@ import { useDashboardCharts } from "@/hooks/useDashboardCharts";
 import {
   PriorityChart,
   WeeklyTasksChart,
-  // ProgressChart,
 } from "@/components/dashboard/DashboardCharts";
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { accessibleTasks } = useTasks();
-  const { accessibleLists } = useLists();
+  const { accessibleTasks, fetchAllTasks } = useTasks();
+  const { accessibleLists, fetchAllLists } = useLists();
+
+  useEffect(() => {
+    fetchAllTasks();
+    fetchAllLists();
+  }, []);
 
   const {
     priorityChartData,
@@ -23,15 +28,12 @@ export default function DashboardPage() {
     progressChartConfig,
     weeklyTasksData,
     weeklyTasksConfig,
-    // tasksPerListData,
-    // tasksPerListConfig,
     weekStats,
   } = useDashboardCharts({
     accessibleTasks,
     accessibleLists,
   });
 
-  // Mapa de datos para cada tipo de tarjeta
   const cardDataMap: Record<
     string,
     {
@@ -49,9 +51,6 @@ export default function DashboardPage() {
         weekStats.tasksPerList
           .map((item) => `${item.listName}: ${item.count} tareas`)
           .join(", ") || "Sin tareas",
-      // chartComponent: (
-      //   <ProgressChart data={tasksPerListData} config={tasksPerListConfig} />
-      // ),
     },
     "Tareas Por Prioridad": {
       chartComponent: (
@@ -69,8 +68,6 @@ export default function DashboardPage() {
       ),
     },
   };
-
-  // ==================== Renderizado Principal ====================
 
   return (
     <div className="container mx-auto p-6">

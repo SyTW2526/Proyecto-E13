@@ -4,7 +4,7 @@ export enum TaskStatus {
   COMPLETED = "COMPLETED",
 }
 
-export enum Priority {
+export enum TaskPriority {
   LOW = "LOW",
   MEDIUM = "MEDIUM",
   HIGH = "HIGH",

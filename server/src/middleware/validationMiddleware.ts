@@ -9,9 +9,7 @@ export const validate = (
     try {
       const dataToValidate = req[source];
       const validatedData = schema.parse(dataToValidate);
-
       req[source] = validatedData;
-
       next();
     } catch (error) {
       if (error instanceof ZodError) {
@@ -19,7 +17,6 @@ export const validate = (
           field: err.path.join("."),
           message: err.message,
         }));
-
         res.status(400).json({
           error: "Validation failed",
           details: errors,

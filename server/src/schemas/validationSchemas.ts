@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const TaskStatus = z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]);
-export const Priority = z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]);
+export const TaskPriority = z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]);
 export const SharePermission = z.enum(["VIEW", "EDIT", "ADMIN"]);
 
 // Auth
@@ -53,13 +53,42 @@ export const createTaskSchema = z.object({
   description: z.string().optional(),
   status: TaskStatus.optional(),
   listId: z.string(),
-  priority: Priority.optional(),
+  priority: TaskPriority.optional(),
   dueDate: z.coerce.date().optional(),
   favorite: z.boolean().optional(),
+});
+
+export const updateTaskSchema = z.object({
+  name: z.string().min(1, "El nombre es obligatorio").optional(),
+  description: z.string().optional(),
+  status: TaskStatus.optional(),
+  listId: z.string().optional(),
+  priority: TaskPriority.optional(),
+  dueDate: z.coerce.date().optional(),
+  favorite: z.boolean().optional(),
+});
+
+export const shareTaskSchema = z.object({
+  email: z.email({ message: "Email inválido" }),
+  permission: SharePermission.optional(),
+});
+
+export const updateShareSchema = z.object({
+  permission: SharePermission,
 });
 
 // List
 export const createListSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   description: z.string().optional(),
+});
+
+export const updateListSchema = z.object({
+  name: z.string().min(1, "El nombre es obligatorio").optional(),
+  description: z.string().optional(),
+});
+
+export const shareListSchema = z.object({
+  email: z.email({ message: "Email inválido" }),
+  permission: SharePermission.optional(),
 });
