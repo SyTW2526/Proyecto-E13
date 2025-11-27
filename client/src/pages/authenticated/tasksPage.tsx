@@ -4,22 +4,15 @@ import { useLists } from "@/hooks/useLists";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { FilterableList } from "@/components/tasks/FilterableList";
-import {
-  priorityConfig,
-  statusConfig,
-  tasksPageLabels,
-} from "@/config/taskConfig";
+import { tasksPageLabels } from "@/config/taskConfig";
 import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
 import { Button } from "@/components/ui/button";
-import Icon from "@/components/ui/icon";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Task, TaskPriority, TaskStatus } from "@/types/tasks-system/task";
+  TaskStatusFilter,
+  TaskPriorityFilter,
+  TaskSortFilter,
+} from "@/components/tasks/TaskFilters";
+import type { Task } from "@/types/tasks-system/task";
 
 export default function TasksPage() {
   const {
@@ -86,90 +79,22 @@ export default function TasksPage() {
 
           {/* Filtros */}
           <div className="flex flex-wrap gap-3">
-            <Select
+            <TaskStatusFilter
               value={filters.status}
-              onValueChange={(value) =>
-                filterByStatus(value as "all" | TaskStatus)
-              }
-            >
-              <SelectTrigger className="w-[140px] h-8 text-xs">
-                <SelectValue placeholder="Estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos los estados</SelectItem>
-                {Object.entries(statusConfig).map(([key, config]) => (
-                  <SelectItem key={key} value={key}>
-                    {config.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={filterByStatus}
+            />
 
-            <Select
+            <TaskPriorityFilter
               value={filters.priority}
-              onValueChange={(value) =>
-                filterByPriority(value as "all" | TaskPriority)
-              }
-            >
-              <SelectTrigger className="w-[140px] h-8 text-xs">
-                <SelectValue placeholder="Prioridad" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas las prioridades</SelectItem>
-                {Object.entries(priorityConfig).map(([key, config]) => (
-                  <SelectItem key={key} value={key}>
-                    {config.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={filterByPriority}
+            />
 
-            {/* Ordenar */}
-            <div className="flex items-center gap-2 ml-auto">
-              <Select
-                value={sorting.field}
-                onValueChange={(value) =>
-                  sortBy(
-                    value as
-                      | "name"
-                      | "dueDate"
-                      | "priority"
-                      | "createdAt"
-                      | "updatedAt",
-                    sorting.order,
-                  )
-                }
-              >
-                <SelectTrigger className="w-[160px] h-8 text-xs">
-                  <SelectValue placeholder="Ordenar por" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="dueDate">Fecha de vencimiento</SelectItem>
-                  <SelectItem value="createdAt">Fecha de creación</SelectItem>
-                  <SelectItem value="name">Nombre</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={toggleSort}
-                title={
-                  sorting.order === "asc"
-                    ? "Orden ascendente"
-                    : "Orden descendente"
-                }
-              >
-                <Icon
-                  as={
-                    sorting.order === "asc"
-                      ? "IconSortAscending"
-                      : "IconSortDescending"
-                  }
-                  size={16}
-                />
-              </Button>
-            </div>
+            <TaskSortFilter
+              sortField={sorting.field}
+              sortOrder={sorting.order}
+              onSortFieldChange={(field) => sortBy(field, sorting.order)}
+              onToggleOrder={toggleSort}
+            />
           </div>
         </div>
 

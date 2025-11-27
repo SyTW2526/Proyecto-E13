@@ -34,6 +34,7 @@ import {
   setTaskStatus,
   toggleSortOrder,
   toggleTaskComplete,
+  toggleTaskFavorite,
   updateTask,
   updateTaskShare,
 } from "@/store/slices/tasksSlice";
@@ -88,6 +89,7 @@ export function useTasks(listId?: string) {
   const removeTask = (id: string) => dispatch(deleteTask(id));
   const selectTask = (id: string | null) => dispatch(setSelectedTask(id));
   const toggleComplete = (id: string) => dispatch(toggleTaskComplete(id));
+  const toggleFavorite = (id: string) => dispatch(toggleTaskFavorite(id));
   const changeStatus = (id: string, status: TaskStatus) =>
     dispatch(setTaskStatus({ id, status }));
   const filterByStatus = (status: "all" | TaskStatus) =>
@@ -146,6 +148,7 @@ export function useTasks(listId?: string) {
     removeTask,
     selectTask,
     toggleComplete,
+    toggleFavorite,
     changeStatus,
     filterByStatus,
     filterByList,
