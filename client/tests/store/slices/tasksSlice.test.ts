@@ -1,9 +1,10 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import reducer, {
-  addTask,
+  createTask,
   addTaskShare,
   clearFilters,
   deleteTask,
+  fetchTasks,
   removeTaskShare,
   resetTasksState,
   selectFilteredTasks,
@@ -24,14 +25,12 @@ import reducer, {
   setStatusFilter,
   setListFilter,
   setTaskStatus,
-  setTasks,
   toggleSortOrder,
   toggleTaskComplete,
   updateTask,
   updateTaskShare,
 } from "@/store/slices/tasksSlice";
-import type { Task, TasksState } from "@/types/tasks-system/task";
-import type { TaskShare } from "@/types/tasks-system/shareTask";
+import type { Task, TasksState, TaskShare } from "@/types/tasks-system/task";
 
 const baseTask: Task = {
   id: "t1",
@@ -84,60 +83,73 @@ describe("tasksSlice reducer", () => {
     expect(state.isLoading).toBe(false);
   });
 
-  it("setTasks reemplaza listado y reinicia flags", () => {
+  it("fetchTasks.fulfilled reemplaza listado y reinicia flags", () => {
+    const action = {
+      type: fetchTasks.fulfilled.type,
+      payload: [baseTask],
+    };
     const state = reducer(
       { ...initialState, isLoading: true, error: "x" },
-      setTasks([baseTask]),
+      action,
     );
     expect(state.tasks).toEqual([baseTask]);
     expect(state.isLoading).toBe(false);
     expect(state.error).toBeNull();
   });
 
-  it("addTask inserta al inicio y limpia error", () => {
+  it("createTask.fulfilled inserta al inicio y limpia error", () => {
     const other = { ...baseTask, id: "t2" };
+    const action = {
+      type: createTask.fulfilled.type,
+      payload: baseTask,
+    };
     const state = reducer(
       { ...initialState, tasks: [other], error: "x" },
-      addTask(baseTask),
+      action,
     );
     expect(state.tasks.map((t) => t.id)).toEqual(["t1", "t2"]);
     expect(state.error).toBeNull();
   });
 
-  it("updateTask actualiza campos existentes", () => {
-    const state = reducer(
-      { ...initialState, tasks: [baseTask] },
-      updateTask({ id: "t1", name: "Nuevo nombre" }),
-    );
+  it("updateTask.fulfilled actualiza campos existentes", () => {
+    const action = {
+      type: updateTask.fulfilled.type,
+      payload: { ...baseTask, name: "Nuevo nombre" },
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
     expect(state.tasks[0].name).toBe("Nuevo nombre");
   });
 
-  it("deleteTask elimina y reinicia selectedTaskId", () => {
+  it("deleteTask.fulfilled elimina y reinicia selectedTaskId", () => {
     const populated: TasksState = {
       ...initialState,
       tasks: [baseTask],
       selectedTaskId: "t1",
     };
-    const state = reducer(populated, deleteTask("t1"));
+    const action = {
+      type: deleteTask.fulfilled.type,
+      payload: "t1",
+    };
+    const state = reducer(populated, action);
     expect(state.tasks).toHaveLength(0);
     expect(state.selectedTaskId).toBeNull();
   });
 
-  it("toggleTaskComplete alterna estado y fechas", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-03-01T00:00:00.000Z"));
-    let state = reducer(
-      { ...initialState, tasks: [baseTask] },
-      toggleTaskComplete("t1"),
-    );
+  it("toggleTaskComplete.fulfilled actualiza tarea", () => {
+    const updatedTask = {
+      ...baseTask,
+      completed: true,
+      status: "COMPLETED" as const,
+      completedAt: "2024-03-01T00:00:00.000Z",
+    };
+    const action = {
+      type: toggleTaskComplete.fulfilled.type,
+      payload: updatedTask,
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
     expect(state.tasks[0].completed).toBe(true);
     expect(state.tasks[0].status).toBe("COMPLETED");
     expect(state.tasks[0].completedAt).toBe("2024-03-01T00:00:00.000Z");
-
-    state = reducer(state, toggleTaskComplete("t1"));
-    expect(state.tasks[0].completed).toBe(false);
-    expect(state.tasks[0].status).toBe("PENDING");
-    expect(state.tasks[0].completedAt).toBeUndefined();
   });
 
   it("setTaskStatus ajusta status y completed/completedAt", () => {
@@ -187,7 +199,7 @@ describe("tasksSlice reducer", () => {
     );
     expect(state.tasks[0].shares).toEqual([share]);
 
-    const updated = { ...share, permission: "EDIT" };
+    const updated = { ...share, permission: "EDIT" as const };
     state = reducer(state, updateTaskShare({ taskId: "t1", share: updated }));
     expect(state.tasks[0].shares[0]).toEqual(updated);
 
@@ -246,13 +258,13 @@ describe("tasksSlice selectors", () => {
   it("selectFilteredTasks aplica filtros y ordenamiento", () => {
     const tasks = [
       baseTask,
-      { ...baseTask, id: "t2", name: "Alquilar", status: "COMPLETED" },
+      { ...baseTask, id: "t2", name: "Alquilar", status: "COMPLETED" as const },
       {
         ...baseTask,
         id: "t3",
         name: "Otra",
-        status: "IN_PROGRESS",
-        priority: "HIGH",
+        status: "IN_PROGRESS" as const,
+        priority: "HIGH" as const,
         description: "algo especial",
       },
     ];

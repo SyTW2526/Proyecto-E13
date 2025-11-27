@@ -3,7 +3,17 @@ import { useTasks } from "./useTasks";
 import { useLists } from "./useLists";
 
 export function useTaskFilters() {
-  const { accessibleTasks, filteredTasks, filterByList, filters } = useTasks();
+  const {
+    accessibleTasks,
+    filteredTasks,
+    filterByList,
+    filterByStatus,
+    filterByPriority,
+    filters,
+    sortBy,
+    toggleSort,
+    sorting,
+  } = useTasks();
   const { accessibleLists } = useLists();
 
   // Usar el listId de los filtros de Redux en lugar de estado local
@@ -23,13 +33,8 @@ export function useTaskFilters() {
 
   // Determinar qué tareas mostrar
   const displayTasks = useMemo(() => {
-    // Si hay filtro de lista activo, mostrar tareas filtradas
-    if (filters.listId) {
-      return filteredTasks;
-    }
-    // Si no hay filtro, mostrar todas las tareas accesibles
-    return accessibleTasks;
-  }, [filters.listId, filteredTasks, accessibleTasks]);
+    return filteredTasks;
+  }, [filteredTasks]);
 
   // Contar listas (esto parece redundante, revisar si se usa)
   const listListCounts = useMemo(
@@ -52,6 +57,12 @@ export function useTaskFilters() {
     listListCounts,
     selectedListId,
     handleListFilter,
+    filterByStatus,
+    filterByPriority,
+    filters,
+    sortBy,
+    toggleSort,
+    sorting,
     accessibleLists,
   };
 }

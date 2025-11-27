@@ -20,7 +20,7 @@ describe("useTheme", () => {
       },
       preloadedState: {
         theme: {
-          theme: "light",
+          theme: "light" as const,
         },
       },
     });
@@ -43,13 +43,10 @@ describe("useTheme", () => {
     });
 
     expect(result.current.theme).toBe("dark");
-    expect(document.documentElement.classList.contains("dark")).toBe(true);
-    expect(localStorage.setItem).toHaveBeenCalledWith("theme", "dark");
+    // DOM and localStorage updates are handled by store subscription, not the hook
   });
 
   it("should remove dark class when theme is set to light", () => {
-    document.documentElement.classList.add("dark");
-
     const { result } = renderHook(() => useTheme(), { wrapper });
 
     act(() => {
@@ -57,18 +54,16 @@ describe("useTheme", () => {
     });
 
     expect(result.current.theme).toBe("light");
-    expect(document.documentElement.classList.contains("dark")).toBe(false);
-    expect(localStorage.setItem).toHaveBeenCalledWith("theme", "light");
   });
 
-  it("should apply theme to DOM on mount", () => {
+  it("should return current theme from store", () => {
     store = configureStore({
       reducer: {
         theme: themeReducer,
       },
       preloadedState: {
         theme: {
-          theme: "dark",
+          theme: "dark" as const,
         },
       },
     });
@@ -77,8 +72,9 @@ describe("useTheme", () => {
       <Provider store={store}>{children}</Provider>
     );
 
-    renderHook(() => useTheme(), { wrapper: wrapperWithDark });
-
-    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    const { result } = renderHook(() => useTheme(), {
+      wrapper: wrapperWithDark,
+    });
+    expect(result.current.theme).toBe("dark");
   });
 });

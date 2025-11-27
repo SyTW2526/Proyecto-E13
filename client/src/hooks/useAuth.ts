@@ -5,14 +5,12 @@ import {
   registerUser,
   loginWithGoogleUser,
   logout,
-  updateUser,
   selectUser,
   selectIsAuthenticated,
   selectToken,
   selectAuthLoading,
   selectAuthError,
 } from "@/store/slices/authSlice";
-import type { User } from "@/types/auth/auth";
 
 export function useAuth() {
   const dispatch = useAppDispatch();
@@ -63,13 +61,6 @@ export function useAuth() {
     dispatch(logout());
   }, [dispatch]);
 
-  const updateUserProfile = useCallback(
-    (updates: Partial<User>) => {
-      dispatch(updateUser(updates));
-    },
-    [dispatch],
-  );
-
   return {
     user,
     isAuthenticated,
@@ -80,6 +71,5 @@ export function useAuth() {
     register,
     loginWithGoogle,
     signOut,
-    updateUserProfile,
   };
 }

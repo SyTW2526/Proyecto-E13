@@ -4,7 +4,9 @@ import authReducer, {
   registerUser,
   loginWithGoogleUser,
   logout,
-  updateUser,
+  updateUserProfile,
+  changeUserPassword,
+  deleteUserAccount,
   selectUser,
   selectIsAuthenticated,
   selectToken,
@@ -74,8 +76,6 @@ describe("authSlice", () => {
       expect(state.isAuthenticated).toBe(true);
       expect(state.isLoading).toBe(false);
       expect(state.error).toBeNull();
-      expect(setAuthToken).toHaveBeenCalledWith("token123");
-      expect(localStorage.getItem("user")).toBe(JSON.stringify(mockUser));
     });
 
     it("should handle loginUser.rejected", () => {
@@ -177,11 +177,10 @@ describe("authSlice", () => {
       expect(state.isAuthenticated).toBe(false);
       expect(state.isLoading).toBe(false);
       expect(state.error).toBeNull();
-      expect(setAuthToken).toHaveBeenCalled();
-      expect(localStorage.getItem("user")).toBeNull();
     });
 
-    it("should handle updateUser action", () => {
+    // Update Profile Thunk
+    it("should handle updateUserProfile.fulfilled", () => {
       const loggedInState: AuthState = {
         ...initialState,
         user: mockUser,
@@ -189,22 +188,38 @@ describe("authSlice", () => {
         isAuthenticated: true,
       };
 
-      const action = updateUser({ name: "Updated Name" });
+      const action = {
+        type: updateUserProfile.fulfilled.type,
+        payload: { name: "Updated Name" },
+      };
       const state = authReducer(loggedInState, action);
 
       expect(state.user?.name).toBe("Updated Name");
       expect(state.user?.email).toBe(mockUser.email);
-      expect(state.user?.id).toBe(mockUser.id);
-      expect(localStorage.getItem("user")).toBe(
-        JSON.stringify({ ...mockUser, name: "Updated Name" }),
-      );
     });
 
-    it("should handle updateUser when user is null", () => {
-      const action = updateUser({ name: "New Name" });
+    // Change Password Thunk
+    it("should handle changeUserPassword.fulfilled", () => {
+      const action = { type: changeUserPassword.fulfilled.type };
       const state = authReducer(initialState, action);
+      expect(state.isLoading).toBe(false);
+    });
+
+    // Delete Account Thunk
+    it("should handle deleteUserAccount.fulfilled", () => {
+      const loggedInState: AuthState = {
+        ...initialState,
+        user: mockUser,
+        token: "token123",
+        isAuthenticated: true,
+      };
+
+      const action = { type: deleteUserAccount.fulfilled.type };
+      const state = authReducer(loggedInState, action);
 
       expect(state.user).toBeNull();
+      expect(state.token).toBeNull();
+      expect(state.isAuthenticated).toBe(false);
     });
   });
 

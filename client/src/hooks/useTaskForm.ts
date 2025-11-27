@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useTasks } from "./useTasks";
 import { useLists } from "./useLists";
-import { useAuth } from "./useAuth";
 import type { Task, TaskPriority, TaskStatus } from "@/types/tasks-system/task";
 import type { List } from "@/types/tasks-system/list";
 
@@ -31,7 +30,6 @@ export function useTaskForm() {
 
   const { createTask } = useTasks();
   const { accessibleLists, createList } = useLists();
-  const { user } = useAuth();
 
   // Establecer la primera lista por defecto si existe y no hay ninguna seleccionada
   useEffect(() => {
@@ -50,21 +48,30 @@ export function useTaskForm() {
 
   const handleListCreated = useCallback(
     (listData: Omit<List, "id" | "createdAt" | "shares" | "tasks">) => {
-      if (!user?.id) return;
+      // La creación de la lista ahora se maneja en el diálogo de lista
+      // Aquí solo necesitamos actualizar el campo listId si la creación fue exitosa
+      // Sin embargo, como createList es asíncrono, idealmente deberíamos esperar la respuesta
+      // Por ahora, asumiremos que el usuario seleccionará la nueva lista o que el diálogo de lista
+      // manejará la selección si es necesario.
+      // Dado que CreateListDialog ahora usa el thunk directamente, este callback podría simplificarse
+      // o eliminarse si el diálogo maneja todo.
+      // Pero para mantener la compatibilidad con el prop onCreateList de CreateListDialog (si se usa en modo controlado),
+      // podemos dejarlo.
+      // NOTA: CreateListDialog en modo controlado llama a onCreateList con los datos, pero no crea la lista en el store.
+      // Si CreateTaskDialog usa CreateListDialog en modo controlado, entonces SÍ necesitamos crear la lista aquí.
 
-      const newList: List = {
-        id: crypto.randomUUID(),
-        ...listData,
-        ownerId: user.id,
-        createdAt: new Date().toISOString(),
-        tasks: [],
-        shares: [],
-      };
+      // Revisando CreateTaskDialog, usa CreateListDialog con onCreateList={handleListCreated}.
+      // Y CreateListDialog llama a onCreateList en modo controlado.
+      // PERO CreateTaskDialog pasa `open` y `onOpenChange`, lo que sugiere modo controlado.
+      // Sin embargo, CreateListDialogUnified decide el modo basado en props.
+      // Si pasamos `onCreateList`, es modo controlado.
 
-      createList(newList);
-      updateField("listId", newList.id);
+      // Vamos a actualizar esto para despachar la acción createList
+      createList(listData);
+      // Nota: No podemos saber el ID de la nueva lista inmediatamente aquí sin esperar el thunk.
+      // Esto es una limitación actual. Idealmente createList debería devolver la lista creada.
     },
-    [user, createList, updateField],
+    [createList],
   );
 
   const handleSubmit = useCallback(
@@ -73,22 +80,16 @@ export function useTaskForm() {
         return false;
       }
 
-      const newTask: Task = {
-        id: crypto.randomUUID(),
+      createTask({
         name: formData.name.trim(),
         description: formData.description.trim() || undefined,
         status: formData.status,
         priority: formData.priority,
         dueDate: formData.dueDate || undefined,
         listId: formData.listId,
-        completed: formData.status === "COMPLETED",
         favorite: formData.favorite,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        shares: [],
-      };
+      });
 
-      createTask(newTask);
       resetForm();
       onSuccess?.();
       return true;

@@ -1,4 +1,3 @@
-import React from "react";
 import * as TablerIcons from "@tabler/icons-react";
 import type { IconType as CompIconType } from "@/types/components";
 

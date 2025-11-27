@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import reducer, {
-  addList,
+  createList,
   addListShare,
   deleteList,
+  fetchLists,
   removeListShare,
   resetListsState,
   selectLists,
@@ -11,14 +12,12 @@ import reducer, {
   selectSelectedList,
   selectSharedLists,
   setError,
-  setLists,
   setLoading,
   setSelectedList,
   updateList,
   updateListShare,
 } from "@/store/slices/listsSlice";
-import type { ListsState, List } from "@/types/tasks-system/list";
-import type { ListShare } from "@/types/list/shareList";
+import type { ListsState, List, ListShare } from "@/types/tasks-system/list";
 
 const baseList: List = {
   id: "l1",
@@ -54,41 +53,54 @@ describe("listsSlice reducer", () => {
     expect(state.isLoading).toBe(false);
   });
 
-  it("setLists reemplaza y limpia estado", () => {
+  it("fetchLists.fulfilled reemplaza y limpia estado", () => {
+    const action = {
+      type: fetchLists.fulfilled.type,
+      payload: [baseList],
+    };
     const state = reducer(
       { ...initialState, error: "err", isLoading: true },
-      setLists([baseList]),
+      action,
     );
     expect(state.lists).toEqual([baseList]);
     expect(state.error).toBeNull();
     expect(state.isLoading).toBe(false);
   });
 
-  it("addList inserta al inicio y limpia error", () => {
+  it("createList.fulfilled inserta al inicio y limpia error", () => {
     const another = { ...baseList, id: "l2", name: "Work" };
+    const action = {
+      type: createList.fulfilled.type,
+      payload: baseList,
+    };
     const state = reducer(
       { ...initialState, lists: [another], error: "x" },
-      addList(baseList),
+      action,
     );
     expect(state.lists.map((l) => l.id)).toEqual(["l1", "l2"]);
     expect(state.error).toBeNull();
   });
 
-  it("updateList modifica la lista encontrada", () => {
-    const state = reducer(
-      { ...initialState, lists: [baseList] },
-      updateList({ id: "l1", name: "Updated" }),
-    );
+  it("updateList.fulfilled modifica la lista encontrada", () => {
+    const action = {
+      type: updateList.fulfilled.type,
+      payload: { ...baseList, name: "Updated" },
+    };
+    const state = reducer({ ...initialState, lists: [baseList] }, action);
     expect(state.lists[0].name).toBe("Updated");
   });
 
-  it("deleteList elimina y limpia selectedListId", () => {
+  it("deleteList.fulfilled elimina y limpia selectedListId", () => {
     const populated: ListsState = {
       ...initialState,
       lists: [baseList],
       selectedListId: "l1",
     };
-    const state = reducer(populated, deleteList("l1"));
+    const action = {
+      type: deleteList.fulfilled.type,
+      payload: "l1",
+    };
+    const state = reducer(populated, action);
     expect(state.lists).toHaveLength(0);
     expect(state.selectedListId).toBeNull();
   });
@@ -105,7 +117,7 @@ describe("listsSlice reducer", () => {
     );
     expect(state.lists[0].shares).toEqual([share]);
 
-    const updatedShare = { ...share, permission: "EDIT" };
+    const updatedShare = { ...share, permission: "EDIT" as const };
     state = reducer(
       state,
       updateListShare({ listId: "l1", share: updatedShare }),

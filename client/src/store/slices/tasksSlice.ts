@@ -5,7 +5,8 @@ import type {
   TaskStatus,
   TaskShare,
 } from "@/types/tasks-system/task";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { api, apiErrorMessage } from "@/lib/api";
 
 const initialState: TasksState = {
   tasks: [],
@@ -24,6 +25,70 @@ const initialState: TasksState = {
   },
 };
 
+// Async Thunks
+export const fetchTasks = createAsyncThunk(
+  "tasks/fetchTasks",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get<Task[]>("/tasks");
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const createTask = createAsyncThunk(
+  "tasks/createTask",
+  async (taskData: Partial<Task>, { rejectWithValue }) => {
+    try {
+      const { data } = await api.post<Task>("/tasks", taskData);
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const updateTask = createAsyncThunk(
+  "tasks/updateTask",
+  async (
+    { id, ...updates }: Partial<Task> & { id: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const { data } = await api.patch<Task>(`/tasks/${id}`, updates);
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const deleteTask = createAsyncThunk(
+  "tasks/deleteTask",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await api.delete(`/tasks/${id}`);
+      return id;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const toggleTaskComplete = createAsyncThunk(
+  "tasks/toggleComplete",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const { data } = await api.patch<Task>(`/tasks/${id}/toggle-complete`);
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
@@ -40,37 +105,6 @@ const tasksSlice = createSlice({
       state.tasks = action.payload;
       state.isLoading = false;
       state.error = null;
-    },
-    addTask: (state, action: PayloadAction<Task>) => {
-      state.tasks.unshift(action.payload);
-      state.error = null;
-    },
-    updateTask: (
-      state,
-      action: PayloadAction<Partial<Task> & { id: string }>,
-    ) => {
-      const index = state.tasks.findIndex((t) => t.id === action.payload.id);
-      if (index !== -1) {
-        state.tasks[index] = { ...state.tasks[index], ...action.payload };
-      }
-      state.error = null;
-    },
-    deleteTask: (state, action: PayloadAction<string>) => {
-      state.tasks = state.tasks.filter((task) => task.id !== action.payload);
-      if (state.selectedTaskId === action.payload) {
-        state.selectedTaskId = null;
-      }
-      state.error = null;
-    },
-    toggleTaskComplete: (state, action: PayloadAction<string>) => {
-      const task = state.tasks.find((t) => t.id === action.payload);
-      if (task) {
-        task.completed = !task.completed;
-        task.status = task.completed ? "COMPLETED" : "PENDING";
-        task.completedAt = task.completed
-          ? new Date().toISOString()
-          : undefined;
-      }
     },
     setTaskStatus: (
       state,
@@ -159,16 +193,90 @@ const tasksSlice = createSlice({
     },
     resetTasksState: () => initialState,
   },
+  extraReducers: (builder) => {
+    // Fetch Tasks
+    builder
+      .addCase(fetchTasks.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.tasks = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchTasks.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Create Task
+    builder
+      .addCase(createTask.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(createTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.tasks.unshift(action.payload);
+        state.error = null;
+      })
+      .addCase(createTask.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Update Task
+    builder
+      .addCase(updateTask.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const index = state.tasks.findIndex((t) => t.id === action.payload.id);
+        if (index !== -1) {
+          state.tasks[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Delete Task
+    builder
+      .addCase(deleteTask.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+        if (state.selectedTaskId === action.payload) {
+          state.selectedTaskId = null;
+        }
+        state.error = null;
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Toggle Complete
+    builder.addCase(toggleTaskComplete.fulfilled, (state, action) => {
+      const index = state.tasks.findIndex((t) => t.id === action.payload.id);
+      if (index !== -1) {
+        state.tasks[index] = action.payload;
+      }
+    });
+  },
 });
 
 export const {
   setLoading,
   setError,
-  setTasks,
-  addTask,
-  updateTask,
-  deleteTask,
-  toggleTaskComplete,
   setTaskStatus,
   setSelectedTask,
   setStatusFilter,
@@ -297,5 +405,5 @@ export const selectTasksByPriority = (state: { tasks: TasksState }) => {
 export const selectSharedTasks =
   (userId: string) => (state: { tasks: TasksState }) =>
     state.tasks.tasks.filter((task) =>
-      task.shares.some((share) => share.userId === userId),
+      task.shares?.some((share) => share.userId === userId),
     );

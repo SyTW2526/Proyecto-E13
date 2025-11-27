@@ -5,10 +5,11 @@ import {
   getNextDueTasks,
 } from "@/lib/taskFilters";
 import {
-  addTask,
   addTaskShare,
   clearFilters,
+  createTask,
   deleteTask,
+  fetchTasks,
   removeTaskShare,
   selectFilteredTasks,
   selectSelectedTask,
@@ -30,7 +31,6 @@ import {
   setSelectedTask,
   setSorting,
   setStatusFilter,
-  setTasks,
   setTaskStatus,
   toggleSortOrder,
   toggleTaskComplete,
@@ -81,8 +81,8 @@ export function useTasks(listId?: string) {
   const priorityStats = useAppSelector(selectTasksByPriority);
   const sharedTasks = useAppSelector(selectSharedTasks(user?.id || ""));
 
-  const loadTasks = (tasksData: Task[]) => dispatch(setTasks(tasksData));
-  const createTask = (task: Task) => dispatch(addTask(task));
+  const fetchAllTasks = () => dispatch(fetchTasks());
+  const createNewTask = (task: Partial<Task>) => dispatch(createTask(task));
   const editTask = (data: Partial<Task> & { id: string }) =>
     dispatch(updateTask(data));
   const removeTask = (id: string) => dispatch(deleteTask(id));
@@ -140,8 +140,8 @@ export function useTasks(listId?: string) {
     nextDueTasks,
     recentTasks,
     favoriteTasks,
-    loadTasks,
-    createTask,
+    fetchAllTasks,
+    createTask: createNewTask,
     editTask,
     removeTask,
     selectTask,
