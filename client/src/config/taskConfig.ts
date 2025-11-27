@@ -4,6 +4,23 @@
  * Define las opciones y etiquetas para la gestión de tareas.
  */
 
+export const taskFilterLabels = {
+  statusPlaceholder: "Estado",
+  statusAll: "Todos los Estados",
+  priorityPlaceholder: "Prioridad",
+  priorityAll: "Todas las Prioridades",
+  sortPlaceholder: "Ordenar por",
+  sortFields: {
+    dueDate: "Fecha de Vencimiento",
+    createdAt: "Fecha de Creación",
+    name: "Nombre",
+  },
+  sortOrder: {
+    asc: "Ascendente",
+    desc: "Descendente",
+  },
+};
+
 export const priorityConfig = {
   LOW: {
     color: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
@@ -35,6 +52,17 @@ export const statusConfig = {
   COMPLETED: {
     color: "bg-green-500/10 text-green-700 dark:text-green-400",
     label: "Completada",
+  },
+} as const;
+
+export const taskFavoritesConfig = {
+  FAVORITE: {
+    color: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400",
+    label: "Favorita",
+  },
+  NOT_FAVORITE: {
+    color: "bg-gray-500/10 text-gray-700 dark:text-gray-400",
+    label: "No Favorita",
   },
 } as const;
 
@@ -76,6 +104,10 @@ export const taskFormLabels = {
     },
     status: {
       label: "Estado",
+      required: false,
+    },
+    favorite: {
+      label: "Favorita",
       required: false,
     },
     dueDate: {

@@ -1,19 +1,12 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  TaskPriorityFilter,
+  TaskStatusFilter,
+} from "@/components/tasks/TaskFilters";
 import { Combobox } from "@/components/ui/combobox";
 import { FormField } from "./FormField";
-import {
-  priorityConfig,
-  statusConfig,
-  taskFormLabels,
-} from "@/config/taskConfig";
+import { taskFormLabels } from "@/config/taskConfig";
 import type { TaskPriority, TaskStatus } from "@/types/tasks-system/task";
 import type { List } from "@/types/tasks-system/list";
 
@@ -91,24 +84,12 @@ export function TaskFormFields({
           htmlFor="priority"
           required={taskFormLabels.fields.priority.required}
         >
-          <Select
+          <TaskPriorityFilter
             value={formData.priority}
-            onValueChange={(value) =>
-              updateField("priority", value as TaskPriority)
-            }
-            required
-          >
-            <SelectTrigger id="priority" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(priorityConfig).map(([key, config]) => (
-                <SelectItem key={key} value={key}>
-                  <span className={config.color}>{config.label}</span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            onChange={(value) => updateField("priority", value)}
+            showAll={false}
+            className="w-full"
+          />
         </FormField>
 
         <FormField
@@ -116,24 +97,12 @@ export function TaskFormFields({
           htmlFor="status"
           required={taskFormLabels.fields.status.required}
         >
-          <Select
+          <TaskStatusFilter
             value={formData.status}
-            onValueChange={(value) =>
-              updateField("status", value as TaskStatus)
-            }
-            required
-          >
-            <SelectTrigger id="status" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(statusConfig).map(([key, config]) => (
-                <SelectItem key={key} value={key}>
-                  <span className={config.color}>{config.label}</span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            onChange={(value) => updateField("status", value)}
+            showAll={false}
+            className="w-full"
+          />
         </FormField>
       </div>
 
