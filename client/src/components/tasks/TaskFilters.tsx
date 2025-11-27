@@ -6,6 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   statusConfig,
   priorityConfig,
@@ -26,6 +27,7 @@ interface TaskFilterConfig {
   placeholder: string;
   allLabel: string;
   config: Record<string, { color: string; label: string }>;
+  icon?: string;
 }
 
 function TaskFilter<T extends string>({
@@ -46,7 +48,13 @@ function TaskFilter<T extends string>({
         )}
         {Object.entries(filterConfig.config).map(([key, config]) => (
           <SelectItem key={key} value={key}>
-            <span className={config.color}>{config.label}</span>
+            <Badge
+              variant="outline"
+              className={config.color}
+              leftIcon={filterConfig.icon}
+            >
+              {config.label}
+            </Badge>
           </SelectItem>
         ))}
       </SelectContent>
@@ -62,6 +70,7 @@ export function TaskStatusFilter(props: FilterProps<TaskStatus>) {
         placeholder: taskFilterLabels.statusPlaceholder,
         allLabel: taskFilterLabels.statusAll,
         config: statusConfig,
+        icon: "IconCircle",
       }}
     />
   );
@@ -75,6 +84,7 @@ export function TaskPriorityFilter(props: FilterProps<TaskPriority>) {
         placeholder: taskFilterLabels.priorityPlaceholder,
         allLabel: taskFilterLabels.priorityAll,
         config: priorityConfig,
+        icon: "IconFlag",
       }}
     />
   );

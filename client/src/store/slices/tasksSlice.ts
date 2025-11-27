@@ -89,6 +89,18 @@ export const toggleTaskComplete = createAsyncThunk(
   },
 );
 
+export const toggleTaskFavorite = createAsyncThunk(
+  "tasks/toggleFavorite",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const { data } = await api.patch<Task>(`/tasks/${id}/toggle-favorite`);
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
@@ -266,6 +278,12 @@ const tasksSlice = createSlice({
 
     // Toggle Complete
     builder.addCase(toggleTaskComplete.fulfilled, (state, action) => {
+      const index = state.tasks.findIndex((t) => t.id === action.payload.id);
+      if (index !== -1) {
+        state.tasks[index] = action.payload;
+      }
+    });
+    builder.addCase(toggleTaskFavorite.fulfilled, (state, action) => {
       const index = state.tasks.findIndex((t) => t.id === action.payload.id);
       if (index !== -1) {
         state.tasks[index] = action.payload;

@@ -66,19 +66,22 @@ export function TaskFormFields({
         </FormField>
       </div>
 
-      {/* Fecha de vencimiento */}
-      <FormField label={taskFormLabels.fields.dueDate.label} htmlFor="dueDate">
-        <Input
-          id="dueDate"
-          type="date"
-          min={new Date(Date.now()).toISOString().split("T")[0]}
-          value={formData.dueDate}
-          onChange={(e) => updateField("dueDate", e.target.value)}
-        />
-      </FormField>
-
       {/* Prioridad y Estado - 1 columna en móvil, 2 en desktop */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        {/* Fecha de vencimiento */}
+        <FormField
+          label={taskFormLabels.fields.dueDate.label}
+          htmlFor="dueDate"
+        >
+          <Input
+            id="dueDate"
+            type="date"
+            min={new Date(Date.now()).toISOString().split("T")[0]}
+            value={formData.dueDate}
+            onChange={(e) => updateField("dueDate", e.target.value)}
+          />
+        </FormField>
+
         <FormField
           label={taskFormLabels.fields.priority.label}
           htmlFor="priority"
