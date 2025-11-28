@@ -49,8 +49,8 @@ export function TaskCard({ task, formatDate }: TaskCardProps) {
             align="start"
           />
 
-          {/* Status, Priority, Favorite (Right) */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            {/* Status Filter */}
             <TaskStatusFilter
               variant="compact"
               value={task.status}
@@ -62,6 +62,7 @@ export function TaskCard({ task, formatDate }: TaskCardProps) {
               showAll={false}
             />
 
+            {/* Priority Filter */}
             <TaskPriorityFilter
               variant="compact"
               value={task.priority}
@@ -72,28 +73,28 @@ export function TaskCard({ task, formatDate }: TaskCardProps) {
               }}
               showAll={false}
             />
-
-            {/* Favorite Checkbox */}
-            <Checkbox
-              checked={task.favorite}
-              onCheckedChange={() => toggleFavorite(task.id)}
-              className="cursor-pointer hover:scale-110 transition-transform duration-200 ml-1"
-              icon={
-                <Icon
-                  as="IconStar"
-                  size={16}
-                  className="text-muted-foreground hover:text-yellow-400 transition-colors duration-200"
-                />
-              }
-              checkedIcon={
-                <Icon
-                  as="IconStar"
-                  size={16}
-                  className="fill-yellow-400 text-yellow-400"
-                />
-              }
-            />
           </div>
+
+          {/* Favorite Checkbox */}
+          <Checkbox
+            checked={task.favorite}
+            onCheckedChange={() => toggleFavorite(task.id)}
+            className="cursor-pointer hover:scale-110 transition-transform duration-200"
+            icon={
+              <Icon
+                as="IconStar"
+                size={16}
+                className="text-muted-foreground hover:text-yellow-400 transition-colors duration-200"
+              />
+            }
+            checkedIcon={
+              <Icon
+                as="IconStar"
+                size={16}
+                className="fill-yellow-400 text-yellow-400"
+              />
+            }
+          />
         </div>
 
         {/* Left Section: Title & Description */}
