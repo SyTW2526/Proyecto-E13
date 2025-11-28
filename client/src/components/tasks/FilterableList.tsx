@@ -111,7 +111,7 @@ export function FilterableList({
           </CreateListDialogStandalone>
         </div>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:flex sm:flex-col sm:gap-2">
+      <div className="mt-4 flex flex-col gap-4 sm:gap-2">
         {isLoading ? (
           [...Array(3)].map((_, i) => (
             <div

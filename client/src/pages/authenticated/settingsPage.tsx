@@ -28,6 +28,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useUI } from "@/hooks/useUI";
+import { SidebarWidth, TaskCardSize } from "@/store/slices/uiSlice";
 
 export default function SettingsPage() {
   const {
@@ -53,6 +62,9 @@ export default function SettingsPage() {
     deleteAccount,
     deleteAccountMsg,
   } = useSettings();
+
+  const { sidebarWidth, setSidebarWidth, taskCardSize, setTaskCardSize } =
+    useUI();
 
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
@@ -179,6 +191,52 @@ export default function SettingsPage() {
               </div>
             </div>
             <Switch checked={isDark} onCheckedChange={handleToggleTheme} />
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-medium">Tamaño de la barra lateral</div>
+              <div className="text-sm text-muted-foreground">
+                Ajusta el ancho de la lista de tareas.
+              </div>
+            </div>
+            <Select
+              value={sidebarWidth}
+              onValueChange={(value) => setSidebarWidth(value as SidebarWidth)}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Selecciona un tamaño" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="compact">Compacto</SelectItem>
+                <SelectItem value="normal">Normal</SelectItem>
+                <SelectItem value="wide">Amplio</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-medium">Tamaño de las tarjetas</div>
+              <div className="text-sm text-muted-foreground">
+                Ajusta el tamaño de las tarjetas de tarea.
+              </div>
+            </div>
+            <Select
+              value={taskCardSize.toString()}
+              onValueChange={(value) =>
+                setTaskCardSize(parseInt(value) as TaskCardSize)
+              }
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Selecciona un tamaño" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2">2 Columnas</SelectItem>
+                <SelectItem value="3">3 Columnas</SelectItem>
+                <SelectItem value="4">4 Columnas</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>

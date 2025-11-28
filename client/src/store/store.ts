@@ -4,6 +4,7 @@ import authReducer from "./slices/authSlice";
 import themeReducer from "./slices/themeSlice";
 import listsReducer from "./slices/listsSlice";
 import tasksReducer from "./slices/tasksSlice";
+import uiReducer from "./slices/uiSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     theme: themeReducer,
     lists: listsReducer,
     tasks: tasksReducer,
+    ui: uiReducer,
   },
 });
 
@@ -25,7 +27,7 @@ let previousState = store.getState();
 
 store.subscribe(() => {
   const state = store.getState();
-  const { auth, theme } = state;
+  const { auth, theme, ui } = state;
 
   if (auth.token !== previousState.auth.token) {
     if (auth.token) {
@@ -53,6 +55,14 @@ store.subscribe(() => {
     } else {
       root.classList.remove("dark");
     }
+  }
+
+  if (ui.sidebarWidth !== previousState.ui.sidebarWidth) {
+    localStorage.setItem("sidebarWidth", ui.sidebarWidth);
+  }
+
+  if (ui.taskCardSize !== previousState.ui.taskCardSize) {
+    localStorage.setItem("taskCardSize", ui.taskCardSize.toString());
   }
 
   previousState = state;
