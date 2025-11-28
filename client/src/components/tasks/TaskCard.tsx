@@ -1,14 +1,7 @@
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ItemActionsMenu } from "@/components/ui/ItemActionsMenu";
 import {
   Dialog,
   DialogContent,
@@ -21,10 +14,15 @@ import Icon from "@/components/ui/icon";
 import { Checkbox } from "@/components/customized/checkbox/checkbox-09";
 import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
 import ShareTaskDialog from "./ShareTaskDialog";
-import { priorityConfig, statusConfig } from "@/config/taskConfig";
+
 import { useTasks } from "@/hooks/useTasks";
 import type { Task, TaskStatus, TaskPriority } from "@/types/tasks-system/task";
 import type { List } from "@/types/tasks-system/list";
+import {
+  TaskStatusFilter,
+  TaskPriorityFilter
+} from "@/components/tasks/TaskFilters";
+
 
 interface TaskCardProps {
   task: Task;
@@ -33,8 +31,6 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, formatDate }: TaskCardProps) {
-  const priorityStyle = priorityConfig[task.priority];
-  const statusStyle = statusConfig[task.status];
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
@@ -46,96 +42,36 @@ export function TaskCard({ task, formatDate }: TaskCardProps) {
         {/* Top Section: Actions (Left) and Status/Priority/Favorite (Right) */}
         <div className="flex justify-between items-center w-full">
           {/* Actions Menu (Left) */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-muted-foreground hover:text-foreground"
-              >
-                <Icon as="IconDotsVertical" size={16} />
-                <span className="sr-only">Abrir menú</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem onClick={() => setShareDialogOpen(true)}>
-                <Icon as="IconShare" className="mr-2" />
-                Compartir
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
-                <Icon as="IconEdit" className="mr-2" />
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                onClick={() => setDeleteDialogOpen(true)}
-              >
-                <Icon as="IconTrash" className="mr-2" />
-                Eliminar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <ItemActionsMenu
+            onShare={() => setShareDialogOpen(true)}
+            onEdit={() => setEditDialogOpen(true)}
+            onDelete={() => setDeleteDialogOpen(true)}
+            align="start"
+          />
 
           {/* Status, Priority, Favorite (Right) */}
           <div className="flex items-center gap-2">
-            <div className="flex flex-wrap gap-1.5">
-              <DropdownMenu>
-                <DropdownMenuTrigger className="focus:outline-none">
-                  <Badge
-                    variant="outline"
-                    className={`${statusStyle.color} cursor-pointer hover:opacity-80 transition-opacity`}
-                    leftIcon="IconCircle"
-                  >
-                    {statusStyle.label}
-                  </Badge>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {Object.entries(statusConfig).map(([key, config]) => (
-                    <DropdownMenuItem
-                      key={key}
-                      onClick={() =>
-                        editTask({ id: task.id, status: key as TaskStatus })
-                      }
-                      className="flex items-center gap-2"
-                    >
-                      <div
-                        className={`w-2 h-2 rounded-full ${config.color.replace("bg-", "bg-").replace("/10", "")} bg-current opacity-70`}
-                      />
-                      {config.label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <TaskStatusFilter
+              variant="compact"
+              value={task.status}
+              onChange={(status) => {
+                if (status !== "all") {
+                  editTask({ id: task.id, status });
+                }
+              }}
+              showAll={false}
+            />
 
-              <DropdownMenu>
-                <DropdownMenuTrigger className="focus:outline-none">
-                  <Badge
-                    variant="outline"
-                    className={`${priorityStyle.color} cursor-pointer hover:opacity-80 transition-opacity`}
-                    leftIcon="IconFlag"
-                  >
-                    {priorityStyle.label}
-                  </Badge>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {Object.entries(priorityConfig).map(([key, config]) => (
-                    <DropdownMenuItem
-                      key={key}
-                      onClick={() =>
-                        editTask({ id: task.id, priority: key as TaskPriority })
-                      }
-                      className="flex items-center gap-2"
-                    >
-                      <div
-                        className={`w-2 h-2 rounded-full ${config.color.replace("bg-", "bg-").replace("/10", "")} bg-current opacity-70`}
-                      />
-                      {config.label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            <TaskPriorityFilter
+              variant="compact"
+              value={task.priority}
+              onChange={(priority) => {
+                if (priority !== "all") {
+                  editTask({ id: task.id, priority });
+                }
+              }}
+              showAll={false}
+            />
 
             {/* Favorite Checkbox */}
             <Checkbox

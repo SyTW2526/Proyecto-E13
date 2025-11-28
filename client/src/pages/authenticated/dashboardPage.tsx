@@ -10,6 +10,7 @@ import {
   PriorityChart,
   WeeklyTasksChart,
 } from "@/components/dashboard/DashboardCharts";
+import { Badge } from "@/components/ui/badge";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -47,10 +48,17 @@ export default function DashboardPage() {
     "Tareas Completadas": { details: weekStats.completedTasks },
     "Próximas Tareas": { details: weekStats.upcomingTasks },
     "Tareas Por Lista": {
-      details:
-        weekStats.tasksPerList
-          .map((item) => `${item.listName}: ${item.count} tareas`)
-          .join(", ") || "Sin tareas",
+      chartComponent: (
+        <div className="flex flex-wrap gap-2">
+          {weekStats.tasksPerList.length > 0 ? (
+            weekStats.tasksPerList.map((item, index) => (
+              <Badge key={index} variant="outline" className="text-sm">{item.listName}: {item.count} tareas</Badge>
+            ))
+          ) : (
+            <span className="text-gray-500 dark:text-gray-400">Sin tareas</span>
+          )}
+        </div>
+      ),
     },
     "Tareas Por Prioridad": {
       chartComponent: (
