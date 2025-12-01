@@ -12,6 +12,7 @@ Aplicación Fullstack colaborativa para crear, organizar y compartir tareas de f
 
 [![CI Tests (Client)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-client.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-client.yml)
 [![CI Tests (Server)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-server.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-server.yml)
+[![Coverage Status](https://coveralls.io/repos/github/SyTW2526/Proyecto-E13/badge.svg?branch=main)](https://coveralls.io/github/SyTW2526/Proyecto-E13?branch=main)
 
 ---
 
