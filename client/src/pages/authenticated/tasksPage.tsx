@@ -64,7 +64,7 @@ export default function TasksPage() {
   return (
     <div className="max-w-(--breakpoint-2xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
       <aside
-        className={`sticky top-8 shrink-0 ${sidebarWidthClass} w-full space-y-8 order-1 lg:order-2 lg:border-l lg:border-border/40 lg:pl-12`}
+        className={`sticky top-8 shrink-0 ${sidebarWidthClass} w-full space-y-8 order-1 lg:order-2 lg:border-l lg:border-border lg:pl-12`}
       >
         <FilterableList
           title={tasksPageLabels.sidebar.title}
@@ -94,7 +94,7 @@ export default function TasksPage() {
           </div>
 
           {/* Filtros */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-card/20 p-2 rounded-lg border border-border/50">
+          <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-card p-2 rounded-lg border border-border">
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <TaskStatusFilter
                 value={filters.status}
