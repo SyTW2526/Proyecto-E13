@@ -94,7 +94,7 @@ export default function TasksPage() {
           </div>
 
           {/* Filtros */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
+          <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-card/20 p-2 rounded-lg border border-border/50">
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <TaskStatusFilter
                 value={filters.status}

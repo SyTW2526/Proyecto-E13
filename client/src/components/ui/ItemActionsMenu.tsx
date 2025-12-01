@@ -24,7 +24,7 @@ export function ItemActionsMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" leftIcon={"IconDotsVertical"} />
+        <Button variant="ghost" size="icon" leftIcon={"IconDotsVertical"} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align={align}>
         {onShare && (

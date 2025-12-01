@@ -49,6 +49,28 @@ export function TaskCard({ task, formatDate }: TaskCardProps) {
             align="start"
           />
 
+
+          {/* Favorite Checkbox */}
+          <Checkbox
+            checked={task.favorite}
+            onCheckedChange={() => toggleFavorite(task.id)}
+            className="cursor-pointer hover:scale-110 transition-transform duration-200"
+            icon={
+              <Icon
+                as="IconStar"
+                size={16}
+                className="text-muted-foreground hover:text-yellow-400 transition-colors duration-200"
+              />
+            }
+            checkedIcon={
+              <Icon
+                as="IconStar"
+                size={16}
+                className="fill-yellow-400 text-yellow-400"
+              />
+            }
+          />
+
           <div className="flex items-center gap-1">
             {/* Status Filter */}
             <TaskStatusFilter
@@ -74,27 +96,6 @@ export function TaskCard({ task, formatDate }: TaskCardProps) {
               showAll={false}
             />
           </div>
-
-          {/* Favorite Checkbox */}
-          <Checkbox
-            checked={task.favorite}
-            onCheckedChange={() => toggleFavorite(task.id)}
-            className="cursor-pointer hover:scale-110 transition-transform duration-200"
-            icon={
-              <Icon
-                as="IconStar"
-                size={16}
-                className="text-muted-foreground hover:text-yellow-400 transition-colors duration-200"
-              />
-            }
-            checkedIcon={
-              <Icon
-                as="IconStar"
-                size={16}
-                className="fill-yellow-400 text-yellow-400"
-              />
-            }
-          />
         </div>
 
         {/* Left Section: Title & Description */}
