@@ -288,7 +288,15 @@ const tasksSlice = createSlice({
       .addCase(updateTask.fulfilled, (state, action) => {
         const index = state.tasks.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) {
-          state.tasks[index] = action.payload;
+          state.tasks[index] = {
+            ...state.tasks[index],
+            ...action.payload,
+            list:
+              action.payload.list && state.tasks[index].list
+                ? { ...state.tasks[index].list, ...action.payload.list }
+                : action.payload.list || state.tasks[index].list,
+            shares: action.payload.shares || state.tasks[index].shares,
+          };
         }
         state.error = null;
       })
@@ -322,7 +330,15 @@ const tasksSlice = createSlice({
       .addCase(shareTask.fulfilled, (state, action) => {
         const index = state.tasks.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) {
-          state.tasks[index] = action.payload;
+          state.tasks[index] = {
+            ...state.tasks[index],
+            ...action.payload,
+            list:
+              action.payload.list && state.tasks[index].list
+                ? { ...state.tasks[index].list, ...action.payload.list }
+                : action.payload.list || state.tasks[index].list,
+            shares: action.payload.shares || state.tasks[index].shares,
+          };
         }
         state.error = null;
       })
@@ -347,7 +363,15 @@ const tasksSlice = createSlice({
       .addCase(updateTaskSharePermission.fulfilled, (state, action) => {
         const index = state.tasks.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) {
-          state.tasks[index] = action.payload;
+          state.tasks[index] = {
+            ...state.tasks[index],
+            ...action.payload,
+            list:
+              action.payload.list && state.tasks[index].list
+                ? { ...state.tasks[index].list, ...action.payload.list }
+                : action.payload.list || state.tasks[index].list,
+            shares: action.payload.shares || state.tasks[index].shares,
+          };
         }
         state.error = null;
       })
@@ -363,7 +387,15 @@ const tasksSlice = createSlice({
       .addCase(unshareTask.fulfilled, (state, action) => {
         const index = state.tasks.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) {
-          state.tasks[index] = action.payload;
+          state.tasks[index] = {
+            ...state.tasks[index],
+            ...action.payload,
+            list:
+              action.payload.list && state.tasks[index].list
+                ? { ...state.tasks[index].list, ...action.payload.list }
+                : action.payload.list || state.tasks[index].list,
+            shares: action.payload.shares || state.tasks[index].shares,
+          };
         }
         state.error = null;
       })

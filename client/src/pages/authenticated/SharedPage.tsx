@@ -11,6 +11,7 @@ import {
   TaskSortFilter,
 } from "@/components/tasks/TaskFilters";
 import type { Task } from "@/types/tasks-system/task";
+import { useUI } from "@/hooks/useUI";
 
 export default function SharedPage() {
   const {
@@ -29,6 +30,19 @@ export default function SharedPage() {
 
   const { fetchSharedTasks, isLoading } = useTasks();
   const { fetchSharedLists, isLoading: isLoadingLists } = useLists();
+  const { sidebarWidth, taskCardSize } = useUI();
+
+  const sidebarWidthClass = {
+    compact: "lg:max-w-xs",
+    normal: "lg:max-w-md",
+    wide: "lg:max-w-xl",
+  }[sidebarWidth];
+
+  const gridColsClass = {
+    2: "grid-cols-1 lg:grid-cols-2",
+    3: "grid-cols-1 lg:grid-cols-3",
+    4: "grid-cols-1 lg:grid-cols-4",
+  }[taskCardSize];
 
   useEffect(() => {
     fetchSharedTasks();
@@ -46,8 +60,10 @@ export default function SharedPage() {
   }, []);
 
   return (
-    <div className="max-w-(--breakpoint-xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
-      <aside className="sticky top-8 shrink-0 lg:max-w-xs w-full space-y-8 order-1 lg:order-2 lg:border-l lg:border-border/40 lg:pl-12">
+    <div className="max-w-(--breakpoint-2xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
+      <aside
+        className={`sticky top-8 shrink-0 ${sidebarWidthClass} w-full space-y-8 order-1 lg:order-2 lg:border-l lg:border-border lg:pl-12`}
+      >
         <FilterableList
           title="Listas Compartidas"
           items={listTaskCounts}
@@ -70,7 +86,7 @@ export default function SharedPage() {
           </div>
 
           {/* Filtros */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
+          <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-card p-2 rounded-lg border border-border">
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <TaskStatusFilter
                 value={filters.status}
@@ -98,8 +114,8 @@ export default function SharedPage() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {[...Array(4)].map((_, i) => (
+          <div className={`grid ${gridColsClass} gap-6`}>
+            {[...Array(taskCardSize * 2)].map((_, i) => (
               <div
                 key={i}
                 className="rounded-md border p-4 h-[160px] animate-pulse bg-muted/20"
@@ -115,7 +131,7 @@ export default function SharedPage() {
             <p className="text-muted-foreground">No hay tareas compartidas</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className={`grid ${gridColsClass} gap-6`}>
             {displayTasks.map((task: Task) => {
               const list = accessibleLists.find(
                 (list) => list.id === task.listId,

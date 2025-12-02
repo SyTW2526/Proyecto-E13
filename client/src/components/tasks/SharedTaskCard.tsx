@@ -2,11 +2,11 @@ import { useState, memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ItemActionsMenu } from "@/components/ui/ItemActionsMenu";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -18,13 +18,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Icon from "@/components/ui/icon";
-import { Checkbox } from "@/components/customized/checkbox/checkbox-09";
 import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
 import ShareTaskDialog from "./ShareTaskDialog";
 import { priorityConfig, statusConfig } from "@/config/taskConfig";
@@ -51,7 +60,9 @@ export const SharedTaskCard = memo(function SharedTaskCard({
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
-  const { toggleFavorite, removeTask, editTask } = useTasks();
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const { removeTask, editTask } = useTasks();
 
   // Calculate permission
   let permission: SharePermission = "VIEW";
@@ -69,75 +80,49 @@ export const SharedTaskCard = memo(function SharedTaskCard({
   // Determine owner
   const owner = task.list?.owner || list?.owner;
 
+  const handleShare = () => {
+    if (canShare) {
+      setShareDialogOpen(true);
+    } else {
+      setErrorMessage("No tienes permisos para compartir esta tarea.");
+      setErrorDialogOpen(true);
+    }
+  };
+
+  const handleEdit = () => {
+    if (canEdit) {
+      setEditDialogOpen(true);
+    } else {
+      setErrorMessage("No tienes permisos para editar esta tarea.");
+      setErrorDialogOpen(true);
+    }
+  };
+
+  const handleDelete = () => {
+    if (canDelete) {
+      setDeleteDialogOpen(true);
+    } else {
+      setErrorMessage("No tienes permisos para eliminar esta tarea.");
+      setErrorDialogOpen(true);
+    }
+  };
+
   return (
     <Card className="group relative flex flex-col shadow-none border border-border/40 bg-card hover:shadow-sm transition-all duration-200 overflow-hidden rounded-xl">
       <CardContent className="flex flex-col gap-4 w-full">
-        {/* Top Section: Actions (Left) and Status/Priority/Favorite (Right) */}
+        {/* Top Section: Actions (Left) and Status/Priority (Right) */}
         <div className="flex justify-between items-center w-full">
           {/* Actions Menu (Left) */}
           <div className="flex items-center gap-2">
-            {(canEdit || canDelete || canShare) && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                  >
-                    <Icon as="IconDotsVertical" size={16} />
-                    <span className="sr-only">Abrir menú</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  {canShare && (
-                    <DropdownMenuItem onClick={() => setShareDialogOpen(true)}>
-                      <Icon as="IconShare" className="mr-2" />
-                      Compartir
-                    </DropdownMenuItem>
-                  )}
-                  {canEdit && (
-                    <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
-                      <Icon as="IconEdit" className="mr-2" />
-                      Editar
-                    </DropdownMenuItem>
-                  )}
-                  {(canEdit || canShare) && canDelete && (
-                    <DropdownMenuSeparator />
-                  )}
-                  {canDelete && (
-                    <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
-                      onClick={() => setDeleteDialogOpen(true)}
-                    >
-                      <Icon as="IconTrash" className="mr-2" />
-                      Eliminar
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-
-            {/* Owner Info */}
-            {owner && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
-                      <Icon as="IconUser" size={12} />
-                      <span className="max-w-[100px] truncate">
-                        {owner.name}
-                      </span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Compartido por: {owner.email}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
+            <ItemActionsMenu
+              onShare={handleShare}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              align="start"
+            />
           </div>
 
-          {/* Status, Priority, Favorite (Right) */}
+          {/* Status, Priority (Right) */}
           <div className="flex items-center gap-2">
             <div className="flex flex-wrap gap-1.5">
               <DropdownMenu>
@@ -209,55 +194,60 @@ export const SharedTaskCard = memo(function SharedTaskCard({
                 )}
               </DropdownMenu>
             </div>
-
-            {/* Favorite Checkbox */}
-            <Checkbox
-              checked={task.favorite}
-              onCheckedChange={() => toggleFavorite(task.id)}
-              className="cursor-pointer hover:scale-110 transition-transform duration-200 ml-1"
-              icon={
-                <Icon
-                  as="IconStar"
-                  size={16}
-                  className="text-muted-foreground hover:text-yellow-400 transition-colors duration-200"
-                />
-              }
-              checkedIcon={
-                <Icon
-                  as="IconStar"
-                  size={16}
-                  className="fill-yellow-400 text-yellow-400"
-                />
-              }
-            />
           </div>
         </div>
 
-        {/* Left Section: Title & Description */}
+        {/* Middle Section: Title & Description */}
         <div className="flex-1 flex flex-col justify-center text-left">
           <h3 className="text-base font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors">
             {task.name}
           </h3>
 
-          {/* Dates */}
-          <div className="flex flex-row gap-1.5 mt-1">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Icon
-                as="IconCalendarPlus"
-                size={14}
-                className="text-muted-foreground shrink-0"
-              />
-              <span>{formatDate(task.createdAt)}</span>
-            </div>
-            {task.dueDate && (
+          {/* Dates and Owner */}
+          <div className="flex flex-row justify-between items-center mt-1">
+            <div className="flex flex-row gap-1.5">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Icon
-                  as="IconCalendarEvent"
+                  as="IconCalendarPlus"
                   size={14}
                   className="text-muted-foreground shrink-0"
                 />
-                <span>{task.dueDate ? formatDate(task.dueDate) : "-"}</span>
+                <span>{formatDate(task.createdAt)}</span>
               </div>
+              {task.dueDate && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Icon
+                    as="IconCalendarEvent"
+                    size={14}
+                    className="text-muted-foreground shrink-0"
+                  />
+                  <span>{task.dueDate ? formatDate(task.dueDate) : "-"}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Owner Avatar */}
+            {owner && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Avatar className="h-6 w-6 cursor-help">
+                      <AvatarImage
+                        src={owner.image || undefined}
+                        alt={owner.name}
+                      />
+                      <AvatarFallback className="text-[10px]">
+                        {owner.name.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      Compartido por: {owner.name} ({owner.email})
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
           </div>
           {task.description && (
@@ -311,6 +301,21 @@ export const SharedTaskCard = memo(function SharedTaskCard({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Error Alert Dialog */}
+      <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Acción no permitida</AlertDialogTitle>
+            <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>
+              Entendido
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 });

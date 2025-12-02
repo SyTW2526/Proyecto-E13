@@ -1,5 +1,4 @@
 import { useState, memo } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ItemActionsMenu } from "@/components/ui/ItemActionsMenu";
@@ -17,13 +16,12 @@ import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
 import ShareTaskDialog from "./ShareTaskDialog";
 
 import { useTasks } from "@/hooks/useTasks";
-import type { Task, TaskStatus, TaskPriority } from "@/types/tasks-system/task";
+import type { Task } from "@/types/tasks-system/task";
 import type { List } from "@/types/tasks-system/list";
 import {
   TaskStatusFilter,
-  TaskPriorityFilter
+  TaskPriorityFilter,
 } from "@/components/tasks/TaskFilters";
-
 
 interface TaskCardProps {
   task: Task;
@@ -35,8 +33,6 @@ export const TaskCard = memo(function TaskCard({
   task,
   formatDate,
 }: TaskCardProps) {
-  const priorityStyle = priorityConfig[task.priority];
-  const statusStyle = statusConfig[task.status];
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
@@ -53,28 +49,6 @@ export const TaskCard = memo(function TaskCard({
             onEdit={() => setEditDialogOpen(true)}
             onDelete={() => setDeleteDialogOpen(true)}
             align="start"
-          />
-
-
-          {/* Favorite Checkbox */}
-          <Checkbox
-            checked={task.favorite}
-            onCheckedChange={() => toggleFavorite(task.id)}
-            className="cursor-pointer hover:scale-110 transition-transform duration-200"
-            icon={
-              <Icon
-                as="IconStar"
-                size={16}
-                className="text-muted-foreground hover:text-yellow-400 transition-colors duration-200"
-              />
-            }
-            checkedIcon={
-              <Icon
-                as="IconStar"
-                size={16}
-                className="fill-yellow-400 text-yellow-400"
-              />
-            }
           />
 
           <div className="flex items-center gap-1">
@@ -100,6 +74,27 @@ export const TaskCard = memo(function TaskCard({
                 }
               }}
               showAll={false}
+            />
+
+            {/* Favorite Checkbox */}
+            <Checkbox
+              checked={task.favorite}
+              onCheckedChange={() => toggleFavorite(task.id)}
+              className="ml-2 cursor-pointer hover:scale-110 transition-transform duration-200"
+              icon={
+                <Icon
+                  as="IconStar"
+                  size={16}
+                  className="text-muted-foreground hover:text-yellow-400 transition-colors duration-200"
+                />
+              }
+              checkedIcon={
+                <Icon
+                  as="IconStar"
+                  size={16}
+                  className="fill-yellow-400 text-yellow-400"
+                />
+              }
             />
           </div>
         </div>
