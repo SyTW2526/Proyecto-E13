@@ -154,11 +154,8 @@ export function FilterableList({
               </div>
               <div className="flex items-center gap-2">
                 <Badge
-                  variant="secondary"
-                  className={`justify-center rounded-full ${selectedId === item.id
-                    ? "bg-secondary text-secondary-foreground"
-                    : "bg-primary text-primary-foreground"
-                    }`}
+                  variant={selectedId === item.id ? "secondary" : "default"}
+                  className="justify-center rounded-full"
                 >
                   {item.count}
                 </Badge>
