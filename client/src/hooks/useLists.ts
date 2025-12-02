@@ -8,6 +8,7 @@ import {
   selectOwnedLists,
   selectSharedLists,
   fetchLists,
+  fetchSharedLists,
   createList,
   updateList,
   deleteList,
@@ -43,6 +44,7 @@ export function useLists() {
   const sharedLists = useAppSelector(selectSharedLists(user?.id || ""));
 
   const fetchAllLists = () => dispatch(fetchLists());
+  const fetchSharedListsAction = () => dispatch(fetchSharedLists());
   const createNewList = (list: Partial<List>) => dispatch(createList(list));
   const editList = (data: Partial<List> & { id: string }) =>
     dispatch(updateList(data));
@@ -91,6 +93,7 @@ export function useLists() {
     selectedListId,
     selectedList,
     fetchAllLists,
+    fetchSharedLists: fetchSharedListsAction,
     createList: createNewList,
     editList,
     removeList,

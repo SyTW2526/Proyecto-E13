@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, memo } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ItemActionsMenu } from "@/components/ui/ItemActionsMenu";
@@ -30,7 +31,12 @@ interface TaskCardProps {
   formatDate: (dateString?: string) => string;
 }
 
-export function TaskCard({ task, formatDate }: TaskCardProps) {
+export const TaskCard = memo(function TaskCard({
+  task,
+  formatDate,
+}: TaskCardProps) {
+  const priorityStyle = priorityConfig[task.priority];
+  const statusStyle = statusConfig[task.status];
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
@@ -178,4 +184,4 @@ export function TaskCard({ task, formatDate }: TaskCardProps) {
       </Dialog>
     </Card>
   );
-}
+});

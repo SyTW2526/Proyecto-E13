@@ -3,6 +3,7 @@ import {
   createList,
   deleteList,
   getUserLists,
+  getSharedLists,
   updateList,
   shareList,
   unshareList,
@@ -21,6 +22,7 @@ const router = Router();
 
 router.post("/", authenticate, validateBody(createListSchema), createList);
 router.get("/", authenticate, getUserLists);
+router.get("/shared", authenticate, getSharedLists);
 router.patch("/:id", authenticate, validateBody(updateListSchema), updateList);
 router.delete("/:id", authenticate, deleteList);
 router.post(

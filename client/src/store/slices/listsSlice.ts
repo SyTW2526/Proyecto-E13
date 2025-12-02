@@ -22,6 +22,18 @@ export const fetchLists = createAsyncThunk(
   },
 );
 
+export const fetchSharedLists = createAsyncThunk(
+  "lists/fetchSharedLists",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get<List[]>("/lists/shared");
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
 export const createList = createAsyncThunk(
   "lists/createList",
   async (listData: Partial<List>, { rejectWithValue }) => {
@@ -154,6 +166,19 @@ const listsSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchLists.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchSharedLists.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchSharedLists.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.lists = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchSharedLists.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

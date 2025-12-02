@@ -2,20 +2,17 @@ import { useEffect, useCallback } from "react";
 import { useTasks } from "@/hooks/useTasks";
 import { useLists } from "@/hooks/useLists";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
-import { TaskCard } from "@/components/tasks/TaskCard";
+import { SharedTaskCard } from "@/components/tasks/SharedTaskCard";
 import { FilterableList } from "@/components/tasks/FilterableList";
 import { tasksPageLabels } from "@/config/taskConfig";
-import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
-import { Button } from "@/components/ui/button";
 import {
   TaskStatusFilter,
   TaskPriorityFilter,
   TaskSortFilter,
 } from "@/components/tasks/TaskFilters";
 import type { Task } from "@/types/tasks-system/task";
-import { useUI } from "@/hooks/useUI";
 
-export default function TasksPage() {
+export default function SharedPage() {
   const {
     displayTasks,
     listTaskCounts,
@@ -30,25 +27,12 @@ export default function TasksPage() {
     sorting,
   } = useTaskFilters();
 
-  const { fetchAllTasks, isLoading } = useTasks();
-  const { fetchAllLists, isLoading: isLoadingLists } = useLists();
-  const { sidebarWidth, taskCardSize } = useUI();
-
-  const sidebarWidthClass = {
-    compact: "lg:max-w-xs",
-    normal: "lg:max-w-md",
-    wide: "lg:max-w-xl",
-  }[sidebarWidth];
-
-  const gridColsClass = {
-    2: "grid-cols-1 lg:grid-cols-2",
-    3: "grid-cols-1 lg:grid-cols-3",
-    4: "grid-cols-1 lg:grid-cols-4",
-  }[taskCardSize];
+  const { fetchSharedTasks, isLoading } = useTasks();
+  const { fetchSharedLists, isLoading: isLoadingLists } = useLists();
 
   useEffect(() => {
-    fetchAllTasks();
-    fetchAllLists();
+    fetchSharedTasks();
+    fetchSharedLists();
   }, []);
 
   const formatDate = useCallback((dateString?: string) => {
@@ -62,16 +46,14 @@ export default function TasksPage() {
   }, []);
 
   return (
-    <div className="max-w-(--breakpoint-2xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
-      <aside
-        className={`sticky top-8 shrink-0 ${sidebarWidthClass} w-full space-y-8 order-1 lg:order-2 lg:border-l lg:border-border lg:pl-12`}
-      >
+    <div className="max-w-(--breakpoint-xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
+      <aside className="sticky top-8 shrink-0 lg:max-w-xs w-full space-y-8 order-1 lg:order-2 lg:border-l lg:border-border/40 lg:pl-12">
         <FilterableList
-          title={tasksPageLabels.sidebar.title}
+          title="Listas Compartidas"
           items={listTaskCounts}
           selectedId={selectedListId}
           onItemClick={handleListFilter}
-          emptyMessage={tasksPageLabels.sidebar.emptyState}
+          emptyMessage="No hay listas compartidas"
           icon={tasksPageLabels.createButtons.list.icon}
           isLoading={isLoadingLists}
         />
@@ -82,19 +64,13 @@ export default function TasksPage() {
           <div className="flex flex-row items-center justify-between gap-4">
             <div>
               <h1 className="text-4xl font-extrabold tracking-tight text-foreground/90">
-                {tasksPageLabels.title}
+                Tareas Compartidas
               </h1>
-            </div>
-            <div className="flex gap-2">
-              {/* Boton de crear tareas */}
-              <CreateTaskDialog>
-                <Button leftIcon={tasksPageLabels.createButtons.task.icon} />
-              </CreateTaskDialog>
             </div>
           </div>
 
           {/* Filtros */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-card p-2 rounded-lg border border-border">
+          <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <TaskStatusFilter
                 value={filters.status}
@@ -122,8 +98,8 @@ export default function TasksPage() {
         </div>
 
         {isLoading ? (
-          <div className={`grid ${gridColsClass} gap-6`}>
-            {[...Array(taskCardSize * 2)].map((_, i) => (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {[...Array(4)].map((_, i) => (
               <div
                 key={i}
                 className="rounded-md border p-4 h-[160px] animate-pulse bg-muted/20"
@@ -136,18 +112,16 @@ export default function TasksPage() {
           </div>
         ) : displayTasks.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              {tasksPageLabels.emptyState}
-            </p>
+            <p className="text-muted-foreground">No hay tareas compartidas</p>
           </div>
         ) : (
-          <div className={`grid ${gridColsClass} gap-6`}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {displayTasks.map((task: Task) => {
               const list = accessibleLists.find(
                 (list) => list.id === task.listId,
               );
               return (
-                <TaskCard
+                <SharedTaskCard
                   key={task.id}
                   task={task}
                   list={list}

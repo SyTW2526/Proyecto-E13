@@ -17,6 +17,16 @@ export interface Task {
   shares: TaskShare[];
   favorite: boolean;
   updatedAt: string;
+  list?: {
+    id: string;
+    name: string;
+    owner?: {
+      id: string;
+      name: string;
+      email: string;
+      image?: string | null;
+    };
+  };
 }
 
 export interface TasksState {

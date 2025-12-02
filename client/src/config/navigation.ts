@@ -6,4 +6,5 @@
 export const navigationItems = [
   { title: "Resumen", href: "/dashboard", icon: "IconDashboard" },
   { title: "Tareas", href: "/tasks", icon: "IconTask" },
+  { title: "Compartido", href: "/shared", icon: "IconUsers" },
 ];

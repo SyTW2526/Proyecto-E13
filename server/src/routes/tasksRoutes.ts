@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createTask,
   getUserTasks,
+  getSharedTasks,
   deleteTask,
   updateTask,
   shareTask,
@@ -21,6 +22,7 @@ const router = Router();
 
 router.post("/", authenticate, validateBody(createTaskSchema), createTask);
 router.get("/", authenticate, getUserTasks);
+router.get("/shared", authenticate, getSharedTasks);
 router.delete("/:id", authenticate, deleteTask);
 router.patch("/:id", authenticate, validateBody(updateTaskSchema), updateTask);
 router.post(
