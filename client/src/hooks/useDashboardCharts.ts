@@ -59,9 +59,9 @@ export function useDashboardCharts({
     });
   }, [accessibleTasks]);
 
-  // Agrupar tareas por lista
+  // Agrupar tareas por lista (usando TODAS las tareas accesibles)
   const tasksPerList = useMemo(() => {
-    const grouped = tasksThisWeek.reduce<Record<string, number>>(
+    const grouped = accessibleTasks.reduce<Record<string, number>>(
       (acc, task) => {
         acc[task.listId] = (acc[task.listId] || 0) + 1;
         return acc;
@@ -74,7 +74,7 @@ export function useDashboardCharts({
       listName: list.name,
       count: grouped[list.id] || 0,
     }));
-  }, [tasksThisWeek, accessibleLists]);
+  }, [accessibleTasks, accessibleLists]);
 
   // Contadores para las tarjetas superiores
   const weekStats = useMemo(() => {
@@ -106,8 +106,8 @@ export function useDashboardCharts({
     };
   }, [tasksThisWeek, tasksPerList]);
 
-  // Calcular stats de prioridad para esta semana
-  const weekPriorityStats = useMemo(() => {
+  // Calcular stats de prioridad globales
+  const priorityStats = useMemo(() => {
     const stats: Record<string, number> = {
       LOW: 0,
       MEDIUM: 0,
@@ -115,41 +115,44 @@ export function useDashboardCharts({
       URGENT: 0,
     };
 
-    tasksThisWeek.forEach((task) => {
+    accessibleTasks.forEach((task) => {
       stats[task.priority] = (stats[task.priority] || 0) + 1;
     });
 
     return stats;
-  }, [tasksThisWeek]);
+  }, [accessibleTasks]);
 
-  // Calcular stats de estado para esta semana (para gráfico)
-  const weekTaskStats = useMemo(() => {
-    const pending = tasksThisWeek.filter((t) => t.status === "PENDING").length;
-    const inProgress = tasksThisWeek.filter(
+  // Calcular stats de estado globales (para gráfico)
+  const taskStats = useMemo(() => {
+    const pending = accessibleTasks.filter((t) => t.status === "PENDING").length;
+    const inProgress = accessibleTasks.filter(
       (t) => t.status === "IN_PROGRESS",
     ).length;
-    const completed = tasksThisWeek.filter(
+    const completed = accessibleTasks.filter(
       (t) => t.status === "COMPLETED",
     ).length;
 
     return { pending, inProgress, completed };
-  }, [tasksThisWeek]);
+  }, [accessibleTasks]);
 
-  // Gráfico de prioridades (usando datos de esta semana)
+  // Gráfico de prioridades (usando datos globales)
   const priorityChartData = useMemo(() => {
-    return Object.entries(weekPriorityStats)
+    console.log("Dashboard - accessibleTasks:", accessibleTasks);
+    console.log("Dashboard - tasksThisWeek:", tasksThisWeek);
+    
+    return Object.entries(priorityStats)
       .map(([priority, count]) => {
         const label =
           priorityConfig[priority.toUpperCase() as keyof typeof priorityConfig]
             .label;
         return {
           name: label,
-          value: count,
+          value: count as number,
           fill: PRIORITY_COLORS[label as keyof typeof PRIORITY_COLORS],
         };
       })
       .filter((item) => item.value > 0);
-  }, [weekPriorityStats]);
+  }, [priorityStats, accessibleTasks, tasksThisWeek]);
 
   const priorityChartConfig = useMemo(() => {
     return Object.entries(priorityConfig).reduce(
@@ -164,26 +167,26 @@ export function useDashboardCharts({
     );
   }, []);
 
-  // Gráfico de distribución por estado (usando datos de esta semana)
+  // Gráfico de distribución por estado (usando datos globales)
   const progressChartData = useMemo(() => {
     return [
       {
         name: "Pendientes",
-        value: weekTaskStats.pending,
+        value: taskStats.pending,
         fill: STATUS_COLORS.pending,
       },
       {
         name: "En Progreso",
-        value: weekTaskStats.inProgress,
+        value: taskStats.inProgress,
         fill: STATUS_COLORS.inProgress,
       },
       {
         name: "Completadas",
-        value: weekTaskStats.completed,
+        value: taskStats.completed,
         fill: STATUS_COLORS.completed,
       },
     ].filter((item) => item.value > 0);
-  }, [weekTaskStats]);
+  }, [taskStats]);
 
   const progressChartConfig = {
     Pendientes: {
