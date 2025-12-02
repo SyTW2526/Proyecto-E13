@@ -126,9 +126,9 @@ export function FilterableList({
               onClick={() =>
                 onItemClick(selectedId === item.id ? null : item.id)
               }
-              className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border ${selectedId === item.id
-                ? "bg-primary text-primary font-medium border-transparent"
-                : "bg-card dark:bg-card hover:bg-muted text-muted-foreground hover:text-foreground border-transparent dark:border-border/30"
+              className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border border-border ${selectedId === item.id
+                ? "bg-primary text-secondary font-medium"
+                : "bg-card dark:bg-card hover:bg-muted text-muted-foreground hover:text-foreground"
                 }`}
             >
               <div className="flex items-center gap-3 overflow-hidden">
@@ -137,7 +137,7 @@ export function FilterableList({
                   size={18}
                   className={
                     selectedId === item.id
-                      ? "text-primary"
+                      ? "text-secondary"
                       : "text-muted-foreground group-hover:text-foreground"
                   }
                 />
@@ -156,8 +156,8 @@ export function FilterableList({
                 <Badge
                   variant="secondary"
                   className={`justify-center rounded-full ${selectedId === item.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
+                    ? "bg-secondary text-secondary-foreground"
+                    : "bg-primary text-primary-foreground"
                     }`}
                 >
                   {item.count}

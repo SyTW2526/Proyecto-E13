@@ -37,7 +37,7 @@ export function TaskCard({ task, formatDate }: TaskCardProps) {
   const { toggleFavorite, removeTask, editTask } = useTasks();
 
   return (
-    <Card className="group relative flex flex-col shadow-none border border-border/40 bg-card hover:shadow-sm transition-all duration-200 overflow-hidden rounded-xl">
+    <Card className="group relative flex flex-col shadow-none border border-border bg-card hover:shadow-sm transition-all duration-200 overflow-hidden rounded-xl">
       <CardContent className="flex flex-col gap-4 w-full">
         {/* Top Section: Actions (Left) and Status/Priority/Favorite (Right) */}
         <div className="flex justify-between items-center w-full">
