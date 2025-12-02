@@ -43,13 +43,13 @@ export default function FeatureCard({
       </CardHeader>
 
       {bigDetails && details ? (
-        <CardContent className="pt-0">
+        <CardContent id="big-details" className="pt-0">
           <span className="text-3xl sm:text-4xl leading-none font-bold text-foreground">
             {details}
           </span>
         </CardContent>
       ) : details && !chart ? (
-        <CardContent className="pt-0">
+        <CardContent id="details" className="pt-0">
           <p className="text-xs sm:text-sm text-muted-foreground whitespace-pre-line">
             {details}
           </p>
@@ -57,7 +57,7 @@ export default function FeatureCard({
       ) : null}
 
       {children && (
-        <CardContent className="pt-0 pb-4 sm:pb-6">{children}</CardContent>
+        <CardContent className="pt-0">{children}</CardContent>
       )}
     </Card>
   );

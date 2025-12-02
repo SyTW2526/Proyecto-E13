@@ -32,17 +32,3 @@ export const Checkbox = React.forwardRef<
   </>
 ));
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
-
-export default function CheckboxIconDemo() {
-  return (
-    <div className="flex items-center space-x-3">
-      <Checkbox
-        icon={<Icon as="IconStar" />}
-        defaultChecked
-        checkedIcon={
-          <Icon as="IconStar" className="fill-yellow-400 stroke-yellow-400" />
-        }
-      />
-    </div>
-  );
-}
