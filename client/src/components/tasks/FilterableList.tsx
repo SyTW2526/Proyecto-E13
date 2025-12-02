@@ -128,7 +128,7 @@ export function FilterableList({
               }
               className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border ${selectedId === item.id
                 ? "bg-primary text-primary font-medium border-transparent"
-                : "bg-card/50 dark:bg-card hover:bg-muted text-muted-foreground hover:text-foreground border-transparent dark:border-border/30"
+                : "bg-card dark:bg-card hover:bg-muted text-muted-foreground hover:text-foreground border-transparent dark:border-border/30"
                 }`}
             >
               <div className="flex items-center gap-3 overflow-hidden">
