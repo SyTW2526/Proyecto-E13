@@ -9,6 +9,12 @@ export interface List {
   tasks: Task[];
   ownerId: string;
   shares: ListShare[];
+  owner?: {
+    id: string;
+    name: string;
+    email: string;
+    image?: string | null;
+  };
 }
 
 export interface ListsState {

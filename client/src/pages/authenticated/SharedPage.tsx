@@ -2,11 +2,9 @@ import { useEffect, useCallback } from "react";
 import { useTasks } from "@/hooks/useTasks";
 import { useLists } from "@/hooks/useLists";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
-import { TaskCard } from "@/components/tasks/TaskCard";
+import { SharedTaskCard } from "@/components/tasks/SharedTaskCard";
 import { FilterableList } from "@/components/tasks/FilterableList";
 import { tasksPageLabels } from "@/config/taskConfig";
-import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
-import { Button } from "@/components/ui/button";
 import {
   TaskStatusFilter,
   TaskPriorityFilter,
@@ -14,7 +12,7 @@ import {
 } from "@/components/tasks/TaskFilters";
 import type { Task } from "@/types/tasks-system/task";
 
-export default function TasksPage() {
+export default function SharedPage() {
   const {
     displayTasks,
     listTaskCounts,
@@ -29,12 +27,12 @@ export default function TasksPage() {
     sorting,
   } = useTaskFilters();
 
-  const { fetchAllTasks, isLoading } = useTasks();
-  const { fetchAllLists, isLoading: isLoadingLists } = useLists();
+  const { fetchSharedTasks, isLoading } = useTasks();
+  const { fetchSharedLists, isLoading: isLoadingLists } = useLists();
 
   useEffect(() => {
-    fetchAllTasks();
-    fetchAllLists();
+    fetchSharedTasks();
+    fetchSharedLists();
   }, []);
 
   const formatDate = useCallback((dateString?: string) => {
@@ -51,11 +49,11 @@ export default function TasksPage() {
     <div className="max-w-(--breakpoint-xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
       <aside className="sticky top-8 shrink-0 lg:max-w-xs w-full space-y-8 order-1 lg:order-2 lg:border-l lg:border-border/40 lg:pl-12">
         <FilterableList
-          title={tasksPageLabels.sidebar.title}
+          title="Listas Compartidas"
           items={listTaskCounts}
           selectedId={selectedListId}
           onItemClick={handleListFilter}
-          emptyMessage={tasksPageLabels.sidebar.emptyState}
+          emptyMessage="No hay listas compartidas"
           icon={tasksPageLabels.createButtons.list.icon}
           isLoading={isLoadingLists}
         />
@@ -66,14 +64,8 @@ export default function TasksPage() {
           <div className="flex flex-row items-center justify-between gap-4">
             <div>
               <h1 className="text-4xl font-extrabold tracking-tight text-foreground/90">
-                {tasksPageLabels.title}
+                Tareas Compartidas
               </h1>
-            </div>
-            <div className="flex gap-2">
-              {/* Boton de crear tareas */}
-              <CreateTaskDialog>
-                <Button leftIcon={tasksPageLabels.createButtons.task.icon} />
-              </CreateTaskDialog>
             </div>
           </div>
 
@@ -120,9 +112,7 @@ export default function TasksPage() {
           </div>
         ) : displayTasks.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              {tasksPageLabels.emptyState}
-            </p>
+            <p className="text-muted-foreground">No hay tareas compartidas</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -131,7 +121,7 @@ export default function TasksPage() {
                 (list) => list.id === task.listId,
               );
               return (
-                <TaskCard
+                <SharedTaskCard
                   key={task.id}
                   task={task}
                   list={list}

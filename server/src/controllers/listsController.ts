@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../database/prisma";
+import { createNotification } from "./notificationsController";
 
 export const createList = async (req: Request, res: Response) => {
   try {
@@ -58,6 +59,37 @@ export const getUserLists = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Error getting lists" });
+  }
+};
+
+export const getSharedLists = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const lists = await prisma.list.findMany({
+      where: {
+        shares: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+      include: {
+        shares: true,
+        tasks: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+      },
+    });
+    return res.status(200).json(lists);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Error getting shared lists" });
   }
 };
 
@@ -146,6 +178,17 @@ export const shareList = async (req: Request, res: Response) => {
         tasks: true,
       },
     });
+    const currentUser = await prisma.user.findUnique({
+      where: { id: req.user?.id },
+      select: { name: true },
+    });
+    await createNotification(
+      user.id,
+      "GENERAL",
+      "Nueva lista compartida",
+      `${currentUser?.name || "Alguien"} te ha compartido la lista "${list.name}"`,
+      currentUser?.name || "Usuario",
+    );
     return res.status(200).json(list);
   } catch (error) {
     console.error(error);

@@ -12,6 +12,7 @@ import {
   createTask,
   deleteTask,
   fetchTasks,
+  fetchSharedTasks,
   selectFilteredTasks,
   selectSelectedTask,
   selectSelectedTaskId,
@@ -80,6 +81,7 @@ export function useTasks(listId?: string) {
   const sharedTasks = useAppSelector(selectSharedTasks(user?.id || ""));
 
   const fetchAllTasks = () => dispatch(fetchTasks());
+  const fetchSharedTasksAction = () => dispatch(fetchSharedTasks());
   const createNewTask = (task: Partial<Task>) => dispatch(createTask(task));
   const editTask = (data: Partial<Task> & { id: string }) =>
     dispatch(updateTask(data));
@@ -155,6 +157,7 @@ export function useTasks(listId?: string) {
     recentTasks,
     favoriteTasks,
     fetchAllTasks,
+    fetchSharedTasks: fetchSharedTasksAction,
     createTask: createNewTask,
     editTask,
     removeTask,

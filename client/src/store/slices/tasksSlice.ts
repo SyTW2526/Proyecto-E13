@@ -7,6 +7,7 @@ import type {
 } from "@/types/tasks-system/task";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { api, apiErrorMessage } from "@/lib/api";
+import { deleteList } from "./listsSlice";
 
 const initialState: TasksState = {
   tasks: [],
@@ -31,6 +32,18 @@ export const fetchTasks = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await api.get<Task[]>("/tasks");
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
+export const fetchSharedTasks = createAsyncThunk(
+  "tasks/fetchSharedTasks",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get<Task[]>("/tasks/shared");
       return data;
     } catch (err) {
       return rejectWithValue(apiErrorMessage(err));
@@ -224,12 +237,24 @@ const tasksSlice = createSlice({
       .addCase(fetchTasks.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchSharedTasks.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchSharedTasks.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.tasks = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchSharedTasks.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
       });
 
     // Create Task
     builder
       .addCase(createTask.pending, (state) => {
-        state.isLoading = true;
         state.error = null;
       })
       .addCase(createTask.fulfilled, (state, action) => {
@@ -274,7 +299,6 @@ const tasksSlice = createSlice({
     // Delete Task
     builder
       .addCase(deleteTask.pending, (state) => {
-        state.isLoading = true;
         state.error = null;
       })
       .addCase(deleteTask.fulfilled, (state, action) => {
@@ -345,6 +369,11 @@ const tasksSlice = createSlice({
       })
       .addCase(unshareTask.rejected, (state, action) => {
         state.error = action.payload as string;
+      })
+      .addCase(deleteList.fulfilled, (state, action) => {
+        state.tasks = state.tasks.filter(
+          (task) => task.listId !== action.payload,
+        );
       });
   },
 });

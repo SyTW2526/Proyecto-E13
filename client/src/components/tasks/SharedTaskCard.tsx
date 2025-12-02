@@ -17,25 +17,35 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Icon from "@/components/ui/icon";
 import { Checkbox } from "@/components/customized/checkbox/checkbox-09";
 import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
 import ShareTaskDialog from "./ShareTaskDialog";
 import { priorityConfig, statusConfig } from "@/config/taskConfig";
 import { useTasks } from "@/hooks/useTasks";
+import { useAuth } from "@/hooks/useAuth";
 import type { Task, TaskStatus, TaskPriority } from "@/types/tasks-system/task";
 import type { List } from "@/types/tasks-system/list";
+import type { SharePermission } from "@/types/permissions";
 
-interface TaskCardProps {
+interface SharedTaskCardProps {
   task: Task;
   list?: List;
   formatDate: (dateString?: string) => string;
 }
 
-export const TaskCard = memo(function TaskCard({
+export const SharedTaskCard = memo(function SharedTaskCard({
   task,
+  list,
   formatDate,
-}: TaskCardProps) {
+}: SharedTaskCardProps) {
+  const { user } = useAuth();
   const priorityStyle = priorityConfig[task.priority];
   const statusStyle = statusConfig[task.status];
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -43,100 +53,160 @@ export const TaskCard = memo(function TaskCard({
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const { toggleFavorite, removeTask, editTask } = useTasks();
 
+  // Calculate permission
+  let permission: SharePermission = "VIEW";
+  const myId = user?.id;
+  const taskShare = task.shares?.find((s) => s.userId === myId);
+  const listShare = list?.shares?.find((s) => s.userId === myId);
+
+  if (taskShare) permission = taskShare.permission;
+  else if (listShare) permission = listShare.permission;
+
+  const canEdit = permission === "EDIT" || permission === "ADMIN";
+  const canDelete = permission === "ADMIN";
+  const canShare = permission === "ADMIN";
+
+  // Determine owner
+  const owner = task.list?.owner || list?.owner;
+
   return (
     <Card className="group relative flex flex-col shadow-none border border-border/40 bg-card hover:shadow-sm transition-all duration-200 overflow-hidden rounded-xl">
       <CardContent className="flex flex-col gap-4 w-full">
         {/* Top Section: Actions (Left) and Status/Priority/Favorite (Right) */}
         <div className="flex justify-between items-center w-full">
           {/* Actions Menu (Left) */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-muted-foreground hover:text-foreground"
-              >
-                <Icon as="IconDotsVertical" size={16} />
-                <span className="sr-only">Abrir menú</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem onClick={() => setShareDialogOpen(true)}>
-                <Icon as="IconShare" className="mr-2" />
-                Compartir
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
-                <Icon as="IconEdit" className="mr-2" />
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                onClick={() => setDeleteDialogOpen(true)}
-              >
-                <Icon as="IconTrash" className="mr-2" />
-                Eliminar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            {(canEdit || canDelete || canShare) && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                  >
+                    <Icon as="IconDotsVertical" size={16} />
+                    <span className="sr-only">Abrir menú</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  {canShare && (
+                    <DropdownMenuItem onClick={() => setShareDialogOpen(true)}>
+                      <Icon as="IconShare" className="mr-2" />
+                      Compartir
+                    </DropdownMenuItem>
+                  )}
+                  {canEdit && (
+                    <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
+                      <Icon as="IconEdit" className="mr-2" />
+                      Editar
+                    </DropdownMenuItem>
+                  )}
+                  {(canEdit || canShare) && canDelete && (
+                    <DropdownMenuSeparator />
+                  )}
+                  {canDelete && (
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onClick={() => setDeleteDialogOpen(true)}
+                    >
+                      <Icon as="IconTrash" className="mr-2" />
+                      Eliminar
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
+            {/* Owner Info */}
+            {owner && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+                      <Icon as="IconUser" size={12} />
+                      <span className="max-w-[100px] truncate">
+                        {owner.name}
+                      </span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Compartido por: {owner.email}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
 
           {/* Status, Priority, Favorite (Right) */}
           <div className="flex items-center gap-2">
             <div className="flex flex-wrap gap-1.5">
               <DropdownMenu>
-                <DropdownMenuTrigger className="focus:outline-none">
+                <DropdownMenuTrigger
+                  className="focus:outline-none"
+                  disabled={!canEdit}
+                >
                   <Badge
                     variant="outline"
-                    className={`${statusStyle.color} cursor-pointer hover:opacity-80 transition-opacity`}
+                    className={`${statusStyle.color} ${canEdit ? "cursor-pointer hover:opacity-80" : "cursor-default opacity-80"} transition-opacity`}
                     leftIcon="IconCircle"
                   >
                     {statusStyle.label}
                   </Badge>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {Object.entries(statusConfig).map(([key, config]) => (
-                    <DropdownMenuItem
-                      key={key}
-                      onClick={() =>
-                        editTask({ id: task.id, status: key as TaskStatus })
-                      }
-                      className="flex items-center gap-2"
-                    >
-                      <div
-                        className={`w-2 h-2 rounded-full ${config.color.replace("bg-", "bg-").replace("/10", "")} bg-current opacity-70`}
-                      />
-                      {config.label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
+                {canEdit && (
+                  <DropdownMenuContent align="end">
+                    {Object.entries(statusConfig).map(([key, config]) => (
+                      <DropdownMenuItem
+                        key={key}
+                        onClick={() =>
+                          editTask({ id: task.id, status: key as TaskStatus })
+                        }
+                        className="flex items-center gap-2"
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full ${config.color.replace("bg-", "bg-").replace("/10", "")} bg-current opacity-70`}
+                        />
+                        {config.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                )}
               </DropdownMenu>
 
               <DropdownMenu>
-                <DropdownMenuTrigger className="focus:outline-none">
+                <DropdownMenuTrigger
+                  className="focus:outline-none"
+                  disabled={!canEdit}
+                >
                   <Badge
                     variant="outline"
-                    className={`${priorityStyle.color} cursor-pointer hover:opacity-80 transition-opacity`}
+                    className={`${priorityStyle.color} ${canEdit ? "cursor-pointer hover:opacity-80" : "cursor-default opacity-80"} transition-opacity`}
                     leftIcon="IconFlag"
                   >
                     {priorityStyle.label}
                   </Badge>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {Object.entries(priorityConfig).map(([key, config]) => (
-                    <DropdownMenuItem
-                      key={key}
-                      onClick={() =>
-                        editTask({ id: task.id, priority: key as TaskPriority })
-                      }
-                      className="flex items-center gap-2"
-                    >
-                      <div
-                        className={`w-2 h-2 rounded-full ${config.color.replace("bg-", "bg-").replace("/10", "")} bg-current opacity-70`}
-                      />
-                      {config.label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
+                {canEdit && (
+                  <DropdownMenuContent align="end">
+                    {Object.entries(priorityConfig).map(([key, config]) => (
+                      <DropdownMenuItem
+                        key={key}
+                        onClick={() =>
+                          editTask({
+                            id: task.id,
+                            priority: key as TaskPriority,
+                          })
+                        }
+                        className="flex items-center gap-2"
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full ${config.color.replace("bg-", "bg-").replace("/10", "")} bg-current opacity-70`}
+                        />
+                        {config.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                )}
               </DropdownMenu>
             </div>
 
