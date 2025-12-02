@@ -3,12 +3,7 @@ import Icon from "@/components/ui/icon";
 import { tasksPageLabels } from "@/config/taskConfig";
 import { CreateListDialogStandalone } from "../createDialogs/createListDialog";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ItemActionsMenu } from "@/components/ui/ItemActionsMenu";
 import { useLists } from "@/hooks/useLists";
 import { useState } from "react";
 import EditListDialog from "../createDialogs/editListDialog";
@@ -111,12 +106,12 @@ export function FilterableList({
           </CreateListDialogStandalone>
         </div>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:flex sm:flex-col sm:gap-2">
+      <div className="mt-4 flex flex-col gap-4 sm:gap-2">
         {isLoading ? (
           [...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="flex items-center gap-2 p-3 rounded-md border h-[52px] animate-pulse bg-muted/20"
+              className="flex items-center gap-2 p-3 rounded-md border h-[52px] animate-pulse bg-muted"
             >
               <div className="h-5 w-5 bg-muted rounded-full" />
               <div className="h-4 w-2/3 bg-muted rounded" />
@@ -131,11 +126,10 @@ export function FilterableList({
               onClick={() =>
                 onItemClick(selectedId === item.id ? null : item.id)
               }
-              className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border ${
-                selectedId === item.id
-                  ? "bg-primary/10 text-primary font-medium border-transparent"
-                  : "bg-card/50 dark:bg-card/20 hover:bg-muted/50 text-muted-foreground hover:text-foreground border-transparent dark:border-border/30"
-              }`}
+              className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border border-border ${selectedId === item.id
+                ? "bg-primary text-secondary font-medium"
+                : "bg-card dark:bg-card hover:bg-muted text-muted-foreground hover:text-foreground"
+                }`}
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <Icon
@@ -143,75 +137,38 @@ export function FilterableList({
                   size={18}
                   className={
                     selectedId === item.id
-                      ? "text-primary"
+                      ? "text-secondary"
                       : "text-muted-foreground group-hover:text-foreground"
                   }
                 />
-                <span className="font-medium truncate">
-                  {item.name}
-                  {item.description && ":"}
-                </span>
-                {item.description && (
-                  <p className="text-xs text-muted-foreground truncate hidden sm:block">
-                    {item.description}
-                  </p>
-                )}
+                <div className="flex flex-col gap-0">
+                  <span className="font-medium truncate">
+                    {item.name}
+                  </span>
+                  {item.description && (
+                    <p className="text-xs text-muted-foreground truncate">
+                      {item.description}
+                    </p>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Badge
-                  variant="secondary"
-                  className={`px-1.5 min-w-[1.5rem] justify-center rounded-full ${
-                    selectedId === item.id
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  }`}
+                  variant={selectedId === item.id ? "secondary" : "default"}
+                  className="justify-center rounded-full"
                 >
                   {item.count}
                 </Badge>
 
                 {isOwner(item.id) && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-muted-foreground/50 hover:text-foreground"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Icon as="IconDotsVertical" className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingListId(item.id);
-                        }}
-                      >
-                        <Icon as="IconEdit" className="mr-2 h-4 w-4" />
-                        Editar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSharingListId(item.id);
-                        }}
-                      >
-                        <Icon as="IconShare" className="mr-2 h-4 w-4" />
-                        Compartir
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDeletingListId(item.id);
-                        }}
-                      >
-                        <Icon as="IconTrash" className="mr-2 h-4 w-4" />
-                        Eliminar
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <ItemActionsMenu
+                      onEdit={() => setEditingListId(item.id)}
+                      onShare={() => setSharingListId(item.id)}
+                      onDelete={() => setDeletingListId(item.id)}
+                      align="end"
+                    />
+                  </div>
                 )}
               </div>
             </div>

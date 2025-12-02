@@ -5,6 +5,8 @@
  * iconos, títulos, descripciones y detalles específicos para cada tarjeta.
  */
 
+import { bigint } from "zod";
+
 export const dashboardConfig = {
   title: "Panel de Control",
   welcome: "¡Bienvenido, ",
@@ -20,13 +22,13 @@ export const dashboardCards = [
     bigDetails: true,
     span: "md:col-span-2 lg:col-span-1",
   },
-  {
-    icon: "IconBell",
-    title: "Tareas Pendientes",
-    description: "Esta semana",
-    bigDetails: true,
-    span: "md:col-span-2 lg:col-span-1",
-  },
+  // {
+  //   icon: "IconBell",
+  //   title: "Tareas Pendientes",
+  //   description: "Esta semana",
+  //   bigDetails: true,
+  //   span: "md:col-span-2 lg:col-span-1",
+  // },
   {
     icon: "IconChecklist",
     title: "Tareas Completadas",
@@ -40,7 +42,8 @@ export const dashboardCards = [
     description: "Distribución por lista",
     // chart: true,
     // chartType: "bar",
-    span: "md:col-span-2 lg:col-span-1",
+    bigDetails: true,
+    span: "md:col-span-2 lg:col-span-2",
   },
   {
     icon: "IconChartBar",
