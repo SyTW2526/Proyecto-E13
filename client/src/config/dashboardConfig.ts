@@ -5,6 +5,8 @@
  * iconos, títulos, descripciones y detalles específicos para cada tarjeta.
  */
 
+import { bigint } from "zod";
+
 export const dashboardConfig = {
   title: "Panel de Control",
   welcome: "¡Bienvenido, ",
@@ -40,6 +42,7 @@ export const dashboardCards = [
     description: "Distribución por lista",
     // chart: true,
     // chartType: "bar",
+    bigDetails: true,
     span: "md:col-span-2 lg:col-span-2",
   },
   {
