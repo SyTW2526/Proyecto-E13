@@ -124,7 +124,9 @@ export function useDashboardCharts({
 
   // Calcular stats de estado globales (para gráfico)
   const taskStats = useMemo(() => {
-    const pending = accessibleTasks.filter((t) => t.status === "PENDING").length;
+    const pending = accessibleTasks.filter(
+      (t) => t.status === "PENDING",
+    ).length;
     const inProgress = accessibleTasks.filter(
       (t) => t.status === "IN_PROGRESS",
     ).length;
@@ -139,7 +141,7 @@ export function useDashboardCharts({
   const priorityChartData = useMemo(() => {
     console.log("Dashboard - accessibleTasks:", accessibleTasks);
     console.log("Dashboard - tasksThisWeek:", tasksThisWeek);
-    
+
     return Object.entries(priorityStats)
       .map(([priority, count]) => {
         const label =

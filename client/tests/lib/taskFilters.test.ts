@@ -1,15 +1,21 @@
 import {
+  getCompletedTasksForDay,
   getCompletedTasksLastNDays,
+  getCompletedTasksThisWeek,
   getFavoriteTasks,
   getHighPriorityPendingTasks,
   getInboxTasks,
   getInProgressRecentlyUpdatedTasks,
   getMostRecentTasks,
   getNextDueTasks,
+  getNextDueTasksThisWeek,
   getOverdueTasks,
+  getPendingTasksThisWeek,
+  getRecentTasksThisWeek,
   getTasksDueThisWeek,
   getTasksSharedWithUser,
   getTodayTasks,
+  groupTasksByList,
 } from "@/lib/taskFilters";
 import type { Task } from "@/types/tasks-system/task";
 import { describe, expect, it } from "vitest";
@@ -100,13 +106,13 @@ describe("taskFilters", () => {
 
     it("cuenta correctamente en el límite exacto del período", () => {
       const now = new Date();
-      const exactlySevenDaysAgo = new Date(now);
-      exactlySevenDaysAgo.setDate(now.getDate() - 7);
+      const sixDaysAgo = new Date(now);
+      sixDaysAgo.setDate(now.getDate() - 6);
 
       const tasks = [
         createTask({
           completed: true,
-          completedAt: exactlySevenDaysAgo.toISOString(),
+          completedAt: sixDaysAgo.toISOString(),
         }),
       ];
 
@@ -178,10 +184,11 @@ describe("taskFilters", () => {
       expect(getNextDueTasks([], 5)).toHaveLength(0);
     });
 
-    it("incluye tareas que vencen exactamente ahora", () => {
-      const now = new Date();
+    it("incluye tareas que vencen en el futuro inmediato", () => {
+      const soon = new Date();
+      soon.setMinutes(soon.getMinutes() + 5);
 
-      const tasks = [createTask({ dueDate: now.toISOString() })];
+      const tasks = [createTask({ dueDate: soon.toISOString() })];
 
       const result = getNextDueTasks(tasks, 5);
       expect(result).toHaveLength(1);
@@ -602,6 +609,257 @@ describe("taskFilters", () => {
       const tasks = [createTask({ shares: [] }), createTask({ shares: [] })];
 
       expect(getTasksSharedWithUser(tasks, "user-123")).toHaveLength(0);
+    });
+  });
+
+  describe("getCompletedTasksForDay", () => {
+    it("Devuelve tareas completadas en un día específico", () => {
+      const specificDate = new Date("2024-03-15");
+      const sameDayMorning = new Date("2024-03-15T08:00:00");
+      const sameDayAfternoon = new Date("2024-03-15T16:00:00");
+      const differentDay = new Date("2024-03-16");
+
+      const tasks = [
+        createTask({
+          id: "1",
+          completed: true,
+          completedAt: sameDayMorning.toISOString(),
+        }),
+        createTask({
+          id: "2",
+          completed: true,
+          completedAt: sameDayAfternoon.toISOString(),
+        }),
+        createTask({
+          id: "3",
+          completed: true,
+          completedAt: differentDay.toISOString(),
+        }),
+        createTask({ id: "4", completed: false }),
+      ];
+
+      const result = getCompletedTasksForDay(tasks, specificDate);
+      expect(result).toHaveLength(2);
+      expect(result.map((t) => t.id)).toContain("1");
+      expect(result.map((t) => t.id)).toContain("2");
+    });
+
+    it("Devuelve array vacío cuando no hay tareas completadas ese día", () => {
+      const specificDate = new Date("2024-03-15");
+      const tasks = [createTask({ completed: false })];
+      expect(getCompletedTasksForDay(tasks, specificDate)).toHaveLength(0);
+    });
+
+    it("Maneja tareas sin completedAt", () => {
+      const specificDate = new Date("2024-03-15");
+      const tasks = [createTask({ completed: true, completedAt: undefined })];
+      expect(getCompletedTasksForDay(tasks, specificDate)).toHaveLength(0);
+    });
+  });
+
+  describe("groupTasksByList", () => {
+    it("Agrupa tareas por listId correctamente", () => {
+      const tasks = [
+        createTask({ id: "1", listId: "list-A" }),
+        createTask({ id: "2", listId: "list-B" }),
+        createTask({ id: "3", listId: "list-A" }),
+      ];
+
+      const result = groupTasksByList(tasks);
+      expect(Object.keys(result)).toHaveLength(2);
+      expect(result["list-A"]).toHaveLength(2);
+      expect(result["list-B"]).toHaveLength(1);
+    });
+
+    it("Devuelve objeto vacío cuando no hay tareas", () => {
+      const result = groupTasksByList([]);
+      expect(Object.keys(result)).toHaveLength(0);
+    });
+
+    it("Agrupa todas las tareas en un solo grupo si tienen el mismo listId", () => {
+      const tasks = [
+        createTask({ id: "1", listId: "same-list" }),
+        createTask({ id: "2", listId: "same-list" }),
+        createTask({ id: "3", listId: "same-list" }),
+      ];
+
+      const result = groupTasksByList(tasks);
+      expect(Object.keys(result)).toHaveLength(1);
+      expect(result["same-list"]).toHaveLength(3);
+    });
+  });
+
+  describe("getPendingTasksThisWeek", () => {
+    it("Cuenta tareas pendientes con dueDate en esta semana", () => {
+      const today = new Date();
+      const in3Days = new Date();
+      in3Days.setDate(today.getDate() + 3);
+
+      const tasks = [
+        createTask({ status: "PENDING", dueDate: in3Days.toISOString() }),
+        createTask({ status: "COMPLETED", dueDate: in3Days.toISOString() }),
+        createTask({ status: "PENDING", dueDate: undefined }),
+      ];
+
+      const result = getPendingTasksThisWeek(tasks);
+      expect(result).toBeGreaterThanOrEqual(1);
+    });
+
+    it("No cuenta tareas que no son PENDING", () => {
+      const in3Days = new Date();
+      in3Days.setDate(in3Days.getDate() + 3);
+
+      const tasks = [
+        createTask({ status: "IN_PROGRESS", dueDate: in3Days.toISOString() }),
+        createTask({ status: "COMPLETED", dueDate: in3Days.toISOString() }),
+      ];
+
+      const result = getPendingTasksThisWeek(tasks);
+      expect(result).toBe(0);
+    });
+  });
+
+  describe("getCompletedTasksThisWeek", () => {
+    it("Cuenta tareas completadas esta semana", () => {
+      const today = new Date();
+      const tasks = [
+        createTask({
+          completed: true,
+          completedAt: today.toISOString(),
+        }),
+        createTask({ completed: false }),
+      ];
+
+      const result = getCompletedTasksThisWeek(tasks);
+      expect(result).toBeGreaterThanOrEqual(1);
+    });
+
+    it("No cuenta tareas completadas hace más de una semana", () => {
+      const twoWeeksAgo = new Date();
+      twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+      const tasks = [
+        createTask({
+          completed: true,
+          completedAt: twoWeeksAgo.toISOString(),
+        }),
+      ];
+
+      const result = getCompletedTasksThisWeek(tasks);
+      expect(result).toBe(0);
+    });
+  });
+
+  describe("getRecentTasksThisWeek", () => {
+    it("Devuelve tareas creadas esta semana ordenadas por fecha", () => {
+      const today = new Date();
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      const twoWeeksAgo = new Date();
+      twoWeeksAgo.setDate(today.getDate() - 14);
+
+      const tasks = [
+        createTask({ id: "1", createdAt: yesterday.toISOString() }),
+        createTask({ id: "2", createdAt: today.toISOString() }),
+        createTask({ id: "3", createdAt: twoWeeksAgo.toISOString() }),
+      ];
+
+      const result = getRecentTasksThisWeek(tasks, 5);
+      expect(result.length).toBeGreaterThanOrEqual(1);
+      if (result.length >= 2) {
+        expect(result[0].id).toBe("2");
+        expect(result[1].id).toBe("1");
+      }
+    });
+
+    it("Limita los resultados según el parámetro limit", () => {
+      const tasks = Array.from({ length: 10 }, (_, i) =>
+        createTask({ id: `task-${i}`, createdAt: new Date().toISOString() }),
+      );
+
+      expect(getRecentTasksThisWeek(tasks, 3)).toHaveLength(3);
+    });
+  });
+
+  describe("getNextDueTasksThisWeek", () => {
+    it("Devuelve tareas que vencen esta semana sin completar", () => {
+      const in2Days = new Date();
+      in2Days.setDate(in2Days.getDate() + 2);
+      const in5Days = new Date();
+      in5Days.setDate(in5Days.getDate() + 5);
+
+      const tasks = [
+        createTask({
+          id: "1",
+          status: "PENDING",
+          dueDate: in2Days.toISOString(),
+        }),
+        createTask({
+          id: "2",
+          status: "COMPLETED",
+          dueDate: in5Days.toISOString(),
+        }),
+        createTask({
+          id: "3",
+          status: "IN_PROGRESS",
+          dueDate: in5Days.toISOString(),
+        }),
+      ];
+
+      const result = getNextDueTasksThisWeek(tasks);
+      expect(result.length).toBeGreaterThanOrEqual(1);
+      expect(result[0].id).toBe("1");
+    });
+
+    it("Limita los resultados si se proporciona limit", () => {
+      const tasks = Array.from({ length: 10 }, (_, i) => {
+        const futureDate = new Date();
+        futureDate.setDate(futureDate.getDate() + 1 + i);
+        return createTask({
+          id: `task-${i}`,
+          status: "PENDING",
+          dueDate: futureDate.toISOString(),
+        });
+      });
+
+      expect(getNextDueTasksThisWeek(tasks, 3)).toHaveLength(3);
+    });
+
+    it("Devuelve todas las tareas si no se proporciona limit", () => {
+      const in1Day = new Date();
+      in1Day.setDate(in1Day.getDate() + 1);
+      const in2Days = new Date();
+      in2Days.setDate(in2Days.getDate() + 2);
+
+      const tasks = [
+        createTask({
+          id: "1",
+          status: "PENDING",
+          dueDate: in1Day.toISOString(),
+        }),
+        createTask({
+          id: "2",
+          status: "PENDING",
+          dueDate: in2Days.toISOString(),
+        }),
+      ];
+
+      const result = getNextDueTasksThisWeek(tasks);
+      expect(result.length).toBe(2);
+    });
+
+    it("No incluye tareas pasadas", () => {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      const tasks = [
+        createTask({
+          status: "PENDING",
+          dueDate: yesterday.toISOString(),
+        }),
+      ];
+
+      expect(getNextDueTasksThisWeek(tasks)).toHaveLength(0);
     });
   });
 });

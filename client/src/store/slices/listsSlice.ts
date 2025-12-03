@@ -1,6 +1,7 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import type { List, ListsState, ListShare } from "@/types/tasks-system/list";
 import { api, apiErrorMessage } from "@/lib/api";
+import type { SharePermission } from "@/types/permissions";
+import type { List, ListsState } from "@/types/tasks-system/list";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: ListsState = {
   lists: [],
@@ -263,7 +264,7 @@ const listsSlice = createSlice({
             (s) => s.userId === action.meta.arg.userId,
           );
           if (share) {
-            share.permission = action.meta.arg.permission as any;
+            share.permission = action.meta.arg.permission as SharePermission;
           }
         }
       })

@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach } from "vitest";
 import themeReducer, {
-  setTheme,
-  selectTheme,
   selectIsDark,
+  selectTheme,
+  setTheme,
 } from "@/store/slices/themeSlice";
 import type { ThemeState } from "@/types/theme";
+import { beforeEach, describe, expect, it } from "vitest";
 
 describe("themeSlice", () => {
   let initialState: ThemeState;
@@ -24,12 +24,18 @@ describe("themeSlice", () => {
       });
     });
 
-    it("should handle setTheme action", () => {
+    it("should handle setTheme action to dark", () => {
       const action = setTheme("dark");
       const state = themeReducer(initialState, action);
 
       expect(state.theme).toBe("dark");
-      // Side effects are now handled by store subscription, not reducer
+    });
+
+    it("should handle setTheme action to light", () => {
+      const action = setTheme("light");
+      const state = themeReducer({ theme: "dark" }, action);
+
+      expect(state.theme).toBe("light");
     });
   });
 

@@ -45,7 +45,9 @@ function TaskFilter<T extends string>({
   if (variant === "compact") {
     return (
       <Select value={value} onValueChange={(val) => onChange(val as T | "all")}>
-        <SelectTrigger className={`!h-auto !w-auto !p-0 !border-0 !bg-transparent !shadow-none !outline-none !ring-0 focus:!ring-0 focus-visible:!ring-0 focus-visible:!border-0 [&>svg]:hidden ${className}`}>
+        <SelectTrigger
+          className={`!h-auto !w-auto !p-0 !border-0 !bg-transparent !shadow-none !outline-none !ring-0 focus:!ring-0 focus-visible:!ring-0 focus-visible:!border-0 [&>svg]:hidden ${className}`}
+        >
           <Badge
             variant="outline"
             className={`${currentConfig?.color || ""} cursor-pointer hover:opacity-80 transition-opacity`}
@@ -59,17 +61,17 @@ function TaskFilter<T extends string>({
           {showAll && (
             <SelectItem value="all">{filterConfig.allLabel}</SelectItem>
           )}
-         {Object.entries(filterConfig.config).map(([key, config]) => (
-          <SelectItem key={key} value={key}>
-            <Badge
-              variant="outline"
-              className={config.color}
-              leftIcon={filterConfig.icon}
-            >
-              {config.label}
-            </Badge>
-          </SelectItem>
-        ))}
+          {Object.entries(filterConfig.config).map(([key, config]) => (
+            <SelectItem key={key} value={key}>
+              <Badge
+                variant="outline"
+                className={config.color}
+                leftIcon={filterConfig.icon}
+              >
+                {config.label}
+              </Badge>
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     );

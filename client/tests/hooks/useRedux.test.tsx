@@ -1,9 +1,9 @@
-import { describe, it, expect } from "vitest";
-import { renderHook } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import themeReducer from "@/store/slices/themeSlice";
+import { configureStore } from "@reduxjs/toolkit";
+import { renderHook } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { describe, expect, it } from "vitest";
 
 describe("useRedux", () => {
   const createWrapper = (store: ReturnType<typeof configureStore>) => {
@@ -13,7 +13,7 @@ describe("useRedux", () => {
   };
 
   describe("useAppDispatch", () => {
-    it("should return dispatch function", () => {
+    it("Retorna la función dispatch", () => {
       const store = configureStore({
         reducer: {
           theme: themeReducer,
@@ -27,7 +27,7 @@ describe("useRedux", () => {
       expect(typeof result.current).toBe("function");
     });
 
-    it("should dispatch actions correctly", () => {
+    it("Despacha acciones correctamente", () => {
       const store = configureStore({
         reducer: {
           theme: themeReducer,
@@ -47,7 +47,7 @@ describe("useRedux", () => {
   });
 
   describe("useAppSelector", () => {
-    it("should select state correctly", () => {
+    it("Selecciona el estado correctamente", () => {
       const store = configureStore({
         reducer: {
           theme: themeReducer,
@@ -69,7 +69,7 @@ describe("useRedux", () => {
       expect(result.current).toBe("dark");
     });
 
-    it("should update when state changes", async () => {
+    it("Actualiza cuando cambia el estado", async () => {
       const store = configureStore({
         reducer: {
           theme: themeReducer,

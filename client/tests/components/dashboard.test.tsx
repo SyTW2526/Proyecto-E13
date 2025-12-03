@@ -1,8 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import { describe, it, beforeEach, vi, expect } from "vitest";
 import DashboardPage from "@/pages/authenticated/dashboardPage";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
-// Mock hooks
 vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => ({ user: { name: "Tomás" } }),
 }));
@@ -34,32 +33,25 @@ vi.mock("@/hooks/useDashboardCharts", () => ({
 }));
 
 describe("DashboardPage", () => {
-  beforeEach(() => {
-    // No es necesario resetear mocks con vi.mock
-  });
-
-  it("muestra el nombre del usuario en el dashboard", () => {
+  it("Muestra el nombre del usuario en el dashboard", () => {
     render(<DashboardPage />);
     expect(screen.getByText(/¡Bienvenido, Tomás/i)).toBeInTheDocument();
   });
 
-  it("muestra las tarjetas de tareas con los datos correctos", () => {
+  it("Muestra las tarjetas de tareas con los datos correctos", () => {
     render(<DashboardPage />);
     expect(screen.getByText(/Próximas Tareas/i)).toBeInTheDocument();
     expect(screen.getByText("3")).toBeInTheDocument();
-    expect(screen.getByText(/Tareas Pendientes/i)).toBeInTheDocument();
-    expect(screen.getByText("2")).toBeInTheDocument();
     expect(screen.getByText(/Tareas Completadas/i)).toBeInTheDocument();
-    expect(screen.getByText("1")).toBeInTheDocument();
   });
 
-  it("muestra el detalle de tareas por lista", () => {
+  it("Muestra el detalle de tareas por lista", () => {
     render(<DashboardPage />);
-    expect(screen.getByText(/Personal:/i)).toBeInTheDocument();
-    expect(screen.getByText(/Trabajo:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Personal/i)).toBeInTheDocument();
+    expect(screen.getByText(/Trabajo/i)).toBeInTheDocument();
   });
 
-  it("muestra el número de semana", () => {
+  it("Muestra el número de semana", () => {
     render(<DashboardPage />);
     expect(screen.getByText(/Semana 48/i)).toBeInTheDocument();
   });

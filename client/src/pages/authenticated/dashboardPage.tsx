@@ -1,16 +1,16 @@
-import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { dashboardConfig, dashboardCards } from "@/config/dashboardConfig";
-import FeatureCard from "@/components/ui/featureCard";
-import Icon from "@/components/ui/icon";
-import { useTasks } from "@/hooks/useTasks";
-import { useLists } from "@/hooks/useLists";
-import { useDashboardCharts } from "@/hooks/useDashboardCharts";
 import {
   PriorityChart,
   WeeklyTasksChart,
-} from "@/components/dashboard/DashboardCharts";
+} from "@/components/dashboard/dashboardCharts";
 import { Badge } from "@/components/ui/badge";
+import FeatureCard from "@/components/ui/featureCard";
+import Icon from "@/components/ui/icon";
+import { dashboardCards, dashboardConfig } from "@/config/dashboardConfig";
+import { useAuth } from "@/hooks/useAuth";
+import { useDashboardCharts } from "@/hooks/useDashboardCharts";
+import { useLists } from "@/hooks/useLists";
+import { useTasks } from "@/hooks/useTasks";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -44,15 +44,24 @@ export default function DashboardPage() {
       chartComponent?: React.ReactNode;
     }
   > = {
-    "Tareas Completadas": { details: weekStats.completedTasks + " / " + weekStats.upcomingTasks },
+    "Tareas Completadas": {
+      details: weekStats.completedTasks + " / " + weekStats.upcomingTasks,
+    },
     "Próximas Tareas": { details: weekStats.upcomingTasks },
     "Tareas Por Lista": {
       chartComponent: (
         <div className="flex flex-wrap gap-2 align-center py-1">
           {weekStats.tasksPerList.length > 0 ? (
             weekStats.tasksPerList.map((item, index) => (
-              <Badge key={index} variant="default" className="text-md" leftIcon={"IconList"}>{item.listName}
-                <Badge key={index} variant="secondary" className="text-xs">{item.count}
+              <Badge
+                key={index}
+                variant="default"
+                className="text-md"
+                leftIcon={"IconList"}
+              >
+                {item.listName}
+                <Badge key={index} variant="secondary" className="text-xs">
+                  {item.count}
                 </Badge>
               </Badge>
             ))
