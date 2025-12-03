@@ -1,8 +1,7 @@
 import DashboardPage from "@/pages/authenticated/dashboardPage";
 import { render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-// Mock hooks
 vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => ({ user: { name: "Tomás" } }),
 }));
@@ -34,10 +33,6 @@ vi.mock("@/hooks/useDashboardCharts", () => ({
 }));
 
 describe("DashboardPage", () => {
-  beforeEach(() => {
-    // No es necesario resetear mocks con vi.mock
-  });
-
   it("Muestra el nombre del usuario en el dashboard", () => {
     render(<DashboardPage />);
     expect(screen.getByText(/¡Bienvenido, Tomás/i)).toBeInTheDocument();

@@ -1,16 +1,16 @@
-import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { dashboardConfig, dashboardCards } from "@/config/dashboardConfig";
-import FeatureCard from "@/components/ui/featureCard";
-import Icon from "@/components/ui/icon";
-import { useTasks } from "@/hooks/useTasks";
-import { useLists } from "@/hooks/useLists";
-import { useDashboardCharts } from "@/hooks/useDashboardCharts";
 import {
   PriorityChart,
   WeeklyTasksChart,
-} from "@/components/dashboard/DashboardCharts";
+} from "@/components/dashboard/dashboardCharts";
 import { Badge } from "@/components/ui/badge";
+import FeatureCard from "@/components/ui/featureCard";
+import Icon from "@/components/ui/icon";
+import { dashboardCards, dashboardConfig } from "@/config/dashboardConfig";
+import { useAuth } from "@/hooks/useAuth";
+import { useDashboardCharts } from "@/hooks/useDashboardCharts";
+import { useLists } from "@/hooks/useLists";
+import { useTasks } from "@/hooks/useTasks";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
   const { user } = useAuth();

@@ -179,6 +179,14 @@ describe("authSlice", () => {
     });
 
     // Update Profile Thunk
+    it("should handle updateUserProfile.pending", () => {
+      const action = { type: updateUserProfile.pending.type };
+      const state = authReducer(initialState, action);
+
+      expect(state.isLoading).toBe(true);
+      expect(state.error).toBeNull();
+    });
+
     it("should handle updateUserProfile.fulfilled", () => {
       const loggedInState: AuthState = {
         ...initialState,
@@ -197,14 +205,52 @@ describe("authSlice", () => {
       expect(state.user?.email).toBe(mockUser.email);
     });
 
+    it("should handle updateUserProfile.rejected", () => {
+      const action = {
+        type: updateUserProfile.rejected.type,
+        payload: "Update failed",
+      };
+      const state = authReducer(initialState, action);
+
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBe("Update failed");
+    });
+
     // Change Password Thunk
+    it("should handle changeUserPassword.pending", () => {
+      const action = { type: changeUserPassword.pending.type };
+      const state = authReducer(initialState, action);
+
+      expect(state.isLoading).toBe(true);
+      expect(state.error).toBeNull();
+    });
+
     it("should handle changeUserPassword.fulfilled", () => {
       const action = { type: changeUserPassword.fulfilled.type };
       const state = authReducer(initialState, action);
       expect(state.isLoading).toBe(false);
     });
 
+    it("should handle changeUserPassword.rejected", () => {
+      const action = {
+        type: changeUserPassword.rejected.type,
+        payload: "Password change failed",
+      };
+      const state = authReducer(initialState, action);
+
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBe("Password change failed");
+    });
+
     // Delete Account Thunk
+    it("should handle deleteUserAccount.pending", () => {
+      const action = { type: deleteUserAccount.pending.type };
+      const state = authReducer(initialState, action);
+
+      expect(state.isLoading).toBe(true);
+      expect(state.error).toBeNull();
+    });
+
     it("should handle deleteUserAccount.fulfilled", () => {
       const loggedInState: AuthState = {
         ...initialState,
@@ -219,6 +265,17 @@ describe("authSlice", () => {
       expect(state.user).toBeNull();
       expect(state.token).toBeNull();
       expect(state.isAuthenticated).toBe(false);
+    });
+
+    it("should handle deleteUserAccount.rejected", () => {
+      const action = {
+        type: deleteUserAccount.rejected.type,
+        payload: "Delete account failed",
+      };
+      const state = authReducer(initialState, action);
+
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBe("Delete account failed");
     });
   });
 

@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Mock de ReactDOM antes de importar main
 vi.mock("react-dom/client", () => ({
   default: {
     createRoot: vi.fn(() => ({
@@ -39,7 +38,6 @@ describe("main.tsx", () => {
 
     vi.mocked(ReactDOM.default.createRoot).mockImplementation(mockCreateRoot);
 
-    // Importar main después de los mocks
     await import("@/main");
 
     const rootElement = document.getElementById("root");

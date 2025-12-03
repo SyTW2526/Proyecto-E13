@@ -24,7 +24,9 @@ describe("Sheet", () => {
       </Sheet>,
     );
 
-    expect(container.querySelector('[data-slot="sheet-trigger"]')).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="sheet-trigger"]'),
+    ).toBeInTheDocument();
   });
 
   it("Abre el Sheet al hacer click en el trigger", async () => {

@@ -2,7 +2,7 @@ import {
   PriorityChart,
   ProgressChart,
   WeeklyTasksChart,
-} from "@/components/dashboard/DashboardCharts";
+} from "@/components/dashboard/dashboardCharts";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -83,7 +83,6 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={config} />,
       );
 
-      // Verificar que se renderiza el componente
       expect(container.firstChild).toBeInTheDocument();
     });
 
@@ -120,7 +119,6 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={config} />,
       );
 
-      // Verificar que se renderiza el gráfico
       expect(container.firstChild).toBeInTheDocument();
     });
 
@@ -132,6 +130,86 @@ describe("DashboardCharts", () => {
         { day: "Jue", pending: 0, inProgress: 5, completed: 0 },
         { day: "Vie", pending: 3, inProgress: 0, completed: 7 },
       ];
+
+      const config = {
+        pending: { label: "Pendiente", color: "#6b7280" },
+        inProgress: { label: "En Progreso", color: "#3b82f6" },
+        completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza barras con solo tareas pendientes", () => {
+      const data = [{ day: "Lun", pending: 10, inProgress: 0, completed: 0 }];
+
+      const config = {
+        pending: { label: "Pendiente", color: "#6b7280" },
+        inProgress: { label: "En Progreso", color: "#3b82f6" },
+        completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza barras con solo tareas en progreso", () => {
+      const data = [{ day: "Lun", pending: 0, inProgress: 8, completed: 0 }];
+
+      const config = {
+        pending: { label: "Pendiente", color: "#6b7280" },
+        inProgress: { label: "En Progreso", color: "#3b82f6" },
+        completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza barras con tareas pendientes y en progreso sin completadas", () => {
+      const data = [{ day: "Lun", pending: 5, inProgress: 3, completed: 0 }];
+
+      const config = {
+        pending: { label: "Pendiente", color: "#6b7280" },
+        inProgress: { label: "En Progreso", color: "#3b82f6" },
+        completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza barras con tareas en progreso y completadas sin pendientes", () => {
+      const data = [{ day: "Lun", pending: 0, inProgress: 4, completed: 6 }];
+
+      const config = {
+        pending: { label: "Pendiente", color: "#6b7280" },
+        inProgress: { label: "En Progreso", color: "#3b82f6" },
+        completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("No renderiza etiqueta cuando el total es cero", () => {
+      const data = [{ day: "Lun", pending: 0, inProgress: 0, completed: 0 }];
 
       const config = {
         pending: { label: "Pendiente", color: "#6b7280" },

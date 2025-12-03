@@ -16,9 +16,9 @@ beforeAll(() => {
     if (
       message.includes("ECONNREFUSED") ||
       message.includes("Error al cargar notificaciones") ||
-      message.includes("ancho(0) y alto(0) del gráfico") ||
+      message.includes("width(0) and height(0) of chart") ||
       message.includes(
-        "Una actualización de TestComponent dentro de una prueba no estaba incluida en el acto",
+        "An update to TestComponent inside a test was not wrapped in act",
       )
     ) {
       return;
@@ -29,7 +29,7 @@ beforeAll(() => {
   console.warn = (...args: unknown[]) => {
     const message = args[0]?.toString() || "";
     // Suprimir warnings de Recharts
-    if (message.includes("ancho") && message.includes("alto")) {
+    if (message.includes("width") && message.includes("height")) {
       return;
     }
     originalWarn(...args);

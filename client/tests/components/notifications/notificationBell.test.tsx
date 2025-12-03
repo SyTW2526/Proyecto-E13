@@ -254,7 +254,7 @@ describe("NotificationBell", () => {
         const mencionesTabs = screen.queryAllByText("Menciones");
         const buzonTabs = screen.queryAllByText("Buzón");
         const archivosTabs = screen.queryAllByText("Archivos");
-        
+
         expect(generalTabs.length).toBeGreaterThan(0);
         expect(mencionesTabs.length).toBeGreaterThan(0);
         expect(buzonTabs.length).toBeGreaterThan(0);

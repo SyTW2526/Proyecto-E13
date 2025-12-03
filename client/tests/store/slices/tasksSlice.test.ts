@@ -7,6 +7,7 @@ import reducer, {
   resetTasksState,
   selectFilteredTasks,
   selectSelectedTask,
+  selectSharedTasks,
   selectTaskById,
   selectTaskFilters,
   selectTaskSorting,
@@ -424,6 +425,63 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     expect(state.error).toBeNull();
   });
 
+  it("updateTask.pending actualiza optimísticamente la tarea", () => {
+    const action = {
+      type: updateTask.pending.type,
+      meta: {
+        arg: {
+          id: "t1",
+          name: "Actualizado",
+          description: "nueva descripción",
+        },
+      },
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].name).toBe("Actualizado");
+    expect(state.tasks[0].description).toBe("nueva descripción");
+  });
+
+  it("updateTask.pending actualiza status a COMPLETED con timestamp", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-05-15T10:30:00.000Z"));
+
+    const action = {
+      type: updateTask.pending.type,
+      meta: {
+        arg: {
+          id: "t1",
+          status: "COMPLETED",
+        },
+      },
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].completed).toBe(true);
+    expect(state.tasks[0].completedAt).toBe("2024-05-15T10:30:00.000Z");
+  });
+
+  it("updateTask.pending actualiza status a no completado y limpia completedAt", () => {
+    const taskCompleted = {
+      ...baseTask,
+      status: "COMPLETED" as const,
+      completed: true,
+      completedAt: "2024-01-10T00:00:00.000Z",
+    };
+
+    const action = {
+      type: updateTask.pending.type,
+      meta: {
+        arg: {
+          id: "t1",
+          status: "IN_PROGRESS",
+        },
+      },
+    };
+    const state = reducer({ ...initialState, tasks: [taskCompleted] }, action);
+    expect(state.tasks[0].completed).toBe(false);
+    expect(state.tasks[0].completedAt).toBeUndefined();
+    expect(state.tasks[0].status).toBe("IN_PROGRESS");
+  });
+
   it("updateTask.rejected establece error", () => {
     const action = {
       type: updateTask.rejected.type,
@@ -466,5 +524,304 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     const action = { type: unshareTask.pending.type };
     const state = reducer({ ...initialState, error: "old error" }, action);
     expect(state.error).toBeNull();
+  });
+
+  it("shareTask.fulfilled actualiza tarea con shares", () => {
+    const taskWithShares = {
+      ...baseTask,
+      shares: [
+        {
+          id: "s1",
+          taskId: "t1",
+          userId: "u2",
+          user: { id: "u2", email: "user2@test.com", name: "User 2" },
+          permission: "VIEW" as const,
+        },
+      ],
+    };
+    const action = {
+      type: shareTask.fulfilled.type,
+      payload: taskWithShares,
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].shares).toHaveLength(1);
+    expect(state.tasks[0].shares?.[0].userId).toBe("u2");
+    expect(state.error).toBeNull();
+  });
+
+  it("updateTaskSharePermission.pending actualiza optimísticamente el permiso", () => {
+    const taskWithShares = {
+      ...baseTask,
+      shares: [
+        {
+          id: "s1",
+          taskId: "t1",
+          userId: "u2",
+          user: { id: "u2", email: "user2@test.com", name: "User 2" },
+          permission: "VIEW" as const,
+        },
+      ],
+    };
+    const action = {
+      type: updateTaskSharePermission.pending.type,
+      meta: {
+        arg: {
+          taskId: "t1",
+          userId: "u2",
+          permission: "EDIT",
+        },
+      },
+    };
+    const state = reducer({ ...initialState, tasks: [taskWithShares] }, action);
+    expect(state.tasks[0].shares?.[0].permission).toBe("EDIT");
+    expect(state.error).toBeNull();
+  });
+
+  it("updateTaskSharePermission.fulfilled actualiza tarea con nuevo permiso", () => {
+    const taskWithUpdatedShare = {
+      ...baseTask,
+      shares: [
+        {
+          id: "s1",
+          taskId: "t1",
+          userId: "u2",
+          user: { id: "u2", email: "user2@test.com", name: "User 2" },
+          permission: "EDIT" as const,
+        },
+      ],
+    };
+    const action = {
+      type: updateTaskSharePermission.fulfilled.type,
+      payload: taskWithUpdatedShare,
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].shares?.[0].permission).toBe("EDIT");
+    expect(state.error).toBeNull();
+  });
+
+  it("unshareTask.fulfilled actualiza tarea sin el share eliminado", () => {
+    const taskWithoutShare = {
+      ...baseTask,
+      shares: [],
+    };
+    const action = {
+      type: unshareTask.fulfilled.type,
+      payload: taskWithoutShare,
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].shares).toHaveLength(0);
+    expect(state.error).toBeNull();
+  });
+
+  it("selectFilteredTasks filtra por listId", () => {
+    const task2 = {
+      ...baseTask,
+      id: "t2",
+      name: "Tarea 2",
+      listId: "l2",
+    };
+    const state = {
+      tasks: {
+        ...initialState,
+        tasks: [baseTask, task2],
+        filters: { ...initialState.filters, listId: "l1" },
+      },
+    };
+    const filtered = selectFilteredTasks(state);
+    expect(filtered).toHaveLength(1);
+    expect(filtered[0].id).toBe("t1");
+  });
+
+  it("selectFilteredTasks filtra por prioridad", () => {
+    const taskHigh = {
+      ...baseTask,
+      id: "t1",
+      priority: "HIGH" as const,
+    };
+    const task2 = {
+      ...baseTask,
+      id: "t2",
+      name: "Tarea 2",
+      priority: "LOW" as const,
+    };
+    const state = {
+      tasks: {
+        ...initialState,
+        tasks: [taskHigh, task2],
+        filters: { ...initialState.filters, priority: "HIGH" as const },
+      },
+    };
+    const filtered = selectFilteredTasks(state);
+    expect(filtered).toHaveLength(1);
+    expect(filtered[0].priority).toBe("HIGH");
+  });
+
+  it("selectFilteredTasks filtra por búsqueda en descripción", () => {
+    const task1 = {
+      ...baseTask,
+      description: "Descripción de prueba",
+    };
+    const task2 = {
+      ...baseTask,
+      id: "t2",
+      name: "Tarea sin match",
+      description: "algo diferente",
+    };
+    const state = {
+      tasks: {
+        ...initialState,
+        tasks: [task1, task2],
+        filters: { ...initialState.filters, search: "prueba" },
+      },
+    };
+    const filtered = selectFilteredTasks(state);
+    expect(filtered).toHaveLength(1);
+    expect(filtered[0].id).toBe("t1");
+  });
+
+  it("selectFilteredTasks ordena por dueDate", () => {
+    const task1 = {
+      ...baseTask,
+      id: "t1",
+      dueDate: "2024-12-31",
+    };
+    const task2 = {
+      ...baseTask,
+      id: "t2",
+      dueDate: "",
+    };
+    const task3 = {
+      ...baseTask,
+      id: "t3",
+      dueDate: "2024-06-15",
+    };
+    const state = {
+      tasks: {
+        ...initialState,
+        tasks: [task1, task2, task3],
+        sorting: { field: "dueDate" as const, order: "asc" as const },
+      },
+    };
+    const sorted = selectFilteredTasks(state);
+    expect(sorted[0].dueDate).toBe("");
+    expect(sorted[1].dueDate).toBe("2024-06-15");
+    expect(sorted[2].dueDate).toBe("2024-12-31");
+  });
+
+  it("selectFilteredTasks ordena por priority descendente", () => {
+    const task1 = {
+      ...baseTask,
+      id: "t1",
+      priority: "LOW" as const,
+    };
+    const task2 = {
+      ...baseTask,
+      id: "t2",
+      priority: "URGENT" as const,
+    };
+    const task3 = {
+      ...baseTask,
+      id: "t3",
+      priority: "HIGH" as const,
+    };
+    const state = {
+      tasks: {
+        ...initialState,
+        tasks: [task1, task2, task3],
+        sorting: { field: "priority" as const, order: "desc" as const },
+      },
+    };
+    const sorted = selectFilteredTasks(state);
+    expect(sorted[0].priority).toBe("URGENT");
+    expect(sorted[1].priority).toBe("HIGH");
+    expect(sorted[2].priority).toBe("LOW");
+  });
+
+  it("selectFilteredTasks ordena por updatedAt", () => {
+    const task2 = {
+      ...baseTask,
+      id: "t2",
+      updatedAt: "2024-01-15T00:00:00Z",
+    };
+    const state = {
+      tasks: {
+        ...initialState,
+        tasks: [baseTask, task2],
+        sorting: { field: "updatedAt" as const, order: "asc" as const },
+      },
+    };
+    const sorted = selectFilteredTasks(state);
+    expect(sorted[0].id).toBe("t1");
+    expect(sorted[1].id).toBe("t2");
+  });
+
+  it("selectFilteredTasks ordena por createdAt por defecto", () => {
+    const task2 = {
+      ...baseTask,
+      id: "t2",
+      createdAt: "2024-01-15T00:00:00Z",
+    };
+    const state = {
+      tasks: {
+        ...initialState,
+        tasks: [baseTask, task2],
+        sorting: { field: "createdAt" as const, order: "asc" as const },
+      },
+    };
+    const sorted = selectFilteredTasks(state);
+    expect(sorted[0].id).toBe("t1");
+    expect(sorted[1].id).toBe("t2");
+  });
+
+  it("selectFilteredTasks retorna 0 cuando dos valores son iguales", () => {
+    const task1 = {
+      ...baseTask,
+      id: "t1",
+      name: "Mismo nombre",
+    };
+    const task2 = {
+      ...baseTask,
+      id: "t2",
+      name: "Mismo nombre",
+    };
+    const state = {
+      tasks: {
+        ...initialState,
+        tasks: [task1, task2],
+        sorting: { field: "name" as const, order: "asc" as const },
+      },
+    };
+    const sorted = selectFilteredTasks(state);
+    expect(sorted).toHaveLength(2);
+  });
+
+  it("selectSharedTasks filtra tareas compartidas con usuario específico", () => {
+    const taskShared = {
+      ...baseTask,
+      id: "t1",
+      shares: [
+        {
+          id: "s1",
+          taskId: "t1",
+          userId: "u2",
+          user: { id: "u2", email: "user2@test.com", name: "User 2" },
+          permission: "VIEW" as const,
+        },
+      ],
+    };
+    const taskNotShared = {
+      ...baseTask,
+      id: "t2",
+      shares: [],
+    };
+    const state = {
+      tasks: {
+        ...initialState,
+        tasks: [taskShared, taskNotShared],
+      },
+    };
+    const sharedTasks = selectSharedTasks("u2")(state);
+    expect(sharedTasks).toHaveLength(1);
+    expect(sharedTasks[0].id).toBe("t1");
   });
 });

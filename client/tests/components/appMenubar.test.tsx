@@ -165,4 +165,158 @@ describe("AppMenubar", () => {
 
     expect(newNavigate).toHaveBeenCalledWith("/settings");
   });
+
+  it("Renderiza el botón de menú móvil cuando está autenticado", async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      isAuthenticated: true,
+      user: { id: "1", name: "Test User", email: "test@example.com" },
+      token: "token123",
+      isLoading: false,
+      error: null,
+      login: vi.fn(),
+      register: vi.fn(),
+      loginWithGoogle: vi.fn(),
+      signOut: mockSignOut,
+    });
+
+    const { container } = renderWithProviders(
+      <MemoryRouter>
+        <AppMenubar />
+      </MemoryRouter>,
+    );
+
+    const mobileMenuButton = container.querySelector(
+      '[data-slot="sheet-trigger"]',
+    );
+    expect(mobileMenuButton).toBeDefined();
+
+    const user = userEvent.setup();
+    if (mobileMenuButton) {
+      await user.click(mobileMenuButton);
+      await screen.findByText("Menú");
+      expect(screen.getByText("Configuración")).toBeDefined();
+    }
+  });
+
+  it("Navega desde el menú móvil", async () => {
+    const newNavigate = vi.fn();
+    vi.mocked(useAuth).mockReturnValue({
+      isAuthenticated: true,
+      user: { id: "1", name: "Test User", email: "test@example.com" },
+      token: "token123",
+      isLoading: false,
+      error: null,
+      login: vi.fn(),
+      register: vi.fn(),
+      loginWithGoogle: vi.fn(),
+      signOut: mockSignOut,
+    });
+
+    mockNavigate = newNavigate;
+
+    const { container } = renderWithProviders(
+      <MemoryRouter>
+        <AppMenubar />
+      </MemoryRouter>,
+    );
+
+    const user = userEvent.setup();
+    const mobileMenuButton = container.querySelector(
+      '[data-slot="sheet-trigger"]',
+    );
+
+    if (mobileMenuButton) {
+      await user.click(mobileMenuButton);
+      await screen.findByText("Menú");
+
+      const allTasksButtons = screen.getAllByText("Tareas");
+      const mobileTasksButton = allTasksButtons.find((btn) =>
+        btn.closest('[data-slot="sheet-content"]'),
+      );
+
+      if (mobileTasksButton) {
+        await user.click(mobileTasksButton);
+        expect(newNavigate).toHaveBeenCalledWith("/tasks");
+      }
+    }
+  });
+
+  it("Cierra sesión desde el menú móvil", async () => {
+    const newNavigate = vi.fn();
+    vi.mocked(useAuth).mockReturnValue({
+      isAuthenticated: true,
+      user: { id: "1", name: "Mobile User", email: "mobile@test.com" },
+      token: "token123",
+      isLoading: false,
+      error: null,
+      login: vi.fn(),
+      register: vi.fn(),
+      loginWithGoogle: vi.fn(),
+      signOut: mockSignOut,
+    });
+
+    mockNavigate = newNavigate;
+
+    const { container } = renderWithProviders(
+      <MemoryRouter>
+        <AppMenubar />
+      </MemoryRouter>,
+    );
+
+    const user = userEvent.setup();
+    const mobileMenuButton = container.querySelector(
+      '[data-slot="sheet-trigger"]',
+    );
+
+    if (mobileMenuButton) {
+      await user.click(mobileMenuButton);
+      const logoutButtons = await screen.findAllByText("Cerrar sesión");
+      if (logoutButtons.length > 1) {
+        await user.click(logoutButtons[1]);
+      } else {
+        await user.click(logoutButtons[0]);
+      }
+      expect(mockSignOut).toHaveBeenCalled();
+      expect(newNavigate).toHaveBeenCalledWith("/", { replace: true });
+    }
+  });
+
+  it("Navega a configuración desde el menú móvil", async () => {
+    const newNavigate = vi.fn();
+    vi.mocked(useAuth).mockReturnValue({
+      isAuthenticated: true,
+      user: { id: "1", name: "Test User", email: "test@example.com" },
+      token: "token123",
+      isLoading: false,
+      error: null,
+      login: vi.fn(),
+      register: vi.fn(),
+      loginWithGoogle: vi.fn(),
+      signOut: mockSignOut,
+    });
+
+    mockNavigate = newNavigate;
+
+    const { container } = renderWithProviders(
+      <MemoryRouter>
+        <AppMenubar />
+      </MemoryRouter>,
+    );
+
+    const user = userEvent.setup();
+    const mobileMenuButton = container.querySelector(
+      '[data-slot="sheet-trigger"]',
+    );
+
+    if (mobileMenuButton) {
+      await user.click(mobileMenuButton);
+      await screen.findByText("Menú");
+
+      const allConfigButtons = screen.getAllByText("Configuración");
+      const mobileConfigButton = allConfigButtons[allConfigButtons.length - 1];
+
+      await user.click(mobileConfigButton);
+      expect(newNavigate).toHaveBeenCalledWith("/settings");
+    }
+  });
 });

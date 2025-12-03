@@ -6,8 +6,11 @@ import reducer, {
   resetListsState,
   selectListById,
   selectLists,
+  selectListsError,
+  selectListsLoading,
   selectOwnedLists,
   selectSelectedList,
+  selectSelectedListId,
   selectSharedLists,
   setError,
   setLoading,
@@ -106,6 +109,23 @@ describe("listsSlice reducer", () => {
     expect(state.selectedListId).toBeNull();
   });
 
+  it("deleteList.fulfilled elimina pero mantiene selectedListId diferente", () => {
+    const otherList = { ...baseList, id: "l2", name: "Other" };
+    const populated: ListsState = {
+      ...initialState,
+      lists: [baseList, otherList],
+      selectedListId: "l2",
+    };
+    const action = {
+      type: deleteList.fulfilled.type,
+      payload: "l1",
+    };
+    const state = reducer(populated, action);
+    expect(state.lists).toHaveLength(1);
+    expect(state.lists[0].id).toBe("l2");
+    expect(state.selectedListId).toBe("l2");
+  });
+
   it("setSelectedList guarda el id", () => {
     const state = reducer(initialState, setSelectedList("l1"));
     expect(state.selectedListId).toBe("l1");
@@ -165,6 +185,21 @@ describe("listsSlice selectors", () => {
     });
     expect(selectSharedLists("user-1")(state)).toEqual([sharedList]);
     expect(selectSharedLists("other")(state)).toEqual([]);
+  });
+
+  it("selectListsLoading retorna estado de carga", () => {
+    const state = wrap({ ...initialState, isLoading: true });
+    expect(selectListsLoading(state)).toBe(true);
+  });
+
+  it("selectListsError retorna error", () => {
+    const state = wrap({ ...initialState, error: "Error de prueba" });
+    expect(selectListsError(state)).toBe("Error de prueba");
+  });
+
+  it("selectSelectedListId retorna ID seleccionado", () => {
+    const state = wrap({ ...initialState, selectedListId: "l1" });
+    expect(selectSelectedListId(state)).toBe("l1");
   });
 });
 

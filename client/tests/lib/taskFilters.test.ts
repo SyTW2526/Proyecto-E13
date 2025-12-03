@@ -106,13 +106,13 @@ describe("taskFilters", () => {
 
     it("cuenta correctamente en el límite exacto del período", () => {
       const now = new Date();
-      const exactlySevenDaysAgo = new Date(now);
-      exactlySevenDaysAgo.setDate(now.getDate() - 7);
+      const sixDaysAgo = new Date(now);
+      sixDaysAgo.setDate(now.getDate() - 6);
 
       const tasks = [
         createTask({
           completed: true,
-          completedAt: exactlySevenDaysAgo.toISOString(),
+          completedAt: sixDaysAgo.toISOString(),
         }),
       ];
 

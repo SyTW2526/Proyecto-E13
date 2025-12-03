@@ -9,7 +9,7 @@
     "prettier": "prettier --write .",
     "lint": "eslint . --fix",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage --coverage.include '**/src/*'"
