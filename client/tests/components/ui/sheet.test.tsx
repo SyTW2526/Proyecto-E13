@@ -9,19 +9,22 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { render, screen, waitFor } from "@testing-library/react";
+import { I18nTestProvider } from "../../testUtils/i18nTestProvider";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 describe("Sheet", () => {
   it("Renderiza el Sheet correctamente", () => {
     const { container } = render(
-      <Sheet>
-        <SheetTrigger>Abrir</SheetTrigger>
-        <SheetContent>
-          <SheetTitle>Título</SheetTitle>
-          <SheetDescription>Descripción</SheetDescription>
-        </SheetContent>
-      </Sheet>,
+      <I18nTestProvider>
+        <Sheet>
+          <SheetTrigger>Abrir</SheetTrigger>
+          <SheetContent>
+            <SheetTitle>Título</SheetTitle>
+            <SheetDescription>Descripción</SheetDescription>
+          </SheetContent>
+        </Sheet>
+      </I18nTestProvider>,
     );
 
     expect(
@@ -33,13 +36,15 @@ describe("Sheet", () => {
     const user = userEvent.setup();
 
     render(
-      <Sheet>
-        <SheetTrigger>Abrir Sheet</SheetTrigger>
-        <SheetContent>
-          <SheetTitle>Título del Sheet</SheetTitle>
-          <SheetDescription>Descripción del contenido</SheetDescription>
-        </SheetContent>
-      </Sheet>,
+      <I18nTestProvider>
+        <Sheet>
+          <SheetTrigger>Abrir Sheet</SheetTrigger>
+          <SheetContent>
+            <SheetTitle>Título del Sheet</SheetTitle>
+            <SheetDescription>Descripción del contenido</SheetDescription>
+          </SheetContent>
+        </Sheet>
+      </I18nTestProvider>,
     );
 
     const trigger = screen.getByText("Abrir Sheet");
@@ -52,15 +57,17 @@ describe("Sheet", () => {
     const user = userEvent.setup();
 
     render(
-      <Sheet>
-        <SheetTrigger>Abrir</SheetTrigger>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>Título</SheetTitle>
-            <SheetDescription>Descripción</SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>,
+      <I18nTestProvider>
+        <Sheet>
+          <SheetTrigger>Abrir</SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Título</SheetTitle>
+              <SheetDescription>Descripción</SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
+      </I18nTestProvider>,
     );
 
     await user.click(screen.getByText("Abrir"));
@@ -205,7 +212,7 @@ describe("Sheet", () => {
 
     await user.click(screen.getByText("Abrir"));
 
-    expect(screen.getByText("Close")).toBeInTheDocument();
+    expect(screen.getByText("Cerrar")).toBeInTheDocument();
   });
 
   it("Renderiza SheetClose correctamente", async () => {

@@ -4,6 +4,7 @@ import {
   WeeklyTasksChart,
 } from "@/components/dashboard/dashboardCharts";
 import { render, screen } from "@testing-library/react";
+import { I18nTestProvider } from "../../testUtils/i18nTestProvider";
 import { describe, expect, it } from "vitest";
 
 describe("DashboardCharts", () => {
@@ -15,7 +16,11 @@ describe("DashboardCharts", () => {
         baja: { label: "Baja", color: "#10b981" },
       };
 
-      render(<PriorityChart data={[]} config={config} />);
+      render(
+        <I18nTestProvider>
+          <PriorityChart data={[]} config={config} />
+        </I18nTestProvider>,
+      );
 
       expect(
         screen.getByText(/No hay tareas para mostrar/i),
@@ -36,7 +41,9 @@ describe("DashboardCharts", () => {
       };
 
       const { container } = render(
-        <PriorityChart data={data} config={config} />,
+        <I18nTestProvider>
+          <PriorityChart data={data} config={config} />
+        </I18nTestProvider>,
       );
 
       // Verificar que se renderiza el componente
@@ -57,7 +64,9 @@ describe("DashboardCharts", () => {
       };
 
       const { container } = render(
-        <PriorityChart data={data} config={config} />,
+        <I18nTestProvider>
+          <PriorityChart data={data} config={config} />
+        </I18nTestProvider>,
       );
 
       // Verificar que se renderiza el componente

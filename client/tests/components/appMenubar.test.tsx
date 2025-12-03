@@ -4,6 +4,7 @@ import { screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "../helpers/test-utils";
+import { I18nTestProvider } from "../testUtils/i18nTestProvider";
 
 vi.mock("@/hooks/useAuth");
 let mockNavigate = vi.fn();
@@ -59,6 +60,7 @@ describe("AppMenubar", () => {
       <MemoryRouter>
         <AppMenubar />
       </MemoryRouter>,
+      { wrapper: I18nTestProvider },
     );
 
     expect(screen.getByText("TaskGrid")).toBeDefined();

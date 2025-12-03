@@ -2,6 +2,7 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
 import type { Notification } from "@/types/notification";
 import { render, screen, waitFor } from "@testing-library/react";
+import { I18nTestProvider } from "../../testUtils/i18nTestProvider";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -59,10 +60,14 @@ describe("NotificationBell", () => {
       getNotificationsByType: vi.fn(() => []),
     });
 
-    render(<NotificationBell />);
+    render(
+      <I18nTestProvider>
+        <NotificationBell />
+      </I18nTestProvider>,
+    );
 
     expect(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     ).toBeInTheDocument();
   });
 
@@ -117,7 +122,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     const button = screen.getByRole("button", {
-      name: /abrir notificaciones/i,
+      name: "Abrir notificaciones",
     });
     await user.click(button);
 
@@ -142,7 +147,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     await waitFor(() => {
@@ -166,7 +171,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     await waitFor(() => {
@@ -190,7 +195,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     await waitFor(() => {
@@ -217,7 +222,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     const markAllButton = await screen.findByRole("button", {
@@ -244,7 +249,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     // Esperar a que aparezcan las tabs
@@ -287,7 +292,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     const mencionesTab = await screen.findAllByText("Menciones");
@@ -314,7 +319,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     await waitFor(() => {
@@ -340,7 +345,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     await waitFor(() => {
@@ -367,7 +372,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     const notification = await screen.findByText("Nueva tarea asignada");
@@ -392,7 +397,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     await waitFor(() => {
@@ -421,7 +426,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     const notification = await screen.findByText("Nueva tarea asignada");
@@ -460,7 +465,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     const markAllButton = await screen.findByRole("button", {
@@ -494,7 +499,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     await waitFor(() => {
@@ -518,7 +523,7 @@ describe("NotificationBell", () => {
     render(<NotificationBell />);
 
     await user.click(
-      screen.getByRole("button", { name: /abrir notificaciones/i }),
+      screen.getByRole("button", { name: "Abrir notificaciones" }),
     );
 
     await waitFor(() => {

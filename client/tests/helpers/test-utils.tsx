@@ -27,13 +27,22 @@ export function renderWithProviders(
       },
       preloadedState,
     }),
+    wrapper: CustomWrapper,
     ...renderOptions
-  }: ExtendedRenderOptions = {},
+  }: ExtendedRenderOptions & {
+    wrapper?: React.ComponentType<{ children: React.ReactNode }>;
+  } = {},
 ) {
-  function Wrapper({ children }: { children: React.ReactNode }) {
+  function DefaultWrapper({ children }: { children: React.ReactNode }) {
     return <Provider store={store}>{children}</Provider>;
   }
-
+  const Wrapper = CustomWrapper
+    ? ({ children }: { children: React.ReactNode }) => (
+        <Provider store={store}>
+          <CustomWrapper>{children}</CustomWrapper>
+        </Provider>
+      )
+    : DefaultWrapper;
   return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
 }
 

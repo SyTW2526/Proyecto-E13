@@ -3,6 +3,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { I18nTestProvider } from "../../testUtils/i18nTestProvider";
 
 vi.mock("@/hooks/useTheme", () => ({
   useTheme: vi.fn(),
@@ -19,10 +20,14 @@ describe("ThemeToggle", () => {
       setTheme: vi.fn(),
     });
 
-    render(<ThemeToggle />);
+    render(
+      <I18nTestProvider>
+        <ThemeToggle />
+      </I18nTestProvider>,
+    );
 
     expect(
-      screen.getByRole("button", { name: "Cambiar a tema light" }),
+      screen.getByRole("button", { name: "Cambiar a tema claro" }),
     ).toBeInTheDocument();
   });
 
@@ -33,10 +38,14 @@ describe("ThemeToggle", () => {
       setTheme,
     });
 
-    render(<ThemeToggle />);
+    render(
+      <I18nTestProvider>
+        <ThemeToggle />
+      </I18nTestProvider>,
+    );
     const user = userEvent.setup();
     await user.click(
-      screen.getByRole("button", { name: "Cambiar a tema dark" }),
+      screen.getByRole("button", { name: "Cambiar a tema oscuro" }),
     );
 
     expect(setTheme).toHaveBeenCalledWith("dark");
