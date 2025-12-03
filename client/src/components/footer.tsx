@@ -8,7 +8,7 @@ export default function Footer() {
   const navigate = useNavigate();
   return (
     <footer
-      className="fixed bottom-0 left-0 right-0 z-50 border bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60 w-fit rounded-md mx-auto px-4 my-2"
+      className="fixed bottom-0 left-0 right-0 z-50 border border-border bg-card w-fit rounded-lg mx-auto px-4 my-2"
       role="contentinfo"
       aria-label={t("footer.ariaLabel")}
     >

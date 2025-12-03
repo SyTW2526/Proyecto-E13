@@ -36,7 +36,7 @@ export default function AppMenubar() {
   const logoFill = theme === "dark" ? "#ffffff" : "#000000";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60 w-fit md:w-6xl rounded-md mx-auto px-4 mt-4 mb-2">
+    <header className="fixed top-0 left-0 right-0 z-50 border border-border bg-card w-fit md:w-6xl rounded-lg mx-auto px-4 mt-4 mb-2">
       <div className="mx-auto flex max-w-6xl h-full justify-between items-center gap-20">
           <Link to="/" className="flex items-center gap-2">
             <Logo fill={logoFill} width={32} height={32} className="h-8 w-8" />
