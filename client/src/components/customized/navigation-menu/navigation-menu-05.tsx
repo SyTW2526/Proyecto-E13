@@ -8,8 +8,10 @@ import { cn } from "@/lib/utils";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { navigationItems } from "@/config/navigation";
+import { useTranslation } from "react-i18next";
 
 export default function NavigationMenuWithActiveItem() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -39,7 +41,7 @@ export default function NavigationMenuWithActiveItem() {
                   className="flex-row items-center gap-2.5 inline-flex p-0 hover:bg-transparent focus:bg-transparent active:bg-transparent"
                   onClick={() => navigate(item.href)}
                 >
-                  {item.title}
+                  {t(item.title)}
                 </Button>
               </NavigationMenuLink>
             </NavigationMenuItem>

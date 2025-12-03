@@ -14,6 +14,7 @@ import Icon from "@/components/ui/icon";
 import { Checkbox } from "@/components/customized/checkbox/checkbox-09";
 import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
 import ShareTaskDialog from "./ShareTaskDialog";
+import { useTranslation } from "react-i18next";
 
 import { useTasks } from "@/hooks/useTasks";
 import type { Task } from "@/types/tasks-system/task";
@@ -33,6 +34,7 @@ export const TaskCard = memo(function TaskCard({
   task,
   formatDate,
 }: TaskCardProps) {
+  const { t } = useTranslation();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
@@ -152,10 +154,9 @@ export const TaskCard = memo(function TaskCard({
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>¿Estás seguro?</DialogTitle>
+            <DialogTitle>{t("tasks.delete.title")}</DialogTitle>
             <DialogDescription>
-              Esta acción no se puede deshacer. La tarea "{task.name}" será
-              eliminada permanentemente.
+              {t("tasks.delete.description", { name: task.name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -163,7 +164,7 @@ export const TaskCard = memo(function TaskCard({
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
             >
-              Cancelar
+              {t("tasks.delete.cancel")}
             </Button>
             <Button
               variant="destructive"
@@ -172,7 +173,7 @@ export const TaskCard = memo(function TaskCard({
                 setDeleteDialogOpen(false);
               }}
             >
-              Eliminar
+              {t("tasks.delete.confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { priorityConfig } from "@/config/taskConfig";
 import type { Task } from "@/types/tasks-system/task";
+import { useTranslation } from "react-i18next";
 
 // Helper para obtener inicio de semana
 function getStartOfWeek(): Date {
@@ -42,6 +43,8 @@ export function useDashboardCharts({
   accessibleTasks,
   accessibleLists = [],
 }: UseDashboardChartsProps) {
+  const { t } = useTranslation();
+
   // Filtrar TODAS las tareas de la semana actual (lunes a domingo)
   // Solo incluye tareas con dueDate dentro de la semana actual
   const tasksThisWeek = useMemo(() => {
@@ -99,7 +102,7 @@ export function useDashboardCharts({
         .length,
 
       // Número de semana
-      weekNumber: `Semana ${weekNumber}`,
+      weekNumber: t("dashboard.weekNumber", { number: weekNumber }),
 
       // Tareas por lista
       tasksPerList,
@@ -124,7 +127,9 @@ export function useDashboardCharts({
 
   // Calcular stats de estado globales (para gráfico)
   const taskStats = useMemo(() => {
-    const pending = accessibleTasks.filter((t) => t.status === "PENDING").length;
+    const pending = accessibleTasks.filter(
+      (t) => t.status === "PENDING",
+    ).length;
     const inProgress = accessibleTasks.filter(
       (t) => t.status === "IN_PROGRESS",
     ).length;
@@ -139,73 +144,90 @@ export function useDashboardCharts({
   const priorityChartData = useMemo(() => {
     console.log("Dashboard - accessibleTasks:", accessibleTasks);
     console.log("Dashboard - tasksThisWeek:", tasksThisWeek);
-    
+
     return Object.entries(priorityStats)
       .map(([priority, count]) => {
-        const label =
-          priorityConfig[priority.toUpperCase() as keyof typeof priorityConfig]
-            .label;
+        const labelKey = `tasks.priority.${priority}`;
         return {
-          name: label,
+          name: t(labelKey),
           value: count as number,
-          fill: PRIORITY_COLORS[label as keyof typeof PRIORITY_COLORS],
+          fill: PRIORITY_COLORS[
+            priorityConfig[
+              priority.toUpperCase() as keyof typeof priorityConfig
+            ].label as keyof typeof PRIORITY_COLORS
+          ],
         };
       })
       .filter((item) => item.value > 0);
-  }, [priorityStats, accessibleTasks, tasksThisWeek]);
+  }, [priorityStats, accessibleTasks, tasksThisWeek, t]);
 
   const priorityChartConfig = useMemo(() => {
     return Object.entries(priorityConfig).reduce(
-      (acc, [, config]) => ({
+      (acc, [key]) => ({
         ...acc,
-        [config.label]: {
-          label: config.label,
-          color: PRIORITY_COLORS[config.label as keyof typeof PRIORITY_COLORS],
+        [t(`tasks.priority.${key}`)]: {
+          label: t(`tasks.priority.${key}`),
+          color:
+            PRIORITY_COLORS[
+              priorityConfig[key as keyof typeof priorityConfig]
+                .label as keyof typeof PRIORITY_COLORS
+            ],
         },
       }),
       {},
     );
-  }, []);
+  }, [t]);
 
   // Gráfico de distribución por estado (usando datos globales)
   const progressChartData = useMemo(() => {
     return [
       {
-        name: "Pendientes",
+        name: t("dashboard.statusLabels.pending"),
         value: taskStats.pending,
         fill: STATUS_COLORS.pending,
       },
       {
-        name: "En Progreso",
+        name: t("dashboard.statusLabels.inProgress"),
         value: taskStats.inProgress,
         fill: STATUS_COLORS.inProgress,
       },
       {
-        name: "Completadas",
+        name: t("dashboard.statusLabels.completed"),
         value: taskStats.completed,
         fill: STATUS_COLORS.completed,
       },
     ].filter((item) => item.value > 0);
-  }, [taskStats]);
+  }, [taskStats, t]);
 
-  const progressChartConfig = {
-    Pendientes: {
-      label: "Pendientes",
-      color: STATUS_COLORS.pending,
-    },
-    "En Progreso": {
-      label: "En Progreso",
-      color: STATUS_COLORS.inProgress,
-    },
-    Completadas: {
-      label: "Completadas",
-      color: STATUS_COLORS.completed,
-    },
-  };
+  const progressChartConfig = useMemo(
+    () => ({
+      [t("dashboard.statusLabels.pending")]: {
+        label: t("dashboard.statusLabels.pending"),
+        color: STATUS_COLORS.pending,
+      },
+      [t("dashboard.statusLabels.inProgress")]: {
+        label: t("dashboard.statusLabels.inProgress"),
+        color: STATUS_COLORS.inProgress,
+      },
+      [t("dashboard.statusLabels.completed")]: {
+        label: t("dashboard.statusLabels.completed"),
+        color: STATUS_COLORS.completed,
+      },
+    }),
+    [t],
+  );
 
   // Gráfico de tareas de la semana actual (Lun-Dom)
   const weeklyTasksData = useMemo(() => {
-    const days = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+    const days = [
+      t("dashboard.days.mon"),
+      t("dashboard.days.tue"),
+      t("dashboard.days.wed"),
+      t("dashboard.days.thu"),
+      t("dashboard.days.fri"),
+      t("dashboard.days.sat"),
+      t("dashboard.days.sun"),
+    ];
     const weekStart = new Date();
     const day = weekStart.getDay();
     const diff = day === 0 ? -6 : 1 - day;
@@ -245,22 +267,25 @@ export function useDashboardCharts({
     }
 
     return weekData;
-  }, [accessibleTasks]);
+  }, [accessibleTasks, t]);
 
-  const weeklyTasksConfig = {
-    pending: {
-      label: "Pendientes",
-      color: STATUS_COLORS.pending,
-    },
-    inProgress: {
-      label: "En Progreso",
-      color: STATUS_COLORS.inProgress,
-    },
-    completed: {
-      label: "Completadas",
-      color: STATUS_COLORS.completed,
-    },
-  };
+  const weeklyTasksConfig = useMemo(
+    () => ({
+      pending: {
+        label: t("dashboard.statusLabels.pending"),
+        color: STATUS_COLORS.pending,
+      },
+      inProgress: {
+        label: t("dashboard.statusLabels.inProgress"),
+        color: STATUS_COLORS.inProgress,
+      },
+      completed: {
+        label: t("dashboard.statusLabels.completed"),
+        color: STATUS_COLORS.completed,
+      },
+    }),
+    [t],
+  );
 
   // Gráfica de tareas por lista con colores distintos
   const LIST_COLORS = [
@@ -290,9 +315,9 @@ export function useDashboardCharts({
           color: LIST_COLORS[index % LIST_COLORS.length],
         },
       }),
-      { count: { label: "Tareas" } },
+      { count: { label: t("tasks.title") } },
     );
-  }, [tasksPerList]);
+  }, [tasksPerList, t]);
 
   return {
     // Datos de gráficos

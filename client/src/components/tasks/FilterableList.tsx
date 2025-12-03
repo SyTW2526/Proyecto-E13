@@ -1,11 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
-import { tasksPageLabels } from "@/config/taskConfig";
 import { CreateListDialogStandalone } from "../createDialogs/createListDialog";
 import { Button } from "@/components/ui/button";
 import { ItemActionsMenu } from "@/components/ui/ItemActionsMenu";
 import { useLists } from "@/hooks/useLists";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import EditListDialog from "../createDialogs/editListDialog";
 import ShareListDialog from "../lists/ShareListDialog";
 import {
@@ -43,6 +43,7 @@ export function FilterableList({
   icon,
   isLoading,
 }: FilterableListProps) {
+  const { t } = useTranslation();
   const { lists, removeList, isOwner } = useLists();
   const [editingListId, setEditingListId] = useState<string | null>(null);
   const [sharingListId, setSharingListId] = useState<string | null>(null);
@@ -75,13 +76,13 @@ export function FilterableList({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogTitle>{t("lists.delete.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará la lista y todas sus tareas permanentemente.
+              {t("lists.delete.description")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{t("lists.delete.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
@@ -91,7 +92,7 @@ export function FilterableList({
                 }
               }}
             >
-              Eliminar
+              {t("lists.delete.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -102,7 +103,7 @@ export function FilterableList({
         <div className="flex gap-2">
           {/* Boton de crear listas */}
           <CreateListDialogStandalone>
-            <Button leftIcon={tasksPageLabels.createButtons.list.icon} />
+            <Button leftIcon="IconList" />
           </CreateListDialogStandalone>
         </div>
       </div>
@@ -126,10 +127,11 @@ export function FilterableList({
               onClick={() =>
                 onItemClick(selectedId === item.id ? null : item.id)
               }
-              className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border border-border ${selectedId === item.id
-                ? "bg-primary text-secondary font-medium"
-                : "bg-card dark:bg-card hover:bg-muted text-muted-foreground hover:text-foreground"
-                }`}
+              className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border border-border ${
+                selectedId === item.id
+                  ? "bg-primary text-secondary font-medium"
+                  : "bg-card dark:bg-card hover:bg-muted text-muted-foreground hover:text-foreground"
+              }`}
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <Icon
@@ -142,9 +144,7 @@ export function FilterableList({
                   }
                 />
                 <div className="flex flex-col gap-0">
-                  <span className="font-medium truncate">
-                    {item.name}
-                  </span>
+                  <span className="font-medium truncate">{item.name}</span>
                   {item.description && (
                     <p className="text-xs text-muted-foreground truncate">
                       {item.description}

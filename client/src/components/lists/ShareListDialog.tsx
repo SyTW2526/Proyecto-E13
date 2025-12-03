@@ -18,6 +18,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Icon from "@/components/ui/icon";
 import { useLists } from "@/hooks/useLists";
+import { useTranslation } from "react-i18next";
 import type { List } from "@/types/tasks-system/list";
 import {
   AlertDialog,
@@ -41,6 +42,7 @@ export default function ShareListDialog({
   onOpenChange,
   list,
 }: ShareListDialogProps) {
+  const { t } = useTranslation();
   const { shareList, removeShare, updateShare, isLoading } = useLists();
   const [email, setEmail] = useState("");
   const [permission, setPermission] = useState<string>("VIEW");
@@ -64,7 +66,7 @@ export default function ShareListDialog({
       });
       setEmail("");
     } catch (err) {
-      setError("Error al compartir la lista. Verifica el email.");
+      setError(t("share.errorShareList"));
       console.error(err);
     }
   };
@@ -73,14 +75,14 @@ export default function ShareListDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Compartir Lista</DialogTitle>
-          <DialogDescription>
-            Invita a otros usuarios a colaborar en esta lista via email.
-          </DialogDescription>
+          <DialogTitle>{t("share.list.title")}</DialogTitle>
+          <DialogDescription>{t("share.list.description")}</DialogDescription>
         </DialogHeader>
 
         <div className="bg-muted/30 p-4 rounded-lg border border-border/50 mt-4">
-          <h4 className="text-sm font-medium mb-3">Invitar colaborador</h4>
+          <h4 className="text-sm font-medium mb-3">
+            {t("share.inviteCollaborator")}
+          </h4>
           <form
             onSubmit={handleShare}
             className="flex flex-col sm:flex-row items-end gap-3"
@@ -88,7 +90,7 @@ export default function ShareListDialog({
             <div className="grid gap-1.5 flex-1 w-full">
               <Input
                 id="email"
-                placeholder="ejemplo@correo.com"
+                placeholder={t("share.emailPlaceholder")}
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -102,9 +104,15 @@ export default function ShareListDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="VIEW">Ver</SelectItem>
-                  <SelectItem value="EDIT">Editar</SelectItem>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="VIEW">
+                    {t("share.permissions.VIEW")}
+                  </SelectItem>
+                  <SelectItem value="EDIT">
+                    {t("share.permissions.EDIT")}
+                  </SelectItem>
+                  <SelectItem value="ADMIN">
+                    {t("share.permissions.ADMIN")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <Button
@@ -115,7 +123,7 @@ export default function ShareListDialog({
                 {isLoading ? (
                   <Icon as="IconLoader2" className="animate-spin" />
                 ) : (
-                  "Invitar"
+                  t("share.invite")
                 )}
               </Button>
             </div>
@@ -126,12 +134,12 @@ export default function ShareListDialog({
 
         <div className="mt-6 space-y-4">
           <h4 className="text-sm font-medium text-muted-foreground">
-            Personas con acceso
+            {t("share.peopleWithAccess")}
           </h4>
           <div className="space-y-3">
             {list.shares?.length === 0 && (
               <p className="text-sm text-muted-foreground italic">
-                Esta lista no se ha compartido con nadie aún.
+                {t("share.noSharesList")}
               </p>
             )}
             {list.shares?.map((share) => (
@@ -169,9 +177,15 @@ export default function ShareListDialog({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="VIEW">Ver</SelectItem>
-                      <SelectItem value="EDIT">Editar</SelectItem>
-                      <SelectItem value="ADMIN">Admin</SelectItem>
+                      <SelectItem value="VIEW">
+                        {t("share.permissions.VIEW")}
+                      </SelectItem>
+                      <SelectItem value="EDIT">
+                        {t("share.permissions.EDIT")}
+                      </SelectItem>
+                      <SelectItem value="ADMIN">
+                        {t("share.permissions.ADMIN")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <Button
@@ -195,13 +209,17 @@ export default function ShareListDialog({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("share.removeCollaborator.title")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará al colaborador de la lista.
+              {t("share.removeCollaborator.descriptionList")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>
+              {t("share.removeCollaborator.cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 if (collaboratorToRemove) {
@@ -210,7 +228,7 @@ export default function ShareListDialog({
                 }
               }}
             >
-              Confirmar
+              {t("share.removeCollaborator.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

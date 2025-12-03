@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "react-i18next";
 import { AuthenticateMode } from "@/types/components";
 import { LoginFormProps } from "@/types/components";
 import { firstZodIssueMessage } from "@/lib/utils";
@@ -30,6 +31,7 @@ function getGis() {
 }
 
 export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<AuthenticateMode>(forceMode ?? "login");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -94,9 +96,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     if (!apiG || !googleBtnRef.current) return;
     if (!googleClientId) {
       console.error("Google Client ID no configurado");
-      setLocalError(
-        "Google Client ID no configurado. Verifica tu archivo .env",
-      );
+      setLocalError(t("auth.googleClientIdError"));
       return;
     }
     if (!gisReady || googleBtnRendered) return;
@@ -108,9 +108,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
         callback: async (resp) => {
           const idToken = resp?.credential;
           if (!idToken) {
-            setLocalError(
-              "Error de autorización de Google. Verifica que tu origen (localhost:5173) esté autorizado en Google Cloud Console.",
-            );
+            setLocalError(t("auth.googleAuthError"));
             return;
           }
 
@@ -121,9 +119,9 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
           }
           const result = await loginWithGoogle(tokenValidation.data.idToken);
           if (result.success) {
-            setOk("Login con Google exitoso");
+            setOk(t("auth.googleLoginSuccess"));
           } else {
-            setLocalError(result.error || "Error al iniciar sesión con Google");
+            setLocalError(result.error || t("auth.googleLoginError"));
           }
         },
         ux_mode: "popup",
@@ -143,11 +141,9 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
       setGoogleBtnRendered(true);
     } catch (error) {
       console.error("Error al inicializar Google Sign-In:", error);
-      setLocalError(
-        "Error al inicializar Google Sign-In. Verifica la configuración.",
-      );
+      setLocalError(t("auth.googleInitError"));
     }
-  }, [googleClientId, gisReady, googleBtnRendered, loginWithGoogle]);
+  }, [googleClientId, gisReady, googleBtnRendered, loginWithGoogle, t]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -166,9 +162,9 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
         parsed.data.password,
       );
       if (result.success) {
-        setOk("Registro exitoso. Redirigiendo al dashboard...");
+        setOk(t("auth.registerSuccess"));
       } else {
-        setLocalError(result.error || "Error al autenticar");
+        setLocalError(result.error || t("auth.authError"));
       }
       return;
     }
@@ -181,9 +177,9 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
 
     const result = await login(parsed.data.email, parsed.data.password);
     if (result.success) {
-      setOk("Login correcto. Redirigiendo...");
+      setOk(t("auth.loginSuccess"));
     } else {
-      setLocalError(result.error || "Error al autenticar");
+      setLocalError(result.error || t("auth.authError"));
     }
   }
   const otherHref = linkTo ?? (mode === "login" ? "/register" : "/login");
@@ -193,16 +189,16 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
         <Card className="shadow-lg border-border/50 bg-card/95 backdrop-blur-sm">
           <CardHeader className="space-y-1 text-center">
             <CardTitle className="text-2xl tracking-tight">
-              {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
+              {mode === "login" ? t("auth.login") : t("auth.register")}
             </CardTitle>
-            <CardDescription>Bienvenido a TaskGrid</CardDescription>
+            <CardDescription>{t("auth.welcomeTo")}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={onSubmit} className="space-y-4">
               <FieldGroup>
                 {mode === "register" && (
                   <Field>
-                    <FieldLabel>Nombre</FieldLabel>
+                    <FieldLabel>{t("auth.name")}</FieldLabel>
                     <Input
                       type="text"
                       autoComplete="name"
@@ -215,7 +211,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                 )}
 
                 <Field>
-                  <FieldLabel>Email</FieldLabel>
+                  <FieldLabel>{t("auth.email")}</FieldLabel>
                   <Input
                     type="email"
                     autoComplete="email"
@@ -228,7 +224,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                 </Field>
 
                 <Field>
-                  <FieldLabel>Contraseña</FieldLabel>
+                  <FieldLabel>{t("auth.password")}</FieldLabel>
                   <Input
                     type="password"
                     autoComplete={
@@ -253,17 +249,19 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                 )}
                 <Button type="submit" disabled={isLoading} className="w-full">
                   {isLoading
-                    ? "Cargando..."
+                    ? t("auth.loading")
                     : mode === "login"
-                      ? "Entrar"
-                      : "Registrarme"}
+                      ? t("auth.enter")
+                      : t("auth.registerMe")}
                 </Button>
                 {forceMode ? (
                   <Link
                     to={otherHref}
                     className="inline-flex w-full items-center justify-center rounded-md border px-3 py-2 text-sm hover:text-foreground"
                   >
-                    {mode === "login" ? "Crear una cuenta" : "Ya tengo cuenta"}
+                    {mode === "login"
+                      ? t("auth.createAccount")
+                      : t("auth.haveAccount")}
                   </Link>
                 ) : (
                   <Button
@@ -275,7 +273,9 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     disabled={isLoading}
                     className="w-full"
                   >
-                    {mode === "login" ? "Crear una cuenta" : "Ya tengo cuenta"}
+                    {mode === "login"
+                      ? t("auth.createAccount")
+                      : t("auth.haveAccount")}
                   </Button>
                 )}
                 <div className="w-full flex justify-center h-11 relative">
@@ -290,7 +290,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                   />
                 </div>
                 <FieldDescription className="text-center text-xs text-muted-foreground">
-                  Al continuar aceptas los Términos y la Política de Privacidad
+                  {t("auth.termsAndPrivacy")}
                 </FieldDescription>
               </FieldGroup>
             </form>

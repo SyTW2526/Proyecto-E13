@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 interface ItemActionsMenuProps {
   onEdit?: () => void;
@@ -21,6 +22,7 @@ export function ItemActionsMenu({
   onDelete,
   align = "start",
 }: ItemActionsMenuProps) {
+  const { t } = useTranslation();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -29,14 +31,14 @@ export function ItemActionsMenu({
       <DropdownMenuContent align={align}>
         {onShare && (
           <DropdownMenuItem onClick={onShare}>
-            <Icon as="IconShare" ariaLabel="Compartir" />
-            Compartir
+            <Icon as="IconShare" ariaLabel={t("common.share")} />
+            {t("common.share")}
           </DropdownMenuItem>
         )}
         {onEdit && (
           <DropdownMenuItem onClick={onEdit}>
-            <Icon as="IconEdit" ariaLabel="Editar" />
-            Editar
+            <Icon as="IconEdit" ariaLabel={t("common.edit")} />
+            {t("common.edit")}
           </DropdownMenuItem>
         )}
         {(onShare || onEdit) && onDelete && <DropdownMenuSeparator />}
@@ -44,10 +46,10 @@ export function ItemActionsMenu({
           <DropdownMenuItem variant="destructive" onClick={onDelete}>
             <Icon
               as="IconTrash"
-              ariaLabel="Eliminar"
+              ariaLabel={t("common.delete")}
               className="bg-red-500/10 text-red-600 dark:text-red-400 [&_svg]:stroke-red-600 dark:[&_svg]:stroke-red-400"
             />
-            Eliminar
+            {t("common.delete")}
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

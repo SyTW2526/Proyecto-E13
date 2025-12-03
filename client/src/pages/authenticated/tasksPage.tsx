@@ -4,7 +4,7 @@ import { useLists } from "@/hooks/useLists";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { FilterableList } from "@/components/tasks/FilterableList";
-import { tasksPageLabels } from "@/config/taskConfig";
+import { useTranslation } from "react-i18next";
 import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,7 @@ import type { Task } from "@/types/tasks-system/task";
 import { useUI } from "@/hooks/useUI";
 
 export default function TasksPage() {
+  const { t, i18n } = useTranslation();
   const {
     displayTasks,
     listTaskCounts,
@@ -51,15 +52,19 @@ export default function TasksPage() {
     fetchAllLists();
   }, []);
 
-  const formatDate = useCallback((dateString?: string) => {
-    if (!dateString) return tasksPageLabels.taskCard.noDate;
-    const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  }, []);
+  const formatDate = useCallback(
+    (dateString?: string) => {
+      if (!dateString) return t("tasks.card.noDate");
+      const date = new Date(dateString);
+      const locale = i18n.language === "es" ? "es-ES" : "en-US";
+      return date.toLocaleDateString(locale, {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    },
+    [t, i18n.language],
+  );
 
   return (
     <div className="max-w-(--breakpoint-2xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
@@ -67,12 +72,12 @@ export default function TasksPage() {
         className={`sticky top-8 shrink-0 ${sidebarWidthClass} w-full space-y-8 order-1 lg:order-2 lg:border-l lg:border-border lg:pl-12`}
       >
         <FilterableList
-          title={tasksPageLabels.sidebar.title}
+          title={t("lists.sidebar.title")}
           items={listTaskCounts}
           selectedId={selectedListId}
           onItemClick={handleListFilter}
-          emptyMessage={tasksPageLabels.sidebar.emptyState}
-          icon={tasksPageLabels.createButtons.list.icon}
+          emptyMessage={t("lists.emptyState")}
+          icon="IconList"
           isLoading={isLoadingLists}
         />
       </aside>
@@ -82,13 +87,13 @@ export default function TasksPage() {
           <div className="flex flex-row items-center justify-between gap-4">
             <div>
               <h1 className="text-4xl font-extrabold tracking-tight text-foreground/90">
-                {tasksPageLabels.title}
+                {t("tasks.title")}
               </h1>
             </div>
             <div className="flex gap-2">
               {/* Boton de crear tareas */}
               <CreateTaskDialog>
-                <Button leftIcon={tasksPageLabels.createButtons.task.icon} />
+                <Button leftIcon="IconTask" />
               </CreateTaskDialog>
             </div>
           </div>
@@ -136,9 +141,7 @@ export default function TasksPage() {
           </div>
         ) : displayTasks.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              {tasksPageLabels.emptyState}
-            </p>
+            <p className="text-muted-foreground">{t("tasks.emptyState")}</p>
           </div>
         ) : (
           <div className={`grid ${gridColsClass} gap-6`}>

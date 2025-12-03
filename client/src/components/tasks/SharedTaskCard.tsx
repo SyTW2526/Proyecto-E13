@@ -39,6 +39,7 @@ import ShareTaskDialog from "./ShareTaskDialog";
 import { priorityConfig, statusConfig } from "@/config/taskConfig";
 import { useTasks } from "@/hooks/useTasks";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "react-i18next";
 import type { Task, TaskStatus, TaskPriority } from "@/types/tasks-system/task";
 import type { List } from "@/types/tasks-system/list";
 import type { SharePermission } from "@/types/permissions";
@@ -54,6 +55,7 @@ export const SharedTaskCard = memo(function SharedTaskCard({
   list,
   formatDate,
 }: SharedTaskCardProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const priorityStyle = priorityConfig[task.priority];
   const statusStyle = statusConfig[task.status];
@@ -84,7 +86,7 @@ export const SharedTaskCard = memo(function SharedTaskCard({
     if (canShare) {
       setShareDialogOpen(true);
     } else {
-      setErrorMessage("No tienes permisos para compartir esta tarea.");
+      setErrorMessage(t("share.errors.noSharePermission"));
       setErrorDialogOpen(true);
     }
   };
@@ -93,7 +95,7 @@ export const SharedTaskCard = memo(function SharedTaskCard({
     if (canEdit) {
       setEditDialogOpen(true);
     } else {
-      setErrorMessage("No tienes permisos para editar esta tarea.");
+      setErrorMessage(t("share.errors.noEditPermission"));
       setErrorDialogOpen(true);
     }
   };
@@ -102,7 +104,7 @@ export const SharedTaskCard = memo(function SharedTaskCard({
     if (canDelete) {
       setDeleteDialogOpen(true);
     } else {
-      setErrorMessage("No tienes permisos para eliminar esta tarea.");
+      setErrorMessage(t("share.errors.noDeletePermission"));
       setErrorDialogOpen(true);
     }
   };
@@ -243,7 +245,10 @@ export const SharedTaskCard = memo(function SharedTaskCard({
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>
-                      Compartido por: {owner.name} ({owner.email})
+                      {t("share.sharedBy", {
+                        name: owner.name,
+                        email: owner.email,
+                      })}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -276,10 +281,9 @@ export const SharedTaskCard = memo(function SharedTaskCard({
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>¿Estás seguro?</DialogTitle>
+            <DialogTitle>{t("tasks.delete.title")}</DialogTitle>
             <DialogDescription>
-              Esta acción no se puede deshacer. La tarea "{task.name}" será
-              eliminada permanentemente.
+              {t("tasks.delete.description", { name: task.name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -287,7 +291,7 @@ export const SharedTaskCard = memo(function SharedTaskCard({
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
             >
-              Cancelar
+              {t("tasks.delete.cancel")}
             </Button>
             <Button
               variant="destructive"
@@ -296,7 +300,7 @@ export const SharedTaskCard = memo(function SharedTaskCard({
                 setDeleteDialogOpen(false);
               }}
             >
-              Eliminar
+              {t("tasks.delete.confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -306,12 +310,14 @@ export const SharedTaskCard = memo(function SharedTaskCard({
       <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Acción no permitida</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("share.errors.actionNotAllowed")}
+            </AlertDialogTitle>
             <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>
-              Entendido
+              {t("share.errors.understood")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

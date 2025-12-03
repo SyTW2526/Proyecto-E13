@@ -13,9 +13,11 @@ import {
   Palette,
   Shield,
   Trash2,
+  Languages,
 } from "lucide-react";
 import { useSettings } from "@/hooks/useSettings";
 import { useTheme } from "@/hooks/useTheme";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   CardHeader,
@@ -39,6 +41,7 @@ import { useUI } from "@/hooks/useUI";
 import { SidebarWidth, TaskCardSize } from "@/store/slices/uiSlice";
 
 export default function SettingsPage() {
+  const { t, i18n } = useTranslation();
   const {
     name,
     setName,
@@ -70,7 +73,7 @@ export default function SettingsPage() {
   const isDark = theme === "dark";
 
   const passwordHelperText = isGoogleUser
-    ? "Los usuarios que acceden con Google no pueden cambiar su contraseña desde la aplicación."
+    ? t("settings.profile.googleUserPasswordInfo")
     : passwordMsg;
 
   // Cambiar tema (oscuro/claro)
@@ -78,236 +81,346 @@ export default function SettingsPage() {
     setTheme(isDark ? "light" : "dark");
   }
 
+  // Cambiar idioma
+  function handleLanguageChange(lng: string) {
+    i18n.changeLanguage(lng);
+  }
+
   return (
-    <div className="mx-auto w-full max-w-5xl p-6 space-y-8">
+    <div className="mx-auto w-full max-w-7xl p-6 space-y-8">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Ajustes</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {t("settings.title")}
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Preferencias de cuenta, notificaciones y privacidad.
+          {t("settings.subtitle")}
         </p>
       </header>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" /> Perfil
-          </CardTitle>
-          <CardDescription>Actualiza tu nombre y contraseña.</CardDescription>
-        </CardHeader>
+      {/* Grid de tarjetas de configuración */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+        {/* Perfil - ocupa toda la fila en desktop */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" /> {t("settings.profile.title")}
+            </CardTitle>
+            <CardDescription>
+              {t("settings.profile.description")}
+            </CardDescription>
+          </CardHeader>
 
-        <CardContent className="space-y-6">
-          {/* Nombre y email */}
-          <form onSubmit={saveProfile} className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name">Nombre</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Introduce tu nombre"
-                disabled={savingProfile}
-              />
-            </div>
+          <CardContent className="space-y-6">
+            {/* Nombre y email */}
+            <form onSubmit={saveProfile} className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="name">{t("settings.profile.name")}</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t("settings.profile.namePlaceholder")}
+                  disabled={savingProfile}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="inline-flex items-center gap-2">
-                <Mail className="h-4 w-4" /> Email
-              </Label>
-              <Input id="email" type="email" value={email} disabled readOnly />
-            </div>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="email"
+                  className="inline-flex items-center gap-2"
+                >
+                  <Mail className="h-4 w-4" /> {t("settings.profile.email")}
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  disabled
+                  readOnly
+                />
+              </div>
 
-            <div className="sm:col-span-2 flex items-center justify-between gap-4 pt-2">
-              <div className="text-sm text-muted-foreground">{profileMsg}</div>
-              <Button
-                type="submit"
-                className="inline-flex items-center gap-2"
-                disabled={savingProfile}
+              <div className="sm:col-span-2 flex items-center justify-between gap-4 pt-2">
+                <div className="text-sm text-muted-foreground">
+                  {profileMsg}
+                </div>
+                <Button
+                  type="submit"
+                  className="inline-flex items-center gap-2"
+                  disabled={savingProfile}
+                >
+                  <Save className="h-4 w-4" />
+                  {savingProfile
+                    ? t("settings.profile.saving")
+                    : t("settings.profile.saveChanges")}
+                </Button>
+              </div>
+            </form>
+
+            {!isGoogleUser && <Separator />}
+
+            {/* Contraseña */}
+            {!isGoogleUser && (
+              <form
+                onSubmit={savePassword}
+                className="grid gap-4 sm:grid-cols-2"
               >
-                <Save className="h-4 w-4" />
-                {savingProfile ? "Guardando..." : "Guardar cambios"}
-              </Button>
-            </div>
-          </form>
+                <div className="space-y-2">
+                  <Label htmlFor="curr">
+                    {t("settings.profile.currentPassword")}
+                  </Label>
+                  <Input
+                    id="curr"
+                    type="password"
+                    value={currPass}
+                    onChange={(e) => setCurrPass(e.target.value)}
+                    disabled={isGoogleUser || savingPassword}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="new"
+                    className="inline-flex items-center gap-2"
+                  >
+                    <KeyRound className="h-4 w-4" />{" "}
+                    {t("settings.profile.newPassword")}
+                  </Label>
+                  <Input
+                    id="new"
+                    type="password"
+                    value={newPass}
+                    onChange={(e) => setNewPass(e.target.value)}
+                    disabled={isGoogleUser || savingPassword}
+                  />
+                </div>
 
-          <Separator />
+                <div className="sm:col-span-2 flex items-center justify-between gap-4 pt-2">
+                  <div className="text-sm text-muted-foreground">
+                    {passwordHelperText}
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={isGoogleUser || savingPassword}
+                    className="inline-flex items-center gap-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    {savingPassword
+                      ? t("settings.profile.saving")
+                      : t("settings.profile.saveChanges")}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </CardContent>
+        </Card>
 
-          {/* Contraseña */}
-          <form onSubmit={savePassword} className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="curr">Contraseña actual</Label>
-              <Input
-                id="curr"
-                type="password"
-                value={currPass}
-                onChange={(e) => setCurrPass(e.target.value)}
-                disabled={isGoogleUser || savingPassword}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="new" className="inline-flex items-center gap-2">
-                <KeyRound className="h-4 w-4" /> Nueva contraseña
-              </Label>
-              <Input
-                id="new"
-                type="password"
-                value={newPass}
-                onChange={(e) => setNewPass(e.target.value)}
-                disabled={isGoogleUser || savingPassword}
-              />
-            </div>
-
-            <div className="sm:col-span-2 flex items-center justify-between gap-4 pt-2">
-              <div className="text-sm text-muted-foreground">
-                {passwordHelperText}
+        {/* PREFERENCIAS: tema e idioma */}
+        <Card className="md:col-span-1">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Palette className="h-5 w-5" /> {t("settings.preferences.title")}
+            </CardTitle>
+            <CardDescription>
+              {t("settings.preferences.description")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium">
+                  {t("settings.preferences.darkTheme")}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {t("settings.preferences.darkThemeDescription")}
+                </div>
               </div>
-              <Button
-                type="submit"
-                disabled={isGoogleUser || savingPassword}
-                className="inline-flex items-center gap-2"
+              <Switch checked={isDark} onCheckedChange={handleToggleTheme} />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium flex items-center gap-2">
+                  <Languages className="h-4 w-4" />
+                  {t("settings.preferences.language")}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {t("settings.preferences.languageDescription")}
+                </div>
+              </div>
+              <Select
+                value={i18n.language}
+                onValueChange={handleLanguageChange}
               >
-                <Save className="h-4 w-4" />
-                {savingPassword ? "Guardando..." : "Guardar cambios"}
-              </Button>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue
+                    placeholder={t("settings.preferences.selectSize")}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.isArray(i18n.options.supportedLngs)
+                    ? (i18n.options.supportedLngs as string[])
+                        .filter((lng: string) => lng && lng !== "cimode")
+                        .map((lng: string) => {
+                          const resources = i18n.getResourceBundle(
+                            lng,
+                            "translation",
+                          );
+                          const languageName = resources?.language?.name || lng;
+                          const flag = resources?.language?.flag || "🌐";
+                          return (
+                            <SelectItem key={lng} value={lng}>
+                              <span className="mr-1">{flag}</span>
+                              {languageName}
+                            </SelectItem>
+                          );
+                        })
+                    : null}
+                </SelectContent>
+              </Select>
             </div>
-          </form>
-        </CardContent>
-      </Card>
+            <Separator />
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium">
+                  {t("settings.preferences.sidebarWidth")}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {t("settings.preferences.sidebarWidthDescription")}
+                </div>
+              </div>
+              <Select
+                value={sidebarWidth}
+                onValueChange={(value) =>
+                  setSidebarWidth(value as SidebarWidth)
+                }
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue
+                    placeholder={t("settings.preferences.selectSize")}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="compact">
+                    {t("settings.preferences.compact")}
+                  </SelectItem>
+                  <SelectItem value="normal">
+                    {t("settings.preferences.normal")}
+                  </SelectItem>
+                  <SelectItem value="wide">
+                    {t("settings.preferences.wide")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium">
+                  {t("settings.preferences.cardSize")}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {t("settings.preferences.cardSizeDescription")}
+                </div>
+              </div>
+              <Select
+                value={taskCardSize.toString()}
+                onValueChange={(value) =>
+                  setTaskCardSize(parseInt(value) as TaskCardSize)
+                }
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue
+                    placeholder={t("settings.preferences.selectSize")}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2">
+                    2 {t("settings.preferences.columns")}
+                  </SelectItem>
+                  <SelectItem value="3">
+                    3 {t("settings.preferences.columns")}
+                  </SelectItem>
+                  <SelectItem value="4">
+                    4 {t("settings.preferences.columns")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* PREFERENCIAS: tema */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Palette className="h-5 w-5" /> Preferencias
-          </CardTitle>
-          <CardDescription>Tema y experiencia de uso.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium">Tema oscuro</div>
-              <div className="text-sm text-muted-foreground">
-                Activa el modo oscuro para una experiencia visual más cómoda en
-                entornos con poca luz.
+        {/* NOTIFICACIONES: persistentes */}
+        <Card className="md:col-span-1">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bell className="h-5 w-5" /> {t("settings.notifications.title")}
+            </CardTitle>
+            <CardDescription>
+              {t("settings.notifications.description")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium">
+                  {t("settings.notifications.email")}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {t("settings.notifications.emailDescription")}
+                </div>
               </div>
+              <Switch
+                checked={emailNotifications}
+                onCheckedChange={toggleEmailNotifications}
+              />
             </div>
-            <Switch checked={isDark} onCheckedChange={handleToggleTheme} />
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium">Tamaño de la barra lateral</div>
-              <div className="text-sm text-muted-foreground">
-                Ajusta el ancho de la lista de tareas.
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium">
+                  {t("settings.notifications.push")}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {t("settings.notifications.pushDescription")}
+                </div>
               </div>
+              <Switch
+                checked={pushNotifications}
+                onCheckedChange={togglePushNotifications}
+              />
             </div>
-            <Select
-              value={sidebarWidth}
-              onValueChange={(value) => setSidebarWidth(value as SidebarWidth)}
+            {notifMsg && (
+              <div className="text-sm text-muted-foreground">{notifMsg}</div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* PRIVACIDAD: eliminar cuenta */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" /> {t("settings.privacy.title")}
+            </CardTitle>
+            <CardDescription>
+              {t("settings.privacy.description")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            {deleteAccountMsg && (
+              <div className="text-sm text-muted-foreground">
+                {deleteAccountMsg}
+              </div>
+            )}
+            <Button
+              variant="destructive"
+              className="inline-flex items-center gap-2"
+              onClick={deleteAccount}
             >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Selecciona un tamaño" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="compact">Compacto</SelectItem>
-                <SelectItem value="normal">Normal</SelectItem>
-                <SelectItem value="wide">Amplio</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium">Tamaño de las tarjetas</div>
-              <div className="text-sm text-muted-foreground">
-                Ajusta el tamaño de las tarjetas de tarea.
-              </div>
-            </div>
-            <Select
-              value={taskCardSize.toString()}
-              onValueChange={(value) =>
-                setTaskCardSize(parseInt(value) as TaskCardSize)
-              }
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Selecciona un tamaño" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2">2 Columnas</SelectItem>
-                <SelectItem value="3">3 Columnas</SelectItem>
-                <SelectItem value="4">4 Columnas</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* NOTIFICACIONES: persistentes */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" /> Notificaciones
-          </CardTitle>
-          <CardDescription>Configura cómo recibir avisos.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium">Correo electrónico</div>
-              <div className="text-sm text-muted-foreground">
-                Recibe correos electrónicos con la información acerca de tus
-                tareas.
-              </div>
-            </div>
-            <Switch
-              checked={emailNotifications}
-              onCheckedChange={toggleEmailNotifications}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium">Notificaciones push</div>
-              <div className="text-sm text-muted-foreground">
-                Recibe notificaciones emergentes en tiempo real cuando alguien
-                te comparta una tarea o alguna tarea esté por vencer.
-              </div>
-            </div>
-            <Switch
-              checked={pushNotifications}
-              onCheckedChange={togglePushNotifications}
-            />
-          </div>
-          {notifMsg && (
-            <div className="text-sm text-muted-foreground">{notifMsg}</div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* PRIVACIDAD: eliminar cuenta */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" /> Privacidad
-          </CardTitle>
-          <CardDescription>
-            Elimina tu cuenta de forma irreversible.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          {deleteAccountMsg && (
-            <div className="text-sm text-muted-foreground">
-              {deleteAccountMsg}
-            </div>
-          )}
-          <Button
-            variant="destructive"
-            className="inline-flex items-center gap-2"
-            onClick={deleteAccount}
-          >
-            <Trash2 className="h-4 w-4" />
-            Eliminar cuenta
-          </Button>
-        </CardContent>
-      </Card>
+              <Trash2 className="h-4 w-4" />
+              {t("settings.privacy.deleteAccount")}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

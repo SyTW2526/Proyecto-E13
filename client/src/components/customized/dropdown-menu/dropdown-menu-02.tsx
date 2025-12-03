@@ -1,3 +1,4 @@
+import LanguageSelector from "@/components/languageSelector";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -8,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Icon from "@/components/ui/icon";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   onProfile?: () => void;
@@ -22,12 +24,13 @@ type Props = {
 export default function DropdownMenuWithIcon({
   onProfile,
   onSettings,
-  userName = "Mi cuenta",
+  userName,
   userEmail,
   onLogout,
   userInitial = "A",
   userImage,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-full">
@@ -37,7 +40,7 @@ export default function DropdownMenuWithIcon({
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>{userName}</DropdownMenuLabel>
+        <DropdownMenuLabel>{userName || t("auth.myAccount")}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {userEmail && (
           <DropdownMenuLabel className="text-xs text-muted-foreground">
@@ -46,14 +49,16 @@ export default function DropdownMenuWithIcon({
         )}
         {onProfile && (
           <DropdownMenuItem onClick={onProfile}>
-            <Icon as="IconUser" size={16} className="mr-2" /> Perfil
+            <Icon as="IconUser" /> {t("auth.profile")}
           </DropdownMenuItem>
         )}
+        <LanguageSelector />
         <DropdownMenuItem onClick={onSettings}>
-          <Icon as="IconSettings" size={16} className="mr-2" /> Ajustes
+          <Icon as="IconSettings" /> {t("nav.settings")}
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive" onClick={onLogout}>
-          <Icon as="IconLogout" size={16} className="mr-2" /> Cerrar sesión
+          <Icon as="IconLogout" /> {t("auth.logout")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
