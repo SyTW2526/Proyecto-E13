@@ -1,7 +1,7 @@
 import {
-  PriorityChart,
-  ProgressChart,
-  WeeklyTasksChart,
+    PriorityChart,
+    ProgressChart,
+    WeeklyTasksChart,
 } from "@/components/dashboard/dashboardCharts";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
@@ -72,6 +72,54 @@ describe("DashboardCharts", () => {
         { day: "Mar", pending: 4, inProgress: 2, completed: 3 },
         { day: "Mie", pending: 6, inProgress: 1, completed: 4 },
       ];
+
+      const config = {
+        pending: { label: "Pendiente", color: "#6b7280" },
+        inProgress: { label: "En Progreso", color: "#3b82f6" },
+        completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza CustomBar sin payload", () => {
+      const data = [{ day: "Lun", pending: 5, inProgress: 3, completed: 2 }];
+
+      const config = {
+        pending: { label: "Pendiente", color: "#6b7280" },
+        inProgress: { label: "En Progreso", color: "#3b82f6" },
+        completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza CustomBar con height cero o negativo", () => {
+      const data = [{ day: "Lun", pending: 0, inProgress: 0, completed: 0 }];
+
+      const config = {
+        pending: { label: "Pendiente", color: "#6b7280" },
+        inProgress: { label: "En Progreso", color: "#3b82f6" },
+        completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza CustomLabel sin index", () => {
+      const data = [{ day: "Lun", pending: 5, inProgress: 3, completed: 2 }];
 
       const config = {
         pending: { label: "Pendiente", color: "#6b7280" },
@@ -215,6 +263,60 @@ describe("DashboardCharts", () => {
         pending: { label: "Pendiente", color: "#6b7280" },
         inProgress: { label: "En Progreso", color: "#3b82f6" },
         completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza CustomBar para barra del medio (no primera ni última)", () => {
+      const data = [
+        { day: "Lun", pending: 2, inProgress: 5, completed: 3 },
+      ];
+
+      const config = {
+        pending: { label: "Pendiente", color: "#6b7280" },
+        inProgress: { label: "En Progreso", color: "#3b82f6" },
+        completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza CustomBar para última barra (isLast=true, isFirst=false)", () => {
+      const data = [
+        { day: "Lun", pending: 5, inProgress: 3, completed: 8 },
+      ];
+
+      const config = {
+        pending: { label: "Pendiente", color: "#6b7280" },
+        inProgress: { label: "En Progreso", color: "#3b82f6" },
+        completed: { label: "Completado", color: "#15803d" },
+      };
+
+      const { container } = render(
+        <WeeklyTasksChart data={data} config={config} />,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza barras con config sin colores definidos (usa defaults)", () => {
+      const data = [
+        { day: "Lun", pending: 5, inProgress: 3, completed: 2 },
+      ];
+
+      const config = {
+        pending: { label: "Pendiente" },
+        inProgress: { label: "En Progreso" },
+        completed: { label: "Completado" },
       };
 
       const { container } = render(

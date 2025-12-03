@@ -121,6 +121,15 @@ describe("tasksSlice reducer", () => {
     expect(state.tasks[0].name).toBe("Nuevo nombre");
   });
 
+  it("updateTask.fulfilled no actualiza si no encuentra la tarea", () => {
+    const action = {
+      type: updateTask.fulfilled.type,
+      payload: { ...baseTask, id: "not-found", name: "Nuevo nombre" },
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].name).toBe("Comprar");
+  });
+
   it("deleteTask.fulfilled elimina y reinicia selectedTaskId", () => {
     const populated: TasksState = {
       ...initialState,
@@ -150,6 +159,14 @@ describe("tasksSlice reducer", () => {
     expect(state.tasks[0].completed).toBe(false);
     expect(state.tasks[0].completedAt).toBeUndefined();
     expect(state.tasks[0].status).toBe("IN_PROGRESS");
+  });
+
+  it("setTaskStatus no hace nada si no encuentra la tarea", () => {
+    const state = reducer(
+      { ...initialState, tasks: [baseTask] },
+      setTaskStatus({ id: "not-found", status: "COMPLETED" }),
+    );
+    expect(state.tasks[0].completed).toBe(false);
   });
 
   it("actualiza filtros y sorting, y los restablece con clearFilters/toggleSortOrder", () => {
@@ -441,6 +458,20 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     expect(state.tasks[0].description).toBe("nueva descripción");
   });
 
+  it("updateTask.pending no hace nada si no encuentra la tarea", () => {
+    const action = {
+      type: updateTask.pending.type,
+      meta: {
+        arg: {
+          id: "not-found",
+          name: "Actualizado",
+        },
+      },
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].name).toBe("Comprar");
+  });
+
   it("updateTask.pending actualiza status a COMPLETED con timestamp", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-05-15T10:30:00.000Z"));
@@ -457,6 +488,20 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     const state = reducer({ ...initialState, tasks: [baseTask] }, action);
     expect(state.tasks[0].completed).toBe(true);
     expect(state.tasks[0].completedAt).toBe("2024-05-15T10:30:00.000Z");
+  });
+
+  it("updateTask.pending no actualiza status si no hay status en args", () => {
+    const action = {
+      type: updateTask.pending.type,
+      meta: {
+        arg: {
+          id: "t1",
+          name: "Actualizado",
+        },
+      },
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].status).toBe("PENDING");
   });
 
   it("updateTask.pending actualiza status a no completado y limpia completedAt", () => {
@@ -549,6 +594,28 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     expect(state.error).toBeNull();
   });
 
+  it("shareTask.fulfilled no actualiza si no encuentra la tarea", () => {
+    const taskWithShares = {
+      ...baseTask,
+      id: "not-found",
+      shares: [
+        {
+          id: "s1",
+          taskId: "not-found",
+          userId: "u2",
+          user: { id: "u2", email: "user2@test.com", name: "User 2" },
+          permission: "VIEW" as const,
+        },
+      ],
+    };
+    const action = {
+      type: shareTask.fulfilled.type,
+      payload: taskWithShares,
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].shares).toHaveLength(0);
+  });
+
   it("updateTaskSharePermission.pending actualiza optimísticamente el permiso", () => {
     const taskWithShares = {
       ...baseTask,
@@ -577,6 +644,63 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     expect(state.error).toBeNull();
   });
 
+  it("updateTaskSharePermission.pending no hace nada si no encuentra la tarea", () => {
+    const action = {
+      type: updateTaskSharePermission.pending.type,
+      meta: {
+        arg: {
+          taskId: "not-found",
+          userId: "u2",
+          permission: "EDIT",
+        },
+      },
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].shares).toHaveLength(0);
+  });
+
+  it("updateTaskSharePermission.pending no hace nada si la tarea no tiene shares", () => {
+    const action = {
+      type: updateTaskSharePermission.pending.type,
+      meta: {
+        arg: {
+          taskId: "t1",
+          userId: "u2",
+          permission: "EDIT",
+        },
+      },
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].shares).toHaveLength(0);
+  });
+
+  it("updateTaskSharePermission.pending no hace nada si no encuentra el share", () => {
+    const taskWithShares = {
+      ...baseTask,
+      shares: [
+        {
+          id: "s1",
+          taskId: "t1",
+          userId: "other-user",
+          user: { id: "other-user", email: "other@test.com", name: "Other" },
+          permission: "VIEW" as const,
+        },
+      ],
+    };
+    const action = {
+      type: updateTaskSharePermission.pending.type,
+      meta: {
+        arg: {
+          taskId: "t1",
+          userId: "u2",
+          permission: "EDIT",
+        },
+      },
+    };
+    const state = reducer({ ...initialState, tasks: [taskWithShares] }, action);
+    expect(state.tasks[0].shares?.[0].userId).toBe("other-user");
+  });
+
   it("updateTaskSharePermission.fulfilled actualiza tarea con nuevo permiso", () => {
     const taskWithUpdatedShare = {
       ...baseTask,
@@ -599,6 +723,28 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     expect(state.error).toBeNull();
   });
 
+  it("updateTaskSharePermission.fulfilled no actualiza si no encuentra la tarea", () => {
+    const taskWithUpdatedShare = {
+      ...baseTask,
+      id: "not-found",
+      shares: [
+        {
+          id: "s1",
+          taskId: "not-found",
+          userId: "u2",
+          user: { id: "u2", email: "user2@test.com", name: "User 2" },
+          permission: "EDIT" as const,
+        },
+      ],
+    };
+    const action = {
+      type: updateTaskSharePermission.fulfilled.type,
+      payload: taskWithUpdatedShare,
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].shares).toHaveLength(0);
+  });
+
   it("unshareTask.fulfilled actualiza tarea sin el share eliminado", () => {
     const taskWithoutShare = {
       ...baseTask,
@@ -611,6 +757,20 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     const state = reducer({ ...initialState, tasks: [baseTask] }, action);
     expect(state.tasks[0].shares).toHaveLength(0);
     expect(state.error).toBeNull();
+  });
+
+  it("unshareTask.fulfilled no actualiza si no encuentra la tarea", () => {
+    const taskWithoutShare = {
+      ...baseTask,
+      id: "not-found",
+      shares: [],
+    };
+    const action = {
+      type: unshareTask.fulfilled.type,
+      payload: taskWithoutShare,
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].id).toBe("t1");
   });
 
   it("selectFilteredTasks filtra por listId", () => {

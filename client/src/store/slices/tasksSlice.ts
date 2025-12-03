@@ -1,12 +1,12 @@
+import { api, apiErrorMessage } from "@/lib/api";
+import type { SharePermission } from "@/types/permissions";
 import type {
   Task,
   TaskPriority,
   TasksState,
   TaskStatus,
-  TaskShare,
 } from "@/types/tasks-system/task";
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { api, apiErrorMessage } from "@/lib/api";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { deleteList } from "./listsSlice";
 
 const initialState: TasksState = {
@@ -356,7 +356,7 @@ const tasksSlice = createSlice({
             (s) => s.userId === action.meta.arg.userId,
           );
           if (share) {
-            share.permission = action.meta.arg.permission as any;
+            share.permission = action.meta.arg.permission as SharePermission;
           }
         }
       })

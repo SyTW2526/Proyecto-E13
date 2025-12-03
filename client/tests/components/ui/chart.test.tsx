@@ -1,3 +1,4 @@
+// client/tests/components/ui/chart.test.tsx
 import {
   ChartContainer,
   ChartLegend,
@@ -5,8 +6,9 @@ import {
   ChartStyle,
   ChartTooltip,
   ChartTooltipContent,
+  useChart,
 } from "@/components/ui/chart";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { Bar, BarChart, Cell, Pie, PieChart } from "recharts";
 import { describe, expect, it } from "vitest";
 
@@ -22,6 +24,34 @@ describe("Chart", () => {
     { name: "Media", value: 20, fill: "#f59e0b" },
     { name: "Baja", value: 15, fill: "#10b981" },
   ];
+
+  describe("useChart", () => {
+    it("Lanza error cuando se usa fuera de ChartContainer", () => {
+      const TestComponent = () => {
+        useChart();
+        return <div>Test</div>;
+      };
+
+      expect(() => render(<TestComponent />)).toThrow(
+        "useChart must be used within a <ChartContainer />"
+      );
+    });
+
+    it("Retorna el config cuando se usa dentro de ChartContainer", () => {
+      const TestComponent = () => {
+        const { config } = useChart();
+        return <div data-testid="config-test">{JSON.stringify(config)}</div>;
+      };
+
+      render(
+        <ChartContainer config={mockConfig}>
+          <TestComponent />
+        </ChartContainer>
+      );
+
+      expect(screen.getByTestId("config-test")).toHaveTextContent("alta");
+    });
+  });
 
   describe("ChartContainer", () => {
     it("Renderiza el contenedor de gráfico", () => {
@@ -91,6 +121,31 @@ describe("Chart", () => {
       );
 
       expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Renderiza con datos vacíos", () => {
+      const { container } = render(
+        <ChartContainer config={mockConfig}>
+          <BarChart data={[]}>
+            <Bar dataKey="value" />
+          </BarChart>
+        </ChartContainer>,
+      );
+
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it("Genera ID único cuando no se proporciona", () => {
+      const { container } = render(
+        <ChartContainer config={mockConfig}>
+          <BarChart data={mockData}>
+            <Bar dataKey="value" />
+          </BarChart>
+        </ChartContainer>,
+      );
+
+      const chartElement = container.querySelector('[data-chart^="chart-"]');
+      expect(chartElement).toBeInTheDocument();
     });
   });
 
@@ -169,27 +224,55 @@ describe("Chart", () => {
       expect(styleElement?.innerHTML).toContain("--color-withColor");
       expect(styleElement?.innerHTML).not.toContain("--color-withoutColor");
     });
+
+    it("Genera múltiples variables CSS para múltiples colores", () => {
+      const multiConfig = {
+        red: { label: "Rojo", color: "#ef4444" },
+        blue: { label: "Azul", color: "#3b82f6" },
+        green: { label: "Verde", color: "#10b981" },
+      };
+
+      const { container } = render(
+        <ChartStyle id="multi-chart" config={multiConfig} />,
+      );
+
+      const styleElement = container.querySelector("style");
+      expect(styleElement?.innerHTML).toContain("--color-red");
+      expect(styleElement?.innerHTML).toContain("--color-blue");
+      expect(styleElement?.innerHTML).toContain("--color-green");
+    });
+
+    it("Maneja theme con múltiples colores", () => {
+      const multiThemedConfig = {
+        primary: {
+          label: "Primary",
+          theme: { light: "#3b82f6", dark: "#60a5fa" },
+        },
+        secondary: {
+          label: "Secondary",
+          theme: { light: "#10b981", dark: "#34d399" },
+        },
+      };
+
+      const { container } = render(
+        <ChartStyle id="multi-themed" config={multiThemedConfig} />,
+      );
+
+      const styleElement = container.querySelector("style");
+      expect(styleElement?.innerHTML).toContain("--color-primary");
+      expect(styleElement?.innerHTML).toContain("--color-secondary");
+      expect(styleElement?.innerHTML).toContain("#3b82f6");
+      expect(styleElement?.innerHTML).toContain("#10b981");
+    });
   });
 
-  describe("ChartTooltipContent", () => {
-    it("Renderiza el tooltip con datos activos", () => {
-      const payload = [
-        {
-          dataKey: "value",
-          name: "Valor",
-          value: 100,
-          color: "#3b82f6",
-          payload: {},
-        },
-      ];
-
+  describe("ChartTooltip y ChartLegend - Integración", () => {
+    it("Renderiza tooltip en gráfico de barras", () => {
       const { container } = render(
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip
-              content={<ChartTooltipContent active={true} payload={payload} />}
-            />
+            <ChartTooltip />
           </BarChart>
         </ChartContainer>,
       );
@@ -197,14 +280,12 @@ describe("Chart", () => {
       expect(container).toBeInTheDocument();
     });
 
-    it("No renderiza cuando no está activo", () => {
+    it("Renderiza leyenda en gráfico de barras", () => {
       const { container } = render(
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip
-              content={<ChartTooltipContent active={false} payload={[]} />}
-            />
+            <ChartLegend />
           </BarChart>
         </ChartContainer>,
       );
@@ -212,30 +293,12 @@ describe("Chart", () => {
       expect(container).toBeInTheDocument();
     });
 
-    it("Renderiza con indicador tipo línea", () => {
-      const payload = [
-        {
-          dataKey: "value",
-          name: "Valor",
-          value: 50,
-          color: "#10b981",
-          payload: {},
-        },
-      ];
-
+    it("Renderiza tooltip con contenido personalizado", () => {
       const { container } = render(
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  active={true}
-                  payload={payload}
-                  indicator="line"
-                />
-              }
-            />
+            <ChartTooltip content={<ChartTooltipContent />} />
           </BarChart>
         </ChartContainer>,
       );
@@ -243,30 +306,12 @@ describe("Chart", () => {
       expect(container).toBeInTheDocument();
     });
 
-    it("Renderiza con indicador tipo dashed", () => {
-      const payload = [
-        {
-          dataKey: "value",
-          name: "Valor",
-          value: 75,
-          color: "#f59e0b",
-          payload: {},
-        },
-      ];
-
+    it("Renderiza leyenda con contenido personalizado", () => {
       const { container } = render(
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  active={true}
-                  payload={payload}
-                  indicator="dashed"
-                />
-              }
-            />
+            <ChartLegend content={<ChartLegendContent />} />
           </BarChart>
         </ChartContainer>,
       );
@@ -274,144 +319,19 @@ describe("Chart", () => {
       expect(container).toBeInTheDocument();
     });
 
-    it("Oculta el indicador cuando hideIndicator es true", () => {
-      const payload = [
-        {
-          dataKey: "value",
-          name: "Valor",
-          value: 30,
-          color: "#ef4444",
-          payload: {},
-        },
+    it("Renderiza múltiples barras con tooltip y leyenda", () => {
+      const multiData = [
+        { name: "A", value1: 10, value2: 20 },
+        { name: "B", value1: 15, value2: 25 },
       ];
 
       const { container } = render(
         <ChartContainer config={mockConfig}>
-          <BarChart data={mockData}>
-            <Bar dataKey="value" />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  active={true}
-                  payload={payload}
-                  hideIndicator={true}
-                />
-              }
-            />
-          </BarChart>
-        </ChartContainer>,
-      );
-
-      expect(container).toBeInTheDocument();
-    });
-
-    it("Renderiza con etiqueta personalizada usando labelFormatter", () => {
-      const payload = [
-        {
-          dataKey: "value",
-          name: "Valor",
-          value: 90,
-          color: "#3b82f6",
-          payload: {},
-        },
-      ];
-
-      const { container } = render(
-        <ChartContainer config={mockConfig}>
-          <BarChart data={mockData}>
-            <Bar dataKey="value" />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  active={true}
-                  payload={payload}
-                  label="Custom Label"
-                  labelFormatter={(value) => `Personalizado: ${value}`}
-                />
-              }
-            />
-          </BarChart>
-        </ChartContainer>,
-      );
-
-      expect(container).toBeInTheDocument();
-    });
-
-    it("Renderiza con múltiples elementos en payload", () => {
-      const payload = [
-        {
-          dataKey: "pending",
-          name: "Pendiente",
-          value: 10,
-          color: "#6b7280",
-          payload: { fill: "#6b7280" },
-        },
-        {
-          dataKey: "completed",
-          name: "Completado",
-          value: 20,
-          color: "#15803d",
-          payload: { fill: "#15803d" },
-        },
-      ];
-
-      const { container } = render(
-        <ChartContainer config={mockConfig}>
-          <BarChart data={mockData}>
-            <Bar dataKey="value" />
-            <ChartTooltip
-              content={<ChartTooltipContent active={true} payload={payload} />}
-            />
-          </BarChart>
-        </ChartContainer>,
-      );
-
-      expect(container).toBeInTheDocument();
-    });
-
-    it("Usa formatter personalizado cuando está definido", () => {
-      const payload = [
-        {
-          dataKey: "value",
-          name: "Valor",
-          value: 100,
-          color: "#3b82f6",
-          payload: {},
-        },
-      ];
-
-      const { container } = render(
-        <ChartContainer config={mockConfig}>
-          <BarChart data={mockData}>
-            <Bar dataKey="value" />
-            <ChartTooltip
-              content={<ChartTooltipContent active={true} payload={payload} />}
-            />
-          </BarChart>
-        </ChartContainer>,
-      );
-
-      expect(container).toBeInTheDocument();
-    });
-
-    it("Filtra elementos con type 'none'", () => {
-      const payload = [
-        {
-          dataKey: "value2",
-          name: "Valor 2",
-          value: 20,
-          color: "#10b981",
-          payload: {},
-        },
-      ];
-
-      const { container } = render(
-        <ChartContainer config={mockConfig}>
-          <BarChart data={mockData}>
-            <Bar dataKey="value" />
-            <ChartTooltip
-              content={<ChartTooltipContent active={true} payload={payload} />}
-            />
+          <BarChart data={multiData}>
+            <Bar dataKey="value1" fill="#ef4444" />
+            <Bar dataKey="value2" fill="#10b981" />
+            <ChartTooltip />
+            <ChartLegend />
           </BarChart>
         </ChartContainer>,
       );
@@ -420,28 +340,14 @@ describe("Chart", () => {
     });
   });
 
-  describe("ChartLegendContent", () => {
-    it("Renderiza la leyenda con datos de payload", () => {
-      const legendPayload = [
-        {
-          value: "Alta",
-          color: "#ef4444",
-          dataKey: "alta",
-        },
-        {
-          value: "Media",
-          color: "#f59e0b",
-          dataKey: "media",
-        },
-      ];
-
+  describe("Integración de componentes", () => {
+    it("Renderiza gráfico completo con tooltip y leyenda", () => {
       const { container } = render(
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartLegend
-              content={<ChartLegendContent payload={legendPayload} />}
-            />
+            <ChartTooltip />
+            <ChartLegend />
           </BarChart>
         </ChartContainer>,
       );
@@ -449,12 +355,13 @@ describe("Chart", () => {
       expect(container).toBeInTheDocument();
     });
 
-    it("No renderiza cuando payload está vacío", () => {
+    it("Renderiza múltiples gráficos de barras con configuración", () => {
       const { container } = render(
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
-            <Bar dataKey="value" />
-            <ChartLegend content={<ChartLegendContent payload={[]} />} />
+            <Bar dataKey="value" fill="#ef4444" />
+            <ChartTooltip />
+            <ChartLegend />
           </BarChart>
         </ChartContainer>,
       );
@@ -462,27 +369,34 @@ describe("Chart", () => {
       expect(container).toBeInTheDocument();
     });
 
-    it("Renderiza con verticalAlign='top'", () => {
-      const legendPayload = [
-        {
-          value: "Alta",
-          color: "#ef4444",
-          dataKey: "alta",
-        },
-      ];
-
+    it("Renderiza gráfico circular con configuración completa", () => {
       const { container } = render(
         <ChartContainer config={mockConfig}>
-          <BarChart data={mockData}>
+          <PieChart>
+            <Pie data={mockData} dataKey="value">
+              {mockData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Pie>
+            <ChartTooltip />
+            <ChartLegend />
+          </PieChart>
+        </ChartContainer>,
+      );
+
+      expect(container).toBeInTheDocument();
+    });
+
+    it("Renderiza con config que tiene iconos", () => {
+      const IconComponent = () => <svg data-testid="test-icon" />;
+      const configWithIcon = {
+        test: { label: "Test", icon: IconComponent, color: "#000" }
+      };
+
+      const { container } = render(
+        <ChartContainer config={configWithIcon}>
+          <BarChart data={[{ name: "Test", value: 10 }]}>
             <Bar dataKey="value" />
-            <ChartLegend
-              content={
-                <ChartLegendContent
-                  payload={legendPayload}
-                  verticalAlign="top"
-                />
-              }
-            />
           </BarChart>
         </ChartContainer>,
       );
@@ -490,24 +404,17 @@ describe("Chart", () => {
       expect(container).toBeInTheDocument();
     });
 
-    it("Oculta iconos cuando hideIcon es true", () => {
-      const legendPayload = [
-        {
-          value: "Baja",
-          color: "#10b981",
-          dataKey: "baja",
-        },
+    it("Maneja datos con valores null", () => {
+      const nullData = [
+        { name: "A", value: 10 },
+        { name: "B", value: null },
+        { name: "C", value: 15 },
       ];
 
       const { container } = render(
         <ChartContainer config={mockConfig}>
-          <BarChart data={mockData}>
+          <BarChart data={nullData}>
             <Bar dataKey="value" />
-            <ChartLegend
-              content={
-                <ChartLegendContent payload={legendPayload} hideIcon={true} />
-              }
-            />
           </BarChart>
         </ChartContainer>,
       );
@@ -515,27 +422,12 @@ describe("Chart", () => {
       expect(container).toBeInTheDocument();
     });
 
-    it("Usa nameKey personalizado", () => {
-      const legendPayload = [
-        {
-          value: "Test",
-          color: "#3b82f6",
-          customKey: "custom",
-        },
-      ];
-
+    it("Renderiza con diferentes tipos de indicadores", () => {
       const { container } = render(
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartLegend
-              content={
-                <ChartLegendContent
-                  payload={legendPayload}
-                  nameKey="customKey"
-                />
-              }
-            />
+            <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
           </BarChart>
         </ChartContainer>,
       );

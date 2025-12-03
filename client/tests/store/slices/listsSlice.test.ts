@@ -94,6 +94,15 @@ describe("listsSlice reducer", () => {
     expect(state.lists[0].name).toBe("Updated");
   });
 
+  it("updateList.fulfilled no modifica si no encuentra la lista", () => {
+    const action = {
+      type: updateList.fulfilled.type,
+      payload: { ...baseList, id: "not-found", name: "Updated" },
+    };
+    const state = reducer({ ...initialState, lists: [baseList] }, action);
+    expect(state.lists[0].name).toBe("Inbox");
+  });
+
   it("deleteList.fulfilled elimina y limpia selectedListId", () => {
     const populated: ListsState = {
       ...initialState,
@@ -240,6 +249,20 @@ describe("listsSlice - Acciones asíncronas adicionales", () => {
     expect(state.error).toBeNull();
   });
 
+  it("shareList.fulfilled no actualiza si no encuentra la lista", () => {
+    const updatedList = {
+      ...baseList,
+      id: "not-found",
+      shares: [share],
+    };
+    const action = {
+      type: shareList.fulfilled.type,
+      payload: updatedList,
+    };
+    const state = reducer({ ...initialState, lists: [baseList] }, action);
+    expect(state.lists[0].shares).toEqual([]);
+  });
+
   it("shareList.rejected establece error", () => {
     const action = {
       type: shareList.rejected.type,
@@ -264,6 +287,43 @@ describe("listsSlice - Acciones asíncronas adicionales", () => {
     expect(state.lists[0].shares?.[0].permission).toBe("EDIT");
   });
 
+  it("updateListSharePermission.pending no hace nada si no encuentra la lista", () => {
+    const action = {
+      type: updateListSharePermission.pending.type,
+      meta: {
+        arg: { listId: "not-found", userId: "user-1", permission: "EDIT" },
+      },
+    };
+    const state = reducer({ ...initialState, lists: [baseList] }, action);
+    expect(state.lists[0].shares).toEqual([]);
+  });
+
+  it("updateListSharePermission.pending no hace nada si la lista no tiene shares", () => {
+    const action = {
+      type: updateListSharePermission.pending.type,
+      meta: {
+        arg: { listId: "l1", userId: "user-1", permission: "EDIT" },
+      },
+    };
+    const state = reducer({ ...initialState, lists: [baseList] }, action);
+    expect(state.lists[0].shares).toEqual([]);
+  });
+
+  it("updateListSharePermission.pending no hace nada si no encuentra el share", () => {
+    const listWithShare = {
+      ...baseList,
+      shares: [{ ...share, userId: "other-user" }],
+    };
+    const action = {
+      type: updateListSharePermission.pending.type,
+      meta: {
+        arg: { listId: "l1", userId: "user-1", permission: "EDIT" },
+      },
+    };
+    const state = reducer({ ...initialState, lists: [listWithShare] }, action);
+    expect(state.lists[0].shares?.[0].userId).toBe("other-user");
+  });
+
   it("updateListSharePermission.fulfilled actualiza la lista", () => {
     const updatedList = {
       ...baseList,
@@ -275,6 +335,20 @@ describe("listsSlice - Acciones asíncronas adicionales", () => {
     };
     const state = reducer({ ...initialState, lists: [baseList] }, action);
     expect(state.lists[0].shares?.[0].permission).toBe("EDIT");
+  });
+
+  it("updateListSharePermission.fulfilled no actualiza si no encuentra la lista", () => {
+    const updatedList = {
+      ...baseList,
+      id: "not-found",
+      shares: [{ ...share, permission: "EDIT" as const }],
+    };
+    const action = {
+      type: updateListSharePermission.fulfilled.type,
+      payload: updatedList,
+    };
+    const state = reducer({ ...initialState, lists: [baseList] }, action);
+    expect(state.lists[0].shares).toEqual([]);
   });
 
   it("updateListSharePermission.rejected establece error", () => {
@@ -297,6 +371,19 @@ describe("listsSlice - Acciones asíncronas adicionales", () => {
       action,
     );
     expect(state.lists[0].shares).toEqual([]);
+  });
+
+  it("unshareList.fulfilled no actualiza si no encuentra la lista", () => {
+    const listWithoutShare = { ...baseList, id: "not-found", shares: [] };
+    const action = {
+      type: unshareList.fulfilled.type,
+      payload: listWithoutShare,
+    };
+    const state = reducer(
+      { ...initialState, lists: [{ ...baseList, shares: [share] }] },
+      action,
+    );
+    expect(state.lists[0].shares).toEqual([share]);
   });
 
   it("unshareList.rejected establece error", () => {

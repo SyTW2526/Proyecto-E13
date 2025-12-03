@@ -42,6 +42,24 @@ describe("uiSlice", () => {
       );
       expect(state.taskCardSize).toBe(4);
     });
+
+    it("Ignora valores inválidos de sidebarWidth en localStorage", () => {
+      localStorage.setItem("sidebarWidth", "invalid");
+      const state = reducer(undefined, { type: "@@INIT" });
+      expect(state.sidebarWidth).toBe("normal");
+    });
+
+    it("Ignora valores inválidos de taskCardSize en localStorage", () => {
+      localStorage.setItem("taskCardSize", "99");
+      const state = reducer(undefined, { type: "@@INIT" });
+      expect(state.taskCardSize).toBe(2);
+    });
+
+    it("Maneja taskCardSize no numérico en localStorage", () => {
+      localStorage.setItem("taskCardSize", "not-a-number");
+      const state = reducer(undefined, { type: "@@INIT" });
+      expect(state.taskCardSize).toBe(2);
+    });
   });
 
   describe("Reducers", () => {
