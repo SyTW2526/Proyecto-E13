@@ -30,8 +30,8 @@ El **Gestor de Tareas Colaborativo** es una aplicación web fullstack diseñada 
 
 [![CI Tests (Client)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-client.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-client.yml)
 [![CI Tests (Server)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-server.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-server.yml)
-[![Coverage Status](https://coveralls.io/repos/github/SyTW2526/Proyecto-E13/badge.svg?branch=main)](https://coveralls.io/github/SyTW2526/Proyecto-E13?branch=main)
- 
+[![Coverage Status](https://coveralls.io/repos/github/SyTW2526/Proyecto-E13/badge.svg?branch=develop)](https://coveralls.io/github/SyTW2526/Proyecto-E13?branch=develop)
+
 ---
 
 ## Gestión del Proyecto por Sprints
