@@ -5,7 +5,9 @@ import { describe, expect, it } from "vitest";
 describe("Button", () => {
   it("Renderiza correctamente el componente Button", () => {
     render(<Button>Click me</Button>);
-    expect(screen.getByRole("button", { name: /click me/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /click me/i }),
+    ).toBeInTheDocument();
   });
 
   it("Renderiza con la variante default", () => {
@@ -108,17 +110,23 @@ describe("Button", () => {
 
   it("Renderiza con prop text en lugar de children", () => {
     render(<Button text="Using text prop" />);
-    expect(screen.getByRole("button", { name: /using text prop/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /using text prop/i }),
+    ).toBeInTheDocument();
   });
 
   it("text se muestra cuando no hay children", () => {
     render(<Button text="text prop" />);
-    expect(screen.getByRole("button", { name: /text prop/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /text prop/i }),
+    ).toBeInTheDocument();
   });
 
   it("children se muestra cuando ambos están presentes", () => {
     render(<Button text="text prop">children content</Button>);
-    expect(screen.getByRole("button", { name: /text prop/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /text prop/i }),
+    ).toBeInTheDocument();
   });
 
   it("Maneja el atributo disabled correctamente", () => {
@@ -135,7 +143,15 @@ describe("Button", () => {
 
   it("Maneja el atributo disabled correctamente", () => {
     let clicked = false;
-    render(<Button onClick={() => { clicked = true; }}>Click</Button>);
+    render(
+      <Button
+        onClick={() => {
+          clicked = true;
+        }}
+      >
+        Click
+      </Button>,
+    );
     const button = screen.getByRole("button");
     button.click();
     expect(clicked).toBe(true);

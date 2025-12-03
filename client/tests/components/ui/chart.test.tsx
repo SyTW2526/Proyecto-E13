@@ -33,7 +33,7 @@ describe("Chart", () => {
       };
 
       expect(() => render(<TestComponent />)).toThrow(
-        "useChart must be used within a <ChartContainer />"
+        "useChart must be used within a <ChartContainer />",
       );
     });
 
@@ -46,7 +46,7 @@ describe("Chart", () => {
       render(
         <ChartContainer config={mockConfig}>
           <TestComponent />
-        </ChartContainer>
+        </ChartContainer>,
       );
 
       expect(screen.getByTestId("config-test")).toHaveTextContent("alta");
@@ -390,7 +390,7 @@ describe("Chart", () => {
     it("Renderiza con config que tiene iconos", () => {
       const IconComponent = () => <svg data-testid="test-icon" />;
       const configWithIcon = {
-        test: { label: "Test", icon: IconComponent, color: "#000" }
+        test: { label: "Test", icon: IconComponent, color: "#000" },
       };
 
       const { container } = render(
