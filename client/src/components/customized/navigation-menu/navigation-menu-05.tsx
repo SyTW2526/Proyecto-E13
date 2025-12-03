@@ -17,7 +17,7 @@ export default function NavigationMenuWithActiveItem() {
 
   return (
     <NavigationMenu>
-      <NavigationMenuList className="space-x-8">
+      <NavigationMenuList className="space-x-2">
         {navigationItems.map((item) => {
           const isActive = location.pathname === item.href;
 

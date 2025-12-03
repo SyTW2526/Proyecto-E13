@@ -36,9 +36,8 @@ export default function AppMenubar() {
   const logoFill = theme === "dark" ? "#ffffff" : "#000000";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b h-12">
-      <div className="mx-auto flex max-w-7xl h-full items-center gap-4 px-3">
-        <div className="flex items-center justify-between gap-6 w-full">
+    <header className="fixed top-0 left-0 right-0 z-50 border bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60 w-fit md:w-6xl rounded-md mx-auto px-4 mt-4 mb-2">
+      <div className="mx-auto flex max-w-6xl h-full justify-between items-center gap-20">
           <Link to="/" className="flex items-center gap-2">
             <Logo fill={logoFill} width={32} height={32} className="h-8 w-8" />
             <span className="text-lg font-semibold">{t("app.name")}</span>
@@ -48,7 +47,7 @@ export default function AppMenubar() {
             {isAuthenticated && <NavigationMenuWithActiveItem />}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             {isAuthenticated && (
               <>
                 {/* Campana de notificaciones (desktop y móvil) */}
@@ -84,7 +83,7 @@ export default function AppMenubar() {
                       <SheetHeader>
                         <SheetTitle>{t("nav.menu")}</SheetTitle>
                       </SheetHeader>
-                      <div className="flex flex-col gap-4 mt-6">
+                      <div className="flex flex-col gap-2 mt-6">
                         <div className="flex items-center gap-3 p-3 rounded-lg">
                           <Avatar className="h-10 w-10">
                             <AvatarImage src={user?.image} alt={user?.name} />
@@ -114,6 +113,7 @@ export default function AppMenubar() {
                             />
                           ))}
                           <div className="border-t pt-4 flex flex-col gap-2">
+                            <LanguageSelector variant="button" />
                             <Button
                               variant="ghost"
                               className="justify-start"
@@ -142,7 +142,6 @@ export default function AppMenubar() {
             {!isAuthenticated && <LanguageSelector variant="button" />}
             <ThemeToggle />
           </div>
-        </div>
       </div>
     </header>
   );

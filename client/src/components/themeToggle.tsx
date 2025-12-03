@@ -17,6 +17,7 @@ export default function ThemeToggle() {
       leftIcon={next === "dark" ? "IconMoon" : "IconSun"}
       aria-label={`${t("theme.toggle")} ${t(`theme.${next}`)}`}
       onClick={() => setTheme(next)}
+      className="my-2"
     />
   );
 }

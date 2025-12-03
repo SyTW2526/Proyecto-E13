@@ -27,7 +27,7 @@ export default function App() {
     <div className="flex min-h-screen flex-col bg-linear-to-br from-background via-background to-muted/30">
       <AppMenubar />
 
-      <main className="flex-1 overflow-auto pt-12 pb-14">
+      <main className="flex-1 flex overflow-auto py-10 items-center">
         <Routes>
           <Route path="/" element={publicRoute(LandingPage)} />
           <Route path="/login" element={publicRoute(LoginPage)} />
