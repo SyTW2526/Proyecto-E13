@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { MemoryRouter } from "react-router-dom";
-import { screen } from "@testing-library/react";
 import AppMenubar from "@/components/appMenubar";
-import { renderWithProviders } from "../helpers/test-utils";
 import { useAuth } from "@/hooks/useAuth";
+import { screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { renderWithProviders } from "../helpers/test-utils";
 
 vi.mock("@/hooks/useAuth");
 let mockNavigate = vi.fn();
@@ -42,7 +42,7 @@ describe("AppMenubar", () => {
     vi.clearAllMocks();
   });
 
-  it("should render TaskGrid link", () => {
+  it("Renderiza el enlace TaskGrid", () => {
     vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: false,
       user: null,
@@ -53,7 +53,6 @@ describe("AppMenubar", () => {
       register: vi.fn(),
       loginWithGoogle: vi.fn(),
       signOut: mockSignOut,
-      updateUserProfile: vi.fn(),
     });
 
     renderWithProviders(
@@ -66,7 +65,7 @@ describe("AppMenubar", () => {
     expect(screen.queryByText("Cerrar sesión")).toBeNull();
   });
 
-  it("should call signOut and navigate on logout", async () => {
+  it("Llama a signOut y navega al cerrar sesión", async () => {
     const newNavigate = vi.fn();
     vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: true,
@@ -78,7 +77,6 @@ describe("AppMenubar", () => {
       register: vi.fn(),
       loginWithGoogle: vi.fn(),
       signOut: mockSignOut,
-      updateUserProfile: vi.fn(),
     });
 
     mockNavigate = newNavigate;
@@ -95,7 +93,7 @@ describe("AppMenubar", () => {
     expect(newNavigate).toHaveBeenCalledWith("/", { replace: true });
   });
 
-  it("should show navigation menu when authenticated", () => {
+  it("Muestra el menú de navegación cuando está autenticado", () => {
     vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: true,
       user: { id: "1", name: "Test User", email: "test@example.com" },
@@ -106,7 +104,6 @@ describe("AppMenubar", () => {
       register: vi.fn(),
       loginWithGoogle: vi.fn(),
       signOut: mockSignOut,
-      updateUserProfile: vi.fn(),
     });
 
     renderWithProviders(
@@ -119,7 +116,7 @@ describe("AppMenubar", () => {
     expect(screen.getByText("Test User")).toBeDefined();
   });
 
-  it("should not show user dropdown when not authenticated", () => {
+  it("No muestra el dropdown de usuario cuando no está autenticado", () => {
     vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: false,
       user: null,
@@ -130,7 +127,6 @@ describe("AppMenubar", () => {
       register: vi.fn(),
       loginWithGoogle: vi.fn(),
       signOut: mockSignOut,
-      updateUserProfile: vi.fn(),
     });
 
     renderWithProviders(
@@ -143,7 +139,7 @@ describe("AppMenubar", () => {
     expect(screen.queryByText("Ajustes")).toBeNull();
   });
 
-  it("should navigate to settings clicking Ajustes", async () => {
+  it("Navega a ajustes al hacer clic en Ajustes", async () => {
     const newNavigate = vi.fn();
     vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: true,
@@ -155,7 +151,6 @@ describe("AppMenubar", () => {
       register: vi.fn(),
       loginWithGoogle: vi.fn(),
       signOut: mockSignOut,
-      updateUserProfile: vi.fn(),
     });
 
     mockNavigate = newNavigate;

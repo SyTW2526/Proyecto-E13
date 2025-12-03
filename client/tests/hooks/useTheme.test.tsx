@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { renderHook, act } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
 import { useTheme } from "@/hooks/useTheme";
 import themeReducer from "@/store/slices/themeSlice";
+import { configureStore } from "@reduxjs/toolkit";
+import { act, renderHook } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("useTheme", () => {
   let store: ReturnType<typeof configureStore>;
@@ -30,12 +30,12 @@ describe("useTheme", () => {
     <Provider store={store}>{children}</Provider>
   );
 
-  it("should return current theme", () => {
+  it("Retorna el tema actual", () => {
     const { result } = renderHook(() => useTheme(), { wrapper });
     expect(result.current.theme).toBe("light");
   });
 
-  it("should update theme when setTheme is called", () => {
+  it("Actualiza el tema cuando se llama setTheme", () => {
     const { result } = renderHook(() => useTheme(), { wrapper });
 
     act(() => {
@@ -46,7 +46,7 @@ describe("useTheme", () => {
     // DOM and localStorage updates are handled by store subscription, not the hook
   });
 
-  it("should remove dark class when theme is set to light", () => {
+  it("Remueve la clase dark cuando el tema se establece como light", () => {
     const { result } = renderHook(() => useTheme(), { wrapper });
 
     act(() => {
@@ -56,7 +56,7 @@ describe("useTheme", () => {
     expect(result.current.theme).toBe("light");
   });
 
-  it("should return current theme from store", () => {
+  it("Retorna el tema actual desde el store", () => {
     store = configureStore({
       reducer: {
         theme: themeReducer,

@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import ThemeToggle from "@/components/themeToggle";
 import { useTheme } from "@/hooks/useTheme";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/hooks/useTheme", () => ({
   useTheme: vi.fn(),
@@ -26,7 +26,7 @@ describe("ThemeToggle", () => {
     ).toBeInTheDocument();
   });
 
-  it("cambia al tema opuesto al hacer click", async () => {
+  it("Cambia al tema opuesto al hacer click", async () => {
     const setTheme = vi.fn();
     vi.mocked(useTheme).mockReturnValue({
       theme: "light",

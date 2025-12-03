@@ -1,8 +1,8 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
 import reducer, {
-  createTask,
   clearFilters,
+  createTask,
   deleteTask,
+  fetchSharedTasks,
   fetchTasks,
   resetTasksState,
   selectFilteredTasks,
@@ -15,18 +15,22 @@ import reducer, {
   selectTasksByPriority,
   selectTasksByStatus,
   setError,
+  setListFilter,
   setLoading,
   setPriorityFilter,
   setSearchFilter,
   setSelectedTask,
   setSorting,
   setStatusFilter,
-  setListFilter,
   setTaskStatus,
+  shareTask,
   toggleSortOrder,
+  unshareTask,
   updateTask,
+  updateTaskSharePermission,
 } from "@/store/slices/tasksSlice";
-import type { Task, TasksState, TaskShare } from "@/types/tasks-system/task";
+import type { Task, TaskShare, TasksState } from "@/types/tasks-system/task";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 const baseTask: Task = {
   id: "t1",
@@ -273,5 +277,194 @@ describe("tasksSlice selectors", () => {
       high: 1,
       urgent: 1,
     });
+  });
+});
+
+describe("tasksSlice - Acciones asíncronas adicionales", () => {
+  it("fetchSharedTasks.fulfilled reemplaza las tareas", () => {
+    const sharedTask = { ...baseTask, id: "t-shared" };
+    const action = {
+      type: fetchSharedTasks.fulfilled.type,
+      payload: [sharedTask],
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.tasks).toEqual([sharedTask]);
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBeNull();
+  });
+
+  it("fetchSharedTasks.rejected establece error", () => {
+    const action = {
+      type: fetchSharedTasks.rejected.type,
+      payload: "Error al cargar tareas compartidas",
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.error).toBe("Error al cargar tareas compartidas");
+    expect(state.isLoading).toBe(false);
+  });
+
+  it("shareTask.fulfilled actualiza la tarea con shares", () => {
+    const updatedTask = {
+      ...baseTask,
+      shares: [share],
+    };
+    const action = {
+      type: shareTask.fulfilled.type,
+      payload: updatedTask,
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].shares).toEqual([share]);
+    expect(state.error).toBeNull();
+  });
+
+  it("shareTask.rejected establece error", () => {
+    const action = {
+      type: shareTask.rejected.type,
+      payload: "Error al compartir tarea",
+    };
+    const state = reducer(initialState, action);
+    expect(state.error).toBe("Error al compartir tarea");
+  });
+
+  it("updateTaskSharePermission.pending actualiza optimísticamente", () => {
+    const taskWithShare = {
+      ...baseTask,
+      shares: [{ ...share, permission: "VIEW" as const }],
+    };
+    const action = {
+      type: updateTaskSharePermission.pending.type,
+      meta: {
+        arg: { taskId: "t1", userId: "u1", permission: "EDIT" },
+      },
+    };
+    const state = reducer({ ...initialState, tasks: [taskWithShare] }, action);
+    expect(state.tasks[0].shares?.[0].permission).toBe("EDIT");
+  });
+
+  it("updateTaskSharePermission.fulfilled actualiza la tarea", () => {
+    const updatedTask = {
+      ...baseTask,
+      shares: [{ ...share, permission: "EDIT" as const }],
+    };
+    const action = {
+      type: updateTaskSharePermission.fulfilled.type,
+      payload: updatedTask,
+    };
+    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
+    expect(state.tasks[0].shares?.[0].permission).toBe("EDIT");
+  });
+
+  it("updateTaskSharePermission.rejected establece error", () => {
+    const action = {
+      type: updateTaskSharePermission.rejected.type,
+      payload: "Error al actualizar permisos",
+    };
+    const state = reducer(initialState, action);
+    expect(state.error).toBe("Error al actualizar permisos");
+  });
+
+  it("unshareTask.fulfilled elimina el share de la tarea", () => {
+    const taskWithoutShare = { ...baseTask, shares: [] };
+    const action = {
+      type: unshareTask.fulfilled.type,
+      payload: taskWithoutShare,
+    };
+    const state = reducer(
+      { ...initialState, tasks: [{ ...baseTask, shares: [share] }] },
+      action,
+    );
+    expect(state.tasks[0].shares).toEqual([]);
+  });
+
+  it("unshareTask.rejected establece error", () => {
+    const action = {
+      type: unshareTask.rejected.type,
+      payload: "Error al dejar de compartir",
+    };
+    const state = reducer(initialState, action);
+    expect(state.error).toBe("Error al dejar de compartir");
+  });
+
+  it("fetchTasks.pending establece isLoading", () => {
+    const action = { type: fetchTasks.pending.type };
+    const state = reducer(initialState, action);
+    expect(state.isLoading).toBe(true);
+    expect(state.error).toBeNull();
+  });
+
+  it("fetchTasks.rejected establece error", () => {
+    const action = {
+      type: fetchTasks.rejected.type,
+      payload: "Error de red",
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.error).toBe("Error de red");
+    expect(state.isLoading).toBe(false);
+  });
+
+  it("createTask.pending limpia error", () => {
+    const action = { type: createTask.pending.type };
+    const state = reducer({ ...initialState, error: "Error previo" }, action);
+    expect(state.error).toBeNull();
+  });
+
+  it("createTask.rejected establece error", () => {
+    const action = {
+      type: createTask.rejected.type,
+      payload: "Error al crear tarea",
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.error).toBe("Error al crear tarea");
+    expect(state.isLoading).toBe(false);
+  });
+
+  it("updateTask.pending limpia error", () => {
+    const action = { type: updateTask.pending.type };
+    const state = reducer({ ...initialState, error: "Error previo" }, action);
+    expect(state.error).toBeNull();
+  });
+
+  it("updateTask.rejected establece error", () => {
+    const action = {
+      type: updateTask.rejected.type,
+      payload: "Error al actualizar",
+    };
+    const state = reducer(initialState, action);
+    expect(state.error).toBe("Error al actualizar");
+  });
+
+  it("deleteTask.pending limpia error", () => {
+    const action = { type: deleteTask.pending.type };
+    const state = reducer({ ...initialState, error: "Error previo" }, action);
+    expect(state.error).toBeNull();
+  });
+
+  it("deleteTask.rejected establece error", () => {
+    const action = {
+      type: deleteTask.rejected.type,
+      payload: "Error al eliminar",
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.error).toBe("Error al eliminar");
+    expect(state.isLoading).toBe(false);
+  });
+
+  it("fetchSharedTasks.pending establece isLoading", () => {
+    const action = { type: fetchSharedTasks.pending.type };
+    const state = reducer(initialState, action);
+    expect(state.isLoading).toBe(true);
+    expect(state.error).toBeNull();
+  });
+
+  it("shareTask.pending limpia error", () => {
+    const action = { type: shareTask.pending.type };
+    const state = reducer({ ...initialState, error: "old error" }, action);
+    expect(state.error).toBeNull();
+  });
+
+  it("unshareTask.pending limpia error", () => {
+    const action = { type: unshareTask.pending.type };
+    const state = reducer({ ...initialState, error: "old error" }, action);
+    expect(state.error).toBeNull();
   });
 });

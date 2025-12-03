@@ -1,20 +1,24 @@
-import { describe, expect, it } from "vitest";
 import reducer, {
   createList,
   deleteList,
   fetchLists,
+  fetchSharedLists,
   resetListsState,
-  selectLists,
   selectListById,
+  selectLists,
   selectOwnedLists,
   selectSelectedList,
   selectSharedLists,
   setError,
   setLoading,
   setSelectedList,
+  shareList,
+  unshareList,
   updateList,
+  updateListSharePermission,
 } from "@/store/slices/listsSlice";
-import type { ListsState, List, ListShare } from "@/types/tasks-system/list";
+import type { List, ListShare, ListsState } from "@/types/tasks-system/list";
+import { describe, expect, it } from "vitest";
 
 const baseList: List = {
   id: "l1",
@@ -161,5 +165,195 @@ describe("listsSlice selectors", () => {
     });
     expect(selectSharedLists("user-1")(state)).toEqual([sharedList]);
     expect(selectSharedLists("other")(state)).toEqual([]);
+  });
+});
+
+describe("listsSlice - Acciones asíncronas adicionales", () => {
+  it("fetchSharedLists.fulfilled reemplaza las listas", () => {
+    const sharedList = { ...baseList, id: "l-shared" };
+    const action = {
+      type: fetchSharedLists.fulfilled.type,
+      payload: [sharedList],
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.lists).toEqual([sharedList]);
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBeNull();
+  });
+
+  it("fetchSharedLists.rejected establece error", () => {
+    const action = {
+      type: fetchSharedLists.rejected.type,
+      payload: "Error al cargar listas compartidas",
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.error).toBe("Error al cargar listas compartidas");
+    expect(state.isLoading).toBe(false);
+  });
+
+  it("shareList.fulfilled actualiza la lista con shares", () => {
+    const updatedList = {
+      ...baseList,
+      shares: [share],
+    };
+    const action = {
+      type: shareList.fulfilled.type,
+      payload: updatedList,
+    };
+    const state = reducer({ ...initialState, lists: [baseList] }, action);
+    expect(state.lists[0].shares).toEqual([share]);
+    expect(state.error).toBeNull();
+  });
+
+  it("shareList.rejected establece error", () => {
+    const action = {
+      type: shareList.rejected.type,
+      payload: "Error al compartir lista",
+    };
+    const state = reducer(initialState, action);
+    expect(state.error).toBe("Error al compartir lista");
+  });
+
+  it("updateListSharePermission.pending actualiza optimísticamente", () => {
+    const listWithShare = {
+      ...baseList,
+      shares: [{ ...share, permission: "VIEW" as const }],
+    };
+    const action = {
+      type: updateListSharePermission.pending.type,
+      meta: {
+        arg: { listId: "l1", userId: "user-1", permission: "EDIT" },
+      },
+    };
+    const state = reducer({ ...initialState, lists: [listWithShare] }, action);
+    expect(state.lists[0].shares?.[0].permission).toBe("EDIT");
+  });
+
+  it("updateListSharePermission.fulfilled actualiza la lista", () => {
+    const updatedList = {
+      ...baseList,
+      shares: [{ ...share, permission: "EDIT" as const }],
+    };
+    const action = {
+      type: updateListSharePermission.fulfilled.type,
+      payload: updatedList,
+    };
+    const state = reducer({ ...initialState, lists: [baseList] }, action);
+    expect(state.lists[0].shares?.[0].permission).toBe("EDIT");
+  });
+
+  it("updateListSharePermission.rejected establece error", () => {
+    const action = {
+      type: updateListSharePermission.rejected.type,
+      payload: "Error al actualizar permisos",
+    };
+    const state = reducer(initialState, action);
+    expect(state.error).toBe("Error al actualizar permisos");
+  });
+
+  it("unshareList.fulfilled elimina el share de la lista", () => {
+    const listWithoutShare = { ...baseList, shares: [] };
+    const action = {
+      type: unshareList.fulfilled.type,
+      payload: listWithoutShare,
+    };
+    const state = reducer(
+      { ...initialState, lists: [{ ...baseList, shares: [share] }] },
+      action,
+    );
+    expect(state.lists[0].shares).toEqual([]);
+  });
+
+  it("unshareList.rejected establece error", () => {
+    const action = {
+      type: unshareList.rejected.type,
+      payload: "Error al dejar de compartir",
+    };
+    const state = reducer(initialState, action);
+    expect(state.error).toBe("Error al dejar de compartir");
+  });
+
+  it("fetchLists.pending establece isLoading", () => {
+    const action = { type: fetchLists.pending.type };
+    const state = reducer(initialState, action);
+    expect(state.isLoading).toBe(true);
+    expect(state.error).toBeNull();
+  });
+
+  it("fetchLists.rejected establece error", () => {
+    const action = {
+      type: fetchLists.rejected.type,
+      payload: "Error de red",
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.error).toBe("Error de red");
+    expect(state.isLoading).toBe(false);
+  });
+
+  it("createList.pending establece isLoading", () => {
+    const action = { type: createList.pending.type };
+    const state = reducer(initialState, action);
+    expect(state.isLoading).toBe(true);
+  });
+
+  it("createList.rejected establece error", () => {
+    const action = {
+      type: createList.rejected.type,
+      payload: "Error al crear lista",
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.error).toBe("Error al crear lista");
+    expect(state.isLoading).toBe(false);
+  });
+
+  it("updateList.pending establece isLoading", () => {
+    const action = { type: updateList.pending.type };
+    const state = reducer(initialState, action);
+    expect(state.isLoading).toBe(true);
+  });
+
+  it("updateList.rejected establece error", () => {
+    const action = {
+      type: updateList.rejected.type,
+      payload: "Error al actualizar",
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.error).toBe("Error al actualizar");
+    expect(state.isLoading).toBe(false);
+  });
+
+  it("deleteList.pending establece isLoading", () => {
+    const action = { type: deleteList.pending.type };
+    const state = reducer(initialState, action);
+    expect(state.isLoading).toBe(true);
+  });
+
+  it("deleteList.rejected establece error", () => {
+    const action = {
+      type: deleteList.rejected.type,
+      payload: "Error al eliminar",
+    };
+    const state = reducer({ ...initialState, isLoading: true }, action);
+    expect(state.error).toBe("Error al eliminar");
+    expect(state.isLoading).toBe(false);
+  });
+
+  it("fetchSharedLists.pending establece isLoading", () => {
+    const action = { type: fetchSharedLists.pending.type };
+    const state = reducer(initialState, action);
+    expect(state.isLoading).toBe(true);
+    expect(state.error).toBeNull();
+  });
+
+  it("shareList.pending limpia error", () => {
+    const action = { type: shareList.pending.type };
+    const state = reducer({ ...initialState, error: "old error" }, action);
+    expect(state.error).toBeNull();
+  });
+
+  it("unshareList.pending limpia error", () => {
+    const action = { type: unshareList.pending.type };
+    const state = reducer({ ...initialState, error: "old error" }, action);
+    expect(state.error).toBeNull();
   });
 });

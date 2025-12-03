@@ -44,15 +44,24 @@ export default function DashboardPage() {
       chartComponent?: React.ReactNode;
     }
   > = {
-    "Tareas Completadas": { details: weekStats.completedTasks + " / " + weekStats.upcomingTasks },
+    "Tareas Completadas": {
+      details: weekStats.completedTasks + " / " + weekStats.upcomingTasks,
+    },
     "Próximas Tareas": { details: weekStats.upcomingTasks },
     "Tareas Por Lista": {
       chartComponent: (
         <div className="flex flex-wrap gap-2 align-center py-1">
           {weekStats.tasksPerList.length > 0 ? (
             weekStats.tasksPerList.map((item, index) => (
-              <Badge key={index} variant="default" className="text-md" leftIcon={"IconList"}>{item.listName}
-                <Badge key={index} variant="secondary" className="text-xs">{item.count}
+              <Badge
+                key={index}
+                variant="default"
+                className="text-md"
+                leftIcon={"IconList"}
+              >
+                {item.listName}
+                <Badge key={index} variant="secondary" className="text-xs">
+                  {item.count}
                 </Badge>
               </Badge>
             ))

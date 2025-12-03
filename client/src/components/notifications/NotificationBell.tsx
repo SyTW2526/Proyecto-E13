@@ -62,7 +62,7 @@ export function NotificationBell() {
     try {
       await markAllAsRead();
     } catch (error) {
-      console.error("Error al marcar todas como leídas:", error);
+      console.error("Error al marcar todos como leído:", error);
     }
   };
 
@@ -70,7 +70,7 @@ export function NotificationBell() {
     try {
       await markAsRead(id);
     } catch (error) {
-      console.error("Error al marcar como leída:", error);
+      console.error("Error al marcar como leído:", error);
     }
   };
 

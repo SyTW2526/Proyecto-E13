@@ -126,10 +126,11 @@ export function FilterableList({
               onClick={() =>
                 onItemClick(selectedId === item.id ? null : item.id)
               }
-              className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border border-border ${selectedId === item.id
-                ? "bg-primary text-secondary font-medium"
-                : "bg-card dark:bg-card hover:bg-muted text-muted-foreground hover:text-foreground"
-                }`}
+              className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border border-border ${
+                selectedId === item.id
+                  ? "bg-primary text-secondary font-medium"
+                  : "bg-card dark:bg-card hover:bg-muted text-muted-foreground hover:text-foreground"
+              }`}
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <Icon
@@ -142,9 +143,7 @@ export function FilterableList({
                   }
                 />
                 <div className="flex flex-col gap-0">
-                  <span className="font-medium truncate">
-                    {item.name}
-                  </span>
+                  <span className="font-medium truncate">{item.name}</span>
                   {item.description && (
                     <p className="text-xs text-muted-foreground truncate">
                       {item.description}

@@ -56,9 +56,7 @@ export default function FeatureCard({
         </CardContent>
       ) : null}
 
-      {children && (
-        <CardContent className="pt-0">{children}</CardContent>
-      )}
+      {children && <CardContent className="pt-0">{children}</CardContent>}
     </Card>
   );
 }

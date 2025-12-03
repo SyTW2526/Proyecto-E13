@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
-import { MemoryRouter } from "react-router-dom";
-import { screen } from "@testing-library/react";
 import ProtectedRoute from "@/components/auth/protectedRoute";
+import { screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import { describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "../../helpers/test-utils";
 
 vi.mock("@/hooks/useAuth", () => ({
@@ -11,7 +11,7 @@ vi.mock("@/hooks/useAuth", () => ({
 const { useAuth } = await import("@/hooks/useAuth");
 
 describe("ProtectedRoute", () => {
-  it("should render children when authenticated", () => {
+  it("Renderiza los hijos cuando está autenticado", () => {
     vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: true,
       user: null,
@@ -22,7 +22,6 @@ describe("ProtectedRoute", () => {
       register: vi.fn(),
       loginWithGoogle: vi.fn(),
       signOut: vi.fn(),
-      updateUserProfile: vi.fn(),
     });
 
     renderWithProviders(
@@ -36,7 +35,7 @@ describe("ProtectedRoute", () => {
     expect(screen.getByText("Protected Content")).toBeInTheDocument();
   });
 
-  it("should navigate to home when not authenticated", () => {
+  it("Navega al inicio cuando no está autenticado", () => {
     vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: false,
       user: null,
@@ -47,7 +46,6 @@ describe("ProtectedRoute", () => {
       register: vi.fn(),
       loginWithGoogle: vi.fn(),
       signOut: vi.fn(),
-      updateUserProfile: vi.fn(),
     });
 
     renderWithProviders(

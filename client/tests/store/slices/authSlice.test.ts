@@ -1,21 +1,20 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import authReducer, {
-  loginUser,
-  registerUser,
-  loginWithGoogleUser,
-  logout,
-  updateUserProfile,
   changeUserPassword,
   deleteUserAccount,
-  selectUser,
+  loginUser,
+  loginWithGoogleUser,
+  logout,
+  registerUser,
+  selectAuthError,
+  selectAuthLoading,
   selectIsAuthenticated,
   selectToken,
-  selectAuthLoading,
-  selectAuthError,
+  selectUser,
+  updateUserProfile,
 } from "@/store/slices/authSlice";
-import { setAuthToken } from "@/lib/api";
-import type { AuthState } from "@/types/auth/auth";
-import type { User } from "@/types/auth/auth";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import type { AuthState, User } from "@/types/auth/auth";
 
 vi.mock("@/lib/api", () => ({
   setAuthToken: vi.fn(),
@@ -226,27 +225,29 @@ describe("authSlice", () => {
   describe("selectors", () => {
     it("selectUser should return user", () => {
       const state = { auth: { ...initialState, user: mockUser } };
-      expect(selectUser(state as any)).toEqual(mockUser);
+      expect(selectUser(state as { auth: AuthState })).toEqual(mockUser);
     });
 
     it("selectIsAuthenticated should return authentication status", () => {
       const state = { auth: { ...initialState, isAuthenticated: true } };
-      expect(selectIsAuthenticated(state as any)).toBe(true);
+      expect(selectIsAuthenticated(state as { auth: AuthState })).toBe(true);
     });
 
     it("selectToken should return token", () => {
       const state = { auth: { ...initialState, token: "token123" } };
-      expect(selectToken(state as any)).toBe("token123");
+      expect(selectToken(state as { auth: AuthState })).toBe("token123");
     });
 
     it("selectAuthLoading should return loading status", () => {
       const state = { auth: { ...initialState, isLoading: true } };
-      expect(selectAuthLoading(state as any)).toBe(true);
+      expect(selectAuthLoading(state as { auth: AuthState })).toBe(true);
     });
 
     it("selectAuthError should return error", () => {
       const state = { auth: { ...initialState, error: "Error message" } };
-      expect(selectAuthError(state as any)).toBe("Error message");
+      expect(selectAuthError(state as { auth: AuthState })).toBe(
+        "Error message",
+      );
     });
   });
 });

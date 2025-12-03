@@ -1,14 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import { MemoryRouter } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { api } from "@/lib/api";
 import authReducer from "@/store/slices/authSlice";
-import themeReducer from "@/store/slices/themeSlice";
 import listsReducer from "@/store/slices/listsSlice";
 import tasksReducer from "@/store/slices/tasksSlice";
-import { api } from "@/lib/api";
+import themeReducer from "@/store/slices/themeSlice";
+import { configureStore } from "@reduxjs/toolkit";
+import { renderHook, waitFor } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { MemoryRouter } from "react-router-dom";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/api", () => ({
   api: {
@@ -44,7 +44,7 @@ describe("useAuth", () => {
     </MemoryRouter>
   );
 
-  it("should return initial auth state", () => {
+  it("Retorna el estado inicial de autenticación", () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
 
     expect(result.current.isAuthenticated).toBe(false);
@@ -54,7 +54,7 @@ describe("useAuth", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("should login successfully", async () => {
+  it("Inicia sesión exitosamente", async () => {
     const mockResponse = {
       data: {
         token: "token123",
@@ -84,7 +84,7 @@ describe("useAuth", () => {
     expect(result.current.user?.email).toBe("test@example.com");
   });
 
-  it("should handle login failure", async () => {
+  it("Maneja el fallo de inicio de sesión", async () => {
     const error = new Error("Invalid credentials");
     vi.mocked(api.post).mockRejectedValueOnce(error);
 
@@ -103,7 +103,7 @@ describe("useAuth", () => {
     expect(result.current.isAuthenticated).toBe(false);
   });
 
-  it("should register successfully", async () => {
+  it("Registra exitosamente", async () => {
     const mockRegisterResponse = { data: {} };
     const mockLoginResponse = {
       data: {
@@ -135,7 +135,7 @@ describe("useAuth", () => {
     expect(result.current.isAuthenticated).toBe(true);
   });
 
-  it("should handle register failure", async () => {
+  it("Maneja el fallo de registro", async () => {
     const error = new Error("Invalid credentials");
     vi.mocked(api.post).mockRejectedValueOnce(error);
 
@@ -155,7 +155,7 @@ describe("useAuth", () => {
     expect(result.current.isAuthenticated).toBe(false);
   });
 
-  it("should login with Google successfully", async () => {
+  it("Inicia sesión con Google exitosamente", async () => {
     const mockResponse = {
       data: {
         token: "google-token",
@@ -181,7 +181,7 @@ describe("useAuth", () => {
     expect(result.current.isAuthenticated).toBe(true);
   });
 
-  it("should handle login with Google failure", async () => {
+  it("Maneja el fallo de inicio de sesión con Google", async () => {
     const error = new Error("Invalid credentials");
     vi.mocked(api.post).mockRejectedValueOnce(error);
 
@@ -198,7 +198,7 @@ describe("useAuth", () => {
     expect(result.current.isAuthenticated).toBe(false);
   });
 
-  it("should sign out", async () => {
+  it("Cierra sesión", async () => {
     store = configureStore({
       reducer: {
         auth: authReducer,
