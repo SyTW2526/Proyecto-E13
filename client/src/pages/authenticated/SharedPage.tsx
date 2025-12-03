@@ -4,7 +4,7 @@ import { useLists } from "@/hooks/useLists";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { SharedTaskCard } from "@/components/tasks/SharedTaskCard";
 import { FilterableList } from "@/components/tasks/FilterableList";
-import { tasksPageLabels } from "@/config/taskConfig";
+import { useTranslation } from "react-i18next";
 import {
   TaskStatusFilter,
   TaskPriorityFilter,
@@ -14,6 +14,7 @@ import type { Task } from "@/types/tasks-system/task";
 import { useUI } from "@/hooks/useUI";
 
 export default function SharedPage() {
+  const { t, i18n } = useTranslation();
   const {
     displayTasks,
     listTaskCounts,
@@ -49,15 +50,19 @@ export default function SharedPage() {
     fetchSharedLists();
   }, []);
 
-  const formatDate = useCallback((dateString?: string) => {
-    if (!dateString) return tasksPageLabels.taskCard.noDate;
-    const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  }, []);
+  const formatDate = useCallback(
+    (dateString?: string) => {
+      if (!dateString) return t("tasks.card.noDate");
+      const date = new Date(dateString);
+      const locale = i18n.language === "es" ? "es-ES" : "en-US";
+      return date.toLocaleDateString(locale, {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    },
+    [t, i18n.language],
+  );
 
   return (
     <div className="max-w-(--breakpoint-2xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
@@ -65,12 +70,12 @@ export default function SharedPage() {
         className={`sticky top-8 shrink-0 ${sidebarWidthClass} w-full space-y-8 order-1 lg:order-2 lg:border-l lg:border-border lg:pl-12`}
       >
         <FilterableList
-          title="Listas Compartidas"
+          title={t("shared.listsTitle")}
           items={listTaskCounts}
           selectedId={selectedListId}
           onItemClick={handleListFilter}
-          emptyMessage="No hay listas compartidas"
-          icon={tasksPageLabels.createButtons.list.icon}
+          emptyMessage={t("shared.listsEmptyState")}
+          icon="IconList"
           isLoading={isLoadingLists}
         />
       </aside>
@@ -80,7 +85,7 @@ export default function SharedPage() {
           <div className="flex flex-row items-center justify-between gap-4">
             <div>
               <h1 className="text-4xl font-extrabold tracking-tight text-foreground/90">
-                Tareas Compartidas
+                {t("shared.title")}
               </h1>
             </div>
           </div>
@@ -128,7 +133,7 @@ export default function SharedPage() {
           </div>
         ) : displayTasks.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No hay tareas compartidas</p>
+            <p className="text-muted-foreground">{t("shared.emptyState")}</p>
           </div>
         ) : (
           <div className={`grid ${gridColsClass} gap-6`}>

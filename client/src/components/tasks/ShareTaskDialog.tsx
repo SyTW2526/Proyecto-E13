@@ -18,6 +18,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Icon from "@/components/ui/icon";
 import { useTasks } from "@/hooks/useTasks";
+import { useTranslation } from "react-i18next";
 import type { Task } from "@/types/tasks-system/task";
 import {
   AlertDialog,
@@ -41,6 +42,7 @@ export default function ShareTaskDialog({
   onOpenChange,
   task,
 }: ShareTaskDialogProps) {
+  const { t } = useTranslation();
   const { shareTask, removeShare, updateShare, isLoading } = useTasks();
   const [email, setEmail] = useState("");
   const [permission, setPermission] = useState<string>("VIEW");
@@ -58,7 +60,7 @@ export default function ShareTaskDialog({
       await shareTask(task.id, email, permission);
       setEmail("");
     } catch (err) {
-      setError("Error al compartir la tarea. Verifica el email.");
+      setError(t("share.errorShareTask"));
       console.error(err);
     }
   };
@@ -67,14 +69,14 @@ export default function ShareTaskDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Compartir Tarea</DialogTitle>
-          <DialogDescription>
-            Invita a otros usuarios a colaborar en esta tarea via email.
-          </DialogDescription>
+          <DialogTitle>{t("share.task.title")}</DialogTitle>
+          <DialogDescription>{t("share.task.description")}</DialogDescription>
         </DialogHeader>
 
         <div className="bg-muted/30 p-4 rounded-lg border border-border/50 mt-4">
-          <h4 className="text-sm font-medium mb-3">Invitar colaborador</h4>
+          <h4 className="text-sm font-medium mb-3">
+            {t("share.inviteCollaborator")}
+          </h4>
           <form
             onSubmit={handleShare}
             className="flex flex-col sm:flex-row items-end gap-3"
@@ -82,7 +84,7 @@ export default function ShareTaskDialog({
             <div className="grid gap-1.5 flex-1 w-full">
               <Input
                 id="email"
-                placeholder="ejemplo@correo.com"
+                placeholder={t("share.emailPlaceholder")}
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -96,9 +98,15 @@ export default function ShareTaskDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="VIEW">Ver</SelectItem>
-                  <SelectItem value="EDIT">Editar</SelectItem>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="VIEW">
+                    {t("share.permissions.VIEW")}
+                  </SelectItem>
+                  <SelectItem value="EDIT">
+                    {t("share.permissions.EDIT")}
+                  </SelectItem>
+                  <SelectItem value="ADMIN">
+                    {t("share.permissions.ADMIN")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <Button
@@ -109,7 +117,7 @@ export default function ShareTaskDialog({
                 {isLoading ? (
                   <Icon as="IconLoader2" className="animate-spin" />
                 ) : (
-                  "Invitar"
+                  t("share.invite")
                 )}
               </Button>
             </div>
@@ -120,12 +128,12 @@ export default function ShareTaskDialog({
 
         <div className="mt-6 space-y-4">
           <h4 className="text-sm font-medium text-muted-foreground">
-            Personas con acceso
+            {t("share.peopleWithAccess")}
           </h4>
           <div className="space-y-3">
             {task.shares?.length === 0 && (
               <p className="text-sm text-muted-foreground italic">
-                Esta tarea no se ha compartido con nadie aún.
+                {t("share.noSharesTask")}
               </p>
             )}
             {task.shares?.map((share) => (
@@ -160,9 +168,15 @@ export default function ShareTaskDialog({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="VIEW">Ver</SelectItem>
-                      <SelectItem value="EDIT">Editar</SelectItem>
-                      <SelectItem value="ADMIN">Admin</SelectItem>
+                      <SelectItem value="VIEW">
+                        {t("share.permissions.VIEW")}
+                      </SelectItem>
+                      <SelectItem value="EDIT">
+                        {t("share.permissions.EDIT")}
+                      </SelectItem>
+                      <SelectItem value="ADMIN">
+                        {t("share.permissions.ADMIN")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <Button
@@ -186,13 +200,17 @@ export default function ShareTaskDialog({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("share.removeCollaborator.title")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará al colaborador de la tarea.
+              {t("share.removeCollaborator.descriptionTask")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>
+              {t("share.removeCollaborator.cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 if (collaboratorToRemove) {
@@ -201,7 +219,7 @@ export default function ShareTaskDialog({
                 }
               }}
             >
-              Confirmar
+              {t("share.removeCollaborator.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

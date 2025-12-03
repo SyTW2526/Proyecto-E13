@@ -4,23 +4,6 @@
  * Define las opciones y etiquetas para la gestión de tareas.
  */
 
-export const taskFilterLabels = {
-  statusPlaceholder: "Estado",
-  statusAll: "Todos los Estados",
-  priorityPlaceholder: "Prioridad",
-  priorityAll: "Todas las Prioridades",
-  sortPlaceholder: "Ordenar por",
-  sortFields: {
-    dueDate: "Fecha de Vencimiento",
-    createdAt: "Fecha de Creación",
-    name: "Nombre",
-  },
-  sortOrder: {
-    asc: "Ascendente",
-    desc: "Descendente",
-  },
-};
-
 export const priorityConfig = {
   LOW: {
     color:
@@ -70,95 +53,5 @@ export const taskFavoritesConfig = {
   NOT_FAVORITE: {
     color: "bg-gray-500/10 text-gray-700 dark:text-gray-400",
     label: "No Favorita",
-  },
-} as const;
-
-export const taskFormLabels = {
-  createTask: {
-    title: "Crear Nueva Tarea",
-    description: "Completa los campos para crear una nueva tarea",
-    submitButton: "Crear Tarea",
-    cancelButton: "Cancelar",
-  },
-  createList: {
-    title: "Nueva Lista",
-    description: "Crea una nueva lista para organizar tus tareas",
-    submitButton: "Crear Lista",
-    cancelButton: "Cancelar",
-  },
-  fields: {
-    name: {
-      label: "Nombre",
-      placeholder: "Nombre de la tarea",
-      required: true,
-    },
-    description: {
-      label: "Descripción",
-      placeholder: "Descripción de la tarea (opcional)",
-      required: false,
-    },
-    list: {
-      label: "Lista",
-      placeholder: "Selecciona una lista",
-      searchPlaceholder: "Buscar lista...",
-      emptyMessage: "No se encontró ninguna lista.",
-      createNew: "Crear nueva lista",
-      required: true,
-    },
-    priority: {
-      label: "Prioridad",
-      required: false,
-    },
-    status: {
-      label: "Estado",
-      required: false,
-    },
-    favorite: {
-      label: "Favorita",
-      required: false,
-    },
-    dueDate: {
-      label: "Fecha de vencimiento",
-      required: false,
-    },
-    listName: {
-      label: "Nombre",
-      placeholder: "Nombre de la lista",
-      required: true,
-    },
-    listDescription: {
-      label: "Descripción",
-      placeholder: "Descripción (opcional)",
-      required: false,
-    },
-  },
-} as const;
-
-export const tasksPageLabels = {
-  title: "Mis Tareas",
-  taskCount: {
-    singular: "tarea",
-    plural: "tareas",
-    suffix: "en total",
-  },
-  emptyState: "No hay tareas disponibles",
-  sidebar: {
-    title: "Listas",
-    emptyState: "No hay listas",
-  },
-  taskCard: {
-    createdLabel: "Creada:",
-    dueLabel: "Vence:",
-    noDate: "Sin fecha",
-  },
-  createButtons: {
-    task: {
-      icon: "IconTask",
-      text: "Tarea",
-    },
-    list: {
-      icon: "IconList",
-      text: "Lista",
-    },
   },
 } as const;

@@ -5,76 +5,48 @@
  * iconos, títulos, descripciones y detalles específicos para cada tarjeta.
  */
 
-import { bigint } from "zod";
-
-export const dashboardConfig = {
-  title: "Panel de Control",
-  welcome: "¡Bienvenido, ",
-  description: "Resumen de tus tareas y estadísticas",
-  noTasks: "No hay tareas para mostrar.",
-};
-
 export const dashboardCards = [
   {
     icon: "IconCalendar",
-    title: "Próximas Tareas",
-    description: "Vencen esta semana",
+    titleKey: "dashboard.cards.upcomingTasks",
+    descriptionKey: "dashboard.cards.upcomingTasksDesc",
     bigDetails: true,
     span: "md:col-span-2 lg:col-span-1",
   },
-  // {
-  //   icon: "IconBell",
-  //   title: "Tareas Pendientes",
-  //   description: "Esta semana",
-  //   bigDetails: true,
-  //   span: "md:col-span-2 lg:col-span-1",
-  // },
   {
     icon: "IconChecklist",
-    title: "Tareas Completadas",
-    description: "Esta semana",
+    titleKey: "dashboard.cards.completedTasks",
+    descriptionKey: "dashboard.cards.completedTasksDesc",
     bigDetails: true,
     span: "md:col-span-2 lg:col-span-1",
   },
   {
     icon: "IconList",
-    title: "Tareas Por Lista",
-    description: "Distribución por lista",
-    // chart: true,
-    // chartType: "bar",
+    titleKey: "dashboard.cards.tasksByList",
+    descriptionKey: "dashboard.cards.tasksByListDesc",
     bigDetails: true,
     span: "md:col-span-2 lg:col-span-2",
   },
   {
     icon: "IconChartBar",
-    title: "Semana Actual",
-    description: "Tareas de lunes a domingo",
-    details: "Aquí aparecerán tus tareas de esta semana...",
+    titleKey: "dashboard.cards.currentWeek",
+    descriptionKey: "dashboard.cards.currentWeekDesc",
     chart: true,
     chartType: "bar",
     span: "md:col-span-2 lg:col-span-2 row-span-2",
   },
   {
     icon: "IconChartPie",
-    title: "Tareas Por Prioridad",
-    description: "Distribución por prioridad",
-    details: "Aquí aparecerán tus estadísticas de prioridad...",
+    titleKey: "dashboard.cards.tasksByPriority",
+    descriptionKey: "dashboard.cards.tasksByPriorityDesc",
     chart: true,
     chartType: "pie",
     span: "md:col-span-2 lg:col-span-1 row-span-2",
   },
-  // {
-  //   icon: "IconTask",
-  //   title: "Más Tareas",
-  //   description: "Historial de tareas",
-  //   details: "Aquí aparecerán tus tareas más recientes...",
-  //   span: "md:col-span-2 lg:col-span-1 row-span-2",
-  // },
   {
     icon: "IconChartPie",
-    title: "Tareas Por Estado",
-    description: "Distribución por estado",
-    details: "Aquí aparecerán tus estadísticas de estado...",
+    titleKey: "dashboard.cards.tasksByStatus",
+    descriptionKey: "dashboard.cards.tasksByStatusDesc",
     chart: true,
     chartType: "pie",
     span: "md:col-span-2 lg:col-span-1 row-span-2",

@@ -9,38 +9,40 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useTranslation } from "react-i18next";
 import type { NotificationType } from "@/types/notification";
 import { Bell, Circle } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type NotificationTab = "GENERAL" | "MENTION" | "INBOX" | "FILE";
 
-const TAB_LABELS: Record<NotificationTab, string> = {
-  GENERAL: "General",
-  MENTION: "Menciones",
-  INBOX: "Buzón",
-  FILE: "Archivos",
-};
-
 /**
  * Formatear fecha relativa (ej: "Hace 2 horas")
  */
-function formatRelativeTime(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
+function useFormatRelativeTime() {
+  const { t } = useTranslation();
 
-  if (diffMins < 1) return "Ahora mismo";
-  if (diffMins < 60) return `Hace ${diffMins} min`;
-  if (diffHours < 24) return `Hace ${diffHours} horas`;
-  if (diffDays < 7) return `Hace ${diffDays} días`;
-  return date.toLocaleDateString();
+  return (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return t("notifications.timeAgo.now");
+    if (diffMins < 60)
+      return t("notifications.timeAgo.minutes", { count: diffMins });
+    if (diffHours < 24)
+      return t("notifications.timeAgo.hours", { count: diffHours });
+    if (diffDays < 7)
+      return t("notifications.timeAgo.days", { count: diffDays });
+    return date.toLocaleDateString();
+  };
 }
 
 export function NotificationBell() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<NotificationTab>("GENERAL");
   const {
@@ -51,7 +53,15 @@ export function NotificationBell() {
     getNotificationsByType,
   } = useNotifications();
 
+  const formatRelativeTime = useFormatRelativeTime();
   const hasUnread = unreadCount > 0;
+
+  const TAB_LABELS: Record<NotificationTab, string> = {
+    GENERAL: t("notifications.tabs.GENERAL"),
+    MENTION: t("notifications.tabs.MENTION"),
+    INBOX: t("notifications.tabs.INBOX"),
+    FILE: t("notifications.tabs.FILE"),
+  };
 
   const filteredNotifications = useMemo(
     () => getNotificationsByType(activeTab as NotificationType),
@@ -81,7 +91,7 @@ export function NotificationBell() {
           variant="ghost"
           size="icon"
           className="relative rounded-full"
-          aria-label="Abrir notificaciones"
+          aria-label={t("notifications.openNotifications")}
         >
           <Bell className="h-5 w-5" />
           {hasUnread && (
@@ -97,11 +107,13 @@ export function NotificationBell() {
           {/* Cabecera */}
           <div className="flex items-center justify-between border-b px-4 py-3">
             <div className="flex flex-col">
-              <span className="text-sm font-semibold">Notificaciones</span>
+              <span className="text-sm font-semibold">
+                {t("notifications.title")}
+              </span>
               <span className="text-xs text-muted-foreground">
                 {unreadCount > 0
-                  ? `${unreadCount} sin leer`
-                  : "Todo al día por ahora"}
+                  ? t("notifications.unread", { count: unreadCount })
+                  : t("notifications.allCaughtUp")}
               </span>
             </div>
             {hasUnread && (
@@ -111,7 +123,7 @@ export function NotificationBell() {
                 className="text-xs"
                 onClick={handleMarkAllRead}
               >
-                Marcar todo como leído
+                {t("notifications.markAllRead")}
               </Button>
             )}
           </div>
@@ -142,11 +154,11 @@ export function NotificationBell() {
           <div className="max-h-80 space-y-1 overflow-y-auto px-2 py-2">
             {loading ? (
               <div className="px-3 py-6 text-center text-xs text-muted-foreground">
-                Cargando notificaciones...
+                {t("notifications.loading")}
               </div>
             ) : filteredNotifications.length === 0 ? (
               <div className="px-3 py-6 text-center text-xs text-muted-foreground">
-                No hay notificaciones en esta pestaña.
+                {t("notifications.noNotifications")}
               </div>
             ) : (
               filteredNotifications.map((notification) => (
@@ -204,10 +216,10 @@ export function NotificationBell() {
           {/* Pie del popup */}
           <div className="flex items-center justify-between px-4 py-2.5">
             <span className="text-[11px] text-muted-foreground">
-              Centro de actividad de TaskGrid
+              {t("notifications.activityCenter")}
             </span>
             <Button variant="ghost" size="sm" className="text-xs">
-              Ver todas
+              {t("notifications.viewAll")}
             </Button>
           </div>
         </Card>

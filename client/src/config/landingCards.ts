@@ -7,38 +7,33 @@
 export const landingCards = [
   {
     icon: "IconClipboard",
-    title: "Gestión de tareas inteligente",
-    description: "Crea, organiza y prioriza tareas con facilidad",
-    details:
-      "Listas, subtareas, fechas de entrega y prioridades en una vista clara. Completa tareas más rápido con acciones rápidas y plantillas reutilizables.",
+    title: "landing.features.taskManagement.title",
+    description: "landing.features.taskManagement.description",
+    details: "landing.features.taskManagement.details",
     span: "md:col-span-2 lg:col-span-2",
   },
   {
     icon: "IconBell",
-    title: "Notificaciones inteligentes",
-    description: "Recordatorios configurables y alertas oportunas",
-    details:
-      "Recibe avisos por plazos, recordatorios recurrentes y notificaciones push o por correo. Configura la frecuencia y silencia en momentos de concentración.",
+    title: "landing.features.notifications.title",
+    description: "landing.features.notifications.description",
+    details: "landing.features.notifications.details",
   },
   {
     icon: "IconFolder",
-    title: "Proyectos y categorías",
-    description: "Organiza tu trabajo por proyectos y equipos",
-    details:
-      "Agrupa tareas por proyecto, usa carpetas y etiquetas personalizadas. Comparte vistas y permisos para colaborar sin perder el control.",
+    title: "landing.features.projects.title",
+    description: "landing.features.projects.description",
+    details: "landing.features.projects.details",
   },
   {
     icon: "IconPalette",
-    title: "Personalización y accesibilidad",
-    description: "Temas, modos y vistas adaptadas a tu flujo",
-    details:
-      "Soporte para modo claro/oscuro, ajustes de densidad y esquemas de color. Personaliza atajos y la disposición para adaptar la app a tu forma de trabajar.",
+    title: "landing.features.customization.title",
+    description: "landing.features.customization.description",
+    details: "landing.features.customization.details",
   },
   {
     icon: "IconUsers",
-    title: "Colaboración en equipo",
-    description: "Asignación, comentarios y seguimiento de actividad",
-    details:
-      "Trabaja en equipo con asignaciones, menciones y un feed de actividad centralizado.",
+    title: "landing.features.collaboration.title",
+    description: "landing.features.collaboration.description",
+    details: "landing.features.collaboration.details",
   },
 ];

@@ -2,6 +2,7 @@ import Logo from "@/assets/Logo";
 import DropdownMenuWithIcon from "@/components/customized/dropdown-menu/dropdown-menu-02";
 import NavigationMenuWithActiveItem from "@/components/customized/navigation-menu/navigation-menu-05";
 import ThemeToggle from "@/components/themeToggle";
+import LanguageSelector from "@/components/languageSelector";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
@@ -17,8 +18,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function AppMenubar() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, isAuthenticated, signOut } = useAuth();
   const { theme } = useTheme();
@@ -38,7 +41,7 @@ export default function AppMenubar() {
         <div className="flex items-center justify-between gap-6 w-full">
           <Link to="/" className="flex items-center gap-2">
             <Logo fill={logoFill} width={32} height={32} className="h-8 w-8" />
-            <span className="text-lg font-semibold">TaskGrid</span>
+            <span className="text-lg font-semibold">{t("app.name")}</span>
           </Link>
 
           <div className="hidden md:block">
@@ -79,7 +82,7 @@ export default function AppMenubar() {
                     </SheetTrigger>
                     <SheetContent side="right">
                       <SheetHeader>
-                        <SheetTitle>Menú</SheetTitle>
+                        <SheetTitle>{t("nav.menu")}</SheetTitle>
                       </SheetHeader>
                       <div className="flex flex-col gap-4 mt-6">
                         <div className="flex items-center gap-3 p-3 rounded-lg">
@@ -107,7 +110,7 @@ export default function AppMenubar() {
                                 navigate(item.href);
                                 setMobileMenuOpen(false);
                               }}
-                              text={item.title}
+                              text={t(item.title)}
                             />
                           ))}
                           <div className="border-t pt-4 flex flex-col gap-2">
@@ -119,14 +122,14 @@ export default function AppMenubar() {
                                 navigate("/settings");
                                 setMobileMenuOpen(false);
                               }}
-                              text="Configuración"
+                              text={t("nav.settings")}
                             />
                             <Button
                               variant="ghost"
                               className="justify-start text-destructive"
                               leftIcon="IconLogout"
                               onClick={handleLogout}
-                              text="Cerrar sesión"
+                              text={t("auth.logout")}
                             />
                           </div>
                         </div>
@@ -136,6 +139,7 @@ export default function AppMenubar() {
                 </div>
               </>
             )}
+            {!isAuthenticated && <LanguageSelector variant="button" />}
             <ThemeToggle />
           </div>
         </div>

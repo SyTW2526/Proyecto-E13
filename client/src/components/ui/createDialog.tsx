@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useTranslation } from "react-i18next";
 
 interface CreateDialogProps {
   trigger?: ReactNode;
@@ -27,11 +28,12 @@ export function CreateDialog({
   description,
   onSubmit,
   submitLabel,
-  cancelLabel = "Cancelar",
+  cancelLabel,
   children,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
 }: CreateDialogProps) {
+  const { t } = useTranslation();
   const [internalOpen, setInternalOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
@@ -67,7 +69,7 @@ export function CreateDialog({
               onClick={() => setOpen(false)}
               className="w-full sm:w-auto"
             >
-              {cancelLabel}
+              {cancelLabel || t("common.cancel")}
             </Button>
             <Button type="submit" className="w-full sm:flex-1">
               {submitLabel}

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useLists } from "@/hooks/useLists";
-import { taskFormLabels } from "@/config/taskConfig";
+import { useTranslation } from "react-i18next";
 import type { List } from "@/types/tasks-system/list";
 
 // Props para modo controlado (usado como diálogo anidado)
@@ -27,6 +27,7 @@ interface StandaloneProps {
 type CreateListDialogUnifiedProps = ControlledProps | StandaloneProps;
 
 function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({ name: "", description: "" });
   const { createList } = useLists();
 
@@ -70,14 +71,11 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
     <>
       <div className="space-y-2">
         <Label htmlFor="listName">
-          {taskFormLabels.fields.listName.label}{" "}
-          {taskFormLabels.fields.listName.required && (
-            <span className="text-red-500">*</span>
-          )}
+          {t("lists.fields.name.label")} <span className="text-red-500">*</span>
         </Label>
         <Input
           id="listName"
-          placeholder={taskFormLabels.fields.listName.placeholder}
+          placeholder={t("lists.fields.name.placeholder")}
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           required
@@ -86,11 +84,11 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
 
       <div className="space-y-2">
         <Label htmlFor="listDescription">
-          {taskFormLabels.fields.listDescription.label}
+          {t("lists.fields.description.label")}
         </Label>
         <Textarea
           id="listDescription"
-          placeholder={taskFormLabels.fields.listDescription.placeholder}
+          placeholder={t("lists.fields.description.placeholder")}
           value={formData.description}
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
@@ -107,11 +105,11 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
       <FormDialog
         open={props.open}
         onOpenChange={props.onOpenChange}
-        title={taskFormLabels.createList.title}
-        description={taskFormLabels.createList.description}
+        title={t("lists.create.title")}
+        description={t("lists.create.description")}
         onSubmit={handleControlledSubmit}
-        submitLabel={taskFormLabels.createList.submitButton}
-        cancelLabel={taskFormLabels.createList.cancelButton}
+        submitLabel={t("lists.create.submit")}
+        cancelLabel={t("lists.create.cancel")}
         className="max-h-[85vh] sm:max-h-[90vh]"
       >
         {formFields}
@@ -123,11 +121,11 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
   return (
     <CreateDialog
       trigger={props.trigger}
-      title={taskFormLabels.createList.title}
-      description={taskFormLabels.createList.description}
+      title={t("lists.create.title")}
+      description={t("lists.create.description")}
       onSubmit={handleStandaloneSubmit}
-      submitLabel={taskFormLabels.createList.submitButton}
-      cancelLabel={taskFormLabels.createList.cancelButton}
+      submitLabel={t("lists.create.submit")}
+      cancelLabel={t("lists.create.cancel")}
     >
       {formFields}
     </CreateDialog>

@@ -13,16 +13,18 @@ import {
 } from "@/components/ui/card";
 import { Mail, ExternalLink } from "lucide-react";
 import { team } from "@/config/team";
+import { useTranslation } from "react-i18next";
 
 export default function ContactsPage() {
+  const { t } = useTranslation();
   return (
     <div className="mx-auto w-full max-w-6xl px-4">
       <header className="mb-6 text-center">
         <h1 className="text-3xl font-semibold tracking-tight">
-          Nuestro equipo
+          {t("contacts.title")}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Contacto directo del equipo de TaskGrid.
+          {t("contacts.subtitle")}
         </p>
       </header>
 
@@ -35,7 +37,7 @@ export default function ContactsPage() {
               >
                 <img
                   src={member.avatarUrl}
-                  alt={`Avatar de ${member.name}`}
+                  alt={t("contacts.avatarAlt", { name: member.name })}
                   width={96}
                   height={96}
                   loading="lazy"
@@ -47,21 +49,19 @@ export default function ContactsPage() {
                 target="_blank"
                 rel="noreferrer"
                 className="mt-2 underline-offset-4 hover:underline"
-                aria-label={`Perfil ULL de ${member.name}`}
+                aria-label={t("contacts.profileAria", { name: member.name })}
               >
                 <CardTitle className="text-base">{member.name}</CardTitle>
               </a>
 
-              <CardDescription>
-                Estudiante de Ingeniería Informática
-              </CardDescription>
+              <CardDescription>{t("contacts.role")}</CardDescription>
             </CardHeader>
 
             <CardContent className="flex flex-col items-center gap-2">
               <a
                 href={`mailto:${member.email}`}
                 className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm underline-offset-4 hover:underline"
-                aria-label={`Enviar correo a ${member.name}`}
+                aria-label={t("contacts.emailAria", { name: member.name })}
               >
                 <Mail className="h-4 w-4" aria-hidden />
                 {member.email}
@@ -72,10 +72,12 @@ export default function ContactsPage() {
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm underline-offset-4 hover:underline"
-                aria-label={`Abrir perfil ULL de ${member.name}`}
+                aria-label={t("contacts.openProfileAria", {
+                  name: member.name,
+                })}
               >
                 <ExternalLink className="h-4 w-4" aria-hidden />
-                Perfil ULL
+                {t("contacts.ullProfile")}
               </a>
             </CardContent>
           </Card>

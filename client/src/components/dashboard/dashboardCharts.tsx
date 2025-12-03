@@ -6,7 +6,7 @@ import {
   ChartLegendContent,
 } from "@/components/ui/chart";
 import { Bar, BarChart, Pie, PieChart, Cell, XAxis, YAxis } from "recharts";
-import { dashboardConfig } from "@/config/dashboardConfig";
+import { useTranslation } from "react-i18next";
 
 // Constante para el radio de las barras
 const BAR_RADIUS = 8;
@@ -21,11 +21,13 @@ interface PriorityChartProps {
 }
 
 export function PriorityChart({ data, config }: PriorityChartProps) {
+  const { t } = useTranslation();
+
   if (data.length === 0) {
     return (
       <div className="h-[250px] w-full flex items-center justify-center">
         <p className="text-sm text-muted-foreground">
-          {dashboardConfig.noTasks}
+          {t("dashboard.noTasks")}
         </p>
       </div>
     );
@@ -216,6 +218,7 @@ interface ProgressChartProps {
 }
 
 export function ProgressChart({ data, config }: ProgressChartProps) {
+  const { t } = useTranslation();
   const totalTasks = data.reduce(
     (sum, item) => sum + (item.count as number),
     0,
@@ -225,7 +228,7 @@ export function ProgressChart({ data, config }: ProgressChartProps) {
     return (
       <div className="h-[250px] w-full flex items-center justify-center">
         <p className="text-sm text-muted-foreground">
-          {dashboardConfig.noTasks}
+          {t("dashboard.noTasks")}
         </p>
       </div>
     );
