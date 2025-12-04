@@ -41,10 +41,10 @@ export const TaskCard = memo(function TaskCard({
   const { toggleFavorite, removeTask, editTask } = useTasks();
 
   return (
-    <Card className="group relative flex flex-col shadow-none border border-border bg-card hover:shadow-sm transition-all duration-200 overflow-hidden rounded-xl">
-      <CardContent className="flex flex-col gap-4 w-full">
+    <Card id={task.id} className="py-0 group relative flex flex-col shadow-none border border-border bg-card hover:shadow-sm transition-all duration-200 overflow-hidden rounded-xl">
+      <CardContent className="flex flex-col gap-4 w-full p-4 sm:p-6">
         {/* Top Section: Actions (Left) and Status/Priority/Favorite (Right) */}
-        <div className="flex justify-between items-center w-full">
+        <div className="flex flex-wrap justify-between items-center sm:items-center w-full gap-2 sm:gap-0">
           {/* Actions Menu (Left) */}
           <ItemActionsMenu
             onShare={() => setShareDialogOpen(true)}
@@ -53,7 +53,7 @@ export const TaskCard = memo(function TaskCard({
             align="start"
           />
 
-          <div className="flex items-center gap-1">
+          <div className="flex flex-row flex-wrap justify-end items-center gap-1 sm:gap-1">
             {/* Status Filter */}
             <TaskStatusFilter
               variant="compact"
@@ -82,7 +82,7 @@ export const TaskCard = memo(function TaskCard({
             <Checkbox
               checked={task.favorite}
               onCheckedChange={() => toggleFavorite(task.id)}
-              className="ml-2 cursor-pointer hover:scale-110 transition-transform duration-200"
+              className="ml-2 sm:ml-2 cursor-pointer hover:scale-110 transition-transform duration-200"
               icon={
                 <Icon
                   as="IconStar"
@@ -103,33 +103,37 @@ export const TaskCard = memo(function TaskCard({
 
         {/* Left Section: Title & Description */}
         <div className="flex-1 flex flex-col justify-center text-left">
-          <h3 className="text-base font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors">
+          <h3 className="text-base sm:text-base md:text-lg font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors break-words">
             {task.name}
           </h3>
 
           {/* Dates */}
-          <div className="flex flex-row gap-1.5 mt-1">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <div className="flex flex-col xs:flex-row gap-1.5 mt-1">
+            <div className="flex items-center gap-1.5 text-xs sm:text-xs md:text-sm text-muted-foreground">
               <Icon
                 as="IconCalendarPlus"
                 size={14}
                 className="text-muted-foreground shrink-0"
               />
-              <span>{formatDate(task.createdAt)}</span>
+              <span className="truncate max-w-[120px] sm:max-w-none">
+                {formatDate(task.createdAt)}
+              </span>
             </div>
             {task.dueDate && (
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5 text-xs sm:text-xs md:text-sm text-muted-foreground">
                 <Icon
                   as="IconCalendarEvent"
                   size={14}
                   className="text-muted-foreground shrink-0"
                 />
-                <span>{task.dueDate ? formatDate(task.dueDate) : "-"}</span>
+                <span className="truncate max-w-[120px] sm:max-w-none">
+                  {task.dueDate ? formatDate(task.dueDate) : "-"}
+                </span>
               </div>
             )}
           </div>
           {task.description && (
-            <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+            <p className="mt-1.5 text-sm sm:text-sm md:text-base text-muted-foreground line-clamp-2 leading-relaxed break-words">
               {task.description}
             </p>
           )}

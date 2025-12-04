@@ -24,10 +24,10 @@ export default function App() {
   );
 
   return (
-    <div className="flex min-h-screen flex-col bg-linear-to-br from-background via-background to-muted/30">
+    <div className="flex min-h-screen flex-col bg-linear-to-br from-background via-background to-muted/30 px-4 sm:px-6 md:px-8">
       <AppMenubar />
 
-      <main className="flex-1 flex overflow-auto py-10 items-center">
+      <main className="flex-1 w-full py-4 sm:py-8 md:py-10 mt-10 md:mt-16">
         <Routes>
           <Route path="/" element={publicRoute(LandingPage)} />
           <Route path="/login" element={publicRoute(LoginPage)} />

@@ -38,7 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUI } from "@/hooks/useUI";
-import { SidebarWidth, TaskCardSize } from "@/store/slices/uiSlice";
+import { SidebarWidth } from "@/store/slices/uiSlice";
 
 export default function SettingsPage() {
   const { t, i18n } = useTranslation();
@@ -66,8 +66,7 @@ export default function SettingsPage() {
     deleteAccountMsg,
   } = useSettings();
 
-  const { sidebarWidth, setSidebarWidth, taskCardSize, setTaskCardSize } =
-    useUI();
+  const { sidebarWidth, setSidebarWidth } = useUI();
 
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
@@ -308,40 +307,6 @@ export default function SettingsPage() {
                   </SelectItem>
                   <SelectItem value="wide">
                     {t("settings.preferences.wide")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">
-                  {t("settings.preferences.cardSize")}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {t("settings.preferences.cardSizeDescription")}
-                </div>
-              </div>
-              <Select
-                value={taskCardSize.toString()}
-                onValueChange={(value) =>
-                  setTaskCardSize(parseInt(value) as TaskCardSize)
-                }
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue
-                    placeholder={t("settings.preferences.selectSize")}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="2">
-                    2 {t("settings.preferences.columns")}
-                  </SelectItem>
-                  <SelectItem value="3">
-                    3 {t("settings.preferences.columns")}
-                  </SelectItem>
-                  <SelectItem value="4">
-                    4 {t("settings.preferences.columns")}
                   </SelectItem>
                 </SelectContent>
               </Select>

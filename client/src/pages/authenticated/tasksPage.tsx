@@ -33,19 +33,25 @@ export default function TasksPage() {
 
   const { fetchAllTasks, isLoading } = useTasks();
   const { fetchAllLists, isLoading: isLoadingLists } = useLists();
-  const { sidebarWidth, taskCardSize } = useUI();
+  const { sidebarWidth } = useUI();
 
-  const sidebarWidthClass = {
-    compact: "lg:max-w-xs",
-    normal: "lg:max-w-md",
-    wide: "lg:max-w-xl",
+  const layoutConfig = {
+    compact: {
+      sidebar: "lg:w-64",
+      grid: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
+      skeletonCount: 8,
+    },
+    normal: {
+      sidebar: "lg:w-80",
+      grid: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3",
+      skeletonCount: 6,
+    },
+    wide: {
+      sidebar: "lg:w-96",
+      grid: "grid-cols-1 lg:grid-cols-2",
+      skeletonCount: 4,
+    },
   }[sidebarWidth];
-
-  const gridColsClass = {
-    2: "grid-cols-1 lg:grid-cols-2",
-    3: "grid-cols-1 lg:grid-cols-3",
-    4: "grid-cols-1 lg:grid-cols-4",
-  }[taskCardSize];
 
   useEffect(() => {
     fetchAllTasks();
@@ -67,9 +73,9 @@ export default function TasksPage() {
   );
 
   return (
-    <div className="max-w-(--breakpoint-2xl) mx-auto py-10 lg:py-16 px-6 xl:px-0 flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
+    <div className="container mx-auto py-8 px-4 lg:px-8 flex flex-col lg:flex-row items-start gap-8">
       <aside
-        className={`sticky top-8 shrink-0 ${sidebarWidthClass} w-full space-y-8 order-1 lg:order-2 lg:border-l lg:border-border lg:pl-12`}
+        className={`w-full shrink-0 order-1 lg:order-2 ${layoutConfig.sidebar} space-y-8`}
       >
         <FilterableList
           title={t("lists.sidebar.title")}
@@ -82,7 +88,7 @@ export default function TasksPage() {
         />
       </aside>
 
-      <div className="flex-1 order-2 lg:order-1 w-full">
+      <div className="flex-1 min-w-0 w-full order-2 lg:order-1">
         <div className="mb-6 space-y-4">
           <div className="flex flex-row items-center justify-between gap-4">
             <div>
@@ -99,36 +105,36 @@ export default function TasksPage() {
           </div>
 
           {/* Filtros */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between bg-card p-2 rounded-lg border border-border">
+          <div className="flex flex-wrap gap-4 items-center justify-between bg-card p-2 rounded-lg border border-border">
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <TaskStatusFilter
                 value={filters.status}
                 onChange={filterByStatus}
-                className="w-full sm:w-[180px]"
+                className="w-full"
               />
 
               <TaskPriorityFilter
                 value={filters.priority}
                 onChange={filterByPriority}
-                className="w-full sm:w-[180px]"
+                className="w-full"
               />
             </div>
 
-            <div className="w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
+            <div>
               <TaskSortFilter
                 sortField={sorting.field}
                 sortOrder={sorting.order}
                 onSortFieldChange={(field) => sortBy(field, sorting.order)}
                 onToggleOrder={toggleSort}
-                className="w-full sm:w-auto justify-between sm:justify-end"
+                className="w-full"
               />
             </div>
           </div>
         </div>
 
         {isLoading ? (
-          <div className={`grid ${gridColsClass} gap-6`}>
-            {[...Array(taskCardSize * 2)].map((_, i) => (
+          <div className={`grid ${layoutConfig.grid} gap-6`}>
+            {[...Array(layoutConfig.skeletonCount)].map((_, i) => (
               <div
                 key={i}
                 className="rounded-md border p-4 h-[160px] animate-pulse bg-muted/20"
@@ -144,7 +150,7 @@ export default function TasksPage() {
             <p className="text-muted-foreground">{t("tasks.emptyState")}</p>
           </div>
         ) : (
-          <div className={`grid ${gridColsClass} gap-6`}>
+          <div className={`grid ${layoutConfig.grid} gap-6`}>
             {displayTasks.map((task: Task) => {
               const list = accessibleLists.find(
                 (list) => list.id === task.listId,
