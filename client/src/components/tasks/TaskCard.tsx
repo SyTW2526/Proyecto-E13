@@ -108,7 +108,7 @@ export const TaskCard = memo(function TaskCard({
           </h3>
 
           {/* Dates */}
-          <div className="flex flex-col xs:flex-row gap-1.5 mt-1">
+          <div className="flex flex-wrap gap-1.5 mt-1">
             <div className="flex items-center gap-1.5 text-xs sm:text-xs md:text-sm text-muted-foreground">
               <Icon
                 as="IconCalendarPlus"

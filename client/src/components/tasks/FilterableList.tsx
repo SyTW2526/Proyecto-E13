@@ -32,6 +32,7 @@ interface FilterableListProps {
   emptyMessage: string;
   icon: string;
   isLoading?: boolean;
+  showAddButton?: boolean;
 }
 
 export function FilterableList({
@@ -42,6 +43,7 @@ export function FilterableList({
   emptyMessage,
   icon,
   isLoading,
+  showAddButton = true,
 }: FilterableListProps) {
   const { t } = useTranslation();
   const { lists, removeList, isOwner } = useLists();
@@ -100,19 +102,21 @@ export function FilterableList({
 
       <div className="flex flex-row items-center justify-between gap-4">
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
-        <div className="flex gap-2">
-          {/* Boton de crear listas */}
-          <CreateListDialogStandalone>
-            <Button leftIcon="IconList" />
-          </CreateListDialogStandalone>
-        </div>
+        {showAddButton && (
+          <div className="flex gap-2">
+            {/* Boton de crear listas */}
+            <CreateListDialogStandalone>
+              <Button leftIcon="IconList" />
+            </CreateListDialogStandalone>
+          </div>
+        )}
       </div>
       <div className="mt-4 flex flex-col gap-4 sm:gap-2 mx-auto">
         {isLoading ? (
           [...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="flex items-center gap-2 p-3 rounded-md border h-[52px] animate-pulse bg-muted"
+              className="flex items-center gap-2 p-3 rounded-md border animate-pulse bg-muted"
             >
               <div className="h-5 w-5 bg-muted rounded-full" />
               <div className="h-4 w-2/3 bg-muted rounded" />
