@@ -30,7 +30,7 @@ export const priorityConfig = {
 export const statusConfig = {
   PENDING: {
     color:
-      "bg-gray-500/10 text-gray-600 dark:text-gray-400 [&_svg]:stroke-gray-600 dark:[&_svg]:stroke-gray-400",
+      "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 [&_svg]:stroke-yellow-600 dark:[&_svg]:stroke-yellow-400",
     label: "Pendiente",
   },
   IN_PROGRESS: {

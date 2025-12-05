@@ -1,7 +1,20 @@
 import { SharePermission } from "../permissions";
 
 export type TaskStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED";
+
+export const TaskStatusColors: Record<TaskStatus, string> = {
+  PENDING: "#FFA500",       // Orange
+  IN_PROGRESS: "#007BFF",   // Blue
+  COMPLETED: "#28A745",     // Green
+};
 export type TaskPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
+
+export const TaskPriorityColors: Record<TaskPriority, string> = {
+  LOW: "#6B7280",      // Gray
+  MEDIUM: "#3B82F6",   // Blue
+  HIGH: "#F59E0B",     // Yellow
+  URGENT: "#DC2626",   // Red
+};
 
 export interface Task {
   id: string;

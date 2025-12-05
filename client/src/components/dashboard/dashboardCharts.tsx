@@ -189,7 +189,7 @@ export function WeeklyTasksChart({ data, config }: WeeklyTasksChartProps) {
         <Bar
           dataKey="pending"
           stackId="a"
-          fill={config.pending?.color || "#6b7280"}
+          fill={config.pending?.color || "#f59e0b"}
           shape={<CustomBar dataKey="pending" />}
           maxBarSize={60}
         />

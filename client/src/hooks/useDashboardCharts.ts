@@ -2,6 +2,11 @@ import { useMemo } from "react";
 import { priorityConfig } from "@/config/taskConfig";
 import type { Task } from "@/types/tasks-system/task";
 import { useTranslation } from "react-i18next";
+import { TaskStatusColors, TaskPriorityColors } from "@/types/tasks-system/task";
+
+// Usa los colores importados
+const PRIORITY_COLORS = TaskPriorityColors;
+const STATUS_COLORS = TaskStatusColors;
 
 // Helper para obtener inicio de semana
 function getStartOfWeek(): Date {
@@ -19,20 +24,6 @@ function parseDate(value?: string): Date | null {
   const d = new Date(value);
   return Number.isNaN(d.getTime()) ? null : d;
 }
-
-// Colores de gráficos
-const PRIORITY_COLORS = {
-  Baja: "#1d4ed8", // blue-700
-  Media: "#a16207", // yellow-700
-  Alta: "#c2410c", // orange-700
-  Urgente: "#b91c1c", // red-700
-} as const;
-
-const STATUS_COLORS = {
-  pending: "#374151", // gray-700
-  inProgress: "#1d4ed8", // blue-700
-  completed: "#15803d", // green-700
-} as const;
 
 interface UseDashboardChartsProps {
   accessibleTasks: Task[];
@@ -184,17 +175,17 @@ export function useDashboardCharts({
       {
         name: t("dashboard.statusLabels.pending"),
         value: taskStats.pending,
-        fill: STATUS_COLORS.pending,
+        fill: STATUS_COLORS.PENDING,
       },
       {
         name: t("dashboard.statusLabels.inProgress"),
         value: taskStats.inProgress,
-        fill: STATUS_COLORS.inProgress,
+        fill: STATUS_COLORS.IN_PROGRESS,
       },
       {
         name: t("dashboard.statusLabels.completed"),
         value: taskStats.completed,
-        fill: STATUS_COLORS.completed,
+        fill: STATUS_COLORS.COMPLETED,
       },
     ].filter((item) => item.value > 0);
   }, [taskStats, t]);
@@ -203,15 +194,15 @@ export function useDashboardCharts({
     () => ({
       [t("dashboard.statusLabels.pending")]: {
         label: t("dashboard.statusLabels.pending"),
-        color: STATUS_COLORS.pending,
+        color: STATUS_COLORS.PENDING,
       },
       [t("dashboard.statusLabels.inProgress")]: {
         label: t("dashboard.statusLabels.inProgress"),
-        color: STATUS_COLORS.inProgress,
+        color: STATUS_COLORS.IN_PROGRESS,
       },
       [t("dashboard.statusLabels.completed")]: {
         label: t("dashboard.statusLabels.completed"),
-        color: STATUS_COLORS.completed,
+        color: STATUS_COLORS.COMPLETED,
       },
     }),
     [t],
@@ -273,15 +264,15 @@ export function useDashboardCharts({
     () => ({
       pending: {
         label: t("dashboard.statusLabels.pending"),
-        color: STATUS_COLORS.pending,
+        color: STATUS_COLORS.PENDING,
       },
       inProgress: {
         label: t("dashboard.statusLabels.inProgress"),
-        color: STATUS_COLORS.inProgress,
+        color: STATUS_COLORS.IN_PROGRESS,
       },
       completed: {
         label: t("dashboard.statusLabels.completed"),
-        color: STATUS_COLORS.completed,
+        color: STATUS_COLORS.COMPLETED,
       },
     }),
     [t],
