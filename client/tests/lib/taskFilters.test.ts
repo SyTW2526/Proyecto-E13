@@ -18,7 +18,7 @@ import {
   groupTasksByList,
 } from "@/lib/taskFilters";
 import type { Task } from "@/types/tasks-system/task";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi, afterEach, beforeEach } from "vitest";
 
 const createTask = (overrides: Partial<Task> = {}): Task => ({
   id: "test-id",
@@ -782,6 +782,16 @@ describe("taskFilters", () => {
   });
 
   describe("getNextDueTasksThisWeek", () => {
+    beforeEach(() => {
+      // Mock date to Monday, Dec 1, 2025
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-12-01T12:00:00Z"));
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
     it("Devuelve tareas que vencen esta semana sin completar", () => {
       const in2Days = new Date();
       in2Days.setDate(in2Days.getDate() + 2);

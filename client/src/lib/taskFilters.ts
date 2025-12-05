@@ -310,19 +310,16 @@ export function getNextDueTasksThisWeek(tasks: Task[], limit?: number): Task[] {
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 7);
 
-  const filtered = tasks
+  return tasks
     .map((task) => {
       const due = parseDate(task.dueDate);
       return { task, due };
     })
     .filter((entry): entry is { task: Task; due: Date } => entry.due !== null)
-    .filter(({ due, task }) => {
-      // Solo tareas no completadas que vencen desde ahora hasta el final de la semana
-      return task.status !== "COMPLETED" && due >= now && due < weekEnd;
-    })
-    .sort((a, b) => a.due.getTime() - b.due.getTime());
-
-  return limit
-    ? filtered.slice(0, limit).map(({ task }) => task)
-    : filtered.map(({ task }) => task);
+    .filter(({ due, task }) =>
+      task.status !== "COMPLETED" && due >= now && due < weekEnd
+    )
+    .sort((a, b) => a.due.getTime() - b.due.getTime())
+    .slice(0, limit ?? tasks.length)
+    .map(({ task }) => task);
 }
