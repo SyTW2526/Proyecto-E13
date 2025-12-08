@@ -66,6 +66,7 @@ const initialState: TasksState = {
     listId: null,
     search: "",
     priority: "all",
+    favorite: "all",
   },
   sorting: { field: "createdAt", order: "desc" },
 };
