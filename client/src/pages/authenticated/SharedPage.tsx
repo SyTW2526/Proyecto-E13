@@ -6,6 +6,8 @@ import { SharedTaskCard } from "@/components/tasks/SharedTaskCard";
 import { useTranslation } from "react-i18next";
 import { TasksPageLayout } from "@/components/tasks/TasksPageLayout";
 import type { Task } from "@/types/tasks-system/task";
+import { Button } from "@/components/ui/button";
+import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
 
 export default function SharedPage() {
   const { t, i18n } = useTranslation();
@@ -17,6 +19,7 @@ export default function SharedPage() {
     accessibleLists,
     filterByStatus,
     filterByPriority,
+    filterByFavorite,
     filters,
     sortBy,
     toggleSort,
@@ -48,6 +51,11 @@ export default function SharedPage() {
   return (
     <TasksPageLayout
       title={t("shared.title")}
+      headerActions={
+        <CreateTaskDialog filterByEditPermission={true} showCreateList={false}>
+          <Button leftIcon="IconTask" />
+        </CreateTaskDialog>
+      }
       sidebarTitle={t("shared.listsTitle")}
       sidebarActions={false}
       sidebarItems={listTaskCounts}
@@ -58,6 +66,7 @@ export default function SharedPage() {
       filters={filters}
       onStatusChange={filterByStatus}
       onPriorityChange={filterByPriority}
+      showFavoriteToggle={false}
       sorting={sorting}
       onSortChange={(field) => sortBy(field, sorting.order)}
       onToggleSort={toggleSort}

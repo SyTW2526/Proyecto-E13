@@ -4,7 +4,6 @@ import request from "supertest";
 
 // Mock all dependencies before importing routes
 vi.mock("../src/controllers/usersController", () => ({
-  getProfile: vi.fn((req, res) => res.status(200).json({ message: "Profile" })),
   deleteAccount: vi.fn((req, res) =>
     res.status(200).json({ message: "Deleted" }),
   ),
@@ -41,18 +40,6 @@ describe("Users Routes", () => {
     app = express();
     app.use(express.json());
     app.use("/users", usersRoutes);
-  });
-
-  describe("GET /users/me", () => {
-    it("should call getProfile controller with authentication", async () => {
-      const response = await request(app)
-        .get("/users/me")
-        .set("Authorization", "Bearer token");
-
-      expect(authMiddleware.authenticate).toHaveBeenCalled();
-      expect(usersController.getProfile).toHaveBeenCalled();
-      expect(response.status).toBe(200);
-    });
   });
 
   describe("DELETE /users/me", () => {

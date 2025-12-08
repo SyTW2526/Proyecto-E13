@@ -19,6 +19,7 @@ const initialState: TasksState = {
     listId: null,
     search: "",
     priority: "all",
+    favorite: "all",
   },
   sorting: {
     field: "createdAt",
@@ -200,12 +201,16 @@ const tasksSlice = createSlice({
     setPriorityFilter: (state, action: PayloadAction<"all" | TaskPriority>) => {
       state.filters.priority = action.payload;
     },
+    setFavoriteFilter: (state, action: PayloadAction<"all" | "yes" | "no">) => {
+      state.filters.favorite = action.payload;
+    },
     clearFilters: (state) => {
       state.filters = {
         status: "all",
         listId: null,
         search: "",
         priority: "all",
+        favorite: "all",
       };
     },
     setSorting: (
@@ -419,6 +424,7 @@ export const {
   setListFilter,
   setSearchFilter,
   setPriorityFilter,
+  setFavoriteFilter,
   clearFilters,
   setSorting,
   toggleSortOrder,
@@ -474,6 +480,12 @@ export const selectFilteredTasks = (state: { tasks: TasksState }) => {
       (task) =>
         task.name.toLowerCase().includes(searchLower) ||
         task.description?.toLowerCase().includes(searchLower),
+    );
+  }
+
+  if (filters.favorite !== "all") {
+    filtered = filtered.filter((task) =>
+      filters.favorite === "yes" ? task.favorite : !task.favorite,
     );
   }
 

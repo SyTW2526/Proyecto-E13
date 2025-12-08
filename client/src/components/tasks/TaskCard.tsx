@@ -10,6 +10,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import Icon from "@/components/ui/icon";
 import { Checkbox } from "@/components/customized/checkbox/checkbox-09";
 import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
@@ -38,10 +47,15 @@ export const TaskCard = memo(function TaskCard({
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const { toggleFavorite, removeTask, editTask } = useTasks();
 
   return (
-    <Card id={task.id} className="py-0 group relative flex flex-col shadow-none border border-border bg-card hover:shadow-sm transition-all duration-200 overflow-hidden rounded-xl">
+    <Card
+      id={task.id}
+      className="py-0 group relative flex flex-col shadow-none border border-border bg-card hover:shadow-sm transition-all duration-200 overflow-hidden rounded-xl"
+    >
       <CardContent className="flex flex-col gap-4 w-full p-4 sm:p-6">
         {/* Top Section: Actions (Left) and Status/Priority/Favorite (Right) */}
         <div className="flex flex-wrap justify-between items-center sm:items-center w-full gap-2 sm:gap-0">
@@ -172,9 +186,15 @@ export const TaskCard = memo(function TaskCard({
             </Button>
             <Button
               variant="destructive"
-              onClick={() => {
-                removeTask(task.id);
-                setDeleteDialogOpen(false);
+              onClick={async () => {
+                try {
+                  await removeTask(task.id).unwrap();
+                  setDeleteDialogOpen(false);
+                } catch (err) {
+                  setErrorMessage(err as string);
+                  setErrorDialogOpen(true);
+                  setDeleteDialogOpen(false);
+                }
               }}
             >
               {t("tasks.delete.confirm")}
@@ -182,6 +202,23 @@ export const TaskCard = memo(function TaskCard({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Error Alert Dialog */}
+      <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t("share.errors.actionNotAllowed")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>
+              {t("share.errors.understood")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 });

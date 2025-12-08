@@ -29,6 +29,7 @@ import {
   setError,
   setLoading,
   setPriorityFilter,
+  setFavoriteFilter,
   setSearchFilter,
   setSelectedTask,
   setSorting,
@@ -113,6 +114,8 @@ export function useTasks(listId?: string) {
   const filterBySearch = (search: string) => dispatch(setSearchFilter(search));
   const filterByPriority = (priority: "all" | TaskPriority) =>
     dispatch(setPriorityFilter(priority));
+  const filterByFavorite = (favorite: "all" | "yes" | "no") =>
+    dispatch(setFavoriteFilter(favorite));
   const resetFilters = () => dispatch(clearFilters());
   const sortBy = (
     field: "name" | "dueDate" | "priority" | "createdAt" | "updatedAt",
@@ -169,6 +172,7 @@ export function useTasks(listId?: string) {
     filterByList,
     filterBySearch,
     filterByPriority,
+    filterByFavorite,
     resetFilters,
     sortBy,
     toggleSort,

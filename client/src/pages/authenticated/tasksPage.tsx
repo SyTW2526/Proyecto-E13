@@ -19,6 +19,7 @@ export default function TasksPage() {
     accessibleLists,
     filterByStatus,
     filterByPriority,
+    filterByFavorite,
     filters,
     sortBy,
     toggleSort,
@@ -65,6 +66,9 @@ export default function TasksPage() {
       filters={filters}
       onStatusChange={filterByStatus}
       onPriorityChange={filterByPriority}
+      onFavoriteToggle={() =>
+        filterByFavorite(filters.favorite === "yes" ? "all" : "yes")
+      }
       sorting={sorting}
       onSortChange={(field) => sortBy(field, sorting.order)}
       onToggleSort={toggleSort}

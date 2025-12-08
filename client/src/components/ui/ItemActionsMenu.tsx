@@ -13,6 +13,7 @@ interface ItemActionsMenuProps {
   onEdit?: () => void;
   onShare?: () => void;
   onDelete?: () => void;
+  onUnshare?: () => void;
   align?: "start" | "end" | "center";
 }
 
@@ -20,9 +21,15 @@ export function ItemActionsMenu({
   onEdit,
   onShare,
   onDelete,
+  onUnshare,
   align = "start",
 }: ItemActionsMenuProps) {
   const { t } = useTranslation();
+
+  if (!onEdit && !onShare && !onDelete && !onUnshare) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -41,7 +48,23 @@ export function ItemActionsMenu({
             {t("common.edit")}
           </DropdownMenuItem>
         )}
-        {(onShare || onEdit) && onDelete && <DropdownMenuSeparator />}
+        {(onShare || onEdit || onUnshare) && onDelete && (
+          <DropdownMenuSeparator />
+        )}
+        {onUnshare && (
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={onUnshare}
+            className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-100 dark:focus:bg-red-900/20"
+          >
+            <Icon
+              as="IconTrash"
+              ariaLabel={t("common.leave")}
+              className="bg-red-500/10 text-red-600 dark:text-red-400 [&_svg]:stroke-red-600 dark:[&_svg]:stroke-red-400"
+            />
+            {t("common.leave")}
+          </DropdownMenuItem>
+        )}
         {onDelete && (
           <DropdownMenuItem variant="destructive" onClick={onDelete}>
             <Icon
