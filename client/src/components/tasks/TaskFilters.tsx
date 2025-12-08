@@ -149,6 +149,33 @@ export function TaskPriorityFilter(props: FilterProps<TaskPriority>) {
   );
 }
 
+// Favorite Toggle Button
+interface TaskFavoriteToggleProps {
+  active: boolean;
+  onToggle: () => void;
+  className?: string;
+}
+
+export function TaskFavoriteToggle({
+  active,
+  onToggle,
+  className = "",
+}: TaskFavoriteToggleProps) {
+  const { t } = useTranslation();
+
+  return (
+    <Button
+      variant={active ? "default" : "outline"}
+      onClick={onToggle}
+      title={
+        active ? t("tasks.filters.showAll") : t("tasks.filters.showFavorites")
+      }
+      leftIcon={active ? "IconStarFilled" : "IconStar"}
+      className={`${active ? "bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-500" : ""} ${className}`}
+    />
+  );
+}
+
 // Sort Filter Types
 type SortField = "name" | "dueDate" | "priority" | "createdAt" | "updatedAt";
 type SortOrder = "asc" | "desc";

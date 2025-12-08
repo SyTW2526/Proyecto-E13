@@ -181,7 +181,9 @@
       "sortOrder": {
         "asc": "Ascendente",
         "desc": "Descendente"
-      }
+      },
+      "showFavorites": "Mostrar favoritas",
+      "showAll": "Mostrar todas"
     },
     "priority": {
       "LOW": "Baja",
@@ -377,7 +379,8 @@
     "error": "Error",
     "success": "Éxito",
     "required": "Requerido",
-    "share": "Compartir"
+    "share": "Compartir",
+    "leave": "Salir"
   },
   "accessibility": {
     "close": "Cerrar"

@@ -9,6 +9,7 @@ export function useTaskFilters() {
     filterByList,
     filterByStatus,
     filterByPriority,
+    filterByFavorite,
     filters,
     sortBy,
     toggleSort,
@@ -27,6 +28,7 @@ export function useTaskFilters() {
         name: list.name,
         count: accessibleTasks.filter((task) => task.listId === list.id).length,
         description: list.description,
+        owner: list.owner,
       })),
     [accessibleLists, accessibleTasks],
   );
@@ -36,17 +38,6 @@ export function useTaskFilters() {
     return filteredTasks;
   }, [filteredTasks]);
 
-  // Contar listas (esto parece redundante, revisar si se usa)
-  const listListCounts = useMemo(
-    () =>
-      accessibleLists.map((list) => ({
-        id: list.id,
-        name: list.name,
-        count: accessibleLists.filter((list) => list.id === list.id).length,
-      })),
-    [accessibleLists, accessibleLists],
-  );
-
   const handleListFilter = (listId: string | null) => {
     filterByList(listId);
   };
@@ -54,11 +45,11 @@ export function useTaskFilters() {
   return {
     displayTasks,
     listTaskCounts,
-    listListCounts,
     selectedListId,
     handleListFilter,
     filterByStatus,
     filterByPriority,
+    filterByFavorite,
     filters,
     sortBy,
     toggleSort,

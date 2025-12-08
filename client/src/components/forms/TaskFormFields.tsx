@@ -21,7 +21,8 @@ interface TaskFormFieldsProps {
   };
   updateField: (field: string, value: string) => void;
   accessibleLists: List[];
-  onCreateList: () => void;
+  onCreateList?: () => void;
+  showCreateList?: boolean;
 }
 
 export function TaskFormFields({
@@ -29,6 +30,7 @@ export function TaskFormFields({
   updateField,
   accessibleLists,
   onCreateList,
+  showCreateList = true,
 }: TaskFormFieldsProps) {
   const { t } = useTranslation();
 
@@ -59,7 +61,7 @@ export function TaskFormFields({
             items={accessibleLists}
             value={formData.listId}
             onValueChange={(listId) => updateField("listId", listId)}
-            onCreateNew={onCreateList}
+            onCreateNew={showCreateList ? onCreateList : undefined}
             placeholder={t("tasks.fields.list.placeholder")}
             searchPlaceholder={t("tasks.fields.list.searchPlaceholder")}
             emptyMessage={t("tasks.fields.list.emptyMessage")}

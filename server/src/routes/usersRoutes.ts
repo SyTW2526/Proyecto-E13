@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  getProfile,
   deleteAccount,
   updateProfile,
 } from "../controllers/usersController";
@@ -10,7 +9,6 @@ import { updateProfileSchema } from "../schemas/validationSchemas";
 
 const router = Router();
 
-router.get("/me", authenticate, getProfile);
 router.delete("/me", authenticate, deleteAccount);
 router.patch(
   "/me",

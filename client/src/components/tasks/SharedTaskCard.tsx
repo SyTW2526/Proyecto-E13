@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import { useState, memo, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -62,9 +62,10 @@ export const SharedTaskCard = memo(function SharedTaskCard({
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [unshareDialogOpen, setUnshareDialogOpen] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const { removeTask, editTask } = useTasks();
+  const { removeTask, editTask, removeShare } = useTasks();
 
   // Calculate permission
   let permission: SharePermission = "VIEW";
@@ -76,37 +77,33 @@ export const SharedTaskCard = memo(function SharedTaskCard({
   else if (listShare) permission = listShare.permission;
 
   const canEdit = permission === "EDIT" || permission === "ADMIN";
-  const canDelete = permission === "ADMIN";
-  const canShare = permission === "ADMIN";
 
   // Determine owner
   const owner = task.list?.owner || list?.owner;
+  const isOwner = owner?.id === myId;
+  const isListSharedWithMe = list?.shares?.some((s) => s.userId === myId);
+
+  // Permission checks based on backend logic:
+  // - canDelete: requires ADMIN on LIST (not task share) - backend uses requireListPermission=true
+  // - canShare: requires ADMIN on task or list
+  const listPermission = listShare?.permission;
+  const canDeleteTask = isOwner || listPermission === "ADMIN";
+  const canShareTask = isOwner || permission === "ADMIN";
 
   const handleShare = () => {
-    if (canShare) {
-      setShareDialogOpen(true);
-    } else {
-      setErrorMessage(t("share.errors.noSharePermission"));
-      setErrorDialogOpen(true);
-    }
+    setShareDialogOpen(true);
   };
 
   const handleEdit = () => {
-    if (canEdit) {
-      setEditDialogOpen(true);
-    } else {
-      setErrorMessage(t("share.errors.noEditPermission"));
-      setErrorDialogOpen(true);
-    }
+    setEditDialogOpen(true);
   };
 
   const handleDelete = () => {
-    if (canDelete) {
-      setDeleteDialogOpen(true);
-    } else {
-      setErrorMessage(t("share.errors.noDeletePermission"));
-      setErrorDialogOpen(true);
-    }
+    setDeleteDialogOpen(true);
+  };
+
+  const handleUnshare = () => {
+    setUnshareDialogOpen(true);
   };
 
   return (
@@ -117,9 +114,12 @@ export const SharedTaskCard = memo(function SharedTaskCard({
           {/* Actions Menu (Left) */}
           <div className="flex items-center gap-2">
             <ItemActionsMenu
-              onShare={handleShare}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+              onShare={canShareTask ? handleShare : undefined}
+              onEdit={canEdit ? handleEdit : undefined}
+              onDelete={canDeleteTask ? handleDelete : undefined}
+              onUnshare={
+                !isOwner && !isListSharedWithMe ? handleUnshare : undefined
+              }
               align="start"
             />
           </div>
@@ -295,12 +295,55 @@ export const SharedTaskCard = memo(function SharedTaskCard({
             </Button>
             <Button
               variant="destructive"
-              onClick={() => {
-                removeTask(task.id);
-                setDeleteDialogOpen(false);
+              onClick={async () => {
+                try {
+                  await removeTask(task.id).unwrap();
+                  setDeleteDialogOpen(false);
+                } catch (err) {
+                  setErrorMessage(err as string);
+                  setErrorDialogOpen(true);
+                  setDeleteDialogOpen(false);
+                }
               }}
             >
               {t("tasks.delete.confirm")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Unshare Confirmation Dialog */}
+      <Dialog open={unshareDialogOpen} onOpenChange={setUnshareDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("common.leave")}</DialogTitle>
+            <DialogDescription>
+              {t("share.leaveConfirmation", { name: task.name })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setUnshareDialogOpen(false)}
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (myId) {
+                  try {
+                    await removeShare(task.id, myId).unwrap();
+                    setUnshareDialogOpen(false);
+                  } catch (err) {
+                    setErrorMessage(err as string);
+                    setErrorDialogOpen(true);
+                    setUnshareDialogOpen(false);
+                  }
+                }
+              }}
+            >
+              {t("common.leave")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -63,8 +63,13 @@ describe("Sharing Controller", () => {
       // Mock finding the task
       vi.mocked(prisma.task.findUnique).mockResolvedValue({
         id: "task-1",
-        userId: "user-123",
         listId: "list-1",
+        list: {
+          id: "list-1",
+          ownerId: "user-123",
+          shares: [],
+        },
+        shares: [],
       } as any);
 
       // Mock updating the task
@@ -104,6 +109,7 @@ describe("Sharing Controller", () => {
       vi.mocked(prisma.list.findUnique).mockResolvedValue({
         id: "list-1",
         ownerId: "user-123",
+        shares: [],
       } as any);
 
       // Mock updating the list

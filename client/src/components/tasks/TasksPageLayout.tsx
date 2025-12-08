@@ -3,6 +3,7 @@ import { FilterableList } from "@/components/tasks/FilterableList";
 import {
   TaskStatusFilter,
   TaskPriorityFilter,
+  TaskFavoriteToggle,
   TaskSortFilter,
 } from "@/components/tasks/TaskFilters";
 import { useUI } from "@/hooks/useUI";
@@ -29,15 +30,22 @@ interface TasksPageLayoutProps {
   sidebarEmptyMessage: string;
 
   // Filter props
-  filters: { status: TaskStatus | "all"; priority: TaskPriority | "all" };
+  filters: {
+    status: TaskStatus | "all";
+    priority: TaskPriority | "all";
+    favorite: "all" | "yes" | "no";
+  };
   onStatusChange: (status: TaskStatus | "all") => void;
   onPriorityChange: (priority: TaskPriority | "all") => void;
+  onFavoriteToggle?: () => void;
+  showFavoriteToggle?: boolean;
   sorting: { field: SortField; order: "asc" | "desc" };
   onSortChange: (field: SortField) => void;
   onToggleSort: () => void;
 
   // Content props
   isLoadingTasks: boolean;
+  error?: string | null;
   tasks: Task[];
   renderCard: (task: Task) => ReactNode;
   emptyTasksMessage: string;
@@ -56,10 +64,13 @@ export function TasksPageLayout({
   filters,
   onStatusChange,
   onPriorityChange,
+  onFavoriteToggle,
+  showFavoriteToggle = true,
   sorting,
   onSortChange,
   onToggleSort,
   isLoadingTasks,
+  error,
   tasks,
   renderCard,
   emptyTasksMessage,
@@ -101,8 +112,6 @@ export function TasksPageLayout({
         />
       </aside>
 
-      
-
       <div className="flex-1 min-w-0 w-full order-2 lg:order-1">
         <div className="mb-6 space-y-4">
           <div className="flex flex-row items-center justify-between gap-4">
@@ -130,7 +139,7 @@ export function TasksPageLayout({
               />
             </div>
 
-            <div>
+            <div className="flex items-center gap-2">
               <TaskSortFilter
                 sortField={sorting.field}
                 sortOrder={sorting.order}
@@ -138,9 +147,22 @@ export function TasksPageLayout({
                 onToggleOrder={onToggleSort}
                 className="w-full"
               />
+              {showFavoriteToggle && onFavoriteToggle && (
+                <TaskFavoriteToggle
+                  active={filters.favorite === "yes"}
+                  onToggle={onFavoriteToggle}
+                />
+              )}
             </div>
           </div>
         </div>
+
+        {error && (
+          <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6 border border-destructive/20">
+            <p className="font-medium">Error</p>
+            <p className="text-sm">{error}</p>
+          </div>
+        )}
 
         {isLoadingTasks ? (
           <div className={`grid ${layoutConfig.grid} gap-6`}>

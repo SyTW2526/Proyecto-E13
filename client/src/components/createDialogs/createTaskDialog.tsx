@@ -2,6 +2,7 @@ import { CreateDialog } from "@/components/ui/createDialog";
 import { TaskFormFields } from "@/components/forms/TaskFormFields";
 import { CreateListDialog } from "@/components/createDialogs/createListDialog";
 import { useTaskForm } from "@/hooks/useTaskForm";
+import { useLists } from "@/hooks/useLists";
 import { useTranslation } from "react-i18next";
 import type { Task } from "@/types/tasks-system/task";
 
@@ -10,6 +11,8 @@ interface CreateTaskDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   editTask?: Task;
+  filterByEditPermission?: boolean;
+  showCreateList?: boolean;
 }
 
 export default function CreateTaskDialog({
@@ -17,8 +20,11 @@ export default function CreateTaskDialog({
   open,
   onOpenChange,
   editTask,
+  filterByEditPermission = false,
+  showCreateList = true,
 }: CreateTaskDialogProps) {
   const { t } = useTranslation();
+  const { canAccess, isOwner } = useLists();
   const {
     formData,
     updateField,
@@ -29,6 +35,13 @@ export default function CreateTaskDialog({
     handleSubmit,
     resetForm,
   } = useTaskForm(editTask);
+
+  // Filter lists to only show those where user has EDIT+ permission
+  const filteredLists = filterByEditPermission
+    ? accessibleLists.filter(
+        (list) => isOwner(list.id) || canAccess(list.id, "EDIT"),
+      )
+    : accessibleLists;
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen && !editTask) {
@@ -64,16 +77,19 @@ export default function CreateTaskDialog({
         <TaskFormFields
           formData={formData}
           updateField={updateField}
-          accessibleLists={accessibleLists}
+          accessibleLists={filteredLists}
           onCreateList={() => setListDialogOpen(true)}
+          showCreateList={showCreateList}
         />
       </CreateDialog>
 
-      <CreateListDialog
-        open={listDialogOpen}
-        onOpenChange={setListDialogOpen}
-        onCreateList={handleListCreated}
-      />
+      {showCreateList && (
+        <CreateListDialog
+          open={listDialogOpen}
+          onOpenChange={setListDialogOpen}
+          onCreateList={handleListCreated}
+        />
+      )}
     </>
   );
 }

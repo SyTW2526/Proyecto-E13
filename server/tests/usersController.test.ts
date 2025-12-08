@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Request, Response } from "express";
 import {
-  getProfile,
   updateProfile,
   deleteAccount,
 } from "../src/controllers/usersController";
@@ -38,83 +37,6 @@ describe("UsersController", () => {
       json: vi.fn().mockReturnThis(),
     };
     vi.clearAllMocks();
-  });
-
-  describe("getProfile", () => {
-    it("should return user profile successfully", async () => {
-      mockRequest.user = { id: "user-123" };
-
-      const mockUser = {
-        id: "user-123",
-        email: "john@example.com",
-        name: "John Doe",
-        image: null,
-        emailNotifications: true,
-        pushNotifications: false,
-        emailVerifiedAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as any);
-
-      await getProfile(mockRequest as Request, mockResponse as Response);
-
-      expect(prisma.user.findUnique).toHaveBeenCalledWith({
-        where: { id: "user-123" },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          image: true,
-          emailNotifications: true,
-          pushNotifications: true,
-          emailVerifiedAt: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      });
-      expect(mockResponse.status).toHaveBeenCalledWith(200);
-      expect(mockResponse.json).toHaveBeenCalledWith(mockUser);
-    });
-
-    it("should return 401 if user not authenticated", async () => {
-      mockRequest.user = undefined;
-
-      await getProfile(mockRequest as Request, mockResponse as Response);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(401);
-      expect(mockResponse.json).toHaveBeenCalledWith({
-        error: "Unauthorized",
-      });
-      expect(prisma.user.findUnique).not.toHaveBeenCalled();
-    });
-
-    it("should return 404 if user not found", async () => {
-      mockRequest.user = { id: "nonexistent-user" };
-      vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
-
-      await getProfile(mockRequest as Request, mockResponse as Response);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(404);
-      expect(mockResponse.json).toHaveBeenCalledWith({
-        error: "User not found",
-      });
-    });
-
-    it("should return 500 on database error", async () => {
-      mockRequest.user = { id: "user-123" };
-      vi.mocked(prisma.user.findUnique).mockRejectedValue(
-        new Error("DB Error"),
-      );
-
-      await getProfile(mockRequest as Request, mockResponse as Response);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(500);
-      expect(mockResponse.json).toHaveBeenCalledWith({
-        error: "Internal server error",
-      });
-    });
   });
 
   describe("updateProfile", () => {
