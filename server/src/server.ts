@@ -1,7 +1,8 @@
 import "dotenv/config";
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import router from "./routes/routes";
+import { startCleanupJob } from "./jobs/cleanupTasks";
 
 const app = express();
 const PORT = process.env.PORT || 5200;
@@ -16,4 +17,5 @@ app.use((req: Request, res: Response) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
+  startCleanupJob();
 });

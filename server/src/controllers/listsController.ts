@@ -130,8 +130,8 @@ export const updateList = async (req: Request, res: Response) => {
       name?: string;
       description?: string;
     } = {};
-    if (name) dataToUpdate.name = name;
-    if (description) dataToUpdate.description = description;
+    if (name !== undefined) dataToUpdate.name = name;
+    if (description !== undefined) dataToUpdate.description = description;
     if (Object.keys(dataToUpdate).length === 0) {
       return res.status(400).json({ error: "No fields to update" });
     }

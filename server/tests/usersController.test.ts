@@ -67,6 +67,7 @@ describe("UsersController", () => {
         data: {
           name: "John Doe",
           emailNotifications: true,
+          pushNotifications: false,
         },
         select: {
           id: true,

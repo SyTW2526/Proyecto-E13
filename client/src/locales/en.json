@@ -228,6 +228,11 @@
       "dueDate": {
         "label": "Due date"
       }
+    },
+    "completion": {
+      "title": "Task Completed!",
+      "description": "This task will be automatically deleted in 7 days.",
+      "understood": "Understood"
     }
   },
   "lists": {

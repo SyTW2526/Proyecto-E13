@@ -2,7 +2,10 @@ import { useMemo } from "react";
 import { priorityConfig } from "@/config/taskConfig";
 import type { Task } from "@/types/tasks-system/task";
 import { useTranslation } from "react-i18next";
-import { TaskStatusColors, TaskPriorityColors } from "@/types/tasks-system/task";
+import {
+  TaskStatusColors,
+  TaskPriorityColors,
+} from "@/types/tasks-system/task";
 
 // Usa los colores importados
 const PRIORITY_COLORS = TaskPriorityColors;
@@ -139,34 +142,28 @@ export function useDashboardCharts({
     return Object.entries(priorityStats)
       .map(([priority, count]) => {
         const labelKey = `tasks.priority.${priority}`;
+        const priorityKey =
+          priority.toUpperCase() as keyof typeof PRIORITY_COLORS;
         return {
           name: t(labelKey),
           value: count as number,
-          fill: PRIORITY_COLORS[
-            priorityConfig[
-              priority.toUpperCase() as keyof typeof priorityConfig
-            ].label as keyof typeof PRIORITY_COLORS
-          ],
+          fill: PRIORITY_COLORS[priorityKey],
         };
       })
       .filter((item) => item.value > 0);
   }, [priorityStats, accessibleTasks, tasksThisWeek, t]);
 
   const priorityChartConfig = useMemo(() => {
-    return Object.entries(priorityConfig).reduce(
-      (acc, [key]) => ({
+    return Object.entries(priorityConfig).reduce((acc, [key]) => {
+      const priorityKey = key as keyof typeof PRIORITY_COLORS;
+      return {
         ...acc,
         [t(`tasks.priority.${key}`)]: {
           label: t(`tasks.priority.${key}`),
-          color:
-            PRIORITY_COLORS[
-              priorityConfig[key as keyof typeof priorityConfig]
-                .label as keyof typeof PRIORITY_COLORS
-            ],
+          color: PRIORITY_COLORS[priorityKey],
         },
-      }),
-      {},
-    );
+      };
+    }, {});
   }, [t]);
 
   // Gráfico de distribución por estado (usando datos globales)

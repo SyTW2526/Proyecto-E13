@@ -228,6 +228,11 @@
       "dueDate": {
         "label": "Fecha de vencimiento"
       }
+    },
+    "completion": {
+      "title": "¡Tarea Completada!",
+      "description": "Esta tarea será eliminada automáticamente en 7 días.",
+      "understood": "Entendido"
     }
   },
   "lists": {

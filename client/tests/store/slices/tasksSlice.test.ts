@@ -263,6 +263,7 @@ describe("tasksSlice selectors", () => {
         listId: "l1",
         search: "algo",
         priority: "HIGH",
+        favorite: "all",
       },
       sorting: { field: "name", order: "asc" },
     };

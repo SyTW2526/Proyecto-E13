@@ -216,13 +216,13 @@ export const updateTask = async (req: Request, res: Response) => {
       favorite?: boolean;
     } = {};
 
-    if (name) dataToUpdate.name = name;
-    if (description) dataToUpdate.description = description;
-    if (status) dataToUpdate.status = status;
-    if (listId) dataToUpdate.listId = listId;
-    if (priority) dataToUpdate.priority = priority;
-    if (dueDate) dataToUpdate.dueDate = dueDate;
-    if (favorite) dataToUpdate.favorite = favorite;
+    if (name !== undefined) dataToUpdate.name = name;
+    if (description !== undefined) dataToUpdate.description = description;
+    if (status !== undefined) dataToUpdate.status = status;
+    if (listId !== undefined) dataToUpdate.listId = listId;
+    if (priority !== undefined) dataToUpdate.priority = priority;
+    if (dueDate !== undefined) dataToUpdate.dueDate = dueDate;
+    if (favorite !== undefined) dataToUpdate.favorite = favorite;
 
     if (Object.keys(dataToUpdate).length === 0) {
       return res.status(400).json({ error: "No fields to update" });
