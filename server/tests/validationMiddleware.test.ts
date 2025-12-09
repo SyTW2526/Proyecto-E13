@@ -1,11 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import {
   validate,
   validateBody,
-  validateQuery,
   validateParams,
+  validateQuery,
 } from "../src/middleware/validationMiddleware";
 
 describe("ValidationMiddleware", () => {
@@ -158,6 +158,25 @@ describe("ValidationMiddleware", () => {
 
       expect(mockNext).toHaveBeenCalled();
       expect(mockRequest.body).toEqual({ age: 25 });
+    });
+
+    it("should handle non-Zod errors with 500 status", () => {
+      const errorSchema = {
+        parse: vi.fn(() => {
+          throw new Error("Unexpected error");
+        }),
+      } as any;
+
+      mockRequest.body = { name: "Test" };
+
+      const middleware = validate(errorSchema, "body");
+      middleware(mockRequest as Request, mockResponse as Response, mockNext);
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(mockResponse.status).toHaveBeenCalledWith(500);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: "Internal server error during validation",
+      });
     });
   });
 

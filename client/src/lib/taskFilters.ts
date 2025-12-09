@@ -315,8 +315,9 @@ export function getNextDueTasksThisWeek(tasks: Task[], limit?: number): Task[] {
       return { task, due };
     })
     .filter((entry): entry is { task: Task; due: Date } => entry.due !== null)
-    .filter(({ due, task }) =>
-      task.status !== "COMPLETED" && due >= now && due < weekEnd
+    .filter(
+      ({ due, task }) =>
+        task.status !== "COMPLETED" && due >= now && due < weekEnd,
     )
     .sort((a, b) => a.due.getTime() - b.due.getTime())
     .slice(0, limit ?? tasks.length)

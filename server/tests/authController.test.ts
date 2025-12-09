@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import { Request, Response } from "express";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  register,
-  login,
   changePassword,
+  googleSignIn,
+  login,
+  register,
 } from "../src/controllers/authController";
 import { createNotification } from "../src/controllers/notificationsController";
 import prisma from "../src/database/prisma";
@@ -387,6 +388,20 @@ describe("AuthController", () => {
       expect(mockResponse.status).toHaveBeenCalledWith(500);
       expect(mockResponse.json).toHaveBeenCalledWith({
         error: "Internal server error",
+      });
+    });
+  });
+
+  describe("googleSignIn", () => {
+    it("should return 500 if Google OAuth is not configured", async () => {
+      delete process.env.GOOGLE_CLIENT_ID;
+      mockRequest.body = { idToken: "test-token" };
+
+      await googleSignIn(mockRequest as Request, mockResponse as Response);
+
+      expect(mockResponse.status).toHaveBeenCalledWith(500);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: "Google authentication not configured",
       });
     });
   });

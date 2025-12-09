@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/chart";
 import { render, screen } from "@testing-library/react";
 import { Bar, BarChart, Cell, Pie, PieChart } from "recharts";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 describe("Chart", () => {
   const mockConfig = {
@@ -622,9 +622,7 @@ describe("Chart", () => {
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip
-              content={<ChartTooltipContent indicator="dashed" />}
-            />
+            <ChartTooltip content={<ChartTooltipContent indicator="dashed" />} />
           </BarChart>
         </ChartContainer>,
       );
@@ -718,13 +716,13 @@ describe("Chart", () => {
   describe("ChartTooltipContent - Cobertura adicional", () => {
     it("Renderiza tooltip con labelFormatter personalizado", () => {
       const labelFormatter = (label: string) => `Custom: ${label}`;
-
+      
       const { container } = render(
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip
-              content={<ChartTooltipContent labelFormatter={labelFormatter} />}
+            <ChartTooltip 
+              content={<ChartTooltipContent labelFormatter={labelFormatter} />} 
             />
           </BarChart>
         </ChartContainer>,
@@ -738,7 +736,9 @@ describe("Chart", () => {
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
+            <ChartTooltip 
+              content={<ChartTooltipContent indicator="dot" />} 
+            />
           </BarChart>
         </ChartContainer>,
       );
@@ -756,8 +756,8 @@ describe("Chart", () => {
         <ChartContainer config={mockConfig}>
           <BarChart data={customData}>
             <Bar dataKey="value" />
-            <ChartTooltip
-              content={<ChartTooltipContent nameKey="category" />}
+            <ChartTooltip 
+              content={<ChartTooltipContent nameKey="category" />} 
             />
           </BarChart>
         </ChartContainer>,
@@ -771,7 +771,9 @@ describe("Chart", () => {
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip content={<ChartTooltipContent labelKey="name" />} />
+            <ChartTooltip 
+              content={<ChartTooltipContent labelKey="name" />} 
+            />
           </BarChart>
         </ChartContainer>,
       );
@@ -781,14 +783,14 @@ describe("Chart", () => {
 
     it("Renderiza tooltip con formatter personalizado", () => {
       const formatter = (value: number, name: string) => [`${value}%`, name];
-
+      
       const { container } = render(
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip
+            <ChartTooltip 
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              content={<ChartTooltipContent formatter={formatter as any} />}
+              content={<ChartTooltipContent formatter={formatter as any} />} 
             />
           </BarChart>
         </ChartContainer>,
@@ -820,7 +822,9 @@ describe("Chart", () => {
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip content={<ChartTooltipContent color="#ff0000" />} />
+            <ChartTooltip 
+              content={<ChartTooltipContent color="#ff0000" />} 
+            />
           </BarChart>
         </ChartContainer>,
       );
@@ -833,8 +837,8 @@ describe("Chart", () => {
         <ChartContainer config={mockConfig}>
           <BarChart data={mockData}>
             <Bar dataKey="value" />
-            <ChartTooltip
-              content={<ChartTooltipContent labelClassName="custom-label" />}
+            <ChartTooltip 
+              content={<ChartTooltipContent labelClassName="custom-label" />} 
             />
           </BarChart>
         </ChartContainer>,
@@ -898,12 +902,7 @@ describe("Chart", () => {
 
       const { container } = render(
         <ChartContainer config={configWithIcon}>
-          <BarChart
-            data={[
-              { name: "alta", value: 10 },
-              { name: "media", value: 20 },
-            ]}
-          >
+          <BarChart data={[{ name: "alta", value: 10 }, { name: "media", value: 20 }]}>
             <Bar dataKey="value" />
             <ChartLegend content={<ChartLegendContent />} />
           </BarChart>
@@ -920,9 +919,7 @@ describe("Chart", () => {
         </ChartContainer>,
       );
 
-      expect(
-        container.querySelector('[data-slot="chart"]'),
-      ).toBeInTheDocument();
+      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
     });
 
     it("Filtra elementos con type none de la leyenda", () => {
@@ -942,4 +939,4 @@ describe("Chart", () => {
       expect(container).toBeInTheDocument();
     });
   });
-});
+

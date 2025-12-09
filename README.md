@@ -30,6 +30,8 @@ El **Gestor de Tareas Colaborativo** es una aplicación web fullstack diseñada 
 
 [![CI Tests (Client)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-client.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-client.yml)
 [![CI Tests (Server)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-server.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/ci-server.yml)
+[![Coveralls (Client)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/coveralls-client.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/coveralls-client.yml)
+[![Coveralls (Server)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/coveralls-server.yml/badge.svg)](https://github.com/SyTW2526/Proyecto-E13/actions/workflows/coveralls-server.yml)
 [![Coverage Status](https://coveralls.io/repos/github/SyTW2526/Proyecto-E13/badge.svg?branch=develop)](https://coveralls.io/github/SyTW2526/Proyecto-E13?branch=develop)
 
 ---
@@ -112,6 +114,16 @@ El **Gestor de Tareas Colaborativo** es una aplicación web fullstack diseñada 
 - Optimización de tests unitarios (UT)
 
 ![Sprint 6](./docs/Images/sprint6.png)
+
+### Sprint 7 – Documentación y Despliegue
+
+- Ampliación de la suite de tests con cobertura del 96% en el backend y al 86% en el frontend
+- Documentación completa del proyecto y mejoras en README
+- ChatBot de ayuda para usuarios autenticados
+- Preparación y configuración final para despliegue en producción
+- Optimización y refinamiento de la aplicación para entrega final
+
+## ![Sprint 7](./docs/Images/sprint7.png)
 
 ---
 

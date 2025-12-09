@@ -1,8 +1,5 @@
 import { Router } from "express";
-import {
-  deleteAccount,
-  updateProfile,
-} from "../controllers/usersController";
+import { deleteAccount, updateProfile } from "../controllers/usersController";
 import { authenticate } from "../middleware/authMiddleware";
 import { validateBody } from "../middleware/validationMiddleware";
 import { updateProfileSchema } from "../schemas/validationSchemas";
