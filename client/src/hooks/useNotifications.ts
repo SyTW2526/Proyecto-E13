@@ -41,12 +41,12 @@ export function useNotifications() {
 
     // Solo activar polling si el usuario tiene pushNotifications habilitado
     if (user?.pushNotifications) {
-    const intervalId = setInterval(() => {
-      loadNotifications();
-    }, POLLING_INTERVAL);
+      const intervalId = setInterval(() => {
+        loadNotifications();
+      }, POLLING_INTERVAL);
 
-    // Limpiar el intervalo al desmontar
-    return () => clearInterval(intervalId);
+      // Limpiar el intervalo al desmontar
+      return () => clearInterval(intervalId);
     }
 
     return undefined;

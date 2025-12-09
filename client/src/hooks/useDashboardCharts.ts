@@ -2,7 +2,10 @@ import { useMemo } from "react";
 import { priorityConfig } from "@/config/taskConfig";
 import type { Task } from "@/types/tasks-system/task";
 import { useTranslation } from "react-i18next";
-import { TaskStatusColors, TaskPriorityColors } from "@/types/tasks-system/task";
+import {
+  TaskStatusColors,
+  TaskPriorityColors,
+} from "@/types/tasks-system/task";
 
 // Usa los colores importados
 const PRIORITY_COLORS = TaskPriorityColors;
