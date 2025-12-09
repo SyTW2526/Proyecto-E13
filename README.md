@@ -113,6 +113,16 @@ El **Gestor de Tareas Colaborativo** es una aplicación web fullstack diseñada 
 
 ![Sprint 6](./docs/Images/sprint6.png)
 
+### Sprint 7 – Documentación y Despliegue
+
+- Ampliación de la suite de tests con cobertura del 96% en el backend y al 86% en el frontend
+- Documentación completa del proyecto y mejoras en README
+- ChatBot de ayuda para usuarios autenticados
+- Preparación y configuración final para despliegue en producción
+- Optimización y refinamiento de la aplicación para entrega final
+
+## ![Sprint 7](./docs/Images/sprint7.png)
+
 ---
 
 ## Stack Tecnológico
