@@ -30,6 +30,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.11",
+    "socket.io": "^4.8.1",
     "zod": "^4.1.12"
   },
   "devDependencies": {
@@ -47,6 +48,7 @@
     "google-auth-library": "^10.5.0",
     "prettier": "^3.6.2",
     "prisma": "^6.18.0",
+    "socket.io-client": "^4.8.1",
     "supertest": "^7.1.4",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../database/prisma.js";
 import { sendNotificationEmail } from "../utils/emailService.js";
+import { getIO } from "../utils/socket.js";
 
 /**
  * Obtener todas las notificaciones del usuario autenticado
@@ -36,7 +37,6 @@ export const markNotificationAsRead = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "Usuario no autenticado" });
     }
 
-    // Verificar que la notificación pertenece al usuario
     const notification = await prisma.notification.findFirst({
       where: { id, userId },
     });
@@ -115,7 +115,7 @@ export const getUnreadCount = async (req: Request, res: Response) => {
  */
 export const createNotification = async (
   userId: string,
-  type: "GENERAL" | "MENTION" | "INBOX" | "FILE",
+  type: "SYSTEM" | "SHARED" | "EXPIRED",
   title: string,
   description: string,
   actorName: string,
@@ -139,6 +139,8 @@ export const createNotification = async (
         },
       },
     });
+
+    getIO().to(`user:${userId}`).emit("notification:created", notification);
 
     if (notification.user.emailNotifications) {
       sendNotificationEmail(

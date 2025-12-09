@@ -25,7 +25,7 @@ export const register = async (
     });
     await createNotification(
       user.id,
-      "GENERAL",
+      "SYSTEM",
       "¡Bienvenido a Task Grid!",
       "Gracias por unirte a nuestra plataforma. Esperamos que disfrutes organizando tus tareas.",
       "Sistema",
@@ -115,7 +115,7 @@ export async function googleSignIn(req: Request, res: Response) {
         });
         await createNotification(
           user.id,
-          "GENERAL",
+          "SYSTEM",
           "¡Bienvenido a Task Grid!",
           "Gracias por unirte a nuestra plataforma. Esperamos que disfrutes organizando tus tareas.",
           "Sistema",

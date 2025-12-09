@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 export default function LandingPage() {
   const { t } = useTranslation();
   return (
-    // <div className="min-h-screen">
     <div className="container mx-auto p-6">
       <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-4 text-center">
         {t("landing.welcome")}{" "}
@@ -44,6 +43,5 @@ export default function LandingPage() {
         ))}
       </div>
     </div>
-    // </div>
   );
 }

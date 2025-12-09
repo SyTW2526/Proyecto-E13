@@ -17,10 +17,7 @@ export function useTaskFilters() {
   } = useTasks();
   const { accessibleLists } = useLists();
 
-  // Usar el listId de los filtros de Redux en lugar de estado local
   const selectedListId = filters.listId;
-
-  // Contar tareas por lista (mostrar todas las listas, no filtrar)
   const listTaskCounts = useMemo(
     () =>
       accessibleLists.map((list) => ({
@@ -33,7 +30,6 @@ export function useTaskFilters() {
     [accessibleLists, accessibleTasks],
   );
 
-  // Determinar qué tareas mostrar
   const displayTasks = useMemo(() => {
     return filteredTasks;
   }, [filteredTasks]);

@@ -8,7 +8,6 @@ import {
 import { Bar, BarChart, Pie, PieChart, Cell, XAxis, YAxis } from "recharts";
 import { useTranslation } from "react-i18next";
 
-// Constante para el radio de las barras
 const BAR_RADIUS = 8;
 
 interface ChartDataItem {
@@ -100,7 +99,6 @@ export function WeeklyTasksChart({ data, config }: WeeklyTasksChartProps) {
     const isFirst = keysWithValue[0] === dataKey;
     const isLast = keysWithValue[keysWithValue.length - 1] === dataKey;
 
-    // Determinar tipo de radius
     if (!isFirst && !isLast) {
       return <rect x={x} y={y} width={width} height={height} fill={fill} />;
     }

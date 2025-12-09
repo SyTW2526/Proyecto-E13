@@ -165,7 +165,7 @@
     "card": {
       "createdLabel": "Created:",
       "dueLabel": "Due:",
-      "noDate": "No date"
+      "noDate": "No due date"
     },
     "filters": {
       "statusPlaceholder": "Status",
@@ -239,7 +239,7 @@
     "title": "Lists",
     "emptyState": "No lists",
     "sidebar": {
-      "title": "Lists"
+      "title": "My Lists"
     },
     "create": {
       "title": "New List",
@@ -325,10 +325,10 @@
       "days": "{{count}} days ago"
     },
     "tabs": {
-      "GENERAL": "General",
-      "MENTION": "Mentions",
-      "INBOX": "Inbox",
-      "FILE": "Files"
+      "ALL": "All",
+      "SYSTEM": "System",
+      "SHARED": "Shared",
+      "EXPIRED": "Expired"
     }
   },
   "dashboard": {

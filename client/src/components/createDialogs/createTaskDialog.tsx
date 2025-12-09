@@ -2,7 +2,7 @@ import { CreateDialog } from "@/components/ui/createDialog";
 import { TaskFormFields } from "@/components/forms/TaskFormFields";
 import { CreateListDialog } from "@/components/createDialogs/createListDialog";
 import { useTaskForm } from "@/hooks/useTaskForm";
-import { useLists } from "@/hooks/useLists";
+
 import { useTranslation } from "react-i18next";
 import type { Task } from "@/types/tasks-system/task";
 
@@ -24,7 +24,6 @@ export default function CreateTaskDialog({
   showCreateList = true,
 }: CreateTaskDialogProps) {
   const { t } = useTranslation();
-  const { canAccess, isOwner } = useLists();
   const {
     formData,
     updateField,
@@ -34,14 +33,7 @@ export default function CreateTaskDialog({
     handleListCreated,
     handleSubmit,
     resetForm,
-  } = useTaskForm(editTask);
-
-  // Filter lists to only show those where user has EDIT+ permission
-  const filteredLists = filterByEditPermission
-    ? accessibleLists.filter(
-        (list) => isOwner(list.id) || canAccess(list.id, "EDIT"),
-      )
-    : accessibleLists;
+  } = useTaskForm(editTask, { filterByEditPermission });
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen && !editTask) {
@@ -52,7 +44,6 @@ export default function CreateTaskDialog({
 
   const handleFormSubmit = () => {
     const success = handleSubmit(() => {
-      // Cerrar el diálogo después de enviar exitosamente
       handleOpenChange(false);
     });
     return success;
@@ -77,7 +68,7 @@ export default function CreateTaskDialog({
         <TaskFormFields
           formData={formData}
           updateField={updateField}
-          accessibleLists={filteredLists}
+          accessibleLists={accessibleLists}
           onCreateList={() => setListDialogOpen(true)}
           showCreateList={showCreateList}
         />

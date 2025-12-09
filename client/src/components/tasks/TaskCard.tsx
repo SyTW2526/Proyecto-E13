@@ -137,18 +137,18 @@ export const TaskCard = memo(function TaskCard({
                 {formatDate(task.createdAt)}
               </span>
             </div>
-            {task.dueDate && (
-              <div className="flex items-center gap-1.5 text-xs sm:text-xs md:text-sm text-muted-foreground">
-                <Icon
-                  as="IconCalendarEvent"
-                  size={14}
-                  className="text-muted-foreground shrink-0"
-                />
-                <span className="truncate max-w-[120px] sm:max-w-none">
-                  {task.dueDate ? formatDate(task.dueDate) : "-"}
-                </span>
-              </div>
-            )}
+            <div className="flex items-center gap-1.5 text-xs sm:text-xs md:text-sm text-muted-foreground">
+              <Icon
+                as="IconCalendarEvent"
+                size={14}
+                className="text-muted-foreground shrink-0"
+              />
+              <span className="truncate max-w-[120px] sm:max-w-none">
+                {task.dueDate
+                  ? formatDate(task.dueDate)
+                  : t("tasks.card.noDate")}
+              </span>
+            </div>
           </div>
           {task.description && (
             <p className="mt-1.5 text-sm sm:text-sm md:text-base text-muted-foreground line-clamp-2 leading-relaxed break-words">

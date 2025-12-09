@@ -68,7 +68,6 @@ export const SharedTaskCard = memo(function SharedTaskCard({
   const [errorMessage, setErrorMessage] = useState("");
   const { removeTask, editTask, removeShare } = useTasks();
 
-  // Calculate permission
   let permission: SharePermission = "VIEW";
   const myId = user?.id;
   const taskShare = task.shares?.find((s) => s.userId === myId);
@@ -79,14 +78,10 @@ export const SharedTaskCard = memo(function SharedTaskCard({
 
   const canEdit = permission === "EDIT" || permission === "ADMIN";
 
-  // Determine owner
   const owner = task.list?.owner || list?.owner;
   const isOwner = owner?.id === myId;
   const isListSharedWithMe = list?.shares?.some((s) => s.userId === myId);
 
-  // Permission checks based on backend logic:
-  // - canDelete: requires ADMIN on LIST (not task share) - backend uses requireListPermission=true
-  // - canShare: requires ADMIN on task or list
   const listPermission = listShare?.permission;
   const canDeleteTask = isOwner || listPermission === "ADMIN";
   const canShareTask = isOwner || permission === "ADMIN";

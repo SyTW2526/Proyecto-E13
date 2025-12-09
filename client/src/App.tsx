@@ -11,8 +11,10 @@ import ContactsPage from "@/pages/public/contactsPage";
 import ProtectedRoute from "@/components/auth/protectedRoute";
 import Footer from "@/components/footer";
 import AppMenubar from "@/components/appMenubar";
+import { useSocket } from "@/hooks/useSocket";
 
 export default function App() {
+  useSocket();
   const { isAuthenticated } = useAuth();
   const publicRoute = (Page: React.ComponentType) =>
     isAuthenticated ? <Navigate to="/dashboard" replace /> : <Page />;

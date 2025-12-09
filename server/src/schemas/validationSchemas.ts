@@ -4,7 +4,6 @@ export const TaskStatus = z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]);
 export const TaskPriority = z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]);
 export const SharePermission = z.enum(["VIEW", "EDIT", "ADMIN"]);
 
-// Auth
 export const registerSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   email: z.email({ message: "Email inválido" }),
@@ -40,17 +39,15 @@ export const changePasswordSchema = z.object({
     .regex(/[0-9]/, "Password must contain a number"),
 });
 
-// User
 export const updateProfileSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio").optional(),
   emailNotifications: z.boolean().optional(),
   pushNotifications: z.boolean().optional(),
 });
 
-// Task
 export const createTaskSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
-  description: z.string().optional(),
+  description: z.string().max(100, "La descripción debe tener menos de 100 caracteres").optional(),
   status: TaskStatus.optional(),
   listId: z.string(),
   priority: TaskPriority.optional(),
@@ -60,7 +57,7 @@ export const createTaskSchema = z.object({
 
 export const updateTaskSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio").optional(),
-  description: z.string().optional(),
+  description: z.string().max(100, "La descripción debe tener menos de 100 caracteres").optional(),
   status: TaskStatus.optional(),
   listId: z.string().optional(),
   priority: TaskPriority.optional(),
@@ -77,18 +74,19 @@ export const updateShareSchema = z.object({
   permission: SharePermission,
 });
 
-// List
 export const createListSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
-  description: z.string().optional(),
+  description: z.string().max(100, "La descripción debe tener menos de 100 caracteres").optional(),
 });
 
 export const updateListSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio").optional(),
-  description: z.string().optional(),
+  description: z.string().max(100, "La descripción debe tener menos de 100 caracteres").optional(),
 });
 
 export const shareListSchema = z.object({
   email: z.email({ message: "Email inválido" }),
   permission: SharePermission.optional(),
 });
+
+

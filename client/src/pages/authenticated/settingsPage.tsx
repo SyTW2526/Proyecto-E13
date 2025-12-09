@@ -75,12 +75,10 @@ export default function SettingsPage() {
     ? t("settings.profile.googleUserPasswordInfo")
     : passwordMsg;
 
-  // Cambiar tema (oscuro/claro)
   function handleToggleTheme() {
     setTheme(isDark ? "light" : "dark");
   }
 
-  // Cambiar idioma
   function handleLanguageChange(lng: string) {
     i18n.changeLanguage(lng);
   }
@@ -113,7 +111,12 @@ export default function SettingsPage() {
             {/* Nombre y email */}
             <form onSubmit={saveProfile} className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="name">{t("settings.profile.name")}</Label>
+                <Label
+                  htmlFor="name"
+                  className="inline-flex items-center gap-2"
+                >
+                  <User className="h-4 w-4" /> {t("settings.profile.name")}
+                </Label>
                 <Input
                   id="name"
                   value={name}

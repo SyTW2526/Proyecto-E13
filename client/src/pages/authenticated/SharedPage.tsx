@@ -27,7 +27,12 @@ export default function SharedPage() {
   } = useTaskFilters();
 
   const { fetchSharedTasks, isLoading } = useTasks();
-  const { fetchSharedLists, isLoading: isLoadingLists } = useLists();
+  const {
+    fetchSharedLists,
+    isLoading: isLoadingLists,
+    isOwner,
+    canAccess,
+  } = useLists();
 
   useEffect(() => {
     fetchSharedTasks();
@@ -53,7 +58,14 @@ export default function SharedPage() {
       title={t("shared.title")}
       headerActions={
         <CreateTaskDialog filterByEditPermission={true} showCreateList={false}>
-          <Button leftIcon="IconTask" />
+          <Button
+            leftIcon="IconTask"
+            disabled={
+              !accessibleLists.some(
+                (l) => isOwner(l.id) || canAccess(l.id, "EDIT"),
+              )
+            }
+          />
         </CreateTaskDialog>
       }
       sidebarTitle={t("shared.listsTitle")}

@@ -30,6 +30,13 @@ vi.mock("../src/controllers/notificationsController", () => ({
   createNotification: vi.fn(),
 }));
 
+vi.mock("../src/utils/socket", () => ({
+  getIO: vi.fn().mockReturnValue({
+    to: vi.fn().mockReturnThis(),
+    emit: vi.fn(),
+  }),
+}));
+
 describe("Sharing Controller", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../database/prisma";
 import { SharePermission } from "@prisma/client";
 import { createNotification } from "./notificationsController";
+import { getIO } from "../utils/socket";
 
 export const createList = async (req: Request, res: Response) => {
   try {
@@ -18,13 +19,26 @@ export const createList = async (req: Request, res: Response) => {
         ownerId,
       },
       include: {
-        shares: true,
+        shares: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
         tasks: true,
       },
     });
+
+    getIO().to(`user:${ownerId}`).emit("list:created", list);
+
     return res.status(200).json(list);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error creating list" });
   }
 };
@@ -51,9 +65,11 @@ export const deleteList = async (req: Request, res: Response) => {
         id,
       },
     });
+
+    getIO().to(`list:${id}`).emit("list:deleted", id);
+
     return res.status(200).json(list);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error deleting list" });
   }
 };
@@ -66,13 +82,23 @@ export const getUserLists = async (req: Request, res: Response) => {
         ownerId: userId,
       },
       include: {
-        shares: true,
+        shares: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
         tasks: true,
       },
     });
     return res.status(200).json(lists);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error getting lists" });
   }
 };
@@ -89,7 +115,18 @@ export const getSharedLists = async (req: Request, res: Response) => {
         },
       },
       include: {
-        shares: true,
+        shares: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
         tasks: true,
         owner: {
           select: {
@@ -103,7 +140,6 @@ export const getSharedLists = async (req: Request, res: Response) => {
     });
     return res.status(200).json(lists);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error getting shared lists" });
   }
 };
@@ -141,10 +177,24 @@ export const updateList = async (req: Request, res: Response) => {
       },
       data: dataToUpdate,
       include: {
-        shares: true,
+        shares: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
         tasks: true,
       },
     });
+
+    getIO().to(`list:${id}`).emit("list:updated", listUpdated);
+
     return res.status(200).json(listUpdated);
   } catch (error) {
     console.error(error);
@@ -232,14 +282,16 @@ export const shareList = async (req: Request, res: Response) => {
     });
     await createNotification(
       user.id,
-      "GENERAL",
+      "SHARED",
       "Nueva lista compartida",
       `${currentUser?.name || "Alguien"} te ha compartido la lista "${listUpdated.name}"`,
       currentUser?.name || "Usuario",
     );
+
+    getIO().to(`user:${user.id}`).emit("list:shared", listUpdated);
+
     return res.status(200).json(listUpdated);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error sharing list" });
   }
 };
@@ -257,8 +309,10 @@ export const unshareList = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "List not found" });
     }
 
-    if (!hasListPermission(list, currentUserId, SharePermission.ADMIN)) {
-      return res.status(403).json({ error: "Unauthorized" });
+    if (currentUserId !== userId) {
+      if (!hasListPermission(list, currentUserId, SharePermission.ADMIN)) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
     }
 
     const listUpdated = await prisma.list.update({
@@ -291,9 +345,11 @@ export const unshareList = async (req: Request, res: Response) => {
         tasks: true,
       },
     });
+
+    getIO().to(`user:${userId}`).emit("list:unshared", id);
+
     return res.status(200).json(listUpdated);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error unsharing list" });
   }
 };
@@ -355,7 +411,6 @@ export const updateSharePermission = async (req: Request, res: Response) => {
 
     return res.status(200).json(listUpdated);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error updating share permission" });
   }
 };

@@ -3,6 +3,7 @@ import prisma from "../database/prisma";
 import { TaskPriority, TaskStatus } from "../types/task";
 import { SharePermission } from "@prisma/client";
 import { createNotification } from "./notificationsController";
+import { getIO } from "../utils/socket";
 
 export const createTask = async (req: Request, res: Response) => {
   try {
@@ -58,9 +59,11 @@ export const createTask = async (req: Request, res: Response) => {
         list: true,
       },
     });
+
+    getIO().to(`list:${listId}`).emit("task:created", task);
+
     return res.status(200).json(task);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error creating task" });
   }
 };
@@ -87,9 +90,11 @@ export const deleteTask = async (req: Request, res: Response) => {
         id,
       },
     });
+
+    getIO().to(`list:${task.listId}`).emit("task:deleted", id);
+
     return res.status(200).json(task);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error deleting task" });
   }
 };
@@ -125,7 +130,6 @@ export const getUserTasks = async (req: Request, res: Response) => {
     });
     return res.status(200).json(tasks);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error getting tasks" });
   }
 };
@@ -183,7 +187,6 @@ export const getSharedTasks = async (req: Request, res: Response) => {
     });
     return res.status(200).json(tasks);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error getting shared tasks" });
   }
 };
@@ -249,9 +252,11 @@ export const updateTask = async (req: Request, res: Response) => {
         list: true,
       },
     });
+
+    getIO().to(`list:${taskUpdated.listId}`).emit("task:updated", taskUpdated);
+
     return res.status(200).json(taskUpdated);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error updating task" });
   }
 };
@@ -323,14 +328,13 @@ export const shareTask = async (req: Request, res: Response) => {
     });
     await createNotification(
       userToShare.id,
-      "GENERAL",
+      "SHARED",
       "Nueva tarea compartida",
       `${currentUser?.name || "Alguien"} te ha compartido la tarea "${taskUpdated.name}"`,
       currentUser?.name || "Usuario",
     );
     return res.status(200).json(taskUpdated);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Error sharing task" });
   }
 };

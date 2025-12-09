@@ -8,7 +8,6 @@ import { useLists } from "@/hooks/useLists";
 import { useTranslation } from "react-i18next";
 import type { List } from "@/types/tasks-system/list";
 
-// Props para modo controlado (usado como diálogo anidado)
 interface ControlledProps {
   mode: "controlled";
   open: boolean;
@@ -18,7 +17,6 @@ interface ControlledProps {
   ) => void;
 }
 
-// Props para modo standalone (usado como componente independiente)
 interface StandaloneProps {
   mode?: "standalone";
   trigger?: React.ReactNode;
@@ -35,7 +33,6 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
 
   const resetForm = () => setFormData({ name: "", description: "" });
 
-  // Handler para modo standalone
   const handleStandaloneSubmit = () => {
     if (!formData.name.trim()) return false;
 
@@ -48,7 +45,6 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
     return true;
   };
 
-  // Handler para modo controlado
   const handleControlledSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) return;
@@ -99,7 +95,6 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
     </>
   );
 
-  // Modo controlado: usa FormDialog
   if (isControlled) {
     return (
       <FormDialog
@@ -117,7 +112,6 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
     );
   }
 
-  // Modo standalone: usa CreateDialog
   return (
     <CreateDialog
       trigger={props.trigger}
@@ -132,15 +126,12 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
   );
 }
 
-// Export por defecto: modo standalone
 export default CreateListDialogUnified;
 
-// Export nombrado para modo controlado
 export function CreateListDialog(props: Omit<ControlledProps, "mode">) {
   return <CreateListDialogUnified mode="controlled" {...props} />;
 }
 
-// Export nombrado para modo standalone (alias)
 export function CreateListDialogStandalone(props: {
   children?: React.ReactNode;
 }) {

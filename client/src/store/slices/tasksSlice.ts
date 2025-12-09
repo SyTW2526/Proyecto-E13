@@ -27,7 +27,6 @@ const initialState: TasksState = {
   },
 };
 
-// Async Thunks
 export const fetchTasks = createAsyncThunk(
   "tasks/fetchTasks",
   async (_, { rejectWithValue }) => {
@@ -226,9 +225,25 @@ const tasksSlice = createSlice({
       state.sorting.order = state.sorting.order === "asc" ? "desc" : "asc";
     },
     resetTasksState: () => initialState,
+    taskAdded: (state, action: PayloadAction<Task>) => {
+      if (!state.tasks.find((t) => t.id === action.payload.id)) {
+        state.tasks.unshift(action.payload);
+      }
+    },
+    taskUpdated: (state, action: PayloadAction<Task>) => {
+      const index = state.tasks.findIndex((t) => t.id === action.payload.id);
+      if (index !== -1) {
+        state.tasks[index] = action.payload;
+      }
+    },
+    taskDeleted: (state, action: PayloadAction<string>) => {
+      state.tasks = state.tasks.filter((t) => t.id !== action.payload);
+      if (state.selectedTaskId === action.payload) {
+        state.selectedTaskId = null;
+      }
+    },
   },
   extraReducers: (builder) => {
-    // Fetch Tasks
     builder
       .addCase(fetchTasks.pending, (state) => {
         state.isLoading = true;
@@ -257,14 +272,15 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Create Task
     builder
       .addCase(createTask.pending, (state) => {
         state.error = null;
       })
       .addCase(createTask.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.tasks.unshift(action.payload);
+        if (!state.tasks.find((t) => t.id === action.payload.id)) {
+          state.tasks.unshift(action.payload);
+        }
         state.error = null;
       })
       .addCase(createTask.rejected, (state, action) => {
@@ -272,7 +288,6 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Update Task
     builder
       .addCase(updateTask.pending, (state, action) => {
         state.error = null;
@@ -309,7 +324,6 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Delete Task
     builder
       .addCase(deleteTask.pending, (state) => {
         state.error = null;
@@ -327,7 +341,6 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Share Task
     builder
       .addCase(shareTask.pending, (state) => {
         state.error = null;
@@ -351,7 +364,6 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Update Share Permission
     builder
       .addCase(updateTaskSharePermission.pending, (state, action) => {
         state.error = null;
@@ -384,7 +396,6 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Unshare Task
     builder
       .addCase(unshareTask.pending, (state) => {
         state.error = null;
@@ -429,6 +440,9 @@ export const {
   setSorting,
   toggleSortOrder,
   resetTasksState,
+  taskAdded,
+  taskUpdated,
+  taskDeleted,
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;
