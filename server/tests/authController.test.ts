@@ -28,6 +28,13 @@ vi.mock("../src/controllers/notificationsController", () => ({
   createNotification: vi.fn(),
 }));
 
+vi.mock("../src/utils/socket", () => ({
+  getIO: vi.fn().mockReturnValue({
+    to: vi.fn().mockReturnThis(),
+    emit: vi.fn(),
+  }),
+}));
+
 interface AuthRequest extends Request {
   user?: {
     id: string;
@@ -97,7 +104,7 @@ describe("AuthController", () => {
       });
       expect(createNotification).toHaveBeenCalledWith(
         "user-123",
-        "GENERAL",
+        "SYSTEM",
         "¡Bienvenido a Task Grid!",
         "Gracias por unirte a nuestra plataforma. Esperamos que disfrutes organizando tus tareas.",
         "Sistema",

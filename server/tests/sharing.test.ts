@@ -90,7 +90,7 @@ describe("Sharing Controller", () => {
       expect(prisma.task.update).toHaveBeenCalled();
       expect(notificationsController.createNotification).toHaveBeenCalledWith(
         "friend-123",
-        "GENERAL",
+        "SHARED",
         "Nueva tarea compartida",
         'Owner Name te ha compartido la tarea "My Task"',
         "Owner Name",
@@ -130,7 +130,7 @@ describe("Sharing Controller", () => {
       expect(prisma.list.update).toHaveBeenCalled();
       expect(notificationsController.createNotification).toHaveBeenCalledWith(
         "friend-123",
-        "GENERAL",
+        "SHARED",
         "Nueva lista compartida",
         'Owner Name te ha compartido la lista "My List"',
         "Owner Name",

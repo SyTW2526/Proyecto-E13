@@ -45,6 +45,13 @@ vi.mock("../src/controllers/notificationsController", () => ({
   createNotification: vi.fn(),
 }));
 
+vi.mock("../src/utils/socket", () => ({
+  getIO: vi.fn().mockReturnValue({
+    to: vi.fn().mockReturnThis(),
+    emit: vi.fn(),
+  }),
+}));
+
 describe("TasksController", () => {
   let mockReq: Partial<RequestWithUser>;
   let mockRes: Partial<Response>;
@@ -667,7 +674,7 @@ describe("TasksController", () => {
       expect(prisma.task.update).toHaveBeenCalled();
       expect(notificationsController.createNotification).toHaveBeenCalledWith(
         "user456",
-        "GENERAL",
+        "SHARED",
         "Nueva tarea compartida",
         expect.stringContaining("Test User"),
         "Test User",

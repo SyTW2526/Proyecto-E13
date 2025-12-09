@@ -33,6 +33,13 @@ vi.mock("../src/utils/emailService", () => ({
   sendNotificationEmail: vi.fn(),
 }));
 
+vi.mock("../src/utils/socket", () => ({
+  getIO: vi.fn().mockReturnValue({
+    to: vi.fn().mockReturnThis(),
+    emit: vi.fn(),
+  }),
+}));
+
 describe("NotificationsController", () => {
   let mockReq: Partial<RequestWithUser>;
   let mockRes: Partial<Response>;
@@ -286,7 +293,7 @@ describe("NotificationsController", () => {
       const mockNotification = {
         id: "notif1",
         userId: "user123",
-        type: "GENERAL",
+        type: "SYSTEM",
         title: "Test",
         description: "Desc",
         actorName: "Actor",
@@ -302,7 +309,7 @@ describe("NotificationsController", () => {
 
       const result = await createNotification(
         "user123",
-        "GENERAL",
+        "SYSTEM",
         "Test",
         "Desc",
         "Actor",
@@ -311,7 +318,7 @@ describe("NotificationsController", () => {
       expect(prisma.notification.create).toHaveBeenCalledWith({
         data: {
           userId: "user123",
-          type: "GENERAL",
+          type: "SYSTEM",
           title: "Test",
           description: "Desc",
           actorName: "Actor",
@@ -342,7 +349,7 @@ describe("NotificationsController", () => {
 
       (prisma.notification.create as Mock).mockResolvedValue(mockNotification);
 
-      await createNotification("user123", "MENTION", "Test", "Desc", "Actor");
+      await createNotification("user123", "SHARED", "Test", "Desc", "Actor");
 
       expect(sendNotificationEmail).not.toHaveBeenCalled();
     });
@@ -365,7 +372,7 @@ describe("NotificationsController", () => {
 
       const result = await createNotification(
         "user123",
-        "INBOX",
+        "EXPIRED",
         "Test",
         "Desc",
         "Actor",
@@ -380,15 +387,15 @@ describe("NotificationsController", () => {
       );
 
       await expect(
-        createNotification("user123", "FILE", "Test", "Desc", "Actor"),
+        createNotification("user123", "SYSTEM", "Test", "Desc", "Actor"),
       ).rejects.toThrow("DB Error");
     });
 
-    it("should create notification with MENTION type", async () => {
+    it("should create notification with SHARED type", async () => {
       const mockNotification = {
         id: "notif1",
         userId: "user123",
-        type: "MENTION",
+        type: "SHARED",
         user: {
           email: "test@test.com",
           name: "Test User",
@@ -400,20 +407,20 @@ describe("NotificationsController", () => {
 
       const result = await createNotification(
         "user123",
-        "MENTION",
+        "SHARED",
         "You were mentioned",
         "In task XYZ",
         "John Doe",
       );
 
-      expect(result.type).toBe("MENTION");
+      expect(result.type).toBe("SHARED");
     });
 
-    it("should create notification with FILE type", async () => {
+    it("should create notification with EXPIRED type", async () => {
       const mockNotification = {
         id: "notif1",
         userId: "user123",
-        type: "FILE",
+        type: "EXPIRED",
         user: {
           email: "test@test.com",
           name: "Test User",
@@ -425,13 +432,13 @@ describe("NotificationsController", () => {
 
       const result = await createNotification(
         "user123",
-        "FILE",
+        "EXPIRED",
         "File uploaded",
         "New file added",
         "Jane Doe",
       );
 
-      expect(result.type).toBe("FILE");
+      expect(result.type).toBe("EXPIRED");
     });
 
     it("should create notification with empty description", async () => {
@@ -447,7 +454,7 @@ describe("NotificationsController", () => {
 
       (prisma.notification.create as Mock).mockResolvedValue(mockNotification);
 
-      await createNotification("user123", "GENERAL", "Title", "", "Actor");
+      await createNotification("user123", "SYSTEM", "Title", "", "Actor");
 
       expect(prisma.notification.create).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -475,7 +482,7 @@ describe("NotificationsController", () => {
 
       await createNotification(
         "user123",
-        "GENERAL",
+        "SYSTEM",
         longTitle,
         longDesc,
         "Actor",
@@ -501,7 +508,7 @@ describe("NotificationsController", () => {
 
       await createNotification(
         "user123",
-        "GENERAL",
+        "SYSTEM",
         specialTitle,
         specialDesc,
         "Actor<>",

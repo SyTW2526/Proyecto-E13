@@ -174,7 +174,7 @@ describe("UsersController", () => {
       expect(mockResponse.status).toHaveBeenCalledWith(200);
     });
 
-    it("should not update notification settings when false (due to truthy check)", async () => {
+    it("should update notification settings when false", async () => {
       mockRequest.user = { id: "user-123" };
       mockRequest.body = {
         name: "Test User",
@@ -187,8 +187,8 @@ describe("UsersController", () => {
         email: "john@example.com",
         name: "Test User",
         image: null,
-        emailNotifications: true,
-        pushNotifications: true,
+        emailNotifications: false,
+        pushNotifications: false,
         googleSub: null,
       };
 
@@ -196,11 +196,13 @@ describe("UsersController", () => {
 
       await updateProfile(mockRequest as Request, mockResponse as Response);
 
-      // Only name is updated because false values are falsy
+      // All fields including false values are updated
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { id: "user-123" },
         data: {
           name: "Test User",
+          emailNotifications: false,
+          pushNotifications: false,
         },
         select: expect.any(Object),
       });

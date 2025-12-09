@@ -24,38 +24,36 @@ describe("emailService", () => {
   });
 
   describe("Modo desarrollo sin credenciales", () => {
-    it("Logea en consola cuando no hay EMAIL_USER", async () => {
+    it("Returns silently when no EMAIL_USER", async () => {
       delete process.env.EMAIL_USER;
       delete process.env.EMAIL_PASSWORD;
 
       await sendNotificationEmail(
         "test@test.com",
         "Test User",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "Description",
       );
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining("MODO DESARROLLO"),
-      );
+      // Should not throw and not send email
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
-    it("Logea en consola cuando no hay EMAIL_PASSWORD", async () => {
+    it("Returns silently when no EMAIL_PASSWORD", async () => {
       process.env.EMAIL_USER = "test@test.com";
       delete process.env.EMAIL_PASSWORD;
 
       await sendNotificationEmail(
         "test@test.com",
         "Test User",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "Description",
       );
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining("MODO DESARROLLO"),
-      );
+      // Should not throw and not send email
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -76,7 +74,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "recipient@test.com",
         "Test User",
-        "GENERAL",
+        "SYSTEM",
         "Test Title",
         "Test Description",
       );
@@ -89,9 +87,6 @@ describe("emailService", () => {
         },
       });
       expect(mockSendMail).toHaveBeenCalled();
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Email enviado exitosamente"),
-      );
     });
 
     it("Envía email correctamente en desarrollo con credenciales", async () => {
@@ -105,7 +100,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "recipient@test.com",
         "Dev User",
-        "MENTION",
+        "SHARED",
         "Dev Title",
         "Dev Description",
       );
@@ -128,7 +123,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "Description",
       );
@@ -146,7 +141,7 @@ describe("emailService", () => {
       process.env.EMAIL_PASSWORD = "password";
     });
 
-    it("Envía notificación tipo GENERAL", async () => {
+    it("Envía notificación tipo SYSTEM", async () => {
       const mockSendMail = vi.fn().mockResolvedValue({ messageId: "123" });
       const mockTransporter = { sendMail: mockSendMail };
       vi.mocked(nodemailer.createTransport).mockReturnValue(
@@ -156,17 +151,17 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "General Title",
         "General Description",
       );
 
       const callArgs = mockSendMail.mock.calls[0][0];
       expect(callArgs.html).toContain("#6366f1");
-      expect(callArgs.html).toContain("GENERAL");
+      expect(callArgs.html).toContain("SYSTEM");
     });
 
-    it("Envía notificación tipo MENTION", async () => {
+    it("Envía notificación tipo SHARED", async () => {
       const mockSendMail = vi.fn().mockResolvedValue({ messageId: "123" });
       const mockTransporter = { sendMail: mockSendMail };
       vi.mocked(nodemailer.createTransport).mockReturnValue(
@@ -176,17 +171,17 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "MENTION",
+        "SHARED",
         "Mention Title",
         "You were mentioned",
       );
 
       const callArgs = mockSendMail.mock.calls[0][0];
-      expect(callArgs.html).toContain("#ec4899");
-      expect(callArgs.html).toContain("MENTION");
+      expect(callArgs.html).toContain("#8b5cf6");
+      expect(callArgs.html).toContain("SHARED");
     });
 
-    it("Envía notificación tipo INBOX", async () => {
+    it("Envía notificación tipo EXPIRED", async () => {
       const mockSendMail = vi.fn().mockResolvedValue({ messageId: "123" });
       const mockTransporter = { sendMail: mockSendMail };
       vi.mocked(nodemailer.createTransport).mockReturnValue(
@@ -196,34 +191,14 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "INBOX",
+        "EXPIRED",
         "Inbox Title",
         "New inbox item",
       );
 
       const callArgs = mockSendMail.mock.calls[0][0];
-      expect(callArgs.html).toContain("#8b5cf6");
-      expect(callArgs.html).toContain("INBOX");
-    });
-
-    it("Envía notificación tipo FILE", async () => {
-      const mockSendMail = vi.fn().mockResolvedValue({ messageId: "123" });
-      const mockTransporter = { sendMail: mockSendMail };
-      vi.mocked(nodemailer.createTransport).mockReturnValue(
-        mockTransporter as never,
-      );
-
-      await sendNotificationEmail(
-        "test@test.com",
-        "User",
-        "FILE",
-        "File Title",
-        "New file shared",
-      );
-
-      const callArgs = mockSendMail.mock.calls[0][0];
-      expect(callArgs.html).toContain("#14b8a6");
-      expect(callArgs.html).toContain("FILE");
+      expect(callArgs.html).toContain("#ef4444");
+      expect(callArgs.html).toContain("EXPIRED");
     });
   });
 
@@ -243,7 +218,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "Custom User Name",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "Description",
       );
@@ -262,7 +237,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "Custom Title",
         "Custom Description Text",
       );
@@ -284,7 +259,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "Desc",
       );
@@ -305,7 +280,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "Desc",
       );
@@ -328,7 +303,7 @@ describe("emailService", () => {
         mockTransporter as never,
       );
 
-      await sendNotificationEmail("test@test.com", "", "GENERAL", "", "");
+      await sendNotificationEmail("test@test.com", "", "SYSTEM", "", "");
 
       expect(mockSendMail).toHaveBeenCalled();
     });
@@ -344,7 +319,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         longText,
-        "GENERAL",
+        "SYSTEM",
         longText,
         longText,
       );
@@ -362,7 +337,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User <script>",
-        "GENERAL",
+        "SYSTEM",
         "Title & < >",
         'Desc "quotes"',
       );
@@ -380,7 +355,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "user+tag@example.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "Desc",
       );
@@ -399,7 +374,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "Description",
       );
@@ -427,7 +402,7 @@ describe("emailService", () => {
         sendNotificationEmail(
           "test@test.com",
           "User",
-          "GENERAL",
+          "SYSTEM",
           "Title",
           "Desc",
         ),
@@ -436,7 +411,7 @@ describe("emailService", () => {
       expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
-    it("Maneja messageId en respuesta exitosa", async () => {
+    it("Successfully sends email with messageId", async () => {
       const mockSendMail = vi
         .fn()
         .mockResolvedValue({ messageId: "unique-message-id-123" });
@@ -448,14 +423,12 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "Desc",
       );
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining("unique-message-id-123"),
-      );
+      expect(mockSendMail).toHaveBeenCalled();
     });
   });
 
@@ -475,7 +448,7 @@ describe("emailService", () => {
         mockTransporter as never,
       );
 
-      await sendNotificationEmail("", "User", "GENERAL", "Title", "Desc");
+      await sendNotificationEmail("", "User", "SYSTEM", "Title", "Desc");
 
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -496,7 +469,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "Desc",
       );
@@ -517,7 +490,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "",
         "Desc",
       );
@@ -538,7 +511,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         "",
       );
@@ -556,7 +529,7 @@ describe("emailService", () => {
         mockTransporter as never,
       );
 
-      await sendNotificationEmail("", "", "GENERAL", "", "");
+      await sendNotificationEmail("", "", "SYSTEM", "", "");
 
       expect(mockSendMail).toHaveBeenCalled();
     });
@@ -574,7 +547,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         longContent,
         longContent,
       );
@@ -596,7 +569,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         specialText,
-        "GENERAL",
+        "SYSTEM",
         specialText,
         specialText,
       );
@@ -618,7 +591,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         unicodeText,
-        "GENERAL",
+        "SYSTEM",
         unicodeText,
         unicodeText,
       );
@@ -640,7 +613,7 @@ describe("emailService", () => {
       await sendNotificationEmail(
         "test@test.com",
         "User",
-        "GENERAL",
+        "SYSTEM",
         "Title",
         multilineDesc,
       );

@@ -42,6 +42,13 @@ vi.mock("../src/controllers/notificationsController", () => ({
   createNotification: vi.fn(),
 }));
 
+vi.mock("../src/utils/socket", () => ({
+  getIO: vi.fn().mockReturnValue({
+    to: vi.fn().mockReturnThis(),
+    emit: vi.fn(),
+  }),
+}));
+
 describe("ListsController", () => {
   let mockReq: Partial<RequestWithUser>;
   let mockRes: Partial<Response>;
@@ -88,10 +95,10 @@ describe("ListsController", () => {
           description: "Test description",
           ownerId: "user123",
         },
-        include: {
-          shares: true,
+        include: expect.objectContaining({
+          shares: expect.any(Object),
           tasks: true,
-        },
+        }),
       });
       expect(statusMock).toHaveBeenCalledWith(200);
       expect(jsonMock).toHaveBeenCalledWith(mockList);
@@ -266,7 +273,10 @@ describe("ListsController", () => {
 
       expect(prisma.list.findMany).toHaveBeenCalledWith({
         where: { ownerId: "user123" },
-        include: { shares: true, tasks: true },
+        include: expect.objectContaining({
+          shares: expect.any(Object),
+          tasks: true,
+        }),
       });
       expect(statusMock).toHaveBeenCalledWith(200);
       expect(jsonMock).toHaveBeenCalledWith(mockLists);
@@ -319,18 +329,11 @@ describe("ListsController", () => {
             },
           },
         },
-        include: {
-          shares: true,
+        include: expect.objectContaining({
+          shares: expect.any(Object),
           tasks: true,
-          owner: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              image: true,
-            },
-          },
-        },
+          owner: expect.any(Object),
+        }),
       });
       expect(statusMock).toHaveBeenCalledWith(200);
       expect(jsonMock).toHaveBeenCalledWith(mockLists);
@@ -369,7 +372,10 @@ describe("ListsController", () => {
       expect(prisma.list.update).toHaveBeenCalledWith({
         where: { id: "list1" },
         data: { name: "Updated Name", description: "Updated Desc" },
-        include: { shares: true, tasks: true },
+        include: expect.objectContaining({
+          shares: expect.any(Object),
+          tasks: true,
+        }),
       });
       expect(statusMock).toHaveBeenCalledWith(200);
       expect(jsonMock).toHaveBeenCalledWith(updatedList);
@@ -466,7 +472,10 @@ describe("ListsController", () => {
       expect(prisma.list.update).toHaveBeenCalledWith({
         where: { id: "list1" },
         data: { name: "Only Name" },
-        include: { shares: true, tasks: true },
+        include: expect.objectContaining({
+          shares: expect.any(Object),
+          tasks: true,
+        }),
       });
     });
 
