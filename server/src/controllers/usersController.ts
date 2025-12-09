@@ -14,10 +14,11 @@ export const updateProfile = async (req: Request, res: Response) => {
       emailNotifications?: boolean;
       pushNotifications?: boolean;
     } = {};
-    if (name) dataToUpdate.name = name;
-    if (emailNotifications)
+    if (name !== undefined) dataToUpdate.name = name;
+    if (emailNotifications !== undefined)
       dataToUpdate.emailNotifications = emailNotifications;
-    if (pushNotifications) dataToUpdate.pushNotifications = pushNotifications;
+    if (pushNotifications !== undefined)
+      dataToUpdate.pushNotifications = pushNotifications;
     if (Object.keys(dataToUpdate).length === 0) {
       return res.status(400).json({ error: "No fields to update" });
     }

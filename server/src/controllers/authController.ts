@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { OAuth2Client } from "google-auth-library";
 import prisma from "../database/prisma";
 import { generateToken } from "../utils/jwt";
+import { createNotification } from "./notificationsController";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const oauth = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null;
@@ -22,6 +23,13 @@ export const register = async (
         name: true,
       },
     });
+    await createNotification(
+      user.id,
+      "SYSTEM",
+      "¡Bienvenido a Task Grid!",
+      "Gracias por unirte a nuestra plataforma. Esperamos que disfrutes organizando tus tareas.",
+      "Sistema",
+    );
     const token = generateToken({ userId: user.id });
     return res.status(201).json({ user, token });
   } catch (error: any) {
@@ -105,6 +113,13 @@ export async function googleSignIn(req: Request, res: Response) {
             emailVerifiedAt: new Date(),
           },
         });
+        await createNotification(
+          user.id,
+          "SYSTEM",
+          "¡Bienvenido a Task Grid!",
+          "Gracias por unirte a nuestra plataforma. Esperamos que disfrutes organizando tus tareas.",
+          "Sistema",
+        );
       }
     }
     const token = generateToken({ userId: user.id });
@@ -121,7 +136,6 @@ export async function googleSignIn(req: Request, res: Response) {
       },
     });
   } catch (error) {
-    console.error("Google Sign-In error:", error);
     return res
       .status(401)
       .json({ error: "Failed to authenticate with Google" });

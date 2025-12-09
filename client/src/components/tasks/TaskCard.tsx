@@ -48,6 +48,7 @@ export const TaskCard = memo(function TaskCard({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [completionDialogOpen, setCompletionDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { toggleFavorite, removeTask, editTask } = useTasks();
 
@@ -75,6 +76,9 @@ export const TaskCard = memo(function TaskCard({
               onChange={(status) => {
                 if (status !== "all") {
                   editTask({ id: task.id, status });
+                  if (status === "COMPLETED" && task.status !== "COMPLETED") {
+                    setCompletionDialogOpen(true);
+                  }
                 }
               }}
               showAll={false}
@@ -133,18 +137,18 @@ export const TaskCard = memo(function TaskCard({
                 {formatDate(task.createdAt)}
               </span>
             </div>
-            {task.dueDate && (
-              <div className="flex items-center gap-1.5 text-xs sm:text-xs md:text-sm text-muted-foreground">
-                <Icon
-                  as="IconCalendarEvent"
-                  size={14}
-                  className="text-muted-foreground shrink-0"
-                />
-                <span className="truncate max-w-[120px] sm:max-w-none">
-                  {task.dueDate ? formatDate(task.dueDate) : "-"}
-                </span>
-              </div>
-            )}
+            <div className="flex items-center gap-1.5 text-xs sm:text-xs md:text-sm text-muted-foreground">
+              <Icon
+                as="IconCalendarEvent"
+                size={14}
+                className="text-muted-foreground shrink-0"
+              />
+              <span className="truncate max-w-[120px] sm:max-w-none">
+                {task.dueDate
+                  ? formatDate(task.dueDate)
+                  : t("tasks.card.noDate")}
+              </span>
+            </div>
           </div>
           {task.description && (
             <p className="mt-1.5 text-sm sm:text-sm md:text-base text-muted-foreground line-clamp-2 leading-relaxed break-words">
@@ -215,6 +219,26 @@ export const TaskCard = memo(function TaskCard({
           <AlertDialogFooter>
             <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>
               {t("share.errors.understood")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Task Completion Alert Dialog */}
+      <AlertDialog
+        open={completionDialogOpen}
+        onOpenChange={setCompletionDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("tasks.completion.title")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("tasks.completion.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setCompletionDialogOpen(false)}>
+              {t("tasks.completion.understood")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -228,7 +228,7 @@ export function groupTasksByList(tasks: Task[]): Record<string, Task[]> {
 function getStartOfWeek(): Date {
   const now = new Date();
   const day = now.getDay();
-  const diff = day === 0 ? -6 : 1 - day; // Si es domingo (0), retrocede 6 días; sino, calcula días hasta el lunes
+  const diff = day === 0 ? -6 : 1 - day;
   const monday = new Date(now);
   monday.setDate(now.getDate() + diff);
   return startOfDay(monday);
@@ -250,7 +250,6 @@ export function getPendingTasksThisWeek(tasks: Task[]): number {
     const due = parseDate(task.dueDate);
     if (due && due < weekEnd) return true;
 
-    // Tareas sin dueDate: incluir solo si fueron creadas esta semana
     const created = parseDate(task.createdAt);
     if (created && created >= weekStart && created < weekEnd && !task.dueDate)
       return true;

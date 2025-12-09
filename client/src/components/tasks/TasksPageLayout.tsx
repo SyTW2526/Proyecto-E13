@@ -14,8 +14,6 @@ type SortField = "name" | "dueDate" | "priority" | "createdAt" | "updatedAt";
 interface TasksPageLayoutProps {
   title: string;
   headerActions?: ReactNode;
-
-  // Sidebar props
   sidebarTitle: string;
   sidebarActions?: boolean;
   sidebarItems: Array<{
@@ -29,7 +27,6 @@ interface TasksPageLayoutProps {
   isSidebarLoading: boolean;
   sidebarEmptyMessage: string;
 
-  // Filter props
   filters: {
     status: TaskStatus | "all";
     priority: TaskPriority | "all";
@@ -43,7 +40,6 @@ interface TasksPageLayoutProps {
   onSortChange: (field: SortField) => void;
   onToggleSort: () => void;
 
-  // Content props
   isLoadingTasks: boolean;
   error?: string | null;
   tasks: Task[];

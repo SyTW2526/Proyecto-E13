@@ -165,7 +165,7 @@
     "card": {
       "createdLabel": "Created:",
       "dueLabel": "Due:",
-      "noDate": "No date"
+      "noDate": "No due date"
     },
     "filters": {
       "statusPlaceholder": "Status",
@@ -228,13 +228,18 @@
       "dueDate": {
         "label": "Due date"
       }
+    },
+    "completion": {
+      "title": "Task Completed!",
+      "description": "This task will be automatically deleted in 7 days.",
+      "understood": "Understood"
     }
   },
   "lists": {
     "title": "Lists",
     "emptyState": "No lists",
     "sidebar": {
-      "title": "Lists"
+      "title": "My Lists"
     },
     "create": {
       "title": "New List",
@@ -320,10 +325,10 @@
       "days": "{{count}} days ago"
     },
     "tabs": {
-      "GENERAL": "General",
-      "MENTION": "Mentions",
-      "INBOX": "Inbox",
-      "FILE": "Files"
+      "ALL": "All",
+      "SYSTEM": "System",
+      "SHARED": "Shared",
+      "EXPIRED": "Expired"
     }
   },
   "dashboard": {

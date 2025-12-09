@@ -35,7 +35,10 @@ const formatDateForInput = (dateString?: string): string => {
   }
 };
 
-export function useTaskForm(editTask?: Task) {
+export function useTaskForm(
+  editTask?: Task,
+  options: { filterByEditPermission?: boolean } = {},
+) {
   const [formData, setFormData] = useState<TaskFormData>(
     editTask
       ? {
@@ -52,9 +55,14 @@ export function useTaskForm(editTask?: Task) {
   const [listDialogOpen, setListDialogOpen] = useState(false);
 
   const { createTask, editTask: updateTask } = useTasks();
-  const { accessibleLists, createList } = useLists();
+  const { accessibleLists, createList, isOwner, canAccess } = useLists();
 
-  // Actualizar el formulario cuando editTask cambia
+  const listsToUse = options.filterByEditPermission
+    ? accessibleLists.filter(
+        (list) => isOwner(list.id) || canAccess(list.id, "EDIT"),
+      )
+    : accessibleLists;
+
   useEffect(() => {
     if (editTask) {
       setFormData({
@@ -71,12 +79,11 @@ export function useTaskForm(editTask?: Task) {
     }
   }, [editTask]);
 
-  // Establecer la primera lista por defecto si existe y no hay ninguna seleccionada
   useEffect(() => {
-    if (accessibleLists.length > 0 && !formData.listId && !editTask) {
-      setFormData((prev) => ({ ...prev, listId: accessibleLists[0].id }));
+    if (listsToUse.length > 0 && !formData.listId && !editTask) {
+      setFormData((prev) => ({ ...prev, listId: listsToUse[0].id }));
     }
-  }, [accessibleLists, formData.listId, editTask]);
+  }, [listsToUse, formData.listId, editTask]);
 
   const updateField = useCallback((field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -88,28 +95,7 @@ export function useTaskForm(editTask?: Task) {
 
   const handleListCreated = useCallback(
     (listData: Omit<List, "id" | "createdAt" | "shares" | "tasks">) => {
-      // La creación de la lista ahora se maneja en el diálogo de lista
-      // Aquí solo necesitamos actualizar el campo listId si la creación fue exitosa
-      // Sin embargo, como createList es asíncrono, idealmente deberíamos esperar la respuesta
-      // Por ahora, asumiremos que el usuario seleccionará la nueva lista o que el diálogo de lista
-      // manejará la selección si es necesario.
-      // Dado que CreateListDialog ahora usa el thunk directamente, este callback podría simplificarse
-      // o eliminarse si el diálogo maneja todo.
-      // Pero para mantener la compatibilidad con el prop onCreateList de CreateListDialog (si se usa en modo controlado),
-      // podemos dejarlo.
-      // NOTA: CreateListDialog en modo controlado llama a onCreateList con los datos, pero no crea la lista en el store.
-      // Si CreateTaskDialog usa CreateListDialog en modo controlado, entonces SÍ necesitamos crear la lista aquí.
-
-      // Revisando CreateTaskDialog, usa CreateListDialog con onCreateList={handleListCreated}.
-      // Y CreateListDialog llama a onCreateList en modo controlado.
-      // PERO CreateTaskDialog pasa `open` y `onOpenChange`, lo que sugiere modo controlado.
-      // Sin embargo, CreateListDialogUnified decide el modo basado en props.
-      // Si pasamos `onCreateList`, es modo controlado.
-
-      // Vamos a actualizar esto para despachar la acción createList
       createList(listData);
-      // Nota: No podemos saber el ID de la nueva lista inmediatamente aquí sin esperar el thunk.
-      // Esto es una limitación actual. Idealmente createList debería devolver la lista creada.
     },
     [createList],
   );
@@ -131,10 +117,8 @@ export function useTaskForm(editTask?: Task) {
       };
 
       if (editTask) {
-        // Modo edición: actualizar tarea existente
         updateTask({ id: editTask.id, ...taskData });
       } else {
-        // Modo creación: crear nueva tarea
         createTask(taskData);
       }
 
@@ -151,7 +135,7 @@ export function useTaskForm(editTask?: Task) {
     formData,
     updateField,
     resetForm,
-    accessibleLists,
+    accessibleLists: listsToUse,
     listDialogOpen,
     setListDialogOpen,
     handleListCreated,

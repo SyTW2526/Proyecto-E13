@@ -10,7 +10,6 @@ const initialState: ListsState = {
   error: null,
 };
 
-// Async Thunks
 export const fetchLists = createAsyncThunk(
   "lists/fetchLists",
   async (_, { rejectWithValue }) => {
@@ -148,14 +147,29 @@ const listsSlice = createSlice({
       state.error = action.payload;
       state.isLoading = false;
     },
-
     setSelectedList: (state, action: PayloadAction<string | null>) => {
       state.selectedListId = action.payload;
     },
     resetListsState: () => initialState,
+    listUpdated: (state, action: PayloadAction<List>) => {
+      const index = state.lists.findIndex((l) => l.id === action.payload.id);
+      if (index !== -1) {
+        state.lists[index] = action.payload;
+      }
+    },
+    listCreated: (state, action: PayloadAction<List>) => {
+      if (!state.lists.find((l) => l.id === action.payload.id)) {
+        state.lists.unshift(action.payload);
+      }
+    },
+    listDeleted: (state, action: PayloadAction<string>) => {
+      state.lists = state.lists.filter((l) => l.id !== action.payload);
+      if (state.selectedListId === action.payload) {
+        state.selectedListId = null;
+      }
+    },
   },
   extraReducers: (builder) => {
-    // Fetch Lists
     builder
       .addCase(fetchLists.pending, (state) => {
         state.isLoading = true;
@@ -184,7 +198,6 @@ const listsSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Create List
     builder
       .addCase(createList.pending, (state) => {
         state.isLoading = true;
@@ -192,7 +205,9 @@ const listsSlice = createSlice({
       })
       .addCase(createList.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.lists.unshift(action.payload);
+        if (!state.lists.find((l) => l.id === action.payload.id)) {
+          state.lists.unshift(action.payload);
+        }
         state.error = null;
       })
       .addCase(createList.rejected, (state, action) => {
@@ -200,7 +215,6 @@ const listsSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Update List
     builder
       .addCase(updateList.pending, (state) => {
         state.isLoading = true;
@@ -219,7 +233,6 @@ const listsSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Delete List
     builder
       .addCase(deleteList.pending, (state) => {
         state.isLoading = true;
@@ -238,7 +251,6 @@ const listsSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Share List
     builder
       .addCase(shareList.pending, (state) => {
         state.error = null;
@@ -254,7 +266,6 @@ const listsSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Update Share Permission
     builder
       .addCase(updateListSharePermission.pending, (state, action) => {
         state.error = null;
@@ -279,7 +290,6 @@ const listsSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // Unshare List
     builder
       .addCase(unshareList.pending, (state) => {
         state.error = null;
@@ -297,8 +307,15 @@ const listsSlice = createSlice({
   },
 });
 
-export const { setLoading, setError, setSelectedList, resetListsState } =
-  listsSlice.actions;
+export const {
+  setLoading,
+  setError,
+  setSelectedList,
+  resetListsState,
+  listUpdated,
+  listCreated,
+  listDeleted,
+} = listsSlice.actions;
 
 export default listsSlice.reducer;
 

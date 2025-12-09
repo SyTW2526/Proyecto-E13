@@ -11,7 +11,6 @@ import { useTranslation } from "react-i18next";
 import { statusConfig, priorityConfig } from "@/config/taskConfig";
 import type { TaskStatus, TaskPriority } from "@/types/tasks-system/task";
 
-// Types
 interface FilterProps<T> {
   value: T | "all";
   onChange: (value: T | "all") => void;
@@ -27,7 +26,6 @@ interface TaskFilterConfig {
   icon?: string;
 }
 
-// Base TaskFilter Component
 function TaskFilter<T extends string>({
   value,
   onChange,
@@ -75,7 +73,6 @@ function TaskFilter<T extends string>({
     );
   }
 
-  // Default variant
   return (
     <Select value={value} onValueChange={(val) => onChange(val as T | "all")}>
       <SelectTrigger className={`h-8 text-sm ${className}`}>
@@ -101,7 +98,6 @@ function TaskFilter<T extends string>({
   );
 }
 
-// Status Filter
 export function TaskStatusFilter(props: FilterProps<TaskStatus>) {
   const { t } = useTranslation();
 
@@ -125,7 +121,6 @@ export function TaskStatusFilter(props: FilterProps<TaskStatus>) {
   );
 }
 
-// Priority Filter
 export function TaskPriorityFilter(props: FilterProps<TaskPriority>) {
   const { t } = useTranslation();
 
@@ -149,7 +144,6 @@ export function TaskPriorityFilter(props: FilterProps<TaskPriority>) {
   );
 }
 
-// Favorite Toggle Button
 interface TaskFavoriteToggleProps {
   active: boolean;
   onToggle: () => void;
@@ -165,18 +159,17 @@ export function TaskFavoriteToggle({
 
   return (
     <Button
-      variant={active ? "default" : "outline"}
+      variant="outline"
       onClick={onToggle}
       title={
         active ? t("tasks.filters.showAll") : t("tasks.filters.showFavorites")
       }
       leftIcon={active ? "IconStarFilled" : "IconStar"}
-      className={`${active ? "bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-500" : ""} ${className}`}
+      className={`${active ? "bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-500 hover:text-white" : ""} ${className}`}
     />
   );
 }
 
-// Sort Filter Types
 type SortField = "name" | "dueDate" | "priority" | "createdAt" | "updatedAt";
 type SortOrder = "asc" | "desc";
 
@@ -188,7 +181,6 @@ interface TaskSortFilterProps {
   className?: string;
 }
 
-// Sort Filter Component
 export function TaskSortFilter({
   sortField,
   sortOrder,

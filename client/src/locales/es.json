@@ -165,7 +165,7 @@
     "card": {
       "createdLabel": "Creada:",
       "dueLabel": "Vence:",
-      "noDate": "Sin fecha"
+      "noDate": "No vence"
     },
     "filters": {
       "statusPlaceholder": "Estado",
@@ -228,13 +228,18 @@
       "dueDate": {
         "label": "Fecha de vencimiento"
       }
+    },
+    "completion": {
+      "title": "¡Tarea Completada!",
+      "description": "Esta tarea será eliminada automáticamente en 7 días.",
+      "understood": "Entendido"
     }
   },
   "lists": {
     "title": "Listas",
     "emptyState": "No hay listas",
     "sidebar": {
-      "title": "Listas"
+      "title": "Mis Listas"
     },
     "create": {
       "title": "Nueva Lista",
@@ -320,10 +325,10 @@
       "days": "Hace {{count}} días"
     },
     "tabs": {
-      "GENERAL": "General",
-      "MENTION": "Menciones",
-      "INBOX": "Buzón",
-      "FILE": "Archivos"
+      "ALL": "Todos",
+      "SYSTEM": "Sistema",
+      "SHARED": "Compartidas",
+      "EXPIRED": "Vencidas"
     }
   },
   "dashboard": {

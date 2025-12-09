@@ -64,10 +64,10 @@ export const SharedTaskCard = memo(function SharedTaskCard({
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [unshareDialogOpen, setUnshareDialogOpen] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [completionDialogOpen, setCompletionDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { removeTask, editTask, removeShare } = useTasks();
 
-  // Calculate permission
   let permission: SharePermission = "VIEW";
   const myId = user?.id;
   const taskShare = task.shares?.find((s) => s.userId === myId);
@@ -78,14 +78,10 @@ export const SharedTaskCard = memo(function SharedTaskCard({
 
   const canEdit = permission === "EDIT" || permission === "ADMIN";
 
-  // Determine owner
   const owner = task.list?.owner || list?.owner;
   const isOwner = owner?.id === myId;
   const isListSharedWithMe = list?.shares?.some((s) => s.userId === myId);
 
-  // Permission checks based on backend logic:
-  // - canDelete: requires ADMIN on LIST (not task share) - backend uses requireListPermission=true
-  // - canShare: requires ADMIN on task or list
   const listPermission = listShare?.permission;
   const canDeleteTask = isOwner || listPermission === "ADMIN";
   const canShareTask = isOwner || permission === "ADMIN";
@@ -145,9 +141,15 @@ export const SharedTaskCard = memo(function SharedTaskCard({
                     {Object.entries(statusConfig).map(([key, config]) => (
                       <DropdownMenuItem
                         key={key}
-                        onClick={() =>
-                          editTask({ id: task.id, status: key as TaskStatus })
-                        }
+                        onClick={() => {
+                          editTask({ id: task.id, status: key as TaskStatus });
+                          if (
+                            key === "COMPLETED" &&
+                            task.status !== "COMPLETED"
+                          ) {
+                            setCompletionDialogOpen(true);
+                          }
+                        }}
                         className="flex items-center gap-2"
                       >
                         <div
@@ -361,6 +363,26 @@ export const SharedTaskCard = memo(function SharedTaskCard({
           <AlertDialogFooter>
             <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>
               {t("share.errors.understood")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Task Completion Alert Dialog */}
+      <AlertDialog
+        open={completionDialogOpen}
+        onOpenChange={setCompletionDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("tasks.completion.title")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("tasks.completion.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setCompletionDialogOpen(false)}>
+              {t("tasks.completion.understood")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

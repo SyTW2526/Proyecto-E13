@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { createNotification } from "../controllers/notificationsController.js";
 
-// Crear una nueva instancia de Prisma para este script
 const prisma = new PrismaClient();
 
 /**
@@ -12,8 +11,6 @@ async function seedNotifications() {
   try {
     const userEmails = [
       "alu0101349824@ull.edu.es",
-      // "alu0101437415@ull.edu.es",
-      // "alu0101474311@ull.edu.es",
     ];
 
     let totalNotifications = 0;
@@ -30,36 +27,33 @@ async function seedNotifications() {
 
       console.log(`Creando notificaciones para: ${user.email}`);
 
-      // Crear notificaciones usando la función createNotification
-      // que automáticamente enviará emails si el usuario los tiene activados
       const notificationData = [
         {
-          type: "GENERAL" as const,
+          type: "SYSTEM" as const,
           title: "Bienvenido a TaskGrid",
           description: "Tu cuenta ha sido creada exitosamente",
           actorName: "Sistema",
         },
         {
-          type: "FILE" as const,
-          title: "Compartió archivos",
-          description: "alu0101xxxxx1 compartió 2 archivos en TaskGrid",
+          type: "SHARED" as const,
+          title: "Nueva tarea compartida",
+          description: "alu0101xxxxx1 te ha compartido una tarea",
           actorName: "alu0101xxxxx1",
         },
         {
-          type: "MENTION" as const,
-          title: "Nueva mención",
-          description: "alu0101xxxxx2 comentó y te mencionó en una tarea",
+          type: "SHARED" as const,
+          title: "Nueva lista compartida",
+          description: "alu0101xxxxx2 te ha compartido una lista",
           actorName: "alu0101xxxxx2",
         },
         {
-          type: "INBOX" as const,
-          title: "Solicitud de acceso",
-          description: "alu0101xxxxx3 pidió acceso a una lista en TaskGrid",
-          actorName: "alu0101xxxxx3",
+          type: "EXPIRED" as const,
+          title: "Tarea eliminada",
+          description: "La tarea 'Ejemplo' fue eliminada por vencimiento",
+          actorName: "Sistema",
         },
       ];
 
-      // Crear notificaciones una por una usando createNotification
       for (const data of notificationData) {
         await createNotification(
           user.id,

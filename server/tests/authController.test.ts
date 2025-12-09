@@ -7,6 +7,7 @@ import {
   login,
   register,
 } from "../src/controllers/authController";
+import { createNotification } from "../src/controllers/notificationsController";
 import prisma from "../src/database/prisma";
 import * as jwtUtils from "../src/utils/jwt";
 
@@ -23,6 +24,9 @@ vi.mock("../src/database/prisma", () => ({
 
 vi.mock("../src/utils/jwt");
 vi.mock("bcrypt");
+vi.mock("../src/controllers/notificationsController", () => ({
+  createNotification: vi.fn(),
+}));
 
 interface AuthRequest extends Request {
   user?: {
@@ -91,6 +95,13 @@ describe("AuthController", () => {
         }),
         token: "jwt-token",
       });
+      expect(createNotification).toHaveBeenCalledWith(
+        "user-123",
+        "GENERAL",
+        "¡Bienvenido a Task Grid!",
+        "Gracias por unirte a nuestra plataforma. Esperamos que disfrutes organizando tus tareas.",
+        "Sistema",
+      );
     });
 
     it("should return 400 if email already exists", async () => {

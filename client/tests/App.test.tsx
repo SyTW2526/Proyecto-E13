@@ -8,6 +8,10 @@ vi.mock("@/hooks/useAuth", () => ({
   useAuth: vi.fn(),
 }));
 
+vi.mock("@/hooks/useSocket", () => ({
+  useSocket: vi.fn(),
+}));
+
 vi.mock("@/components/appMenubar", () => ({
   default: () => <div data-testid="app-menubar">AppMenubar</div>,
 }));
