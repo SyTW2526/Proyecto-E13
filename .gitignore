@@ -1,4 +1,5 @@
 node_modules/
+html/
 # Environment variables
 .env
 .env*.local
