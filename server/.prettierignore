@@ -13,3 +13,5 @@ src/middleware
 prisma
 database
 html
+.vscode
+coverage
