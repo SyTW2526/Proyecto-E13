@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { OAuth2Client } from "google-auth-library";
-import prisma from "../database/prisma";
-import { generateToken } from "../utils/jwt";
-import { createNotification } from "./notificationsController";
+import prisma from "../database/prisma.js";
+import { generateToken } from "../utils/jwt.js";
+import { createNotification } from "./notificationsController.js";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const oauth = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null;

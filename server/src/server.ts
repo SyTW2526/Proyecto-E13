@@ -3,10 +3,10 @@ import "./config/env";
 
 import express, { Request, Response } from "express";
 import { createServer } from "http";
-import { initSocket } from "./utils/socket";
+import { initSocket } from "./utils/socket.js";
 import cors from "cors";
-import router from "./routes/routes";
-import { startCleanupJob } from "./jobs/cleanupTasks";
+import router from "./routes/routes.js";
+import { startCleanupJob } from "./jobs/cleanupTasks.js";
 
 const app = express();
 const httpServer = createServer(app);
