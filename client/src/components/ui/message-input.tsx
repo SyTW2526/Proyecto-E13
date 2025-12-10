@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, Paperclip, Square } from "lucide-react";
-import { omit } from "remeda";
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
@@ -49,43 +48,47 @@ export function MessageInput({
   const [isDragging, setIsDragging] = useState(false);
   const [showInterruptPrompt, setShowInterruptPrompt] = useState(false);
 
+  // Extraer las props específicas de MessageInput
+  const { allowAttachments, files, setFiles, ...textareaProps } =
+    props as MessageInputWithAttachmentsProps;
+
   useEffect(() => {
     if (!isGenerating) {
       setShowInterruptPrompt(false);
     }
   }, [isGenerating]);
 
-  const addFiles = (files: File[] | null) => {
-    if (props.allowAttachments) {
-      props.setFiles((currentFiles) => {
+  const addFiles = (newFiles: File[] | null) => {
+    if (allowAttachments && setFiles) {
+      setFiles((currentFiles) => {
         if (currentFiles === null) {
-          return files;
+          return newFiles;
         }
 
-        if (files === null) {
+        if (newFiles === null) {
           return currentFiles;
         }
 
-        return [...currentFiles, ...files];
+        return [...currentFiles, ...newFiles];
       });
     }
   };
 
   const onDragOver = (event: React.DragEvent) => {
-    if (props.allowAttachments !== true) return;
+    if (!allowAttachments) return;
     event.preventDefault();
     setIsDragging(true);
   };
 
   const onDragLeave = (event: React.DragEvent) => {
-    if (props.allowAttachments !== true) return;
+    if (!allowAttachments) return;
     event.preventDefault();
     setIsDragging(false);
   };
 
   const onDrop = (event: React.DragEvent) => {
     setIsDragging(false);
-    if (props.allowAttachments !== true) return;
+    if (!allowAttachments) return;
     event.preventDefault();
     const dataTransfer = event.dataTransfer;
     if (dataTransfer.files.length) {
@@ -98,7 +101,7 @@ export function MessageInput({
     if (!items) return;
 
     const text = event.clipboardData.getData("text");
-    if (text && text.length > 500 && props.allowAttachments) {
+    if (text && text.length > 500 && allowAttachments) {
       event.preventDefault();
       const blob = new Blob([text], { type: "text/plain" });
       const file = new File([blob], "Pasted text", {
@@ -113,7 +116,7 @@ export function MessageInput({
       .map((item) => item.getAsFile())
       .filter((file) => file !== null);
 
-    if (props.allowAttachments && files.length > 0) {
+    if (allowAttachments && files.length > 0) {
       addFiles(files);
     }
   };
@@ -127,10 +130,7 @@ export function MessageInput({
           stop();
           setShowInterruptPrompt(false);
           event.currentTarget.form?.requestSubmit();
-        } else if (
-          props.value ||
-          (props.allowAttachments && props.files?.length)
-        ) {
+        } else if (props.value || (allowAttachments && files?.length)) {
           setShowInterruptPrompt(true);
           return;
         }
@@ -142,10 +142,11 @@ export function MessageInput({
     onKeyDownProp?.(event);
   };
 
-  const textAreaRef = useRef<HTMLTextAreaElement>(null) as React.RefObject<HTMLTextAreaElement>;
+  const textAreaRef = useRef<HTMLTextAreaElement>(
+    null,
+  ) as React.RefObject<HTMLTextAreaElement>;
 
-  const showFileList =
-    props.allowAttachments && props.files && props.files.length > 0;
+  const showFileList = allowAttachments && files && files.length > 0;
 
   useAutosizeTextArea({
     ref: textAreaRef,
@@ -168,8 +169,6 @@ export function MessageInput({
         />
       )}
 
-
-
       <div className="relative flex w-full items-center space-x-2">
         <div className="relative flex-1">
           <textarea
@@ -183,30 +182,30 @@ export function MessageInput({
               showFileList && "pb-16",
               className,
             )}
-            {...(props.allowAttachments
-              ? omit(props, ["allowAttachments", "files", "setFiles"])
-              : omit(props, ["allowAttachments"]))}
+            {...textareaProps}
           />
 
-          {props.allowAttachments && (
+          {allowAttachments && (
             <div className="absolute inset-x-3 bottom-0 z-20 overflow-x-scroll py-3">
               <div className="flex space-x-3">
                 <AnimatePresence mode="popLayout">
-                  {props.files?.map((file) => {
+                  {files?.map((file) => {
                     return (
                       <FilePreview
                         key={file.name + String(file.lastModified)}
                         file={file}
                         onRemove={() => {
-                          props.setFiles((files) => {
-                            if (!files) return null;
+                          if (setFiles) {
+                            setFiles((files) => {
+                              if (!files) return null;
 
-                            const filtered = Array.from(files).filter(
-                              (f) => f !== file,
-                            );
-                            if (filtered.length === 0) return null;
-                            return filtered;
-                          });
+                              const filtered = Array.from(files).filter(
+                                (f) => f !== file,
+                              );
+                              if (filtered.length === 0) return null;
+                              return filtered;
+                            });
+                          }
                         }}
                       />
                     );
@@ -257,7 +256,7 @@ export function MessageInput({
         )}
       </div>
 
-      {props.allowAttachments && <FileUploadOverlay isDragging={isDragging} />}
+      {allowAttachments && <FileUploadOverlay isDragging={isDragging} />}
     </div>
   );
 }

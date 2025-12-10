@@ -1,3 +1,4 @@
-import { app } from "../server/src/server";
-
-export default app;
+export default async function handler(req: any, res: any) {
+  const { app } = await import("../server/src/server.js");
+  return app(req, res);
+}
