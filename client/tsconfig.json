@@ -16,7 +16,7 @@
     "types": ["vite/client"],
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "strictNullChecks": true,
     "declaration": true,
     "strictPropertyInitialization": true

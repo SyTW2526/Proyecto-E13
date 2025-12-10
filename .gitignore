@@ -4,6 +4,8 @@ coverage/
 # Environment variables
 .env
 .env*.local
+# Vercel
+.vercel
 # Build outputs
 dist/
 dist-ssr/

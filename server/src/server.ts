@@ -1,4 +1,6 @@
-import "dotenv/config";
+// Cargar variables de entorno PRIMERO
+import "./config/env";
+
 import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { initSocket } from "./utils/socket";
