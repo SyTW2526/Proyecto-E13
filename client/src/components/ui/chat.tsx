@@ -62,7 +62,6 @@ export function Chat({
   className,
   onRateResponse,
   setMessages,
-  transcribeAudio,
 }: ChatProps) {
   const { t } = useTranslation();
   const lastMessage =
@@ -234,7 +233,6 @@ export function Chat({
             setFiles={setFiles}
             stop={handleStop}
             isGenerating={isGenerating}
-            transcribeAudio={transcribeAudio}
           />
         )}
       </ChatForm>
