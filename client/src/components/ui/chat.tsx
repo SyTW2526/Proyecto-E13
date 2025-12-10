@@ -230,7 +230,6 @@ export function Chat({
           <MessageInput
             value={input}
             onChange={handleInputChange}
-            allowAttachments
             files={files}
             setFiles={setFiles}
             stop={handleStop}

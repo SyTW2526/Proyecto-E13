@@ -69,10 +69,10 @@ export default function App() {
       {/* Botón flotante para abrir el chat */}
       <Button
         onClick={() => setOpenChat(true)}
-        className="fixed bottom-6 right-6 z-50 rounded-full shadow-lg p-4"
+        className="fixed bottom-6 right-6 z-50 rounded-full text-3xl shadow-lg p-4"
         aria-label="Abrir chat bot"
-        leftIcon="IconMessageChatbot"
-        size="icon"
+        leftIcon="IconMessageChatbotFilled"
+        size="icon-xl"
       />
 
       {/* Sheet lateral con el chat bot */}

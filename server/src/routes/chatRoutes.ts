@@ -13,7 +13,8 @@ router.post("/", async (req: Request, res: Response) => {
     const { messages } = req.body;
 
     if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ error: "Messages array is required" });
+      res.status(400).json({ error: "Messages array is required" });
+      return;
     }
 
     // Configurar headers para streaming
@@ -42,9 +43,9 @@ Responde de manera concisa y útil en el idioma del usuario.`,
     for await (const chunk of result.textStream) {
       res.write(`data: ${JSON.stringify({ content: chunk })}\n\n`);
     }
-
     res.write("data: [DONE]\n\n");
     res.end();
+    return;
   } catch (error) {
     console.error("Error in chat endpoint:", error);
 
@@ -53,8 +54,10 @@ Responde de manera concisa y útil en el idioma del usuario.`,
         error: "Error processing chat request",
         message: error instanceof Error ? error.message : "Unknown error",
       });
+      return;
     } else {
       res.end();
+      return;
     }
   }
 });
