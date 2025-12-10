@@ -153,19 +153,18 @@ interface TaskFavoriteToggleProps {
 export function TaskFavoriteToggle({
   active,
   onToggle,
-  className = "",
 }: TaskFavoriteToggleProps) {
   const { t } = useTranslation();
 
   return (
     <Button
-      variant="outline"
+      variant={active ? "default" : "outline"}
       onClick={onToggle}
       title={
         active ? t("tasks.filters.showAll") : t("tasks.filters.showFavorites")
       }
       leftIcon={active ? "IconStarFilled" : "IconStar"}
-      className={`${active ? "bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-500 hover:text-white" : ""} ${className}`}
+      // className={`${active ? "bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-500 hover:text-white" : ""} ${className}`}
     />
   );
 }

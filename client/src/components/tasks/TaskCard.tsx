@@ -105,14 +105,14 @@ export const TaskCard = memo(function TaskCard({
                 <Icon
                   as="IconStar"
                   size={16}
-                  className="text-muted-foreground hover:text-yellow-400 transition-colors duration-200"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
                 />
               }
               checkedIcon={
                 <Icon
-                  as="IconStar"
+                  as="IconStarFilled"
                   size={16}
-                  className="fill-yellow-400 text-yellow-400"
+                  className="fill-primary text-primary"
                 />
               }
             />
