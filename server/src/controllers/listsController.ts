@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import prisma from "../database/prisma";
+import prisma from "../database/prisma.js";
 import { SharePermission } from "@prisma/client";
-import { createNotification } from "./notificationsController";
-import { getIO } from "../utils/socket";
+import { createNotification } from "./notificationsController.js";
+import { getIO } from "../utils/socket.js";
 
 export const createList = async (req: Request, res: Response) => {
   try {

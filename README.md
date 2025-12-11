@@ -13,8 +13,17 @@ El **Gestor de Tareas Colaborativo** es una aplicación web fullstack diseñada 
 - **Filtros avanzados**: Búsqueda y filtrado potente para encontrar tus tareas rápidamente
 - **Dashboard resumen**: Visualiza el estado de tus tareas de un vistazo
 - **Soporte multiidioma**: Personaliza tu experiencia en tu idioma preferido
-- **ChatBot integrado**: Asistente virtual para ayudarte a usar la plataforma
+- **ChatBot integrado**: Asistente virtual con IA para ayudarte a usar la plataforma
 - **Gestión de permisos**: Control granular sobre quién puede ver y editar tus tareas
+
+---
+
+## 🚀 Despliegue
+
+Para desplegar en Vercel u otras plataformas, consulta [DEPLOYMENT.md](DEPLOYMENT.md) para instrucciones detalladas sobre:
+- Configuración de variables de entorno
+- Opciones para el servicio de IA (Ollama/Groq/OpenAI)
+- Alternativas de deployment (Vercel, Railway, Render)
 
 ---
 

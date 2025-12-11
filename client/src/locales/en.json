@@ -9,6 +9,18 @@
     "settings": "Settings",
     "menu": "Menu"
   },
+  "chat": {
+    "title": "Chat Assistant",
+    "suggestions": {
+      "createTask": "How do I create a new task?",
+      "shareList": "How do I share a list with my team?",
+      "notifications": "How do I configure notifications?"
+    },
+    "placeholder": "Ask about TaskGrid...",
+    "botResponse": "I'm a TaskGrid assistant. Please configure the AI backend to enable real conversations.",
+    "promptsLabel": "Try these prompts ✨",
+    "copiedMessage": "Copied response to clipboard!"
+  },
   "auth": {
     "login": "Login",
     "register": "Register",

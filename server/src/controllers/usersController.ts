@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
-import prisma from "../database/prisma";
+import prisma from "../database/prisma.js";
 
 export const updateProfile = async (req: Request, res: Response) => {
   try {

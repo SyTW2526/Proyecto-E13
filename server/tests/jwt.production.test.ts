@@ -10,10 +10,10 @@ describe("JWT Production Environment Check (Line 10)", () => {
     process.env = { ...originalEnv };
   });
 
-  it("should throw error when JWT_SECRET is dev-secret in production", async () => {
-    // Configurar el entorno de producción con dev-secret
+  it("should throw error when JWT_SECRET is not set in production", async () => {
+    // Configurar el entorno de producción sin JWT_SECRET
     process.env.NODE_ENV = "production";
-    process.env.JWT_SECRET = "dev-secret";
+    delete process.env.JWT_SECRET;
 
     // Intentar importar el módulo debería lanzar un error
     await expect(async () => {

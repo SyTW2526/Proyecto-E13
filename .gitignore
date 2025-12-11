@@ -4,6 +4,8 @@ coverage/
 # Environment variables
 .env
 .env*.local
+# Vercel
+.vercel
 # Build outputs
 dist/
 dist-ssr/
@@ -33,5 +35,4 @@ Thumbs.db
 # Prisma generated files (server)
 server/src/generated/prisma
 # VSCode extensions config exception
-/package.json
 coverage/

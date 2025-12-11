@@ -40,7 +40,11 @@ export const markNotificationAsRead = createAsyncThunk(
   },
 );
 
-export const markAllNotificationsAsRead = createAsyncThunk(
+export const markAllNotificationsAsRead = createAsyncThunk<
+  void,
+  void,
+  { rejectValue: string }
+>(
   "notifications/markAllAsRead",
   async (_, { rejectWithValue }) => {
     try {

@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import LandingPage from "@/pages/public/landingPage";
 import LoginPage from "@/pages/public/loginPage";
@@ -12,10 +14,21 @@ import ProtectedRoute from "@/components/auth/protectedRoute";
 import Footer from "@/components/footer";
 import AppMenubar from "@/components/appMenubar";
 import { useSocket } from "@/hooks/useSocket";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { ChatWithSuggestions } from "@/components/ui/chatWithSuggestions";
+import { Button } from "@/components/ui/button";
 
 export default function App() {
   useSocket();
+  const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
+  const [openChat, setOpenChat] = useState(false);
+
   const publicRoute = (Page: React.ComponentType) =>
     isAuthenticated ? <Navigate to="/dashboard" replace /> : <Page />;
 
@@ -50,7 +63,29 @@ export default function App() {
           />
         </Routes>
       </main>
+
       <Footer />
+
+      {/* Botón flotante para abrir el chat */}
+      <Button
+        onClick={() => setOpenChat(true)}
+        className="fixed bottom-6 right-6 z-50 rounded-full text-3xl shadow-lg p-4"
+        aria-label="Abrir chat bot"
+        leftIcon="IconMessageChatbotFilled"
+        size="icon-xl"
+      />
+
+      {/* Sheet lateral con el chat bot */}
+      <Sheet open={openChat} onOpenChange={setOpenChat}>
+        <SheetContent className="w-full sm:max-w-2xl flex flex-col h-full p-0">
+          <SheetHeader className="px-6 py-4 border-b">
+            <SheetTitle>{t("chat.title")}</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 flex flex-col min-h-0 px-6 py-4">
+            <ChatWithSuggestions />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
