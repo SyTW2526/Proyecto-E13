@@ -24,23 +24,38 @@ interface HighlightedPre extends React.HTMLAttributes<HTMLPreElement> {
   language: string;
 }
 
-const HighlightedPre = React.memo(
-  async ({ children, language, ...props }: HighlightedPre) => {
-    const { codeToTokens, bundledLanguages } = await import("shiki");
-
-    if (!(language in bundledLanguages)) {
+const HighlightedPre = React.lazy(async () => {
+  const shiki = await import("shiki");
+  function HighlightedPreComponent({
+    children,
+    language,
+    ...props
+  }: HighlightedPre) {
+    if (!(language in shiki.bundledLanguages)) {
       return <pre {...props}>{children}</pre>;
     }
-
-    const { tokens } = await codeToTokens(children, {
-      lang: language as keyof typeof bundledLanguages,
-      defaultColor: false,
-      themes: {
-        light: "github-light",
-        dark: "github-dark",
-      },
-    });
-
+    const [tokens, setTokens] = React.useState<any[]>([]);
+    React.useEffect(() => {
+      let mounted = true;
+      shiki
+        .codeToTokens(children, {
+          lang: language as keyof typeof shiki.bundledLanguages,
+          defaultColor: false,
+          themes: {
+            light: "github-light",
+            dark: "github-dark",
+          },
+        })
+        .then(({ tokens }) => {
+          if (mounted) setTokens(tokens);
+        });
+      return () => {
+        mounted = false;
+      };
+    }, [children, language]);
+    if (!tokens.length) {
+      return <pre {...props}>{children}</pre>;
+    }
     return (
       <pre {...props}>
         <code>
@@ -52,7 +67,6 @@ const HighlightedPre = React.memo(
                     typeof token.htmlStyle === "string"
                       ? undefined
                       : token.htmlStyle;
-
                   return (
                     <span
                       key={tokenIndex}
@@ -70,9 +84,9 @@ const HighlightedPre = React.memo(
         </code>
       </pre>
     );
-  },
-);
-HighlightedPre.displayName = "HighlightedCode";
+  }
+  return { default: HighlightedPreComponent };
+});
 
 interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
   children: React.ReactNode;

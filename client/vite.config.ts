@@ -29,6 +29,39 @@ export default defineConfig({
       process.env.VITE_GOOGLE_CLIENT_ID,
     ),
   },
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("shiki")) {
+              return "shiki";
+            }
+            if (
+              id.includes("react") ||
+              id.includes("react-dom") ||
+              id.includes("react-router-dom") ||
+              id.includes("redux")
+            ) {
+              return "react-vendor";
+            }
+            if (
+              id.includes("@radix-ui") ||
+              id.includes("framer-motion") ||
+              id.includes("lucide-react")
+            ) {
+              return "ui-vendor";
+            }
+            if (id.includes("recharts")) {
+              return "charts";
+            }
+            return "vendor";
+          }
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: "happy-dom",
