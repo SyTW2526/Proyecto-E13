@@ -1,9 +1,9 @@
-import { AnimatePresence, motion } from "framer-motion"
-import { X } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
 
 interface InterruptPromptProps {
-  isOpen: boolean
-  close: () => void
+  isOpen: boolean;
+  close: () => void;
 }
 
 export function InterruptPrompt({ isOpen, close }: InterruptPromptProps) {
@@ -35,5 +35,5 @@ export function InterruptPrompt({ isOpen, close }: InterruptPromptProps) {
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

@@ -29,9 +29,11 @@ describe("DashboardCharts", () => {
       expect(
         screen.getByText(/No hay tareas para mostrar/i),
       ).toBeInTheDocument();
-      
+
       // No debe haber ChartContainer cuando no hay datos
-      expect(container.querySelector('[data-slot="chart"]')).not.toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).not.toBeInTheDocument();
     });
 
     // ============ HAPPY PATH: Normal Data ============
@@ -49,7 +51,9 @@ describe("DashboardCharts", () => {
       );
 
       // Verificar que SÍ se renderiza el ChartContainer
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Single Item ============
@@ -58,11 +62,16 @@ describe("DashboardCharts", () => {
 
       const { container } = render(
         <I18nTestProvider>
-          <PriorityChart data={data} config={{ alta: { label: "Alta", color: "#ef4444" } }} />
+          <PriorityChart
+            data={data}
+            config={{ alta: { label: "Alta", color: "#ef4444" } }}
+          />
         </I18nTestProvider>,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Tiny Values ============
@@ -78,7 +87,9 @@ describe("DashboardCharts", () => {
         </I18nTestProvider>,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Equal Values ============
@@ -95,7 +106,9 @@ describe("DashboardCharts", () => {
         </I18nTestProvider>,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Many Items (tests map iteration) ============
@@ -122,7 +135,9 @@ describe("DashboardCharts", () => {
         </I18nTestProvider>,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Extreme Percentages ============
@@ -138,7 +153,9 @@ describe("DashboardCharts", () => {
         </I18nTestProvider>,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Zero Value ============
@@ -155,7 +172,9 @@ describe("DashboardCharts", () => {
         </I18nTestProvider>,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ INTEGRATION: Tooltip & Legend ============
@@ -171,7 +190,9 @@ describe("DashboardCharts", () => {
         </I18nTestProvider>,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
   });
 
@@ -194,7 +215,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: All Zeros (CustomBar height <= 0) ============
@@ -205,7 +228,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: CustomBar isOnly (solo una barra con valor) ============
@@ -216,7 +241,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     it("CustomBar con isOnly=true (solo inProgress tiene valor)", () => {
@@ -226,7 +253,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     it("CustomBar con isOnly=true (solo completed tiene valor)", () => {
@@ -236,7 +265,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: CustomBar isFirst (primera barra con valor) ============
@@ -247,7 +278,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     it("CustomBar con isFirst=true (pending es primera, inProgress tiene valor)", () => {
@@ -257,7 +290,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: CustomBar isLast (última barra con valor) ============
@@ -268,7 +303,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     it("CustomBar con isLast=true (completed es última, inProgress tiene valor)", () => {
@@ -278,7 +315,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: CustomBar middle (!isFirst && !isLast) ============
@@ -289,7 +328,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     it("CustomBar renderiza rect normal para barra del medio", () => {
@@ -299,7 +340,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: CustomLabel retorna null cuando total === 0 ============
@@ -310,7 +353,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: CustomLabel muestra total > 0 ============
@@ -321,7 +366,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Multiple Days with Mixed Data ============
@@ -340,7 +387,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: All Three Values Present (tests all bars) ============
@@ -351,7 +400,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Config sin colores (usa defaults) ============
@@ -367,18 +418,24 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={configNoColors} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Large Values ============
     it("Maneja valores grandes correctamente", () => {
-      const data = [{ day: "Lun", pending: 999, inProgress: 888, completed: 777 }];
+      const data = [
+        { day: "Lun", pending: 999, inProgress: 888, completed: 777 },
+      ];
 
       const { container } = render(
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ INTEGRATION: Tooltip & Legend ============
@@ -389,7 +446,9 @@ describe("DashboardCharts", () => {
         <WeeklyTasksChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
   });
 
@@ -436,7 +495,9 @@ describe("DashboardCharts", () => {
         <ProgressChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Single Status with Value ============
@@ -451,7 +512,9 @@ describe("DashboardCharts", () => {
         <ProgressChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Large Numbers ============
@@ -466,7 +529,9 @@ describe("DashboardCharts", () => {
         <ProgressChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Sin fill (usa default) ============
@@ -481,7 +546,9 @@ describe("DashboardCharts", () => {
         <ProgressChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Data.map iteration con múltiples items ============
@@ -504,7 +571,9 @@ describe("DashboardCharts", () => {
         <ProgressChart data={data} config={extendedConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Mixed zeros and values ============
@@ -519,7 +588,9 @@ describe("DashboardCharts", () => {
         <ProgressChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Single item in data ============
@@ -530,7 +601,9 @@ describe("DashboardCharts", () => {
         <ProgressChart data={data} config={baseConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ INTEGRATION: Complete Config ============
@@ -551,7 +624,9 @@ describe("DashboardCharts", () => {
         <ProgressChart data={data} config={fullConfig} />,
       );
 
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
 
     // ============ EDGE CASE: Verify reduce function works correctly ============
@@ -567,8 +642,12 @@ describe("DashboardCharts", () => {
       );
 
       // Si totalTasks se calcula mal y da 0, mostraría el mensaje de error
-      expect(screen.queryByText(/No hay tareas para mostrar/i)).not.toBeInTheDocument();
-      expect(container.querySelector('[data-slot="chart"]')).toBeInTheDocument();
+      expect(
+        screen.queryByText(/No hay tareas para mostrar/i),
+      ).not.toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="chart"]'),
+      ).toBeInTheDocument();
     });
   });
 });

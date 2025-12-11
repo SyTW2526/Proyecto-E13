@@ -1,32 +1,42 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MessageInput } from '../../../src/components/ui/message-input';
+import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { MessageInput } from "../../../src/components/ui/message-input";
 
 // Mocks
-vi.mock('react-i18next', () => ({
+vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
-        'chat.placeholder': 'Write your prompt here...',
+        "chat.placeholder": "Write your prompt here...",
       };
       return translations[key] || key;
     },
   }),
 }));
 
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+vi.mock("framer-motion", () => ({
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
   motion: {
-    div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement> & { initial?: unknown; animate?: unknown; exit?: unknown; transition?: unknown }) => <div {...props}>{children}</div>,
+    div: ({
+      children,
+      ...props
+    }: React.HTMLAttributes<HTMLDivElement> & {
+      initial?: unknown;
+      animate?: unknown;
+      exit?: unknown;
+      transition?: unknown;
+    }) => <div {...props}>{children}</div>,
   },
 }));
 
-vi.mock('../../../src/hooks/use-autosize-textarea', () => ({
+vi.mock("../../../src/hooks/use-autosize-textarea", () => ({
   useAutosizeTextArea: vi.fn(),
 }));
 
-vi.mock('../../../src/components/ui/file-preview', () => ({
+vi.mock("../../../src/components/ui/file-preview", () => ({
   FilePreview: ({ file, onRemove }: { file: File; onRemove: () => void }) => (
     <div data-testid={`file-preview-${file.name}`}>
       {file.name}
@@ -35,8 +45,14 @@ vi.mock('../../../src/components/ui/file-preview', () => ({
   ),
 }));
 
-vi.mock('../../../src/components/ui/interrupt-prompt', () => ({
-  InterruptPrompt: ({ isOpen, close }: { isOpen: boolean; close: () => void }) =>
+vi.mock("../../../src/components/ui/interrupt-prompt", () => ({
+  InterruptPrompt: ({
+    isOpen,
+    close,
+  }: {
+    isOpen: boolean;
+    close: () => void;
+  }) =>
     isOpen ? (
       <div data-testid="interrupt-prompt">
         <button onClick={close}>Close</button>
@@ -44,12 +60,12 @@ vi.mock('../../../src/components/ui/interrupt-prompt', () => ({
     ) : null,
 }));
 
-describe('MessageInput', () => {
+describe("MessageInput", () => {
   const mockOnChange = vi.fn();
   const mockStop = vi.fn();
 
   const defaultProps = {
-    value: '',
+    value: "",
     onChange: mockOnChange,
     isGenerating: false,
   };
@@ -58,112 +74,127 @@ describe('MessageInput', () => {
     vi.clearAllMocks();
   });
 
-  it('debe renderizar el componente MessageInput', () => {
+  it("debe renderizar el componente MessageInput", () => {
     render(<MessageInput {...defaultProps} />);
-    expect(screen.getByPlaceholderText('Write your prompt here...')).toBeDefined();
+    expect(
+      screen.getByPlaceholderText("Write your prompt here..."),
+    ).toBeDefined();
   });
 
-  it('debe mostrar placeholder personalizado', () => {
+  it("debe mostrar placeholder personalizado", () => {
     render(<MessageInput {...defaultProps} placeholder="Custom placeholder" />);
-    expect(screen.getByPlaceholderText('Custom placeholder')).toBeDefined();
+    expect(screen.getByPlaceholderText("Custom placeholder")).toBeDefined();
   });
 
-  it('debe actualizar el valor al escribir', async () => {
+  it("debe actualizar el valor al escribir", async () => {
     const user = userEvent.setup();
     render(<MessageInput {...defaultProps} />);
-    
-    const textarea = screen.getByRole('textbox');
-    await user.type(textarea, 'Test message');
-    
+
+    const textarea = screen.getByRole("textbox");
+    await user.type(textarea, "Test message");
+
     expect(mockOnChange).toHaveBeenCalled();
   });
 
-  it('debe enviar al presionar Enter', () => {
-    const form = document.createElement('form');
+  it("debe enviar al presionar Enter", () => {
+    const form = document.createElement("form");
     const requestSubmit = vi.fn();
     form.requestSubmit = requestSubmit;
 
-    const { container } = render(<MessageInput {...defaultProps} value="Test" />);
-    const textarea = container.querySelector('textarea');
-    
+    const { container } = render(
+      <MessageInput {...defaultProps} value="Test" />,
+    );
+    const textarea = container.querySelector("textarea");
+
     if (textarea) {
-      Object.defineProperty(textarea, 'form', {
+      Object.defineProperty(textarea, "form", {
         value: form,
         configurable: true,
       });
 
-      fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
+      fireEvent.keyDown(textarea, { key: "Enter", shiftKey: false });
       expect(requestSubmit).toHaveBeenCalled();
     }
   });
 
-  it('no debe enviar al presionar Shift+Enter', () => {
-    const form = document.createElement('form');
+  it("no debe enviar al presionar Shift+Enter", () => {
+    const form = document.createElement("form");
     const requestSubmit = vi.fn();
     form.requestSubmit = requestSubmit;
 
-    const { container } = render(<MessageInput {...defaultProps} value="Test" />);
-    const textarea = container.querySelector('textarea');
-    
+    const { container } = render(
+      <MessageInput {...defaultProps} value="Test" />,
+    );
+    const textarea = container.querySelector("textarea");
+
     if (textarea) {
-      Object.defineProperty(textarea, 'form', {
+      Object.defineProperty(textarea, "form", {
         value: form,
         configurable: true,
       });
 
-      fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: true });
+      fireEvent.keyDown(textarea, { key: "Enter", shiftKey: true });
       expect(requestSubmit).not.toHaveBeenCalled();
     }
   });
 
-  it('debe mostrar botón stop cuando está generando', () => {
-    render(<MessageInput {...defaultProps} isGenerating={true} stop={mockStop} />);
-    expect(screen.getByLabelText('Stop generating')).toBeDefined();
+  it("debe mostrar botón stop cuando está generando", () => {
+    render(
+      <MessageInput {...defaultProps} isGenerating={true} stop={mockStop} />,
+    );
+    expect(screen.getByLabelText("Stop generating")).toBeDefined();
   });
 
-  it('debe llamar a stop al hacer click en el botón', async () => {
+  it("debe llamar a stop al hacer click en el botón", async () => {
     const user = userEvent.setup();
-    render(<MessageInput {...defaultProps} isGenerating={true} stop={mockStop} />);
-    
-    const stopButton = screen.getByLabelText('Stop generating');
+    render(
+      <MessageInput {...defaultProps} isGenerating={true} stop={mockStop} />,
+    );
+
+    const stopButton = screen.getByLabelText("Stop generating");
     await user.click(stopButton);
-    
+
     expect(mockStop).toHaveBeenCalled();
   });
 
-  it('debe deshabilitar submit cuando el valor está vacío', () => {
+  it("debe deshabilitar submit cuando el valor está vacío", () => {
     render(<MessageInput {...defaultProps} value="" />);
-    const submitButton = screen.getByLabelText('Send message');
-    expect(submitButton.hasAttribute('disabled')).toBe(true);
+    const submitButton = screen.getByLabelText("Send message");
+    expect(submitButton.hasAttribute("disabled")).toBe(true);
   });
 
-  it('debe habilitar submit cuando hay texto', () => {
+  it("debe habilitar submit cuando hay texto", () => {
     render(<MessageInput {...defaultProps} value="Test" />);
-    const submitButton = screen.getByLabelText('Send message');
-    expect(submitButton.hasAttribute('disabled')).toBe(false);
+    const submitButton = screen.getByLabelText("Send message");
+    expect(submitButton.hasAttribute("disabled")).toBe(false);
   });
 
-  it('debe mostrar interrupt prompt al presionar Enter mientras genera', () => {
-    const form = document.createElement('form');
+  it("debe mostrar interrupt prompt al presionar Enter mientras genera", () => {
+    const form = document.createElement("form");
     form.requestSubmit = vi.fn();
 
     const { container } = render(
-      <MessageInput {...defaultProps} value="Test" isGenerating={true} stop={mockStop} />
+      <MessageInput
+        {...defaultProps}
+        value="Test"
+        isGenerating={true}
+        stop={mockStop}
+      />,
     );
-    
-    const textarea = container.querySelector('textarea');
+
+    const textarea = container.querySelector("textarea");
     if (textarea) {
-      Object.defineProperty(textarea, 'form', {
+      Object.defineProperty(textarea, "form", {
         value: form,
         configurable: true,
       });
 
-      fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
-      expect(screen.getByTestId('interrupt-prompt')).toBeDefined();
+      fireEvent.keyDown(textarea, { key: "Enter", shiftKey: false });
+      expect(screen.getByTestId("interrupt-prompt")).toBeDefined();
     }
   });
 
-  describe('Con attachments', () => {
+  describe("Con attachments", () => {
     const mockSetFiles = vi.fn();
     const attachmentProps = {
       ...defaultProps,
@@ -172,97 +203,101 @@ describe('MessageInput', () => {
       setFiles: mockSetFiles,
     };
 
-    it('debe mostrar botón de adjuntar archivo', () => {
+    it("debe mostrar botón de adjuntar archivo", () => {
       render(<MessageInput {...attachmentProps} />);
-      expect(screen.getByLabelText('Attach a file')).toBeDefined();
+      expect(screen.getByLabelText("Attach a file")).toBeDefined();
     });
 
-    it('debe mostrar archivos adjuntos', () => {
-      const files = [new File(['content'], 'test.txt', { type: 'text/plain' })];
+    it("debe mostrar archivos adjuntos", () => {
+      const files = [new File(["content"], "test.txt", { type: "text/plain" })];
       render(<MessageInput {...attachmentProps} files={files} />);
-      expect(screen.getByTestId('file-preview-test.txt')).toBeDefined();
+      expect(screen.getByTestId("file-preview-test.txt")).toBeDefined();
     });
 
-    it('debe eliminar archivo al hacer click en remove', async () => {
+    it("debe eliminar archivo al hacer click en remove", async () => {
       const user = userEvent.setup();
-      const file = new File(['content'], 'test.txt', { type: 'text/plain' });
-      
+      const file = new File(["content"], "test.txt", { type: "text/plain" });
+
       render(<MessageInput {...attachmentProps} files={[file]} />);
-      
-      const removeButton = screen.getByText('Remove');
+
+      const removeButton = screen.getByText("Remove");
       await user.click(removeButton);
-      
+
       expect(mockSetFiles).toHaveBeenCalled();
     });
 
-    it('debe manejar drag over', () => {
+    it("debe manejar drag over", () => {
       const { container } = render(<MessageInput {...attachmentProps} />);
-      const wrapper = container.querySelector('.relative.flex.w-full');
-      
+      const wrapper = container.querySelector(".relative.flex.w-full");
+
       if (wrapper) {
         fireEvent.dragOver(wrapper);
         // Debería mostrar el overlay de drop
-        expect(screen.getByText('Drop your files here to attach them.')).toBeDefined();
+        expect(
+          screen.getByText("Drop your files here to attach them."),
+        ).toBeDefined();
       }
     });
 
-    it('debe manejar drag leave', () => {
+    it("debe manejar drag leave", () => {
       const { container } = render(<MessageInput {...attachmentProps} />);
-      const wrapper = container.querySelector('.relative.flex.w-full');
-      
+      const wrapper = container.querySelector(".relative.flex.w-full");
+
       if (wrapper) {
         fireEvent.dragOver(wrapper);
         fireEvent.dragLeave(wrapper);
         // El overlay debería desaparecer
-        expect(screen.queryByText('Drop your files here to attach them.')).toBeNull();
+        expect(
+          screen.queryByText("Drop your files here to attach them."),
+        ).toBeNull();
       }
     });
 
-    it('debe manejar drop de archivos', () => {
+    it("debe manejar drop de archivos", () => {
       const { container } = render(<MessageInput {...attachmentProps} />);
-      const wrapper = container.querySelector('.relative.flex.w-full');
-      
-      const file = new File(['content'], 'dropped.txt', { type: 'text/plain' });
+      const wrapper = container.querySelector(".relative.flex.w-full");
+
+      const file = new File(["content"], "dropped.txt", { type: "text/plain" });
       const dataTransfer = {
         files: [file],
       };
-      
+
       if (wrapper) {
         fireEvent.drop(wrapper, { dataTransfer });
         expect(mockSetFiles).toHaveBeenCalled();
       }
     });
 
-    it('debe manejar paste de archivos', () => {
+    it("debe manejar paste de archivos", () => {
       const { container } = render(<MessageInput {...attachmentProps} />);
-      const textarea = container.querySelector('textarea');
-      
-      const file = new File(['content'], 'pasted.txt', { type: 'text/plain' });
+      const textarea = container.querySelector("textarea");
+
+      const file = new File(["content"], "pasted.txt", { type: "text/plain" });
       const clipboardData = {
         items: [
           {
             getAsFile: () => file,
           },
         ],
-        getData: () => '',
+        getData: () => "",
       };
-      
+
       if (textarea) {
         fireEvent.paste(textarea, { clipboardData });
         expect(mockSetFiles).toHaveBeenCalled();
       }
     });
 
-    it('debe crear archivo desde texto largo en paste', () => {
+    it("debe crear archivo desde texto largo en paste", () => {
       const { container } = render(<MessageInput {...attachmentProps} />);
-      const textarea = container.querySelector('textarea');
-      
-      const longText = 'a'.repeat(600);
+      const textarea = container.querySelector("textarea");
+
+      const longText = "a".repeat(600);
       const clipboardData = {
         items: [],
         getData: () => longText,
       };
-      
+
       if (textarea) {
         fireEvent.paste(textarea, { clipboardData });
         expect(mockSetFiles).toHaveBeenCalled();
@@ -270,89 +305,105 @@ describe('MessageInput', () => {
     });
   });
 
-  describe('Sin attachments', () => {
-    it('no debe mostrar botón de adjuntar', () => {
+  describe("Sin attachments", () => {
+    it("no debe mostrar botón de adjuntar", () => {
       render(<MessageInput {...defaultProps} allowAttachments={false} />);
-      expect(screen.queryByLabelText('Attach a file')).toBeNull();
+      expect(screen.queryByLabelText("Attach a file")).toBeNull();
     });
 
-    it('no debe reaccionar a drag events', () => {
-      const { container } = render(<MessageInput {...defaultProps} allowAttachments={false} />);
-      const wrapper = container.querySelector('.relative.flex.w-full');
-      
+    it("no debe reaccionar a drag events", () => {
+      const { container } = render(
+        <MessageInput {...defaultProps} allowAttachments={false} />,
+      );
+      const wrapper = container.querySelector(".relative.flex.w-full");
+
       if (wrapper) {
         fireEvent.dragOver(wrapper);
-        expect(screen.queryByText('Drop your files here to attach them.')).toBeNull();
+        expect(
+          screen.queryByText("Drop your files here to attach them."),
+        ).toBeNull();
       }
     });
   });
 
-  it('debe respetar submitOnEnter=false', () => {
-    const form = document.createElement('form');
+  it("debe respetar submitOnEnter=false", () => {
+    const form = document.createElement("form");
     const requestSubmit = vi.fn();
     form.requestSubmit = requestSubmit;
 
     const { container } = render(
-      <MessageInput {...defaultProps} value="Test" submitOnEnter={false} />
+      <MessageInput {...defaultProps} value="Test" submitOnEnter={false} />,
     );
-    const textarea = container.querySelector('textarea');
-    
+    const textarea = container.querySelector("textarea");
+
     if (textarea) {
-      Object.defineProperty(textarea, 'form', {
+      Object.defineProperty(textarea, "form", {
         value: form,
         configurable: true,
       });
 
-      fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
+      fireEvent.keyDown(textarea, { key: "Enter", shiftKey: false });
       expect(requestSubmit).not.toHaveBeenCalled();
     }
   });
 
-  it('debe aplicar className personalizado', () => {
+  it("debe aplicar className personalizado", () => {
     const { container } = render(
-      <MessageInput {...defaultProps} className="custom-class" />
+      <MessageInput {...defaultProps} className="custom-class" />,
     );
-    expect(container.querySelector('.custom-class')).toBeDefined();
+    expect(container.querySelector(".custom-class")).toBeDefined();
   });
 
-  it('debe ocultar interrupt prompt cuando deja de generar', () => {
+  it("debe ocultar interrupt prompt cuando deja de generar", () => {
     const { rerender } = render(
-      <MessageInput {...defaultProps} value="Test" isGenerating={true} stop={mockStop} />
+      <MessageInput
+        {...defaultProps}
+        value="Test"
+        isGenerating={true}
+        stop={mockStop}
+      />,
     );
-    
+
     // Trigger interrupt prompt
-    const form = document.createElement('form');
+    const form = document.createElement("form");
     form.requestSubmit = vi.fn();
-    
-    rerender(<MessageInput {...defaultProps} value="Test" isGenerating={false} stop={mockStop} />);
-    
-    expect(screen.queryByTestId('interrupt-prompt')).toBeNull();
+
+    rerender(
+      <MessageInput
+        {...defaultProps}
+        value="Test"
+        isGenerating={false}
+        stop={mockStop}
+      />,
+    );
+
+    expect(screen.queryByTestId("interrupt-prompt")).toBeNull();
   });
 
-  it('debe deshabilitar interrupt con enableInterrupt=false', () => {
-    const form = document.createElement('form');
+  it("debe deshabilitar interrupt con enableInterrupt=false", () => {
+    const form = document.createElement("form");
     const requestSubmit = vi.fn();
     form.requestSubmit = requestSubmit;
 
     const { container } = render(
-      <MessageInput 
-        {...defaultProps} 
-        value="Test" 
-        isGenerating={true} 
+      <MessageInput
+        {...defaultProps}
+        value="Test"
+        isGenerating={true}
         stop={mockStop}
         enableInterrupt={false}
-      />
+      />,
     );
-    
-    const textarea = container.querySelector('textarea');
+
+    const textarea = container.querySelector("textarea");
     if (textarea) {
-      Object.defineProperty(textarea, 'form', {
+      Object.defineProperty(textarea, "form", {
         value: form,
         configurable: true,
       });
 
-      fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
-      expect(screen.queryByTestId('interrupt-prompt')).toBeNull();
+      fireEvent.keyDown(textarea, { key: "Enter", shiftKey: false });
+      expect(screen.queryByTestId("interrupt-prompt")).toBeNull();
     }
   });
 });

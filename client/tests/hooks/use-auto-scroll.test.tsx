@@ -1,42 +1,42 @@
-import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
-import { useAutoScroll } from '../../src/hooks/use-auto-scroll';
+import { act, renderHook } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
+import { useAutoScroll } from "../../src/hooks/use-auto-scroll";
 
-describe('useAutoScroll', () => {
+describe("useAutoScroll", () => {
   let mockContainer: HTMLDivElement;
 
   beforeEach(() => {
-    mockContainer = document.createElement('div');
-    Object.defineProperty(mockContainer, 'scrollHeight', {
+    mockContainer = document.createElement("div");
+    Object.defineProperty(mockContainer, "scrollHeight", {
       writable: true,
       value: 1000,
     });
-    Object.defineProperty(mockContainer, 'clientHeight', {
+    Object.defineProperty(mockContainer, "clientHeight", {
       writable: true,
       value: 500,
     });
-    Object.defineProperty(mockContainer, 'scrollTop', {
+    Object.defineProperty(mockContainer, "scrollTop", {
       writable: true,
       value: 500,
     });
   });
 
-  it('debe inicializar con shouldAutoScroll en true', () => {
+  it("debe inicializar con shouldAutoScroll en true", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     expect(result.current.shouldAutoScroll).toBe(true);
   });
 
-  it('debe proporcionar containerRef', () => {
+  it("debe proporcionar containerRef", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     expect(result.current.containerRef).toBeDefined();
     expect(result.current.containerRef.current).toBeNull();
   });
 
-  it('debe hacer scroll al fondo cuando shouldAutoScroll es true', () => {
-    const { result } = renderHook(() => useAutoScroll(['dependency']));
-    
+  it("debe hacer scroll al fondo cuando shouldAutoScroll es true", () => {
+    const { result } = renderHook(() => useAutoScroll(["dependency"]));
+
     result.current.containerRef.current = mockContainer;
-    
+
     act(() => {
       result.current.scrollToBottom();
     });
@@ -44,7 +44,7 @@ describe('useAutoScroll', () => {
     expect(mockContainer.scrollTop).toBe(1000);
   });
 
-  it('debe detectar cuando el usuario está cerca del final', () => {
+  it("debe detectar cuando el usuario está cerca del final", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
@@ -58,7 +58,7 @@ describe('useAutoScroll', () => {
     expect(result.current.shouldAutoScroll).toBe(true);
   });
 
-  it('debe desactivar auto-scroll cuando el usuario hace scroll deliberado hacia arriba', () => {
+  it("debe desactivar auto-scroll cuando el usuario hace scroll deliberado hacia arriba", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
@@ -78,7 +78,7 @@ describe('useAutoScroll', () => {
     expect(result.current.shouldAutoScroll).toBe(false);
   });
 
-  it('no debe desactivar auto-scroll con scroll hacia arriba menor al threshold', () => {
+  it("no debe desactivar auto-scroll con scroll hacia arriba menor al threshold", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
@@ -98,7 +98,7 @@ describe('useAutoScroll', () => {
     expect(result.current.shouldAutoScroll).toBe(true);
   });
 
-  it('debe desactivar auto-scroll al detectar touch', () => {
+  it("debe desactivar auto-scroll al detectar touch", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
@@ -109,7 +109,7 @@ describe('useAutoScroll', () => {
     expect(result.current.shouldAutoScroll).toBe(false);
   });
 
-  it('debe reactivar auto-scroll cuando el usuario scrollea al final', () => {
+  it("debe reactivar auto-scroll cuando el usuario scrollea al final", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
@@ -130,26 +130,24 @@ describe('useAutoScroll', () => {
     expect(result.current.shouldAutoScroll).toBe(true);
   });
 
-  it('debe hacer scroll al fondo cuando cambian las dependencias y shouldAutoScroll es true', () => {
-    const { result, rerender } = renderHook(
-      ({ deps }) => useAutoScroll(deps),
-      { initialProps: { deps: ['dep1'] } }
-    );
-    
+  it("debe hacer scroll al fondo cuando cambian las dependencias y shouldAutoScroll es true", () => {
+    const { result, rerender } = renderHook(({ deps }) => useAutoScroll(deps), {
+      initialProps: { deps: ["dep1"] },
+    });
+
     result.current.containerRef.current = mockContainer;
     mockContainer.scrollTop = 0;
 
-    rerender({ deps: ['dep2'] });
+    rerender({ deps: ["dep2"] });
 
     expect(mockContainer.scrollTop).toBe(1000);
   });
 
-  it('no debe hacer scroll cuando shouldAutoScroll es false', () => {
-    const { result, rerender } = renderHook(
-      ({ deps }) => useAutoScroll(deps),
-      { initialProps: { deps: ['dep1'] } }
-    );
-    
+  it("no debe hacer scroll cuando shouldAutoScroll es false", () => {
+    const { result, rerender } = renderHook(({ deps }) => useAutoScroll(deps), {
+      initialProps: { deps: ["dep1"] },
+    });
+
     result.current.containerRef.current = mockContainer;
     mockContainer.scrollTop = 0;
 
@@ -158,13 +156,13 @@ describe('useAutoScroll', () => {
       result.current.handleTouchStart();
     });
 
-    rerender({ deps: ['dep2'] });
+    rerender({ deps: ["dep2"] });
 
     // No debería haber cambiado
     expect(mockContainer.scrollTop).toBe(0);
   });
 
-  it('debe manejar el caso cuando containerRef es null', () => {
+  it("debe manejar el caso cuando containerRef es null", () => {
     const { result } = renderHook(() => useAutoScroll([]));
 
     act(() => {
@@ -179,7 +177,7 @@ describe('useAutoScroll', () => {
     expect(true).toBe(true);
   });
 
-  it('debe actualizar previousScrollTop después de cada scroll', () => {
+  it("debe actualizar previousScrollTop después de cada scroll", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
@@ -198,7 +196,7 @@ describe('useAutoScroll', () => {
     expect(result.current.shouldAutoScroll).toBeDefined();
   });
 
-  it('debe mantener auto-scroll activado cuando se scrollea hacia abajo', () => {
+  it("debe mantener auto-scroll activado cuando se scrollea hacia abajo", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 

@@ -1,13 +1,13 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { CopyButton } from '../../../src/components/ui/copy-button';
-import { useCopyToClipboard } from '../../../src/hooks/use-copy-to-clipboard';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { CopyButton } from "../../../src/components/ui/copy-button";
+import { useCopyToClipboard } from "../../../src/hooks/use-copy-to-clipboard";
 
 // Mock del hook
-vi.mock('../../../src/hooks/use-copy-to-clipboard');
+vi.mock("../../../src/hooks/use-copy-to-clipboard");
 
-describe('CopyButton', () => {
+describe("CopyButton", () => {
   const mockHandleCopy = vi.fn();
 
   beforeEach(() => {
@@ -18,35 +18,35 @@ describe('CopyButton', () => {
     });
   });
 
-  it('debe renderizar el botón', () => {
+  it("debe renderizar el botón", () => {
     render(<CopyButton content="test content" />);
-    const button = screen.getByRole('button', { name: /copy to clipboard/i });
+    const button = screen.getByRole("button", { name: /copy to clipboard/i });
     expect(button).toBeDefined();
   });
 
-  it('debe mostrar icono Copy cuando no está copiado', () => {
+  it("debe mostrar icono Copy cuando no está copiado", () => {
     vi.mocked(useCopyToClipboard).mockReturnValue({
       isCopied: false,
       handleCopy: mockHandleCopy,
     });
 
     render(<CopyButton content="test" />);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole("button");
     expect(button).toBeDefined();
   });
 
-  it('debe mostrar icono Check cuando está copiado', () => {
+  it("debe mostrar icono Check cuando está copiado", () => {
     vi.mocked(useCopyToClipboard).mockReturnValue({
       isCopied: true,
       handleCopy: mockHandleCopy,
     });
 
     render(<CopyButton content="test" />);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole("button");
     expect(button).toBeDefined();
   });
 
-  it('debe llamar handleCopy al hacer click', async () => {
+  it("debe llamar handleCopy al hacer click", async () => {
     const handleCopy = vi.fn();
     vi.mocked(useCopyToClipboard).mockReturnValue({
       isCopied: false,
@@ -55,26 +55,28 @@ describe('CopyButton', () => {
 
     const user = userEvent.setup();
     render(<CopyButton content="test content" />);
-    
-    const button = screen.getByRole('button');
+
+    const button = screen.getByRole("button");
     await user.click(button);
 
     expect(handleCopy).toHaveBeenCalledTimes(1);
   });
 
-  it('debe pasar el contenido y mensaje personalizado al hook', () => {
-    render(<CopyButton content="custom content" copyMessage="Custom message" />);
+  it("debe pasar el contenido y mensaje personalizado al hook", () => {
+    render(
+      <CopyButton content="custom content" copyMessage="Custom message" />,
+    );
 
     expect(useCopyToClipboard).toHaveBeenCalledWith({
-      text: 'custom content',
-      copyMessage: 'Custom message',
+      text: "custom content",
+      copyMessage: "Custom message",
     });
   });
 
-  it('debe tener clases correctas', () => {
+  it("debe tener clases correctas", () => {
     render(<CopyButton content="test" />);
-    const button = screen.getByRole('button');
-    expect(button.className).toContain('h-6');
-    expect(button.className).toContain('w-6');
+    const button = screen.getByRole("button");
+    expect(button.className).toContain("h-6");
+    expect(button.className).toContain("w-6");
   });
 });

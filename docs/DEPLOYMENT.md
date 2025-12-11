@@ -6,13 +6,13 @@ Bienvenido a **TaskGrid**, la plataforma líder en gestión colaborativa de tare
 
 ## 🌐 Acceso a la Aplicación
 
-### Aplicación en Producción
+### Aplicación Web
 
 Accede directamente a TaskGrid desde tu navegador:
 
 **🔗 [https://taskgrid-proyecto-e13.vercel.app/](https://taskgrid-proyecto-e13.vercel.app/)**
 
-No necesitas instalar nada. Solo crea tu cuenta y comienza a organizar tus tareas.
+No necesitas instalar nada. Solo crea tu cuenta y comienza a organizar tus tareas desde cualquier dispositivo con acceso a internet.
 
 ---
 
@@ -75,16 +75,21 @@ La aplicación estará disponible en `http://localhost:5173`
 
 ---
 
-## 🌐 Despliegue en Producción (Vercel)
+## 🌐 Despliegue y Arquitectura
 
-La aplicación está desplegada en Vercel y accesible en:
+La aplicación está desplegada en infraestructura cloud moderna que garantiza:
 
-**URL de Producción:** [https://taskgrid-proyecto-e13.vercel.app/](https://taskgrid-proyecto-e13.vercel.app/)
+### Características
 
-### Arquitectura de Despliegue
+- **Alta disponibilidad:** Acceso 24/7 desde cualquier lugar
+- **Rendimiento optimizado:** Tiempos de carga rápidos
+- **Escalabilidad:** Soporte para múltiples usuarios simultáneos
+- **Seguridad:** Encriptación HTTPS en todas las comunicaciones
 
-- **Frontend:** Desplegado en Vercel con renderizado optimizado
-- **Backend:** API serverless en Vercel
+### Arquitectura
+
+- **Frontend:** Interfaz de usuario moderna y responsiva
+- **Backend:** API REST segura con autenticación
 - **Base de Datos:** PostgreSQL gestionado en infraestructura cloud privada
 
 ### Actualizaciones y Releases
@@ -107,25 +112,16 @@ Las actualizaciones de TaskGrid se despliegan automáticamente por nuestro equip
 - ✅ Soporte multiidioma (Español/Inglés)
 - ✅ Modo claro/oscuro
 
-### Para Desarrolladores (Comandos Internos)
+### Para Desarrolladores Autorizados
 
-Comandos disponibles para el equipo de desarrollo:
+Si eres parte del equipo de desarrollo, contacta con DevOps para:
 
-#### Server (`/server`)
+- Acceso al repositorio privado
+- Credenciales de desarrollo
+- Documentación técnica interna
+- Guías de contribución
 
-```bash
-npm run dev          # Desarrollo con hot-reload
-npm test             # Tests unitarios
-npm run coverage     # Cobertura de tests
-```
-
-#### Client (`/client`)
-
-```bash
-npm run dev          # Desarrollo con hot-reload
-npm test             # Tests unitarios
-npm run coverage     # Cobertura de tests
-```
+Los colaboradores autorizados pueden ejecutar instancias locales para desarrollo y testing.
 
 ---
 
