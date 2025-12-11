@@ -9,9 +9,7 @@ const prisma = new PrismaClient();
  */
 async function seedNotifications() {
   try {
-    const userEmails = [
-      "alu0101349824@ull.edu.es",
-    ];
+    const userEmails = ["alu0101349824@ull.edu.es"];
 
     let totalNotifications = 0;
 

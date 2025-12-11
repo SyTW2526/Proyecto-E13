@@ -326,7 +326,9 @@ describe("NotificationBell", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Va a expirar")).toBeInTheDocument();
-      expect(screen.queryByText("Nueva tarea asignada")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Nueva tarea asignada"),
+      ).not.toBeInTheDocument();
     });
   });
 

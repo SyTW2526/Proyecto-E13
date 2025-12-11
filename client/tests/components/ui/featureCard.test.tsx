@@ -181,7 +181,11 @@ describe("FeatureCard", () => {
 
     it("Maneja details con saltos de línea (whitespace-pre-line)", () => {
       render(
-        <FeatureCard title="Title" details="Line 1{'\n'}Line 2" chart={false} />,
+        <FeatureCard
+          title="Title"
+          details="Line 1{'\n'}Line 2"
+          chart={false}
+        />,
       );
       expect(screen.getByText(/Line 1/)).toBeInTheDocument();
     });

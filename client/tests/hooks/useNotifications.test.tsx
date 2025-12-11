@@ -377,13 +377,11 @@ describe("useNotifications", () => {
       expect(result.current.loading).toBe(false);
     });
 
-    const systemNotifications =
-      result.current.getNotificationsByType("SYSTEM");
+    const systemNotifications = result.current.getNotificationsByType("SYSTEM");
     expect(systemNotifications).toHaveLength(1);
     expect(systemNotifications[0].type).toBe("SYSTEM");
 
-    const sharedNotifications =
-      result.current.getNotificationsByType("SHARED");
+    const sharedNotifications = result.current.getNotificationsByType("SHARED");
     expect(sharedNotifications).toHaveLength(1);
     expect(sharedNotifications[0].type).toBe("SHARED");
   });

@@ -149,9 +149,7 @@ describe("DropdownMenu", () => {
         <DropdownMenu open>
           <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuCheckboxItem checked>
-              Marcado
-            </DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem checked>Marcado</DropdownMenuCheckboxItem>
           </DropdownMenuContent>
         </DropdownMenu>,
       );

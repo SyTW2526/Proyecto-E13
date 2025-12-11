@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock prisma
 vi.mock("../src/database/prisma", () => ({
@@ -10,7 +10,10 @@ vi.mock("../src/database/prisma", () => ({
 }));
 
 import prisma from "../src/database/prisma";
-import { cleanupOldCompletedTasks } from "../src/jobs/cleanupTasks";
+import {
+  cleanupOldCompletedTasks,
+  startCleanupJob,
+} from "../src/jobs/cleanupTasks";
 
 describe("cleanupOldCompletedTasks", () => {
   beforeEach(() => {
@@ -69,12 +72,65 @@ describe("cleanupOldCompletedTasks", () => {
 
     const expectedThreshold = new Date(now - 7 * 24 * 60 * 60 * 1000);
     const calledWith = mockDeleteMany.mock.calls[0][0];
+    const completedAt = calledWith?.where?.completedAt as { lte?: Date };
 
-    expect(calledWith?.where?.completedAt?.lte?.getTime()).toBeCloseTo(
+    expect(completedAt?.lte?.getTime()).toBeCloseTo(
       expectedThreshold.getTime(),
       -3,
     );
 
     vi.restoreAllMocks();
+  });
+});
+
+describe("startCleanupJob", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it("should call cleanupOldCompletedTasks immediately", async () => {
+    const mockDeleteMany = vi.mocked(prisma.task.deleteMany);
+    mockDeleteMany.mockResolvedValue({ count: 0 });
+
+    startCleanupJob();
+
+    // Wait for the immediate call to complete
+    await vi.waitFor(() => {
+      expect(mockDeleteMany).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("should setup interval to call cleanupOldCompletedTasks every hour", async () => {
+    const mockDeleteMany = vi.mocked(prisma.task.deleteMany);
+    mockDeleteMany.mockResolvedValue({ count: 0 });
+
+    startCleanupJob();
+
+    // Wait for the immediate call
+    await vi.waitFor(() => {
+      expect(mockDeleteMany).toHaveBeenCalledTimes(1);
+    });
+
+    // Advance time by 1 hour
+    vi.advanceTimersByTime(60 * 60 * 1000);
+
+    // Wait for the interval call
+    await vi.waitFor(() => {
+      expect(mockDeleteMany).toHaveBeenCalledTimes(2);
+    });
+
+    // Advance time by another hour
+    vi.advanceTimersByTime(60 * 60 * 1000);
+
+    // Wait for the second interval call
+    await vi.waitFor(() => {
+      expect(mockDeleteMany).toHaveBeenCalledTimes(3);
+    });
   });
 });

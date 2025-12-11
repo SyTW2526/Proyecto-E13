@@ -44,17 +44,14 @@ export const markAllNotificationsAsRead = createAsyncThunk<
   void,
   void,
   { rejectValue: string }
->(
-  "notifications/markAllAsRead",
-  async (_, { rejectWithValue }) => {
-    try {
-      await api.patch("/notifications/read-all");
-      return;
-    } catch (err) {
-      return rejectWithValue(apiErrorMessage(err));
-    }
-  },
-);
+>("notifications/markAllAsRead", async (_, { rejectWithValue }) => {
+  try {
+    await api.patch("/notifications/read-all");
+    return;
+  } catch (err) {
+    return rejectWithValue(apiErrorMessage(err));
+  }
+});
 
 const notificationsSlice = createSlice({
   name: "notifications",

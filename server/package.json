@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "prisma generate && tsc",
+    "build": "cd .. && ./server/node_modules/.bin/prisma generate --schema ./server/prisma/schema.prisma && cd server && tsc",
     "vercel-build": "prisma generate && tsc",
     "test": "vitest run",
     "test:watch": "vitest --watch",
@@ -14,10 +14,10 @@
     "start": "node dist/server.js",
     "check": "tsc --noEmit",
     "check:watch": "tsc --noEmit --watch",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
+    "prisma:generate": "cd .. && ./server/node_modules/.bin/prisma generate --schema ./server/prisma/schema.prisma",
+    "prisma:migrate": "cd .. && ./server/node_modules/.bin/prisma migrate dev --schema ./server/prisma/schema.prisma",
     "prisma:studio": "prisma studio",
-    "prisma:notifications": "prisma migrate dev --name notifications",
+    "prisma:notifications": "cd .. && ./server/node_modules/.bin/prisma migrate dev --name notifications --schema ./server/prisma/schema.prisma",
     "prettier": "prettier --write .",
     "coverage": "vitest run --coverage --coverage.include '**/src/*'"
   },
