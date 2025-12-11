@@ -21,6 +21,7 @@ El **Gestor de Tareas Colaborativo** es una aplicación web fullstack diseñada 
 ## 🚀 Despliegue
 
 Para desplegar en Vercel u otras plataformas, consulta [DEPLOYMENT.md](DEPLOYMENT.md) para instrucciones detalladas sobre:
+
 - Configuración de variables de entorno
 - Opciones para el servicio de IA (Ollama/Groq/OpenAI)
 - Alternativas de deployment (Vercel, Railway, Render)

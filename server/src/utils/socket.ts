@@ -25,8 +25,7 @@ export const initSocket = (httpServer: HttpServer) => {
       socket.leave(`list:${listId}`);
     });
 
-    socket.on("disconnect", () => {
-    });
+    socket.on("disconnect", () => {});
   });
 
   return io;
