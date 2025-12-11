@@ -35,5 +35,4 @@ Thumbs.db
 # Prisma generated files (server)
 server/src/generated/prisma
 # VSCode extensions config exception
-/package.json
 coverage/
