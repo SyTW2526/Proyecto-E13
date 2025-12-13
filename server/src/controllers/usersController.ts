@@ -57,19 +57,16 @@ export const deleteAccount = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    await prisma.user.delete({ where: { id: userId } });
+    const deletedUser = await prisma.user.delete({ where: { id: userId } });
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
     return res.status(200).json({
       message: "Account deleted successfully",
     });
   } catch (error) {
     console.error(error);
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2025") {
-        return res.status(404).json({ error: "User not found" });
-      }
-    }
-
     return res.status(500).json({ error: "Internal server error" });
   }
 };

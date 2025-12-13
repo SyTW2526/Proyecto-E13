@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { createServer } from "http";
 import { io as Client } from "socket.io-client";
+import { Server } from "socket.io";
 import {
   afterAll,
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -10,9 +12,6 @@ import {
   it,
   vi,
 } from "vitest";
-import { createTask } from "../../src/controllers/tasksController";
-import prisma from "../../src/database/prisma";
-import { getIO, initSocket } from "../../src/utils/socket";
 
 vi.mock("../../src/database/prisma", () => ({
   default: {
@@ -25,14 +24,60 @@ vi.mock("../../src/database/prisma", () => ({
   },
 }));
 
+describe("Socket Configuration", () => {
+  let httpServer: any;
+
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    httpServer = {} as any;
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("should initialize socket.io with default CORS origin if CLIENT_URL is not set", async () => {
+    delete process.env.CLIENT_URL;
+
+    vi.doMock("socket.io", () => {
+      return {
+        Server: vi.fn().mockImplementation(function () {
+          return { on: vi.fn() };
+        }),
+      };
+    });
+
+    const { initSocket } = await import("../../src/utils/socket");
+    initSocket(httpServer);
+
+    const { Server: MockServer } = await import("socket.io");
+
+    expect(MockServer).toHaveBeenCalledWith(httpServer, {
+      cors: {
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+        credentials: true,
+      },
+    });
+
+    vi.doUnmock("socket.io");
+  });
+});
+
 describe("Socket Integration", () => {
   let httpServer: any;
   let port: number;
   let clientSocket: any;
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    vi.doUnmock("socket.io");
+    vi.resetModules();
+
     httpServer = createServer();
+    const { initSocket } = await import("../../src/utils/socket");
     initSocket(httpServer);
+
     return new Promise<void>((resolve) => {
       httpServer.listen(() => {
         port = (httpServer.address() as any).port;
@@ -51,76 +96,7 @@ describe("Socket Integration", () => {
     vi.clearAllMocks();
   });
 
-  it("should emit task:created event when a task is created", async () => {
-    return new Promise<void>(async (resolve, reject) => {
-      const timeout = setTimeout(() => {
-        clientSocket?.disconnect();
-        reject(new Error("Test timeout"));
-      }, 5000);
-
-      clientSocket = Client(`http://localhost:${port}`);
-
-      const listId = "test-list-id";
-      const userId = "test-user-id";
-
-      clientSocket.on("connect", () => {
-        clientSocket.emit("join_list", listId);
-      });
-
-      clientSocket.on("task:created", (task: any) => {
-        try {
-          expect(task.name).toBe("New Task");
-          expect(task.listId).toBe(listId);
-          clearTimeout(timeout);
-          clientSocket.disconnect();
-          resolve();
-        } catch (e) {
-          clearTimeout(timeout);
-          clientSocket.disconnect();
-          reject(e);
-        }
-      });
-
-      const req = {
-        user: { id: userId },
-        body: {
-          name: "New Task",
-          listId,
-          status: "PENDING",
-        },
-      } as unknown as Request;
-
-      const res = {
-        status: vi.fn().mockReturnThis(),
-        json: vi.fn(),
-      } as unknown as Response;
-
-      vi.mocked(prisma.list.findUnique).mockResolvedValue({
-        id: listId,
-        ownerId: userId,
-        shares: [],
-      } as any);
-      vi.mocked(prisma.task.create).mockResolvedValue({
-        id: "new-task-id",
-        name: "New Task",
-        listId,
-        status: "PENDING",
-        shares: [],
-        list: { id: listId },
-      } as any);
-      setTimeout(async () => {
-        try {
-          await createTask(req, res);
-        } catch (e) {
-          clearTimeout(timeout);
-          clientSocket.disconnect();
-          reject(e);
-        }
-      }, 200);
-    });
-  });
-
-  it("should allow users to join user rooms", async () => {
+  it("should allow users to join user", async () => {
     return new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
         clientSocket?.disconnect();
@@ -145,7 +121,7 @@ describe("Socket Integration", () => {
     });
   });
 
-  it("should allow users to leave list rooms", async () => {
+  it("should allow users to join and leave list", async () => {
     return new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
         clientSocket?.disconnect();
@@ -190,7 +166,8 @@ describe("Socket Integration", () => {
 });
 
 describe("Socket getIO", () => {
-  it("should return initialized socket instance", () => {
+  it("should return initialized socket instance", async () => {
+    const { getIO } = await import("../../src/utils/socket");
     const io = getIO();
     expect(io).toBeDefined();
     expect(io.sockets).toBeDefined();

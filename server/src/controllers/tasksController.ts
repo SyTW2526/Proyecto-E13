@@ -529,8 +529,9 @@ const hasPermission = (
   if (requireListPermission) return false;
 
   if (taskShare) {
-    if (checkLevel(taskShare.permission) >= checkLevel(requiredPermission))
+    if (checkLevel(taskShare.permission) >= checkLevel(requiredPermission)) {
       return true;
+    }
   }
 
   return false;

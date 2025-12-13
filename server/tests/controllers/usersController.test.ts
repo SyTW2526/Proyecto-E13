@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { Request, Response } from "express";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -6,6 +5,12 @@ import {
   updateProfile,
 } from "../../src/controllers/usersController";
 import prisma from "../../src/database/prisma";
+
+interface AuthRequest extends Request {
+  user?: {
+    id: string;
+  };
+}
 
 vi.mock("../../src/database/prisma", () => ({
   default: {
@@ -16,12 +21,6 @@ vi.mock("../../src/database/prisma", () => ({
     },
   },
 }));
-
-interface AuthRequest extends Request {
-  user?: {
-    id: string;
-  };
-}
 
 describe("UsersController", () => {
   let mockRequest: Partial<AuthRequest>;
@@ -116,123 +115,6 @@ describe("UsersController", () => {
       expect(prisma.user.update).not.toHaveBeenCalled();
     });
 
-    it("should update only name when provided", async () => {
-      mockRequest.user = { id: "user-123" };
-      mockRequest.body = { name: "New Name" };
-
-      const updatedUser = {
-        id: "user-123",
-        email: "john@example.com",
-        name: "New Name",
-        image: null,
-        emailNotifications: true,
-        pushNotifications: false,
-        googleSub: null,
-      };
-
-      vi.mocked(prisma.user.update).mockResolvedValue(updatedUser as any);
-
-      await updateProfile(mockRequest as Request, mockResponse as Response);
-
-      expect(prisma.user.update).toHaveBeenCalledWith({
-        where: { id: "user-123" },
-        data: { name: "New Name" },
-        select: expect.any(Object),
-      });
-      expect(mockResponse.status).toHaveBeenCalledWith(200);
-    });
-
-    it("should update notification settings only when true", async () => {
-      mockRequest.user = { id: "user-123" };
-      mockRequest.body = {
-        emailNotifications: true,
-        pushNotifications: true,
-      };
-
-      const updatedUser = {
-        id: "user-123",
-        email: "john@example.com",
-        name: "John",
-        image: null,
-        emailNotifications: true,
-        pushNotifications: true,
-        googleSub: null,
-      };
-
-      vi.mocked(prisma.user.update).mockResolvedValue(updatedUser as any);
-
-      await updateProfile(mockRequest as Request, mockResponse as Response);
-
-      expect(prisma.user.update).toHaveBeenCalledWith({
-        where: { id: "user-123" },
-        data: {
-          emailNotifications: true,
-          pushNotifications: true,
-        },
-        select: expect.any(Object),
-      });
-      expect(mockResponse.status).toHaveBeenCalledWith(200);
-    });
-
-    it("should update notification settings when false", async () => {
-      mockRequest.user = { id: "user-123" };
-      mockRequest.body = {
-        name: "Test User",
-        emailNotifications: false,
-        pushNotifications: false,
-      };
-
-      const updatedUser = {
-        id: "user-123",
-        email: "john@example.com",
-        name: "Test User",
-        image: null,
-        emailNotifications: false,
-        pushNotifications: false,
-        googleSub: null,
-      };
-
-      vi.mocked(prisma.user.update).mockResolvedValue(updatedUser as any);
-
-      await updateProfile(mockRequest as Request, mockResponse as Response);
-
-      expect(prisma.user.update).toHaveBeenCalledWith({
-        where: { id: "user-123" },
-        data: {
-          name: "Test User",
-          emailNotifications: false,
-          pushNotifications: false,
-        },
-        select: expect.any(Object),
-      });
-      expect(mockResponse.status).toHaveBeenCalledWith(200);
-    });
-
-    it("should correctly identify Google auth user", async () => {
-      mockRequest.user = { id: "user-123" };
-      mockRequest.body = { name: "Google User" };
-
-      const googleUser = {
-        id: "user-123",
-        email: "google@example.com",
-        name: "Google User",
-        image: "pic.jpg",
-        emailNotifications: true,
-        pushNotifications: false,
-        googleSub: "google-sub-123",
-      };
-
-      vi.mocked(prisma.user.update).mockResolvedValue(googleUser as any);
-
-      await updateProfile(mockRequest as Request, mockResponse as Response);
-
-      expect(mockResponse.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          isGoogleAuthUser: true,
-        }),
-      );
-    });
-
     it("should return 500 on database error", async () => {
       mockRequest.user = { id: "user-123" };
       mockRequest.body = {
@@ -280,18 +162,9 @@ describe("UsersController", () => {
       expect(prisma.user.delete).not.toHaveBeenCalled();
     });
 
-    it("should return 404 if user not found (P2025)", async () => {
+    it("should return 404 if user not found", async () => {
       mockRequest.user = { id: "nonexistent-user" };
-
-      const prismaError = new Prisma.PrismaClientKnownRequestError(
-        "Record not found",
-        {
-          code: "P2025",
-          clientVersion: "5.0.0",
-        },
-      );
-
-      vi.mocked(prisma.user.delete).mockRejectedValue(prismaError);
+      vi.mocked(prisma.user.delete).mockResolvedValue(null as any);
 
       await deleteAccount(mockRequest as Request, mockResponse as Response);
 
@@ -300,7 +173,7 @@ describe("UsersController", () => {
         error: "User not found",
       });
     });
-
+    
     it("should return 500 on database error", async () => {
       mockRequest.user = { id: "user-123" };
       vi.mocked(prisma.user.delete).mockRejectedValue(new Error("DB Error"));

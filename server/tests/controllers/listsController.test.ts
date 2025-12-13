@@ -479,6 +479,23 @@ describe("ListsController", () => {
       });
     });
 
+    it("should return 403 if user has no share record for the list", async () => {
+      mockReq.params = { id: "list1" };
+      mockReq.body = { name: "Updated" };
+
+      const mockList = {
+        id: "list1",
+        ownerId: "other123",
+        shares: [],
+      };
+
+      (prisma.list.findUnique as Mock).mockResolvedValue(mockList);
+
+      await updateList(mockReq as never, mockRes as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(403);
+    });
+
     it("should handle database errors", async () => {
       mockReq.params = { id: "list1" };
       mockReq.body = { name: "Updated" };
@@ -689,6 +706,50 @@ describe("ListsController", () => {
       );
     });
 
+    it("should use fallback name if user name is missing", async () => {
+      mockReq.params = { id: "list1" };
+      mockReq.body = { email: "other@test.com", permission: "EDIT" };
+
+      const mockList = {
+        id: "list1",
+        name: "My List",
+        ownerId: "user123",
+        shares: [],
+      };
+
+      const mockOtherUser = {
+        id: "other123",
+        email: "other@test.com",
+        name: "Other User",
+      };
+
+      const mockCurrentUser = {
+        id: "user123",
+        name: null,
+      };
+
+      (prisma.list.findUnique as Mock).mockResolvedValue(mockList);
+      (prisma.user.findUnique as Mock)
+        .mockResolvedValueOnce(mockOtherUser)
+        .mockResolvedValueOnce(mockCurrentUser);
+      (prisma.listShare.findUnique as Mock).mockResolvedValue(null);
+      (prisma.list.update as Mock).mockResolvedValue({
+        ...mockList,
+        shares: [{ userId: "other123", permission: "EDIT" }],
+      });
+
+      await shareList(mockReq as never, mockRes as Response);
+
+      expect(notificationsController.createNotification).toHaveBeenCalledWith(
+        "other123",
+        "SHARED",
+        "Nueva lista compartida",
+        expect.stringContaining("Alguien"),
+        "Usuario",
+      );
+      expect(statusMock).toHaveBeenCalledWith(200);
+    });
+
     it("should handle database errors", async () => {
       mockReq.params = { id: "list1" };
       mockReq.body = { email: "other@test.com" };
@@ -787,6 +848,29 @@ describe("ListsController", () => {
       await unshareList(mockReq as never, mockRes as Response);
 
       expect(statusMock).toHaveBeenCalledWith(500);
+    });
+
+    it("should allow user to unshare themselves (leave list)", async () => {
+      mockReq.params = { id: "list1", userId: "user123" };
+
+      const mockList = {
+        id: "list1",
+        ownerId: "owner456",
+        shares: [
+          {
+            userId: "user123",
+            permission: SharePermission.VIEW,
+          },
+        ],
+      };
+
+      (prisma.list.findUnique as Mock).mockResolvedValue(mockList);
+      (prisma.list.update as Mock).mockResolvedValue(mockList);
+
+      await unshareList(mockReq as never, mockRes as Response);
+
+      expect(prisma.list.update).toHaveBeenCalled();
+      expect(statusMock).toHaveBeenCalledWith(200);
     });
   });
 

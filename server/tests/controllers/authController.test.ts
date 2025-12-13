@@ -421,6 +421,24 @@ describe("AuthController", () => {
       });
     });
 
+    it("should return 500 if Google Auth is not configured", async () => {
+      vi.resetModules();
+      const originalClientId = process.env.GOOGLE_CLIENT_ID;
+      delete process.env.GOOGLE_CLIENT_ID;
+      const { googleSignIn: googleSignInFresh } =
+        await import("../../src/controllers/authController");
+
+      mockRequest.body = { idToken: "some-token" };
+      await googleSignInFresh(mockRequest as Request, mockResponse as Response);
+
+      expect(mockResponse.status).toHaveBeenCalledWith(500);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: "Google authentication not configured",
+      });
+
+      process.env.GOOGLE_CLIENT_ID = originalClientId;
+    });
+
     it("should return 401 if verification fails", async () => {
       mockRequest.body = { idToken: "invalid-token" };
       mockVerifyIdToken.mockRejectedValue(new Error("Invalid token"));
@@ -599,6 +617,52 @@ describe("AuthController", () => {
           user: expect.objectContaining({
             id: "new-user-123",
             email: "new@example.com",
+          }),
+        }),
+      );
+    });
+    it("should use email prefix as name if name is missing from Google payload", async () => {
+      mockRequest.body = { idToken: "valid-token" };
+      const payload = {
+        email: "nameless@example.com",
+        sub: "google-nameless",
+        email_verified: true,
+        picture: "pic.jpg",
+      };
+      mockVerifyIdToken.mockResolvedValue({
+        getPayload: () => payload,
+      });
+
+      vi.mocked(prisma.user.findFirst).mockResolvedValue(null);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
+
+      const newUser = {
+        id: "new-user-123",
+        email: "nameless@example.com",
+        name: "nameless",
+        image: "pic.jpg",
+        googleSub: "google-nameless",
+      };
+      vi.mocked(prisma.user.create).mockResolvedValue(newUser as any);
+      vi.mocked(jwtUtils.generateToken).mockReturnValue("jwt-token");
+
+      await googleSignIn(mockRequest as Request, mockResponse as Response);
+
+      expect(prisma.user.create).toHaveBeenCalledWith({
+        data: {
+          email: "nameless@example.com",
+          name: "nameless",
+          password: null,
+          googleSub: "google-nameless",
+          image: "pic.jpg",
+          emailVerifiedAt: expect.any(Date),
+        },
+      });
+
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          user: expect.objectContaining({
+            name: "nameless",
           }),
         }),
       );

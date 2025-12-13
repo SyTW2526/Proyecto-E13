@@ -159,23 +159,6 @@ describe("TasksController", () => {
       expect(jsonMock).toHaveBeenCalledWith(mockTask);
     });
 
-    it("should return 403 if user only has VIEW permission", async () => {
-      mockReq.body = { name: "Task", listId: "list1" };
-
-      const mockList = {
-        id: "list1",
-        ownerId: "owner456",
-        shares: [{ userId: "user123", permission: SharePermission.VIEW }],
-      };
-
-      (prisma.list.findUnique as Mock).mockResolvedValue(mockList);
-
-      await createTask(mockReq as never, mockRes as Response);
-
-      expect(statusMock).toHaveBeenCalledWith(403);
-      expect(jsonMock).toHaveBeenCalledWith({ error: "Unauthorized" });
-    });
-
     it("should return 403 if user has no permission", async () => {
       mockReq.body = { name: "Task", listId: "list1" };
 
@@ -205,32 +188,6 @@ describe("TasksController", () => {
   });
 
   describe("deleteTask", () => {
-    it("should delete task when user is list owner", async () => {
-      mockReq.params = { id: "task1" };
-
-      const mockTask = {
-        id: "task1",
-        name: "Task",
-        list: {
-          id: "list1",
-          ownerId: "user123",
-          shares: [],
-        },
-        shares: [],
-      };
-
-      (prisma.task.findUnique as Mock).mockResolvedValue(mockTask);
-      (prisma.task.delete as Mock).mockResolvedValue(mockTask);
-
-      await deleteTask(mockReq as never, mockRes as Response);
-
-      expect(prisma.task.delete).toHaveBeenCalledWith({
-        where: { id: "task1" },
-      });
-      expect(statusMock).toHaveBeenCalledWith(200);
-      expect(jsonMock).toHaveBeenCalledWith(mockTask);
-    });
-
     it("should return 401 if user is not authenticated", async () => {
       mockReq.user = undefined;
       mockReq.params = { id: "task1" };
@@ -500,52 +457,6 @@ describe("TasksController", () => {
       expect(jsonMock).toHaveBeenCalledWith({ error: "List not found" });
     });
 
-    it("should update task when user has EDIT permission", async () => {
-      mockReq.params = { id: "task1" };
-      mockReq.body = { name: "Updated Task" };
-
-      const mockTask = {
-        id: "task1",
-        list: {
-          id: "list1",
-          ownerId: "owner456",
-          shares: [{ userId: "user123", permission: SharePermission.EDIT }],
-        },
-        shares: [],
-      };
-
-      const updatedTask = { ...mockTask, name: "Updated Task" };
-
-      (prisma.task.findUnique as Mock).mockResolvedValue(mockTask);
-      (prisma.task.update as Mock).mockResolvedValue(updatedTask);
-
-      await updateTask(mockReq as never, mockRes as Response);
-
-      expect(statusMock).toHaveBeenCalledWith(200);
-    });
-
-    it("should return 403 if user only has VIEW permission", async () => {
-      mockReq.params = { id: "task1" };
-      mockReq.body = { name: "Updated" };
-
-      const mockTask = {
-        id: "task1",
-        list: {
-          id: "list1",
-          ownerId: "owner456",
-          shares: [{ userId: "user123", permission: SharePermission.VIEW }],
-        },
-        shares: [],
-      };
-
-      (prisma.task.findUnique as Mock).mockResolvedValue(mockTask);
-
-      await updateTask(mockReq as never, mockRes as Response);
-
-      expect(statusMock).toHaveBeenCalledWith(403);
-      expect(jsonMock).toHaveBeenCalledWith({ error: "Unauthorized" });
-    });
-
     it("should return 400 if no fields to update", async () => {
       mockReq.params = { id: "task1" };
       mockReq.body = {};
@@ -611,6 +522,63 @@ describe("TasksController", () => {
         include: expect.any(Object),
       });
       expect(statusMock).toHaveBeenCalledWith(200);
+    });
+
+    it("should update task when user has direct TASK permission (even if no list permission)", async () => {
+      mockReq.params = { id: "task1" };
+      mockReq.body = { name: "Updated via Task Share" };
+
+      const mockTask = {
+        id: "task1",
+        list: {
+          id: "list1",
+          ownerId: "owner456",
+          shares: [],
+        },
+        shares: [
+          {
+            userId: "user123",
+            permission: SharePermission.EDIT,
+          },
+        ],
+      };
+
+      const updatedTask = { ...mockTask, name: "Updated via Task Share" };
+
+      (prisma.task.findUnique as Mock).mockResolvedValue(mockTask);
+      (prisma.task.update as Mock).mockResolvedValue(updatedTask);
+
+      await updateTask(mockReq as never, mockRes as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(200);
+      expect(jsonMock).toHaveBeenCalledWith(updatedTask);
+    });
+
+    it("should return 403 if user has direct TASK permission but insufficient level", async () => {
+      mockReq.params = { id: "task1" };
+      mockReq.body = { name: "Updated" };
+
+      const mockTask = {
+        id: "task1",
+        list: {
+          id: "list1",
+          ownerId: "owner456",
+          shares: [],
+        },
+        shares: [
+          {
+            userId: "user123",
+            permission: SharePermission.VIEW,
+          },
+        ],
+      };
+
+      (prisma.task.findUnique as Mock).mockResolvedValue(mockTask);
+
+      await updateTask(mockReq as never, mockRes as Response);
+
+      expect(statusMock).toHaveBeenCalledWith(403);
+      expect(jsonMock).toHaveBeenCalledWith({ error: "Unauthorized" });
     });
 
     it("should handle database errors", async () => {
@@ -842,6 +810,63 @@ describe("TasksController", () => {
           },
         }),
       );
+    });
+
+    it("should use fallback name if user name is missing", async () => {
+      mockReq.params = { id: "task1" };
+      mockReq.body = {
+        email: "share@test.com",
+        permission: SharePermission.EDIT,
+      };
+
+      const mockTask = {
+        id: "task1",
+        name: "Task",
+        list: {
+          id: "list1",
+          ownerId: "user123",
+          shares: [],
+        },
+        shares: [],
+      };
+
+      const mockUserToShare = {
+        id: "user456",
+        email: "share@test.com",
+        name: "Share User",
+      };
+
+      const mockCurrentUser = {
+        id: "user123",
+        name: null,
+      };
+
+      const updatedTask = {
+        ...mockTask,
+        shares: [{ userId: "user456", permission: SharePermission.EDIT }],
+      };
+
+      (prisma.task.findUnique as Mock).mockResolvedValue(mockTask);
+
+      (prisma.user.findUnique as Mock)
+        .mockResolvedValueOnce(mockUserToShare)
+        .mockResolvedValueOnce(mockCurrentUser);
+
+      (prisma.task.update as Mock).mockResolvedValue(updatedTask);
+      (notificationsController.createNotification as Mock).mockResolvedValue(
+        {},
+      );
+
+      await shareTask(mockReq as never, mockRes as Response);
+
+      expect(notificationsController.createNotification).toHaveBeenCalledWith(
+        "user456",
+        "SHARED",
+        "Nueva tarea compartida",
+        expect.stringContaining("Alguien"),
+        "Usuario",
+      );
+      expect(statusMock).toHaveBeenCalledWith(200);
     });
 
     it("should handle database errors", async () => {

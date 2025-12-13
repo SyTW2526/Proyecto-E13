@@ -6,8 +6,8 @@ export const chatController = async (req: Request, res: Response) => {
   try {
     const { messages } = req.body;
 
-    if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ error: "Messages array is required" });
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: "No messages provided" });
     }
 
     res.setHeader("Content-Type", "text/event-stream");
@@ -43,6 +43,7 @@ Responde de manera concisa y útil en el idioma del usuario.`,
         message: error instanceof Error ? error.message : "Unknown error",
       });
     }
-    return res.end();
+    res.end();
+    return;
   }
 };
