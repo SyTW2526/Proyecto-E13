@@ -14,10 +14,8 @@ export async function cleanupOldCompletedTasks(): Promise<number> {
         },
       },
     });
-
     return result.count;
   } catch (error) {
-    console.error("[Cleanup] Error deleting old completed tasks:", error);
     return 0;
   }
 }

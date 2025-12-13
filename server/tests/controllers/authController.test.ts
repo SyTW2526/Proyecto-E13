@@ -6,12 +6,12 @@ import {
   googleSignIn,
   login,
   register,
-} from "../src/controllers/authController";
-import { createNotification } from "../src/controllers/notificationsController";
-import prisma from "../src/database/prisma";
-import * as jwtUtils from "../src/utils/jwt";
+} from "../../src/controllers/authController";
+import { createNotification } from "../../src/controllers/notificationsController";
+import prisma from "../../src/database/prisma";
+import * as jwtUtils from "../../src/utils/jwt";
 
-vi.mock("../src/database/prisma", () => ({
+vi.mock("../../src/database/prisma", () => ({
   default: {
     user: {
       create: vi.fn(),
@@ -22,22 +22,26 @@ vi.mock("../src/database/prisma", () => ({
   },
 }));
 
-vi.mock("../src/utils/jwt");
+vi.mock("../../src/utils/jwt");
 vi.mock("bcrypt");
-vi.mock("../src/controllers/notificationsController", () => ({
+vi.mock("../../src/controllers/notificationsController", () => ({
   createNotification: vi.fn(),
 }));
 
-vi.mock("../src/utils/socket", () => ({
+vi.mock("../../src/utils/socket", () => ({
   getIO: vi.fn().mockReturnValue({
     to: vi.fn().mockReturnThis(),
     emit: vi.fn(),
   }),
 }));
 
+const { mockVerifyIdToken } = vi.hoisted(() => ({
+  mockVerifyIdToken: vi.fn(),
+}));
+
 vi.mock("google-auth-library", () => ({
   OAuth2Client: class {
-    verifyIdToken = vi.fn();
+    verifyIdToken = mockVerifyIdToken;
   },
 }));
 
@@ -417,14 +421,187 @@ describe("AuthController", () => {
       });
     });
 
-    it("should return 401 for invalid token", async () => {
+    it("should return 401 if verification fails", async () => {
       mockRequest.body = { idToken: "invalid-token" };
+      mockVerifyIdToken.mockRejectedValue(new Error("Invalid token"));
 
       await googleSignIn(mockRequest as Request, mockResponse as Response);
 
-      // El test debería pasar incluso si devuelve 401
-      expect(mockResponse.status).toHaveBeenCalled();
-      expect(mockResponse.json).toHaveBeenCalled();
+      expect(mockResponse.status).toHaveBeenCalledWith(401);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: "Failed to authenticate with Google",
+      });
+    });
+
+    it("should return 400 if Google payload is invalid", async () => {
+      mockRequest.body = { idToken: "valid-token-missing-email" };
+      mockVerifyIdToken.mockResolvedValue({
+        getPayload: () => ({
+          sub: "google-123",
+          email_verified: true,
+        }),
+      });
+
+      await googleSignIn(mockRequest as Request, mockResponse as Response);
+
+      expect(mockResponse.status).toHaveBeenCalledWith(400);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: "Invalid Google credentials",
+      });
+    });
+
+    it("should login existing user with googleSub", async () => {
+      mockRequest.body = { idToken: "valid-token" };
+      const payload = {
+        email: "john@example.com",
+        sub: "google-123",
+        email_verified: true,
+        name: "John Doe",
+        picture: "pic.jpg",
+      };
+      mockVerifyIdToken.mockResolvedValue({
+        getPayload: () => payload,
+      });
+
+      const mockUser = {
+        id: "user-123",
+        email: "john@example.com",
+        name: "John Doe",
+        image: "pic.jpg",
+        googleSub: "google-123",
+        emailNotifications: true,
+        pushNotifications: false,
+      };
+
+      vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as any);
+      vi.mocked(jwtUtils.generateToken).mockReturnValue("jwt-token");
+
+      await googleSignIn(mockRequest as Request, mockResponse as Response);
+
+      expect(prisma.user.findFirst).toHaveBeenCalledWith({
+        where: { googleSub: "google-123" },
+      });
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        token: "jwt-token",
+        user: {
+          id: mockUser.id,
+          email: mockUser.email,
+          name: mockUser.name,
+          image: mockUser.image,
+          emailNotifications: true,
+          pushNotifications: false,
+          isGoogleAuthUser: true,
+        },
+      });
+    });
+
+    it("should link existing account by email if googleSub not set", async () => {
+      mockRequest.body = { idToken: "valid-token" };
+      const payload = {
+        email: "john@example.com",
+        sub: "google-123",
+        email_verified: true,
+        name: "John Doe",
+        picture: "pic.jpg",
+      };
+      mockVerifyIdToken.mockResolvedValue({
+        getPayload: () => payload,
+      });
+
+      vi.mocked(prisma.user.findFirst).mockResolvedValue(null);
+
+      const existingUser = {
+        id: "user-123",
+        email: "john@example.com",
+        name: "John Doe",
+        image: null,
+        googleSub: null,
+      };
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(existingUser as any);
+
+      const updatedUser = {
+        ...existingUser,
+        googleSub: "google-123",
+      };
+      vi.mocked(prisma.user.update).mockResolvedValue(updatedUser as any);
+      vi.mocked(jwtUtils.generateToken).mockReturnValue("jwt-token");
+
+      await googleSignIn(mockRequest as Request, mockResponse as Response);
+
+      expect(prisma.user.findFirst).toHaveBeenCalledWith({
+        where: { googleSub: "google-123" },
+      });
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        where: { email: "john@example.com" },
+      });
+      expect(prisma.user.update).toHaveBeenCalledWith({
+        where: { id: "user-123" },
+        data: { googleSub: "google-123" },
+      });
+
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          token: "jwt-token",
+          user: expect.objectContaining({
+            id: "user-123",
+            isGoogleAuthUser: true,
+          }),
+        }),
+      );
+    });
+
+    it("should create new user if not exists", async () => {
+      mockRequest.body = { idToken: "valid-token" };
+      const payload = {
+        email: "new@example.com",
+        sub: "google-new",
+        email_verified: true,
+        name: "New User",
+        picture: "pic.jpg",
+      };
+      mockVerifyIdToken.mockResolvedValue({
+        getPayload: () => payload,
+      });
+
+      vi.mocked(prisma.user.findFirst).mockResolvedValue(null);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
+
+      const newUser = {
+        id: "new-user-123",
+        email: "new@example.com",
+        name: "New User",
+        image: "pic.jpg",
+        googleSub: "google-new",
+        emailNotifications: true,
+        pushNotifications: false,
+      };
+      vi.mocked(prisma.user.create).mockResolvedValue(newUser as any);
+      vi.mocked(jwtUtils.generateToken).mockReturnValue("jwt-token");
+
+      await googleSignIn(mockRequest as Request, mockResponse as Response);
+
+      expect(prisma.user.create).toHaveBeenCalledWith({
+        data: {
+          email: "new@example.com",
+          name: "New User",
+          password: null,
+          googleSub: "google-new",
+          image: "pic.jpg",
+          emailVerifiedAt: expect.any(Date),
+        },
+      });
+
+      expect(createNotification).toHaveBeenCalled();
+
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          token: "jwt-token",
+          user: expect.objectContaining({
+            id: "new-user-123",
+            email: "new@example.com",
+          }),
+        }),
+      );
     });
   });
 });

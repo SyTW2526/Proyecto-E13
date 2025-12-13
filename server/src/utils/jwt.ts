@@ -7,9 +7,6 @@ const JWT_ISSUER = "taskgrid-api";
 const JWT_ALGORITHM = "HS256";
 
 if (!JWT_SECRET) {
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("JWT_SECRET must be set in production environment");
-  }
   console.warn(
     "⚠️  JWT_SECRET not set. Using insecure default. Set JWT_SECRET in .env for security.",
   );
@@ -17,11 +14,6 @@ if (!JWT_SECRET) {
 
 const SECRET = JWT_SECRET || "dev-secret-fallback";
 
-/**
- * Genera un token JWT para un usuario
- * @param payload Datos del usuario a incluir en el token
- * @returns Token JWT firmado
- */
 export const generateToken = (payload: JwtPayload): string => {
   return jwt.sign(payload, SECRET, {
     expiresIn: JWT_EXPIRES_IN,
@@ -30,12 +22,6 @@ export const generateToken = (payload: JwtPayload): string => {
   });
 };
 
-/**
- * Verifica un token JWT
- * @param token Token JWT a verificar
- * @returns Payload decodificado si el token es válido
- * @throws Error si el token es inválido o ha expirado
- */
 export const verifyToken = (token: string): JwtPayload => {
   try {
     return jwt.verify(token, SECRET, {

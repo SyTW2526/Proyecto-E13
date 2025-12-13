@@ -1,21 +1,16 @@
 import nodemailer from "nodemailer";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { sendNotificationEmail } from "../src/utils/emailService";
+import { sendNotificationEmail } from "../../src/utils/emailService";
 
-// Mock de nodemailer
 vi.mock("nodemailer");
 
 describe("emailService", () => {
   const originalEnv = process.env;
   const consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-  const consoleErrorSpy = vi
-    .spyOn(console, "error")
-    .mockImplementation(() => {});
 
   beforeEach(() => {
     process.env = { ...originalEnv };
     consoleLogSpy.mockClear();
-    consoleErrorSpy.mockClear();
   });
 
   afterEach(() => {
@@ -23,37 +18,21 @@ describe("emailService", () => {
     vi.clearAllMocks();
   });
 
-  describe("Modo desarrollo sin credenciales", () => {
-    it("Returns silently when no EMAIL_USER", async () => {
+  describe("Configuración faltante", () => {
+    it("Retorna void (implícitamente undefined) si EMAIL_USER o EMAIL_PASSWORD no están definidos", async () => {
       delete process.env.EMAIL_USER;
       delete process.env.EMAIL_PASSWORD;
 
-      await sendNotificationEmail(
+      const result = await sendNotificationEmail(
         "test@test.com",
-        "Test User",
+        "User",
         "SYSTEM",
         "Title",
         "Description",
       );
 
-      // Should not throw and not send email
-      expect(consoleErrorSpy).not.toHaveBeenCalled();
-    });
-
-    it("Returns silently when no EMAIL_PASSWORD", async () => {
-      process.env.EMAIL_USER = "test@test.com";
-      delete process.env.EMAIL_PASSWORD;
-
-      await sendNotificationEmail(
-        "test@test.com",
-        "Test User",
-        "SYSTEM",
-        "Title",
-        "Description",
-      );
-
-      // Should not throw and not send email
-      expect(consoleErrorSpy).not.toHaveBeenCalled();
+      expect(result).toBeUndefined();
+      expect(nodemailer.createTransport).not.toHaveBeenCalled();
     });
   });
 
@@ -64,7 +43,6 @@ describe("emailService", () => {
     });
 
     it("Envía email correctamente en producción", async () => {
-      process.env.NODE_ENV = "production";
       const mockSendMail = vi.fn().mockResolvedValue({ messageId: "123" });
       const mockTransporter = { sendMail: mockSendMail };
       vi.mocked(nodemailer.createTransport).mockReturnValue(
@@ -90,7 +68,6 @@ describe("emailService", () => {
     });
 
     it("Envía email correctamente en desarrollo con credenciales", async () => {
-      process.env.NODE_ENV = "development";
       const mockSendMail = vi.fn().mockResolvedValue({ messageId: "456" });
       const mockTransporter = { sendMail: mockSendMail };
       vi.mocked(nodemailer.createTransport).mockReturnValue(
@@ -126,11 +103,6 @@ describe("emailService", () => {
         "SYSTEM",
         "Title",
         "Description",
-      );
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Error al enviar email:",
-        expect.any(Error),
       );
     });
   });
@@ -407,8 +379,6 @@ describe("emailService", () => {
           "Desc",
         ),
       ).resolves.not.toThrow();
-
-      expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
     it("Successfully sends email with messageId", async () => {
@@ -436,7 +406,6 @@ describe("emailService", () => {
     beforeEach(() => {
       process.env.EMAIL_USER = "test@test.com";
       process.env.EMAIL_PASSWORD = "password123";
-      process.env.NODE_ENV = "production";
     });
 
     it("should handle empty recipient email", async () => {

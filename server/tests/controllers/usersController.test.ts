@@ -4,10 +4,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   deleteAccount,
   updateProfile,
-} from "../src/controllers/usersController";
-import prisma from "../src/database/prisma";
+} from "../../src/controllers/usersController";
+import prisma from "../../src/database/prisma";
 
-vi.mock("../src/database/prisma", () => ({
+vi.mock("../../src/database/prisma", () => ({
   default: {
     user: {
       findUnique: vi.fn(),
@@ -196,7 +196,6 @@ describe("UsersController", () => {
 
       await updateProfile(mockRequest as Request, mockResponse as Response);
 
-      // All fields including false values are updated
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { id: "user-123" },
         data: {

@@ -11,7 +11,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
 import App from "./App";
-import "./i18n";
+import "./utils/i18n";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

@@ -7,11 +7,12 @@ import { getIO } from "../utils/socket.js";
 export const createList = async (req: Request, res: Response) => {
   try {
     const { name, description } = req.body;
-    const ownerId = req.user?.id;
 
+    const ownerId = req.user?.id;
     if (!ownerId) {
       return res.status(401).json({ error: "User not authenticated" });
     }
+
     const list = await prisma.list.create({
       data: {
         name,
@@ -39,6 +40,7 @@ export const createList = async (req: Request, res: Response) => {
 
     return res.status(200).json(list);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error creating list" });
   }
 };
@@ -46,6 +48,7 @@ export const createList = async (req: Request, res: Response) => {
 export const deleteList = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+
     const userId = req.user?.id;
     if (!userId) {
       return res.status(401).json({ error: "User not authenticated" });
@@ -70,6 +73,7 @@ export const deleteList = async (req: Request, res: Response) => {
 
     return res.status(200).json(list);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error deleting list" });
   }
 };
@@ -77,6 +81,7 @@ export const deleteList = async (req: Request, res: Response) => {
 export const getUserLists = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
+
     const lists = await prisma.list.findMany({
       where: {
         ownerId: userId,
@@ -97,8 +102,10 @@ export const getUserLists = async (req: Request, res: Response) => {
         tasks: true,
       },
     });
+
     return res.status(200).json(lists);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error getting lists" });
   }
 };
@@ -106,6 +113,7 @@ export const getUserLists = async (req: Request, res: Response) => {
 export const getSharedLists = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
+
     const lists = await prisma.list.findMany({
       where: {
         shares: {
@@ -138,8 +146,10 @@ export const getSharedLists = async (req: Request, res: Response) => {
         },
       },
     });
+
     return res.status(200).json(lists);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error getting shared lists" });
   }
 };
@@ -147,6 +157,7 @@ export const getSharedLists = async (req: Request, res: Response) => {
 export const updateList = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+
     const userId = req.user?.id;
     if (!userId) {
       return res.status(401).json({ error: "User not authenticated" });
@@ -162,6 +173,7 @@ export const updateList = async (req: Request, res: Response) => {
     }
 
     const { name, description } = req.body;
+
     const dataToUpdate: {
       name?: string;
       description?: string;
@@ -171,6 +183,7 @@ export const updateList = async (req: Request, res: Response) => {
     if (Object.keys(dataToUpdate).length === 0) {
       return res.status(400).json({ error: "No fields to update" });
     }
+
     const listUpdated = await prisma.list.update({
       where: {
         id,
@@ -205,6 +218,7 @@ export const updateList = async (req: Request, res: Response) => {
 export const shareList = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+
     const userId = req.user?.id;
     if (!userId) {
       return res.status(401).json({ error: "User not authenticated" });
@@ -226,11 +240,9 @@ export const shareList = async (req: Request, res: Response) => {
         email,
       },
     });
-
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-
     if (user.id === userId) {
       return res.status(400).json({ error: "Cannot share list with yourself" });
     }
@@ -248,6 +260,7 @@ export const shareList = async (req: Request, res: Response) => {
         .status(400)
         .json({ error: "List already shared with this user" });
     }
+
     const listUpdated = await prisma.list.update({
       where: {
         id,
@@ -276,10 +289,12 @@ export const shareList = async (req: Request, res: Response) => {
         tasks: true,
       },
     });
+
     const currentUser = await prisma.user.findUnique({
       where: { id: req.user?.id },
       select: { name: true },
     });
+
     await createNotification(
       user.id,
       "SHARED",
@@ -292,6 +307,7 @@ export const shareList = async (req: Request, res: Response) => {
 
     return res.status(200).json(listUpdated);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error sharing list" });
   }
 };
@@ -299,6 +315,7 @@ export const shareList = async (req: Request, res: Response) => {
 export const unshareList = async (req: Request, res: Response) => {
   try {
     const { id, userId } = req.params;
+
     const currentUserId = req.user?.id;
     if (!currentUserId) {
       return res.status(401).json({ error: "User not authenticated" });
@@ -350,6 +367,7 @@ export const unshareList = async (req: Request, res: Response) => {
 
     return res.status(200).json(listUpdated);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error unsharing list" });
   }
 };
@@ -357,6 +375,7 @@ export const unshareList = async (req: Request, res: Response) => {
 export const updateSharePermission = async (req: Request, res: Response) => {
   try {
     const { id, userId } = req.params;
+
     const currentUserId = req.user?.id;
     if (!currentUserId) {
       return res.status(401).json({ error: "User not authenticated" });
@@ -411,6 +430,7 @@ export const updateSharePermission = async (req: Request, res: Response) => {
 
     return res.status(200).json(listUpdated);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error updating share permission" });
   }
 };
@@ -445,5 +465,6 @@ const checkLevel = (permission: SharePermission) => {
     [SharePermission.EDIT]: 2,
     [SharePermission.ADMIN]: 3,
   };
+
   return levels[permission];
 };

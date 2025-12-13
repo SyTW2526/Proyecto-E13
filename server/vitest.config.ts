@@ -8,5 +8,8 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "lcov", "html"],
     },
+    env: {
+      JWT_SECRET: "test-secret",
+    },
   },
 });

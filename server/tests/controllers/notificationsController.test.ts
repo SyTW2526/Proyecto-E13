@@ -6,9 +6,9 @@ import {
   getUnreadCount,
   markAllNotificationsAsRead,
   markNotificationAsRead,
-} from "../src/controllers/notificationsController";
-import prisma from "../src/database/prisma";
-import { sendNotificationEmail } from "../src/utils/emailService";
+} from "../../src/controllers/notificationsController";
+import prisma from "../../src/database/prisma";
+import { sendNotificationEmail } from "../../src/utils/emailService";
 
 interface RequestWithUser {
   user?: { id: string; email: string; name: string };
@@ -16,7 +16,7 @@ interface RequestWithUser {
   body: Record<string, unknown>;
 }
 
-vi.mock("../src/database/prisma", () => ({
+vi.mock("../../src/database/prisma", () => ({
   default: {
     notification: {
       findMany: vi.fn(),
@@ -29,11 +29,11 @@ vi.mock("../src/database/prisma", () => ({
   },
 }));
 
-vi.mock("../src/utils/emailService", () => ({
+vi.mock("../../src/utils/emailService", () => ({
   sendNotificationEmail: vi.fn(),
 }));
 
-vi.mock("../src/utils/socket", () => ({
+vi.mock("../../src/utils/socket", () => ({
   getIO: vi.fn().mockReturnValue({
     to: vi.fn().mockReturnThis(),
     emit: vi.fn(),

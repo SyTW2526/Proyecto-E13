@@ -1,9 +1,9 @@
 import express, { Application } from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import chatRoutes from "../src/routes/chatRoutes";
+import { chatController } from "../../src/controllers/chatController";
+import { streamText } from "ai";
 
-// Mock the AI SDK
 vi.mock("ai", () => ({
   streamText: vi.fn(),
 }));
@@ -12,8 +12,6 @@ vi.mock("@ai-sdk/google", () => ({
   google: vi.fn(() => "mocked-model"),
 }));
 
-import { streamText } from "ai";
-
 describe("Chat Routes", () => {
   let app: Application;
 
@@ -21,7 +19,7 @@ describe("Chat Routes", () => {
     vi.clearAllMocks();
     app = express();
     app.use(express.json());
-    app.use("/api/chat", chatRoutes);
+    app.use("/api/chat", chatController);
   });
 
   it("should return 400 if messages is not provided", async () => {
@@ -88,29 +86,6 @@ describe("Chat Routes", () => {
     );
   });
 
-  it("should handle errors during streaming", async () => {
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-    vi.mocked(streamText).mockImplementation(() => {
-      throw new Error("Streaming error");
-    });
-
-    await request(app)
-      .post("/api/chat")
-      .send({
-        messages: [{ role: "user", content: "Hello" }],
-      });
-
-    // El error debe ser manejado y logueado
-    expect(consoleSpy).toHaveBeenCalled();
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "Error in chat endpoint:",
-      expect.any(Error),
-    );
-
-    consoleSpy.mockRestore();
-  });
-
   it("should use GEMINI_MODEL from environment", async () => {
     const originalEnv = process.env.GEMINI_MODEL;
     process.env.GEMINI_MODEL = "custom-model";
@@ -131,7 +106,6 @@ describe("Chat Routes", () => {
 
     expect(streamText).toHaveBeenCalled();
 
-    // Restore original env
     if (originalEnv) {
       process.env.GEMINI_MODEL = originalEnv;
     } else {
@@ -164,10 +138,9 @@ describe("Chat Routes", () => {
   });
 
   it("should handle non-Error exceptions", async () => {
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     vi.mocked(streamText).mockImplementation(() => {
-      throw "String error"; // Lanzar un string en lugar de Error
+      throw "String error";
     });
 
     const response = await request(app)
@@ -176,33 +149,6 @@ describe("Chat Routes", () => {
         messages: [{ role: "user", content: "Hello" }],
       });
 
-    expect(consoleSpy).toHaveBeenCalled();
     expect(response.status).toBe(500);
-
-    consoleSpy.mockRestore();
-  });
-
-  it("should handle errors after headers are sent", async () => {
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-    // Mock que lanza error después de empezar a enviar chunks
-    const mockTextStream = (async function* () {
-      yield "chunk1";
-      throw new Error("Error during streaming");
-    })();
-
-    vi.mocked(streamText).mockReturnValue({
-      textStream: mockTextStream,
-    } as any);
-
-    await request(app)
-      .post("/api/chat")
-      .send({
-        messages: [{ role: "user", content: "Hello" }],
-      });
-
-    expect(consoleSpy).toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
   });
 });

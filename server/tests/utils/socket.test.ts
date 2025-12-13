@@ -10,12 +10,11 @@ import {
   it,
   vi,
 } from "vitest";
-import { createTask } from "../src/controllers/tasksController";
-import prisma from "../src/database/prisma";
-import { getIO, initSocket } from "../src/utils/socket";
+import { createTask } from "../../src/controllers/tasksController";
+import prisma from "../../src/database/prisma";
+import { getIO, initSocket } from "../../src/utils/socket";
 
-// Mock Prisma
-vi.mock("../src/database/prisma", () => ({
+vi.mock("../../src/database/prisma", () => ({
   default: {
     list: {
       findUnique: vi.fn(),
@@ -82,7 +81,6 @@ describe("Socket Integration", () => {
         }
       });
 
-      // Mock Request/Response
       const req = {
         user: { id: userId },
         body: {
@@ -97,13 +95,11 @@ describe("Socket Integration", () => {
         json: vi.fn(),
       } as unknown as Response;
 
-      // Mock Prisma responses
       vi.mocked(prisma.list.findUnique).mockResolvedValue({
         id: listId,
         ownerId: userId,
         shares: [],
       } as any);
-
       vi.mocked(prisma.task.create).mockResolvedValue({
         id: "new-task-id",
         name: "New Task",
@@ -112,8 +108,6 @@ describe("Socket Integration", () => {
         shares: [],
         list: { id: listId },
       } as any);
-
-      // Wait a bit for socket to connect and join room
       setTimeout(async () => {
         try {
           await createTask(req, res);
@@ -132,21 +126,17 @@ describe("Socket Integration", () => {
         clientSocket?.disconnect();
         reject(new Error("Test timeout"));
       }, 3000);
-
       clientSocket = Client(`http://localhost:${port}`);
       const userId = "test-user-123";
-
       clientSocket.on("connect", () => {
         clientSocket.emit("join_user", userId);
 
-        // Esperar un poco para asegurar que se procese
         setTimeout(() => {
           clearTimeout(timeout);
           clientSocket.disconnect();
           resolve();
         }, 100);
       });
-
       clientSocket.on("error", (error: any) => {
         clearTimeout(timeout);
         clientSocket.disconnect();
@@ -161,19 +151,12 @@ describe("Socket Integration", () => {
         clientSocket?.disconnect();
         reject(new Error("Test timeout"));
       }, 3000);
-
       clientSocket = Client(`http://localhost:${port}`);
       const listId = "test-list-456";
-
       clientSocket.on("connect", () => {
-        // Primero unirse a la sala
         clientSocket.emit("join_list", listId);
-
-        // Esperar y luego salir de la sala
         setTimeout(() => {
           clientSocket.emit("leave_list", listId);
-
-          // Esperar un poco más antes de resolver
           setTimeout(() => {
             clearTimeout(timeout);
             clientSocket.disconnect();
@@ -181,7 +164,6 @@ describe("Socket Integration", () => {
           }, 100);
         }, 100);
       });
-
       clientSocket.on("error", (error: any) => {
         clearTimeout(timeout);
         clientSocket.disconnect();
@@ -195,13 +177,10 @@ describe("Socket Integration", () => {
       const timeout = setTimeout(() => {
         reject(new Error("Test timeout"));
       }, 3000);
-
       clientSocket = Client(`http://localhost:${port}`);
-
       clientSocket.on("connect", () => {
         clientSocket.disconnect();
       });
-
       clientSocket.on("disconnect", () => {
         clearTimeout(timeout);
         resolve();
@@ -215,5 +194,11 @@ describe("Socket getIO", () => {
     const io = getIO();
     expect(io).toBeDefined();
     expect(io.sockets).toBeDefined();
+  });
+
+  it("should throw error if not initialized", async () => {
+    vi.resetModules();
+    const { getIO } = await import("../../src/utils/socket");
+    expect(() => getIO()).toThrow("Socket.io not initialized!");
   });
 });

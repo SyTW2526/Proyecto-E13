@@ -10,9 +10,9 @@ import {
   unshareList,
   updateList,
   updateSharePermission,
-} from "../src/controllers/listsController";
-import * as notificationsController from "../src/controllers/notificationsController";
-import prisma from "../src/database/prisma";
+} from "../../src/controllers/listsController";
+import * as notificationsController from "../../src/controllers/notificationsController";
+import prisma from "../../src/database/prisma";
 
 interface RequestWithUser {
   user?: { id: string; email: string; name: string };
@@ -20,7 +20,7 @@ interface RequestWithUser {
   body: Record<string, unknown>;
 }
 
-vi.mock("../src/database/prisma", () => ({
+vi.mock("../../src/database/prisma", () => ({
   default: {
     list: {
       create: vi.fn(),
@@ -38,11 +38,11 @@ vi.mock("../src/database/prisma", () => ({
   },
 }));
 
-vi.mock("../src/controllers/notificationsController", () => ({
+vi.mock("../../src/controllers/notificationsController", () => ({
   createNotification: vi.fn(),
 }));
 
-vi.mock("../src/utils/socket", () => ({
+vi.mock("../../src/utils/socket", () => ({
   getIO: vi.fn().mockReturnValue({
     to: vi.fn().mockReturnThis(),
     emit: vi.fn(),

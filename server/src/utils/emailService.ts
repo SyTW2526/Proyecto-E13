@@ -1,37 +1,19 @@
 import type { Transporter } from "nodemailer";
 import nodemailer from "nodemailer";
 
-/**
- * Servicio de email para enviar notificaciones
- */
-
 const createTransporter = (): Transporter | null => {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
     return null;
   }
-
-  if (process.env.NODE_ENV === "production") {
-    return nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-  } else {
-    return nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-  }
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
 };
 
-/**
- * Generar HTML para el email de notificación
- */
 const generateNotificationEmailHTML = (
   userName: string,
   notificationTitle: string,
@@ -121,9 +103,6 @@ const generateNotificationEmailHTML = (
   `.trim();
 };
 
-/**
- * Enviar email de notificación
- */
 export const sendNotificationEmail = async (
   userEmail: string,
   userName: string,
@@ -150,7 +129,5 @@ export const sendNotificationEmail = async (
     };
 
     await transporter?.sendMail(mailOptions);
-  } catch (error) {
-    console.error("Error al enviar email:", error);
-  }
+  } catch (error) {}
 };

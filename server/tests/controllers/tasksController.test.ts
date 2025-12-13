@@ -1,7 +1,7 @@
 import { SharePermission } from "@prisma/client";
 import { Response } from "express";
 import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
-import * as notificationsController from "../src/controllers/notificationsController";
+import * as notificationsController from "../../src/controllers/notificationsController";
 import {
   createTask,
   deleteTask,
@@ -11,8 +11,8 @@ import {
   unshareTask,
   updateSharePermission,
   updateTask,
-} from "../src/controllers/tasksController";
-import prisma from "../src/database/prisma";
+} from "../../src/controllers/tasksController";
+import prisma from "../../src/database/prisma";
 
 interface RequestWithUser {
   user?: { id: string; email: string; name: string };
@@ -20,7 +20,7 @@ interface RequestWithUser {
   body: Record<string, unknown>;
 }
 
-vi.mock("../src/database/prisma", () => ({
+vi.mock("../../src/database/prisma", () => ({
   default: {
     task: {
       create: vi.fn(),
@@ -41,11 +41,11 @@ vi.mock("../src/database/prisma", () => ({
   },
 }));
 
-vi.mock("../src/controllers/notificationsController", () => ({
+vi.mock("../../src/controllers/notificationsController", () => ({
   createNotification: vi.fn(),
 }));
 
-vi.mock("../src/utils/socket", () => ({
+vi.mock("../../src/utils/socket", () => ({
   getIO: vi.fn().mockReturnValue({
     to: vi.fn().mockReturnThis(),
     emit: vi.fn(),

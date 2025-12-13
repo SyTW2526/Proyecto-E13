@@ -22,7 +22,6 @@ export const createTask = async (req: Request, res: Response) => {
         },
       },
     });
-
     if (!list) {
       return res.status(404).json({ error: "List not found" });
     }
@@ -64,6 +63,7 @@ export const createTask = async (req: Request, res: Response) => {
 
     return res.status(200).json(task);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error creating task" });
   }
 };
@@ -95,6 +95,7 @@ export const deleteTask = async (req: Request, res: Response) => {
 
     return res.status(200).json(task);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error deleting task" });
   }
 };
@@ -128,8 +129,10 @@ export const getUserTasks = async (req: Request, res: Response) => {
         list: true,
       },
     });
+
     return res.status(200).json(tasks);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error getting tasks" });
   }
 };
@@ -137,6 +140,7 @@ export const getUserTasks = async (req: Request, res: Response) => {
 export const getSharedTasks = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
+
     const tasks = await prisma.task.findMany({
       where: {
         OR: [
@@ -185,8 +189,10 @@ export const getSharedTasks = async (req: Request, res: Response) => {
         },
       },
     });
+
     return res.status(200).json(tasks);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error getting shared tasks" });
   }
 };
@@ -199,6 +205,7 @@ export const updateTask = async (req: Request, res: Response) => {
     }
 
     const { id } = req.params;
+
     const task = await getTaskWithPermissions(id, userId);
     if (!task) return res.status(404).json({ error: "Task not found" });
     if (!task.list) return res.status(404).json({ error: "List not found" });
@@ -257,6 +264,7 @@ export const updateTask = async (req: Request, res: Response) => {
 
     return res.status(200).json(taskUpdated);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error updating task" });
   }
 };
@@ -326,6 +334,7 @@ export const shareTask = async (req: Request, res: Response) => {
       where: { id: userId },
       select: { name: true },
     });
+
     await createNotification(
       userToShare.id,
       "SHARED",
@@ -333,8 +342,10 @@ export const shareTask = async (req: Request, res: Response) => {
       `${currentUser?.name || "Alguien"} te ha compartido la tarea "${taskUpdated.name}"`,
       currentUser?.name || "Usuario",
     );
+
     return res.status(200).json(taskUpdated);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error sharing task" });
   }
 };
@@ -356,6 +367,7 @@ export const updateSharePermission = async (req: Request, res: Response) => {
     }
 
     const { permission } = req.body;
+
     const share = await prisma.taskShare.findUnique({
       where: {
         taskId_userId: {
@@ -403,8 +415,10 @@ export const updateSharePermission = async (req: Request, res: Response) => {
         list: true,
       },
     });
+
     return res.status(200).json(taskUpdated);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error updating share permission" });
   }
 };
@@ -473,6 +487,7 @@ export const unshareTask = async (req: Request, res: Response) => {
 
     return res.status(200).json(taskUpdated);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Error unsharing task" });
   }
 };
@@ -527,5 +542,6 @@ const checkLevel = (permission: SharePermission) => {
     [SharePermission.EDIT]: 2,
     [SharePermission.ADMIN]: 3,
   };
+
   return levels[permission];
 };

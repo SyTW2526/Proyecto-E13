@@ -1,12 +1,10 @@
-// Cargar variables de entorno PRIMERO
-import "./config/env";
-
+import "dotenv/config";
 import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { initSocket } from "./utils/socket.js";
 import cors from "cors";
 import router from "./routes/routes.js";
-import { startCleanupJob } from "./jobs/cleanupTasks.js";
+import { startCleanupJob } from "./utils/cleanupTasks.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -22,11 +20,9 @@ app.use((req: Request, res: Response) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-if (process.env.NODE_ENV !== "test") {
-  httpServer.listen(PORT, () => {
-    console.log(`Server is running on port: ${PORT}`);
-    startCleanupJob();
-  });
-}
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on port: ${PORT}`);
+  startCleanupJob();
+});
 
 export { app, httpServer };
