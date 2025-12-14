@@ -499,29 +499,3 @@ export const selectFilteredTasks = (state: { tasks: TasksState }) => {
 
   return filtered;
 };
-
-export const selectTasksByStatus = (state: { tasks: TasksState }) => {
-  const { tasks } = state.tasks;
-  return {
-    pending: tasks.filter((t) => t.status === "PENDING").length,
-    inProgress: tasks.filter((t) => t.status === "IN_PROGRESS").length,
-    completed: tasks.filter((t) => t.status === "COMPLETED").length,
-    total: tasks.length,
-  };
-};
-
-export const selectTasksByPriority = (state: { tasks: TasksState }) => {
-  const { tasks } = state.tasks;
-  return {
-    low: tasks.filter((t) => t.priority === "LOW").length,
-    medium: tasks.filter((t) => t.priority === "MEDIUM").length,
-    high: tasks.filter((t) => t.priority === "HIGH").length,
-    urgent: tasks.filter((t) => t.priority === "URGENT").length,
-  };
-};
-
-export const selectSharedTasks =
-  (userId: string) => (state: { tasks: TasksState }) =>
-    state.tasks.tasks.filter((task) =>
-      task.shares?.some((share) => share.userId === userId),
-    );

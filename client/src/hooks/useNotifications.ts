@@ -9,7 +9,6 @@ import {
   selectNotificationsError,
   selectUnreadCount,
 } from "@/store/slices/notificationsSlice";
-import type { NotificationType } from "@/types/notification";
 
 export function useNotifications() {
   const dispatch = useAppDispatch();
@@ -49,16 +48,6 @@ export function useNotifications() {
     await dispatch(markAllNotificationsAsRead()).unwrap();
   }, [dispatch]);
 
-  /**
-   * Filtrar notificaciones por tipo
-   */
-  const getNotificationsByType = useCallback(
-    (type: NotificationType) => {
-      return notifications.filter((n) => n.type === type);
-    },
-    [notifications],
-  );
-
   return {
     notifications,
     loading,
@@ -67,6 +56,5 @@ export function useNotifications() {
     loadNotifications,
     markAsRead,
     markAllAsRead,
-    getNotificationsByType,
   };
 }

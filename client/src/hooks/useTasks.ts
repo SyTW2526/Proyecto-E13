@@ -2,14 +2,11 @@ import {
   shareTask as shareTaskThunk,
   unshareTask as unshareTaskThunk,
   updateTaskSharePermission as updateTaskSharePermissionThunk,
-  clearFilters,
   createTask,
   deleteTask,
   fetchTasks,
   fetchSharedTasks,
   selectFilteredTasks,
-  selectSelectedTask,
-  selectSelectedTaskId,
   selectTaskFilters,
   selectTasks,
   selectTasksError,
@@ -18,8 +15,6 @@ import {
   setListFilter,
   setPriorityFilter,
   setFavoriteFilter,
-  setSearchFilter,
-  setSelectedTask,
   setSorting,
   setStatusFilter,
   toggleSortOrder,
@@ -30,13 +25,11 @@ import { useAppDispatch, useAppSelector } from "./useRedux";
 import { selectAccessibleTasks } from "@/store/slices/permissionsSelectors";
 import type { Task, TaskPriority, TaskStatus } from "@/types/tasks-system/task";
 
-export function useTasks(listId?: string) {
+export function useTasks() {
   const dispatch = useAppDispatch();
   const tasks = useAppSelector(selectTasks);
   const isLoading = useAppSelector(selectTasksLoading);
   const error = useAppSelector(selectTasksError);
-  const selectedTaskId = useAppSelector(selectSelectedTaskId);
-  const selectedTask = useAppSelector(selectSelectedTask);
   const filters = useAppSelector(selectTaskFilters);
   const sorting = useAppSelector(selectTaskSorting);
   const filteredTasks = useAppSelector(selectFilteredTasks);
@@ -48,7 +41,6 @@ export function useTasks(listId?: string) {
   const editTask = (data: Partial<Task> & { id: string }) =>
     dispatch(updateTask(data));
   const removeTask = (id: string) => dispatch(deleteTask(id));
-  const selectTask = (id: string | null) => dispatch(setSelectedTask(id));
 
   const toggleFavorite = (id: string) => {
     const task = tasks.find((t) => t.id === id);
@@ -61,12 +53,10 @@ export function useTasks(listId?: string) {
     dispatch(setStatusFilter(status));
   const filterByList = (listId: string | null) =>
     dispatch(setListFilter(listId));
-  const filterBySearch = (search: string) => dispatch(setSearchFilter(search));
   const filterByPriority = (priority: "all" | TaskPriority) =>
     dispatch(setPriorityFilter(priority));
   const filterByFavorite = (favorite: "all" | "yes" | "no") =>
     dispatch(setFavoriteFilter(favorite));
-  const resetFilters = () => dispatch(clearFilters());
   const sortBy = (
     field: "name" | "dueDate" | "priority" | "createdAt" | "updatedAt",
     order: "asc" | "desc",
@@ -85,7 +75,6 @@ export function useTasks(listId?: string) {
     accessibleTasks,
     isLoading,
     error,
-    selectedTask,
     filters,
     sorting,
     fetchAllTasks,
@@ -93,14 +82,11 @@ export function useTasks(listId?: string) {
     createTask: createNewTask,
     editTask,
     removeTask,
-    selectTask,
     toggleFavorite,
     filterByStatus,
     filterByList,
-    filterBySearch,
     filterByPriority,
     filterByFavorite,
-    resetFilters,
     sortBy,
     toggleSort,
     shareTask,

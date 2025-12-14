@@ -11,8 +11,8 @@ import TasksPage from "@/pages/authenticated/tasksPage";
 import SharedPage from "@/pages/authenticated/sharedPage";
 import ContactsPage from "@/pages/public/contactsPage";
 import ProtectedRoute from "@/components/auth/protectedRoute";
-import Footer from "@/components/footer";
-import AppMenubar from "@/components/appMenubar";
+import Footer from "@/components/layout/Footer";
+import AppMenubar from "@/components/layout/AppMenubar";
 import { useSocket } from "@/hooks/useSocket";
 import {
   Sheet,
@@ -20,7 +20,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { ChatWithSuggestions } from "@/components/ui/chatWithSuggestions";
+import { ChatWithSuggestions } from "@/components/chat/ChatWithSuggestions";
 import { Button } from "@/components/ui/button";
 
 export default function App() {

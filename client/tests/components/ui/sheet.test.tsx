@@ -8,7 +8,7 @@ import {
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { I18nTestProvider } from "../../testUtils/i18nTestProvider";
+import { I18nTestProvider } from "../../helpers/i18nTestProvider";
 
 describe("Sheet", () => {
   it("Renderiza el Sheet correctamente", () => {

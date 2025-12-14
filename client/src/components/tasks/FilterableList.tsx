@@ -1,12 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
-import { CreateListDialogStandalone } from "../createDialogs/createListDialog";
+import { CreateListDialogStandalone } from "../lists/CreateListDialog";
 import { Button } from "@/components/ui/button";
-import { ItemActionsMenu } from "@/components/ui/ItemActionsMenu";
+import { ItemActionsMenu } from "@/components/shared/ItemActionsMenu";
 import { useLists } from "@/hooks/useLists";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import EditListDialog from "../createDialogs/editListDialog";
+import EditListDialog from "../lists/EditListDialog";
 import ShareListDialog from "../lists/ShareListDialog";
 import {
   AlertDialog,

@@ -29,6 +29,8 @@ export default defineConfig({
         "**/*.d.ts",
         "**/*.config.*",
         "**/dist/**",
+        "**/styles/**",
+        "**/src/locales/**",
       ],
     },
   },

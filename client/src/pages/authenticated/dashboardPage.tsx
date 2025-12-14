@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { dashboardCards } from "@/config/dashboardConfig";
 import { useTranslation } from "react-i18next";
-import FeatureCard from "@/components/ui/featureCard";
+import FeatureCard from "@/components/shared/FeatureCard";
 import Icon from "@/components/ui/icon";
 import { useTasks } from "@/hooks/useTasks";
 import { useLists } from "@/hooks/useLists";
@@ -10,7 +10,7 @@ import { useDashboardCharts } from "@/hooks/useDashboardCharts";
 import {
   PriorityChart,
   WeeklyTasksChart,
-} from "@/components/dashboard/dashboardCharts";
+} from "@/components/dashboard/DashboardCharts";
 import { Badge } from "@/components/ui/badge";
 
 export default function DashboardPage() {

@@ -12,11 +12,11 @@ vi.mock("@/hooks/useSocket", () => ({
   useSocket: vi.fn(),
 }));
 
-vi.mock("@/components/appMenubar", () => ({
+vi.mock("@/components/layout/AppMenubar", () => ({
   default: () => <div data-testid="app-menubar">AppMenubar</div>,
 }));
 
-vi.mock("@/components/footer", () => ({
+vi.mock("@/components/layout/Footer", () => ({
   default: () => <div data-testid="footer">Footer</div>,
 }));
 

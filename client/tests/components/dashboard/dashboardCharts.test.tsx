@@ -5,8 +5,8 @@ import "@testing-library/jest-dom";
 import {
   PriorityChart,
   WeeklyTasksChart,
-} from "../../../src/components/dashboard/dashboardCharts";
-import { I18nTestProvider } from "../../testUtils/i18nTestProvider";
+} from "../../../src/components/dashboard/DashboardCharts";
+import { I18nTestProvider } from "../../helpers/i18nTestProvider";
 
 describe("DashboardCharts", () => {
   describe("PriorityChart - Edge Cases & Branch Coverage", () => {

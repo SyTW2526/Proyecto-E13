@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { landingCards } from "@/config/landingCards";
-import FeatureCard from "@/components/ui/featureCard";
+import FeatureCard from "@/components/shared/FeatureCard";
 import { useTranslation } from "react-i18next";
 
 export default function LandingPage() {

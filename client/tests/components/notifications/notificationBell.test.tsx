@@ -2,7 +2,7 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
 import type { Notification } from "@/types/notification";
 import { render, screen, waitFor } from "@testing-library/react";
-import { I18nTestProvider } from "../../testUtils/i18nTestProvider";
+import { I18nTestProvider } from "../../helpers/i18nTestProvider";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 

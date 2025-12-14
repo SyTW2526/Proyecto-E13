@@ -349,43 +349,6 @@ describe("useNotifications", () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it("Filtra notificaciones por tipo correctamente", async () => {
-    vi.mocked(useAuth).mockReturnValue({
-      user: {
-        id: "1",
-        name: "Test User",
-        email: "test@test.com",
-        pushNotifications: false,
-      },
-      isAuthenticated: true,
-      isLoading: false,
-      login: vi.fn(),
-      register: vi.fn(),
-      signOut: vi.fn(),
-      token: null,
-      error: null,
-      loginWithGoogle: vi.fn(),
-    });
-
-    vi.mocked(api.get).mockResolvedValue({ data: mockNotifications });
-
-    const { result } = renderHook(() => useNotifications(), {
-      wrapper: createWrapper(),
-    });
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
-    });
-
-    const systemNotifications = result.current.getNotificationsByType("SYSTEM");
-    expect(systemNotifications).toHaveLength(1);
-    expect(systemNotifications[0].type).toBe("SYSTEM");
-
-    const sharedNotifications = result.current.getNotificationsByType("SHARED");
-    expect(sharedNotifications).toHaveLength(1);
-    expect(sharedNotifications[0].type).toBe("SHARED");
-  });
-
   it("Calcula correctamente el contador de notificaciones no leídas", async () => {
     vi.mocked(useAuth).mockReturnValue({
       user: {

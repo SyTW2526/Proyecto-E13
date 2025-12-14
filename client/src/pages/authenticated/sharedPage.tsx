@@ -2,12 +2,12 @@ import { useEffect, useCallback } from "react";
 import { useTasks } from "@/hooks/useTasks";
 import { useLists } from "@/hooks/useLists";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
-import { SharedTaskCard } from "@/components/tasks/SharedTaskCard";
+import { SharedTaskCard } from "@/components/tasks/cards/SharedTaskCard";
 import { useTranslation } from "react-i18next";
 import { TasksPageLayout } from "@/components/tasks/TasksPageLayout";
 import type { Task } from "@/types/tasks-system/task";
 import { Button } from "@/components/ui/button";
-import CreateTaskDialog from "@/components/createDialogs/createTaskDialog";
+import CreateTaskDialog from "@/components/tasks/dialogs/CreateTaskDialog";
 
 export default function SharedPage() {
   const { t, i18n } = useTranslation();

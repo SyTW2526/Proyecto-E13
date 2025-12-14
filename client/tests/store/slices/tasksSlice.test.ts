@@ -6,12 +6,9 @@ import reducer, {
   fetchTasks,
   selectFilteredTasks,
   selectSelectedTask,
-  selectSharedTasks,
   selectTaskFilters,
   selectTaskSorting,
   selectTasks,
-  selectTasksByPriority,
-  selectTasksByStatus,
   setListFilter,
   setPriorityFilter,
   setSearchFilter,
@@ -197,33 +194,6 @@ describe("tasksSlice selectors", () => {
     const result = selectFilteredTasks({ tasks: state });
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("t3");
-  });
-
-  it("selectTasksByStatus y selectTasksByPriority cuentan correctamente", () => {
-    const state = wrap({
-      ...initialState,
-      tasks: [
-        baseTask,
-        { ...baseTask, id: "t2", status: "COMPLETED", completed: true },
-        { ...baseTask, id: "t3", status: "IN_PROGRESS", priority: "HIGH" },
-        { ...baseTask, id: "t4", priority: "URGENT" },
-      ],
-    });
-    const statusCounts = selectTasksByStatus(state);
-    expect(statusCounts).toEqual({
-      pending: 2,
-      inProgress: 1,
-      completed: 1,
-      total: 4,
-    });
-
-    const priorityCounts = selectTasksByPriority(state);
-    expect(priorityCounts).toEqual({
-      low: 0,
-      medium: 2,
-      high: 1,
-      urgent: 1,
-    });
   });
 });
 
@@ -882,35 +852,5 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     };
     const sorted = selectFilteredTasks(state);
     expect(sorted).toHaveLength(2);
-  });
-
-  it("selectSharedTasks filtra tareas compartidas con usuario específico", () => {
-    const taskShared = {
-      ...baseTask,
-      id: "t1",
-      shares: [
-        {
-          id: "s1",
-          taskId: "t1",
-          userId: "u2",
-          user: { id: "u2", email: "user2@test.com", name: "User 2" },
-          permission: "VIEW" as const,
-        },
-      ],
-    };
-    const taskNotShared = {
-      ...baseTask,
-      id: "t2",
-      shares: [],
-    };
-    const state = {
-      tasks: {
-        ...initialState,
-        tasks: [taskShared, taskNotShared],
-      },
-    };
-    const sharedTasks = selectSharedTasks("u2")(state);
-    expect(sharedTasks).toHaveLength(1);
-    expect(sharedTasks[0].id).toBe("t1");
   });
 });
