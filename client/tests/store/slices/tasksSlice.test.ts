@@ -4,26 +4,20 @@ import reducer, {
   deleteTask,
   fetchSharedTasks,
   fetchTasks,
-  resetTasksState,
   selectFilteredTasks,
   selectSelectedTask,
   selectSharedTasks,
-  selectTaskById,
   selectTaskFilters,
   selectTaskSorting,
   selectTasks,
-  selectTasksByListId,
   selectTasksByPriority,
   selectTasksByStatus,
-  setError,
   setListFilter,
-  setLoading,
   setPriorityFilter,
   setSearchFilter,
   setSelectedTask,
   setSorting,
   setStatusFilter,
-  setTaskStatus,
   shareTask,
   toggleSortOrder,
   unshareTask,
@@ -76,15 +70,6 @@ afterEach(() => {
 });
 
 describe("tasksSlice reducer", () => {
-  it("setLoading y setError", () => {
-    let state = reducer(initialState, setLoading(true));
-    expect(state.isLoading).toBe(true);
-
-    state = reducer(state, setError("err"));
-    expect(state.error).toBe("err");
-    expect(state.isLoading).toBe(false);
-  });
-
   it("fetchTasks.fulfilled reemplaza listado y reinicia flags", () => {
     const action = {
       type: fetchTasks.fulfilled.type,
@@ -146,30 +131,6 @@ describe("tasksSlice reducer", () => {
     expect(state.selectedTaskId).toBeNull();
   });
 
-  it("setTaskStatus ajusta status y completed/completedAt", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-03-02T00:00:00.000Z"));
-    let state = reducer(
-      { ...initialState, tasks: [baseTask] },
-      setTaskStatus({ id: "t1", status: "COMPLETED" }),
-    );
-    expect(state.tasks[0].completed).toBe(true);
-    expect(state.tasks[0].completedAt).toBe("2024-03-02T00:00:00.000Z");
-
-    state = reducer(state, setTaskStatus({ id: "t1", status: "IN_PROGRESS" }));
-    expect(state.tasks[0].completed).toBe(false);
-    expect(state.tasks[0].completedAt).toBeUndefined();
-    expect(state.tasks[0].status).toBe("IN_PROGRESS");
-  });
-
-  it("setTaskStatus no hace nada si no encuentra la tarea", () => {
-    const state = reducer(
-      { ...initialState, tasks: [baseTask] },
-      setTaskStatus({ id: "not-found", status: "COMPLETED" }),
-    );
-    expect(state.tasks[0].completed).toBe(false);
-  });
-
   it("actualiza filtros y sorting, y los restablece con clearFilters/toggleSortOrder", () => {
     let state = reducer(initialState, setStatusFilter("PENDING"));
     state = reducer(state, setListFilter("l1"));
@@ -193,19 +154,6 @@ describe("tasksSlice reducer", () => {
     const state = reducer(initialState, setSelectedTask("t1"));
     expect(state.selectedTaskId).toBe("t1");
   });
-
-  it("resetTasksState vuelve al inicial", () => {
-    const dirty: TasksState = {
-      ...initialState,
-      tasks: [baseTask],
-      selectedTaskId: "t1",
-      isLoading: true,
-      error: "x",
-      filters: { ...initialState.filters, status: "PENDING" },
-    };
-    const state = reducer(dirty, resetTasksState());
-    expect(state).toEqual(initialState);
-  });
 });
 
 describe("tasksSlice selectors", () => {
@@ -219,27 +167,6 @@ describe("tasksSlice selectors", () => {
     });
     expect(selectTasks(state)).toEqual([baseTask]);
     expect(selectSelectedTask(state)).toEqual(baseTask);
-  });
-
-  it("selectTaskById retorna coincidencia", () => {
-    const state = wrap({
-      ...initialState,
-      tasks: [baseTask, { ...baseTask, id: "t2" }],
-    });
-    expect(selectTaskById("t2")(state)?.id).toBe("t2");
-  });
-
-  it("selectTasksByListId filtra por lista", () => {
-    const state = wrap({
-      ...initialState,
-      tasks: [
-        baseTask,
-        { ...baseTask, id: "t2", listId: "l2" },
-        { ...baseTask, id: "t3", listId: "l1" },
-      ],
-    });
-    expect(selectTasksByListId("l1")(state)).toHaveLength(2);
-    expect(selectTasksByListId("l2")(state)).toHaveLength(1);
   });
 
   it("selectFilteredTasks aplica filtros y ordenamiento", () => {

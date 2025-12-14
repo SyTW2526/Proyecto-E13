@@ -11,10 +11,9 @@ import { ArrowDown, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
-import { useAutoScroll } from "@/hooks/use-auto-scroll";
+import { useAutoScroll } from "@/hooks/chatBot/useAutoScroll";
 import { Button } from "@/components/ui/button";
 import { type Message } from "@/components/ui/chat-message";
-import { CopyButton } from "@/components/ui/copy-button";
 import { MessageInput } from "@/components/ui/message-input";
 import { MessageList } from "@/components/ui/message-list";
 import { PromptSuggestions } from "@/components/ui/prompt-suggestions";
@@ -72,7 +71,6 @@ export function Chat({
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
 
-  // Enhanced stop function that marks pending tool calls as cancelled
   const handleStop = useCallback(() => {
     stop?.();
 
@@ -103,7 +101,7 @@ export function Chat({
               state: "result",
               result: {
                 content: "Tool execution was cancelled",
-                __cancelled: true, // Special marker to indicate cancellation
+                __cancelled: true,
               },
             } as const;
           }
@@ -165,12 +163,6 @@ export function Chat({
     (message: Message) => ({
       actions: onRateResponse ? (
         <>
-          <div className="border-r pr-1">
-            <CopyButton
-              content={message.content}
-              copyMessage={t("chat.copiedMessage")}
-            />
-          </div>
           <Button
             size="icon"
             variant="ghost"
@@ -188,12 +180,7 @@ export function Chat({
             <ThumbsDown className="h-4 w-4" />
           </Button>
         </>
-      ) : (
-        <CopyButton
-          content={message.content}
-          copyMessage={t("chat.copiedMessage")}
-        />
-      ),
+      ) : null,
     }),
     [onRateResponse, t],
   );

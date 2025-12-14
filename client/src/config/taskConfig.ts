@@ -44,14 +44,3 @@ export const statusConfig = {
     label: "Completada",
   },
 } as const;
-
-export const taskFavoritesConfig = {
-  FAVORITE: {
-    color: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400",
-    label: "Favorita",
-  },
-  NOT_FAVORITE: {
-    color: "bg-gray-500/10 text-gray-700 dark:text-gray-400",
-    label: "No Favorita",
-  },
-} as const;

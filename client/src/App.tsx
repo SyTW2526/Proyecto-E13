@@ -8,7 +8,7 @@ import RegisterPage from "@/pages/public/registerPage";
 import DashboardPage from "@/pages/authenticated/dashboardPage";
 import SettingsPage from "@/pages/authenticated/settingsPage";
 import TasksPage from "@/pages/authenticated/tasksPage";
-import SharedPage from "@/pages/authenticated/SharedPage";
+import SharedPage from "@/pages/authenticated/sharedPage";
 import ContactsPage from "@/pages/public/contactsPage";
 import ProtectedRoute from "@/components/auth/protectedRoute";
 import Footer from "@/components/footer";

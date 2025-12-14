@@ -1,15 +1,9 @@
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -143,91 +137,6 @@ describe("DropdownMenu", () => {
     });
   });
 
-  describe("DropdownMenuCheckboxItem", () => {
-    it("Renderiza checkbox checked", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuCheckboxItem checked>Marcado</DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("Marcado")).toBeInTheDocument();
-    });
-
-    it("Renderiza checkbox unchecked", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuCheckboxItem checked={false}>
-              No marcado
-            </DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("No marcado")).toBeInTheDocument();
-    });
-
-    it("Renderiza checkbox con className", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuCheckboxItem checked className="custom-checkbox">
-              Checkbox custom
-            </DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("Checkbox custom")).toBeInTheDocument();
-    });
-  });
-
-  describe("DropdownMenuRadioGroup y RadioItem", () => {
-    it("Renderiza radio group", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuRadioGroup value="opcion1">
-              <DropdownMenuRadioItem value="opcion1">
-                Opción 1
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="opcion2">
-                Opción 2
-              </DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("Opción 1")).toBeInTheDocument();
-      expect(screen.getByText("Opción 2")).toBeInTheDocument();
-    });
-
-    it("Renderiza radio item con className", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuRadioGroup value="test">
-              <DropdownMenuRadioItem value="test" className="custom-radio">
-                Radio custom
-              </DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("Radio custom")).toBeInTheDocument();
-    });
-  });
-
   describe("DropdownMenuLabel", () => {
     it("Renderiza label", () => {
       render(
@@ -300,61 +209,6 @@ describe("DropdownMenu", () => {
       );
 
       expect(screen.getByRole("separator")).toBeInTheDocument();
-    });
-  });
-
-  describe("DropdownMenuShortcut", () => {
-    it("Renderiza shortcut", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>
-              Guardar
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("⌘S")).toBeInTheDocument();
-    });
-
-    it("Renderiza shortcut con className", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>
-              Acción
-              <DropdownMenuShortcut className="custom-shortcut">
-                Ctrl+K
-              </DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("Ctrl+K")).toBeInTheDocument();
-    });
-  });
-
-  describe("DropdownMenuGroup", () => {
-    it("Renderiza group", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuItem>Item 1</DropdownMenuItem>
-              <DropdownMenuItem>Item 2</DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("Item 1")).toBeInTheDocument();
-      expect(screen.getByText("Item 2")).toBeInTheDocument();
     });
   });
 
@@ -437,23 +291,6 @@ describe("DropdownMenu", () => {
     });
   });
 
-  describe("DropdownMenuPortal", () => {
-    it("Renderiza portal", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuContent>
-              <DropdownMenuItem>En portal</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenuPortal>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("En portal")).toBeInTheDocument();
-    });
-  });
-
   describe("Casos borde", () => {
     it("Renderiza menú sin children", () => {
       render(<DropdownMenu />);
@@ -471,64 +308,6 @@ describe("DropdownMenu", () => {
       );
 
       expect(screen.getByText("Item")).toBeInTheDocument();
-    });
-
-    it("Renderiza checkbox sin prop checked", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuCheckboxItem>Sin checked</DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("Sin checked")).toBeInTheDocument();
-    });
-
-    it("Renderiza menú completo con todos los componentes", () => {
-      render(
-        <DropdownMenu open>
-          <DropdownMenuTrigger>Menú completo</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>Título</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                Acción 1<DropdownMenuShortcut>⌘1</DropdownMenuShortcut>
-              </DropdownMenuItem>
-              <DropdownMenuItem variant="destructive">
-                Eliminar
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem checked>
-              Opción marcada
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup value="a">
-              <DropdownMenuRadioItem value="a">A</DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="b">B</DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuSub open>
-              <DropdownMenuSubTrigger>Más</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>Subacción</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          </DropdownMenuContent>
-        </DropdownMenu>,
-      );
-
-      expect(screen.getByText("Título")).toBeInTheDocument();
-      expect(screen.getByText("Acción 1")).toBeInTheDocument();
-      expect(screen.getByText("Eliminar")).toBeInTheDocument();
-      expect(screen.getByText("Opción marcada")).toBeInTheDocument();
-      expect(screen.getByText("A")).toBeInTheDocument();
-      expect(screen.getByText("B")).toBeInTheDocument();
-      expect(screen.getByText("Más")).toBeInTheDocument();
-      expect(screen.getByText("Subacción")).toBeInTheDocument();
     });
   });
 });

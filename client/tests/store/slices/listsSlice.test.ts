@@ -3,8 +3,6 @@ import reducer, {
   deleteList,
   fetchLists,
   fetchSharedLists,
-  resetListsState,
-  selectListById,
   selectLists,
   selectListsError,
   selectListsLoading,
@@ -12,8 +10,6 @@ import reducer, {
   selectSelectedList,
   selectSelectedListId,
   selectSharedLists,
-  setError,
-  setLoading,
   setSelectedList,
   shareList,
   unshareList,
@@ -48,15 +44,6 @@ const initialState: ListsState = {
 };
 
 describe("listsSlice reducer", () => {
-  it("setLoading y setError actualizan flags", () => {
-    let state = reducer(initialState, setLoading(true));
-    expect(state.isLoading).toBe(true);
-
-    state = reducer(state, setError("oops"));
-    expect(state.error).toBe("oops");
-    expect(state.isLoading).toBe(false);
-  });
-
   it("fetchLists.fulfilled reemplaza y limpia estado", () => {
     const action = {
       type: fetchLists.fulfilled.type,
@@ -139,17 +126,6 @@ describe("listsSlice reducer", () => {
     const state = reducer(initialState, setSelectedList("l1"));
     expect(state.selectedListId).toBe("l1");
   });
-
-  it("resetListsState vuelve al estado inicial", () => {
-    const dirty: ListsState = {
-      lists: [baseList],
-      selectedListId: "l1",
-      isLoading: true,
-      error: "x",
-    };
-    const state = reducer(dirty, resetListsState());
-    expect(state).toEqual(initialState);
-  });
 });
 
 describe("listsSlice selectors", () => {
@@ -163,14 +139,6 @@ describe("listsSlice selectors", () => {
     });
     expect(selectLists(state)).toEqual([baseList]);
     expect(selectSelectedList(state)).toEqual(baseList);
-  });
-
-  it("selectListById retorna coincidencia", () => {
-    const state = wrap({
-      ...initialState,
-      lists: [baseList, { ...baseList, id: "l2" }],
-    });
-    expect(selectListById("l2")(state)?.id).toBe("l2");
   });
 
   it("selectOwnedLists filtra por ownerId", () => {

@@ -62,7 +62,6 @@ const notificationsSlice = createSlice({
         state.notifications.unshift(action.payload);
       }
     },
-    resetNotificationsState: () => initialState,
   },
   extraReducers: (builder) => {
     builder
@@ -106,8 +105,7 @@ const notificationsSlice = createSlice({
   },
 });
 
-export const { notificationAdded, resetNotificationsState } =
-  notificationsSlice.actions;
+export const { notificationAdded } = notificationsSlice.actions;
 
 export default notificationsSlice.reducer;
 
@@ -126,8 +124,3 @@ export const selectNotificationsError = (state: {
 export const selectUnreadCount = (state: {
   notifications: NotificationsState;
 }) => state.notifications.notifications.filter((n) => !n.read).length;
-
-export const selectNotificationsByType =
-  (type: Notification["type"]) =>
-  (state: { notifications: NotificationsState }) =>
-    state.notifications.notifications.filter((n) => n.type === type);

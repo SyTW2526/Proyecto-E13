@@ -104,8 +104,3 @@ export const selectAccessibleTasks = createSelector(
     });
   },
 );
-
-export const selectAccessibleTasksByList = (listId: string) =>
-  createSelector([selectAccessibleTasks], (tasks) =>
-    tasks.filter((task) => task.listId === listId),
-  );

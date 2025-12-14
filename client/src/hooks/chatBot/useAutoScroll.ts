@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-// How many pixels from the bottom of the container to enable auto-scroll
 const ACTIVATION_THRESHOLD = 50;
-// Minimum pixels of scroll-up movement required to disable auto-scroll
 const MIN_SCROLL_UP_THRESHOLD = 10;
 
 export function useAutoScroll(dependencies: React.DependencyList) {
@@ -60,7 +58,6 @@ export function useAutoScroll(dependencies: React.DependencyList) {
     if (shouldAutoScroll) {
       scrollToBottom();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 
   return {

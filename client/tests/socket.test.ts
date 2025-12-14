@@ -1,9 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { socket } from "../src/socket";
+import { socket } from "@/utils/socket";
 
 describe("Socket", () => {
   beforeEach(() => {
-    // Mock socket methods
     vi.spyOn(socket, "connect").mockImplementation(() => socket);
     vi.spyOn(socket, "disconnect").mockImplementation(() => socket);
   });

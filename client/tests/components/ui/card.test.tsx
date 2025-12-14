@@ -3,7 +3,6 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -119,23 +118,6 @@ describe("Card", () => {
     expect(content).toHaveClass("custom-content");
   });
 
-  it("Renderiza CardFooter correctamente", () => {
-    const { container } = render(<CardFooter>Footer</CardFooter>);
-
-    const footer = container.querySelector('[data-slot="card-footer"]');
-    expect(footer).toBeInTheDocument();
-    expect(footer).toHaveTextContent("Footer");
-  });
-
-  it("Aplica clases personalizadas al CardFooter", () => {
-    const { container } = render(
-      <CardFooter className="custom-footer">Footer</CardFooter>,
-    );
-
-    const footer = container.querySelector('[data-slot="card-footer"]');
-    expect(footer).toHaveClass("custom-footer");
-  });
-
   it("Renderiza una tarjeta completa con todos los componentes", () => {
     const { container } = render(
       <Card>
@@ -147,9 +129,6 @@ describe("Card", () => {
           </CardAction>
         </CardHeader>
         <CardContent>Contenido principal</CardContent>
-        <CardFooter>
-          <button>Confirmar</button>
-        </CardFooter>
       </Card>,
     );
 
@@ -168,9 +147,6 @@ describe("Card", () => {
     ).toBeInTheDocument();
     expect(
       container.querySelector('[data-slot="card-content"]'),
-    ).toBeInTheDocument();
-    expect(
-      container.querySelector('[data-slot="card-footer"]'),
     ).toBeInTheDocument();
   });
 
@@ -215,12 +191,6 @@ describe("Card", () => {
       const { container } = render(<CardContent />);
       const content = container.querySelector('[data-slot="card-content"]');
       expect(content).toBeInTheDocument();
-    });
-
-    it("Renderiza CardFooter sin children", () => {
-      const { container } = render(<CardFooter />);
-      const footer = container.querySelector('[data-slot="card-footer"]');
-      expect(footer).toBeInTheDocument();
     });
 
     it("Renderiza CardAction sin children", () => {
@@ -295,24 +265,21 @@ describe("Card", () => {
       expect(content).toBeInTheDocument();
     });
 
-    it("Renderiza Card con solo Header y Footer sin Content", () => {
+    it("Renderiza Card con solo Header sin Content", () => {
       const { container } = render(
         <Card>
           <CardHeader>
             <CardTitle>Título</CardTitle>
           </CardHeader>
-          <CardFooter>Footer</CardFooter>
         </Card>,
       );
 
       const card = container.querySelector('[data-slot="card"]');
       const header = container.querySelector('[data-slot="card-header"]');
-      const footer = container.querySelector('[data-slot="card-footer"]');
       const content = container.querySelector('[data-slot="card-content"]');
 
       expect(card).toBeInTheDocument();
       expect(header).toBeInTheDocument();
-      expect(footer).toBeInTheDocument();
       expect(content).not.toBeInTheDocument();
     });
 
@@ -347,7 +314,6 @@ describe("Card", () => {
             <CardAction className="action-class">Acción</CardAction>
           </CardHeader>
           <CardContent className="content-class">Content</CardContent>
-          <CardFooter className="footer-class">Footer</CardFooter>
         </Card>,
       );
 
@@ -369,23 +335,6 @@ describe("Card", () => {
       expect(container.querySelector('[data-slot="card-content"]')).toHaveClass(
         "content-class",
       );
-      expect(container.querySelector('[data-slot="card-footer"]')).toHaveClass(
-        "footer-class",
-      );
-    });
-
-    it("Renderiza CardFooter con múltiples botones", () => {
-      const { container } = render(
-        <CardFooter>
-          <button>Cancelar</button>
-          <button>Aceptar</button>
-          <button>Aplicar</button>
-        </CardFooter>,
-      );
-
-      const footer = container.querySelector('[data-slot="card-footer"]');
-      const buttons = footer?.querySelectorAll("button");
-      expect(buttons).toHaveLength(3);
     });
   });
 });

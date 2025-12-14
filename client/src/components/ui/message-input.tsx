@@ -4,9 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, Paperclip, Square } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
 import { cn } from "@/lib/utils";
-import { useAutosizeTextArea } from "@/hooks/use-autosize-textarea";
+import { useAutosizeTextArea } from "@/hooks/chatBot/useAutosizeTextarea";
 import { Button } from "@/components/ui/button";
 import { FilePreview } from "@/components/ui/file-preview";
 import { InterruptPrompt } from "@/components/ui/interrupt-prompt";
@@ -48,7 +47,6 @@ export function MessageInput({
   const [isDragging, setIsDragging] = useState(false);
   const [showInterruptPrompt, setShowInterruptPrompt] = useState(false);
 
-  // Extraer las props específicas de MessageInput
   const { allowAttachments, files, setFiles, ...textareaProps } =
     props as MessageInputWithAttachmentsProps;
 

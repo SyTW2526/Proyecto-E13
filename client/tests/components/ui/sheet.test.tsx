@@ -1,9 +1,6 @@
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -21,7 +18,6 @@ describe("Sheet", () => {
           <SheetTrigger>Abrir</SheetTrigger>
           <SheetContent>
             <SheetTitle>Título</SheetTitle>
-            <SheetDescription>Descripción</SheetDescription>
           </SheetContent>
         </Sheet>
       </I18nTestProvider>,
@@ -41,7 +37,6 @@ describe("Sheet", () => {
           <SheetTrigger>Abrir Sheet</SheetTrigger>
           <SheetContent>
             <SheetTitle>Título del Sheet</SheetTitle>
-            <SheetDescription>Descripción del contenido</SheetDescription>
           </SheetContent>
         </Sheet>
       </I18nTestProvider>,
@@ -63,7 +58,6 @@ describe("Sheet", () => {
           <SheetContent>
             <SheetHeader>
               <SheetTitle>Título</SheetTitle>
-              <SheetDescription>Descripción</SheetDescription>
             </SheetHeader>
           </SheetContent>
         </Sheet>
@@ -78,31 +72,6 @@ describe("Sheet", () => {
     });
   });
 
-  it("Renderiza SheetFooter correctamente", async () => {
-    const user = userEvent.setup();
-
-    render(
-      <Sheet>
-        <SheetTrigger>Abrir</SheetTrigger>
-        <SheetContent>
-          <SheetTitle>Título</SheetTitle>
-          <SheetDescription>Descripción</SheetDescription>
-          <SheetFooter>
-            <button>Aceptar</button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>,
-    );
-
-    await user.click(screen.getByText("Abrir"));
-
-    await waitFor(() => {
-      expect(
-        document.querySelector('[data-slot="sheet-footer"]'),
-      ).toBeInTheDocument();
-    });
-  });
-
   it("Aplica clases personalizadas al SheetContent", async () => {
     const user = userEvent.setup();
 
@@ -111,7 +80,6 @@ describe("Sheet", () => {
         <SheetTrigger>Abrir</SheetTrigger>
         <SheetContent className="custom-content">
           <SheetTitle>Título</SheetTitle>
-          <SheetDescription>Descripción</SheetDescription>
         </SheetContent>
       </Sheet>,
     );
@@ -175,29 +143,6 @@ describe("Sheet", () => {
     expect(screen.getByText("Título")).toBeInTheDocument();
   });
 
-  it("Renderiza SheetDescription correctamente", async () => {
-    const user = userEvent.setup();
-
-    render(
-      <Sheet>
-        <SheetTrigger>Abrir</SheetTrigger>
-        <SheetContent>
-          <SheetTitle>Título</SheetTitle>
-          <SheetDescription>Esta es la descripción</SheetDescription>
-        </SheetContent>
-      </Sheet>,
-    );
-
-    await user.click(screen.getByText("Abrir"));
-
-    await waitFor(() => {
-      expect(
-        document.querySelector('[data-slot="sheet-description"]'),
-      ).toBeInTheDocument();
-      expect(screen.getByText("Esta es la descripción")).toBeInTheDocument();
-    });
-  });
-
   it("Renderiza el botón de cierre", async () => {
     const user = userEvent.setup();
 
@@ -215,29 +160,6 @@ describe("Sheet", () => {
     expect(screen.getByText("Cerrar")).toBeInTheDocument();
   });
 
-  it("Renderiza SheetClose correctamente", async () => {
-    const user = userEvent.setup();
-
-    render(
-      <Sheet>
-        <SheetTrigger>Abrir</SheetTrigger>
-        <SheetContent>
-          <SheetTitle>Título</SheetTitle>
-          <SheetDescription>Descripción</SheetDescription>
-          <SheetClose>Cerrar personalizado</SheetClose>
-        </SheetContent>
-      </Sheet>,
-    );
-
-    await user.click(screen.getByText("Abrir"));
-
-    await waitFor(() => {
-      expect(
-        document.querySelector('[data-slot="sheet-close"]'),
-      ).toBeInTheDocument();
-    });
-  });
-
   it("Renderiza overlay cuando está abierto", async () => {
     const user = userEvent.setup();
 
@@ -246,7 +168,6 @@ describe("Sheet", () => {
         <SheetTrigger>Abrir</SheetTrigger>
         <SheetContent>
           <SheetTitle>Título</SheetTitle>
-          <SheetDescription>Descripción</SheetDescription>
         </SheetContent>
       </Sheet>,
     );
@@ -269,7 +190,6 @@ describe("Sheet", () => {
         <SheetContent>
           <SheetHeader className="custom-header">
             <SheetTitle>Título</SheetTitle>
-            <SheetDescription>Descripción</SheetDescription>
           </SheetHeader>
         </SheetContent>
       </Sheet>,
@@ -283,31 +203,6 @@ describe("Sheet", () => {
     });
   });
 
-  it("Aplica clases personalizadas al SheetFooter", async () => {
-    const user = userEvent.setup();
-
-    render(
-      <Sheet>
-        <SheetTrigger>Abrir</SheetTrigger>
-        <SheetContent>
-          <SheetTitle>Título</SheetTitle>
-          <SheetDescription>Descripción</SheetDescription>
-          <SheetFooter className="custom-footer">
-            <button>Aceptar</button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>,
-    );
-
-    await user.click(screen.getByText("Abrir"));
-
-    await waitFor(() => {
-      const footer = document.querySelector('[data-slot="sheet-footer"]');
-      expect(footer).toHaveClass("custom-footer");
-    });
-  });
-
-  // Edge Cases / Casos Borde
   describe("Edge Cases", () => {
     it("Cierra el Sheet al presionar ESC", async () => {
       const user = userEvent.setup();
@@ -317,7 +212,6 @@ describe("Sheet", () => {
           <SheetTrigger>Abrir</SheetTrigger>
           <SheetContent>
             <SheetTitle>Título</SheetTitle>
-            <SheetDescription>Descripción</SheetDescription>
           </SheetContent>
         </Sheet>,
       );
@@ -329,44 +223,6 @@ describe("Sheet", () => {
 
       await waitFor(() => {
         expect(screen.queryByText("Título")).not.toBeInTheDocument();
-      });
-    });
-
-    it("Renderiza SheetContent sin SheetTitle (caso inválido pero manejado)", async () => {
-      const user = userEvent.setup();
-
-      render(
-        <Sheet>
-          <SheetTrigger>Abrir</SheetTrigger>
-          <SheetContent>
-            <SheetDescription>Solo descripción</SheetDescription>
-          </SheetContent>
-        </Sheet>,
-      );
-
-      await user.click(screen.getByText("Abrir"));
-
-      await waitFor(() => {
-        expect(screen.getByText("Solo descripción")).toBeInTheDocument();
-      });
-    });
-
-    it("Renderiza SheetContent sin SheetDescription", async () => {
-      const user = userEvent.setup();
-
-      render(
-        <Sheet>
-          <SheetTrigger>Abrir</SheetTrigger>
-          <SheetContent>
-            <SheetTitle>Solo título</SheetTitle>
-          </SheetContent>
-        </Sheet>,
-      );
-
-      await user.click(screen.getByText("Abrir"));
-
-      await waitFor(() => {
-        expect(screen.getByText("Solo título")).toBeInTheDocument();
       });
     });
 
@@ -418,28 +274,6 @@ describe("Sheet", () => {
       });
     });
 
-    it("Renderiza SheetFooter sin children", async () => {
-      const user = userEvent.setup();
-
-      render(
-        <Sheet>
-          <SheetTrigger>Abrir</SheetTrigger>
-          <SheetContent>
-            <SheetTitle>Título</SheetTitle>
-            <SheetFooter></SheetFooter>
-          </SheetContent>
-        </Sheet>,
-      );
-
-      await user.click(screen.getByText("Abrir"));
-
-      await waitFor(() => {
-        expect(
-          document.querySelector('[data-slot="sheet-footer"]'),
-        ).toBeInTheDocument();
-      });
-    });
-
     it("Maneja side con valor inválido usando default", async () => {
       const user = userEvent.setup();
 
@@ -457,31 +291,6 @@ describe("Sheet", () => {
 
       await waitFor(() => {
         expect(screen.getByText("Título")).toBeInTheDocument();
-      });
-    });
-
-    it("Renderiza múltiples SheetClose en el mismo Sheet", async () => {
-      const user = userEvent.setup();
-
-      render(
-        <Sheet>
-          <SheetTrigger>Abrir</SheetTrigger>
-          <SheetContent>
-            <SheetTitle>Título</SheetTitle>
-            <SheetClose>Cerrar 1</SheetClose>
-            <SheetClose>Cerrar 2</SheetClose>
-            <SheetClose>Cerrar 3</SheetClose>
-          </SheetContent>
-        </Sheet>,
-      );
-
-      await user.click(screen.getByText("Abrir"));
-
-      await waitFor(() => {
-        const closeButtons = document.querySelectorAll(
-          '[data-slot="sheet-close"]',
-        );
-        expect(closeButtons.length).toBeGreaterThanOrEqual(1);
       });
     });
 

@@ -1,0 +1,902 @@
+
+> client@0.0.0 test
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.12 [39m[90m/home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client[39m
+
+ [32m✓[39m tests/components/ui/card.test.tsx [2m([22m[2m29 tests[22m[2m)[22m[32m 125[2mms[22m[39m
+ [32m✓[39m tests/integration/storePersistence.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 563[2mms[22m[39m
+     [33m[2m✓[22m[39m Guarda el tema en localStorage cuando el estado cambia [33m 484[2mms[22m[39m
+ [32m✓[39m tests/main.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 601[2mms[22m[39m
+     [33m[2m✓[22m[39m Renderiza la aplicación correctamente [33m 598[2mms[22m[39m
+[90mstderr[2m | tests/hooks/useNotifications.test.tsx[2m > [22m[2museNotifications[2m > [22m[2mMarca una notificación como leída correctamente
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m tests/components/ui/markdown-renderer.test.tsx [2m([22m[2m12 tests[22m[2m)[22m[32m 235[2mms[22m[39m
+[90mstderr[2m | tests/components/ui/chatWithSuggestions.test.tsx[2m > [22m[2mChatWithSuggestions[2m > [22m[2mdebe manejar errores de fetch
+[22m[39mError: Error: Network error
+    at [90m/home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39mtests/components/ui/chatWithSuggestions.test.tsx:177:7
+    at [90mfile:///home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:912:26
+    at [90mfile:///home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1237:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1203:10[90m)[39m
+    at [90mfile:///home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1647:37
+    at Traces.$ [90m(file:///home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.U4xDYhzZ.js:115:27[90m)[39m
+    at trace [90m(file:///home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39mnode_modules/[4mvitest[24m/dist/chunks/test.DqQZzsWf.js:234:21[90m)[39m
+    at runTest [90m(file:///home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1647:12[90m)[39m
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mAbre el Sheet al hacer click en el trigger
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/hooks/useNotifications.test.tsx[2m > [22m[2museNotifications[2m > [22m[2mMarca todas las notificaciones como leídas
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mRenderiza SheetHeader correctamente
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mAplica clases personalizadas al SheetContent
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ [32m✓[39m tests/components/ui/featureCard.test.tsx [2m([22m[2m30 tests[22m[2m)[22m[32m 221[2mms[22m[39m
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mRenderiza con side='left'
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mRenderiza con side='top'
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mRenderiza con side='bottom'
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/hooks/useNotifications.test.tsx[2m > [22m[2museNotifications[2m > [22m[2mPermite recargar notificaciones manualmente
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useNotifications.test.tsx[2m > [22m[2museNotifications[2m > [22m[2mPermite recargar notificaciones manualmente
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m tests/hooks/useNotifications.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 623[2mms[22m[39m
+ [32m✓[39m tests/store/store.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 713[2mms[22m[39m
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mRenderiza el botón de cierre
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ [32m✓[39m tests/components/dashboard/dashboardCharts.test.tsx [2m([22m[2m27 tests[22m[2m)[22m[32m 288[2mms[22m[39m
+[90mstderr[2m | tests/components/ui/chatWithSuggestions.test.tsx[2m > [22m[2mChatWithSuggestions[2m > [22m[2mdebe manejar chunks con JSON inválido
+[22m[39mError parsing chunk: SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at JSON.parse (<anonymous>)
+    at handleSubmit [90m(/home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39msrc/components/ui/chatWithSuggestions.tsx:73:35[90m)[39m
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mRenderiza overlay cuando está abierto
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/chatWithSuggestions.test.tsx[2m > [22m[2mChatWithSuggestions[2m > [22m[2mdebe manejar respuesta no exitosa
+[22m[39mError: Error: Failed to fetch
+    at handleSubmit [90m(/home/jowinson/workplace/universidad/4/sytw/proyecto-task-grid/client/[39msrc/components/ui/chatWithSuggestions.tsx:48:31[90m)[39m
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mAplica clases personalizadas al SheetHeader
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ [32m✓[39m tests/components/ui/chatWithSuggestions.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[33m 838[2mms[22m[39m
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mCierra el Sheet al presionar ESC
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mManeja Sheet controlado con open prop
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mRenderiza SheetHeader sin children
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mManeja side con valor inválido usando default
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mRenderiza SheetContent con className undefined
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ [32m✓[39m tests/components/ui/message-input.test.tsx [2m([22m[2m24 tests[22m[2m)[22m[33m 676[2mms[22m[39m
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mManeja contenido complejo en SheetContent
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mCierra el Sheet al hacer click en el overlay
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mRenderiza todos los lados (top, right, bottom, left) correctamente
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mRenderiza todos los lados (top, right, bottom, left) correctamente
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mRenderiza todos los lados (top, right, bottom, left) correctamente
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/sheet.test.tsx[2m > [22m[2mSheet[2m > [22m[2mEdge Cases[2m > [22m[2mRenderiza todos los lados (top, right, bottom, left) correctamente
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ [32m✓[39m tests/components/ui/sheet.test.tsx [2m([22m[2m18 tests[22m[2m)[22m[33m 1273[2mms[22m[39m
+ [32m✓[39m tests/components/ui/dropdown-menu.test.tsx [2m([22m[2m20 tests[22m[2m)[22m[33m 1366[2mms[22m[39m
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 3000
+}
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 3000
+}
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 3000
+}
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 3000
+}
+ [32m✓[39m tests/components/ui/textarea.test.tsx [2m([22m[2m20 tests[22m[2m)[22m[33m 521[2mms[22m[39m
+ [32m✓[39m tests/components/ui/button.test.tsx [2m([22m[2m44 tests[22m[2m)[22m[33m 386[2mms[22m[39m
+[90mstderr[2m | tests/components/appMenubar.test.tsx[2m > [22m[2mAppMenubar[2m > [22m[2mRenderiza el botón de menú móvil cuando está autenticado
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ [32m✓[39m tests/components/ui/chart.test.tsx [2m([22m[2m59 tests[22m[2m)[22m[33m 540[2mms[22m[39m
+ [32m✓[39m tests/components/ui/switch.test.tsx [2m([22m[2m20 tests[22m[2m)[22m[33m 427[2mms[22m[39m
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 3000
+}
+ [32m✓[39m tests/components/ui/separator.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[32m 129[2mms[22m[39m
+[90mstderr[2m | tests/components/appMenubar.test.tsx[2m > [22m[2mAppMenubar[2m > [22m[2mNavega desde el menú móvil
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ [32m✓[39m tests/components/ui/avatar.test.tsx [2m([22m[2m18 tests[22m[2m)[22m[32m 260[2mms[22m[39m
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 3000
+}
+ [32m✓[39m tests/components/dashboard.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 293[2mms[22m[39m
+ [32m✓[39m tests/components/notifications/notificationBell.test.tsx [2m([22m[2m18 tests[22m[2m)[22m[33m 1991[2mms[22m[39m
+[90mstderr[2m | tests/components/appMenubar.test.tsx[2m > [22m[2mAppMenubar[2m > [22m[2mCierra sesión desde el menú móvil
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+ [32m✓[39m tests/components/ui/badge.test.tsx [2m([22m[2m34 tests[22m[2m)[22m[32m 244[2mms[22m[39m
+ [32m✓[39m tests/components/ui/input.test.tsx [2m([22m[2m22 tests[22m[2m)[22m[32m 240[2mms[22m[39m
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 3000
+}
+ [32m✓[39m tests/components/ui/prompt-suggestions.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 181[2mms[22m[39m
+[90mstderr[2m | tests/components/ui/chat.test.tsx[2m > [22m[2mChat[2m > [22m[2mdebe renderizar el componente correctamente
+[22m[39mYou provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+[90mstderr[2m | tests/components/appMenubar.test.tsx[2m > [22m[2mAppMenubar[2m > [22m[2mNavega a configuración desde el menú móvil
+[22m[39mWarning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+[90mstderr[2m | tests/components/ui/chat.test.tsx[2m > [22m[2mChat[2m > [22m[2mdebe mostrar mensajes cuando hay mensajes
+[22m[39mYou provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+[90mstderr[2m | tests/components/ui/chat.test.tsx[2m > [22m[2mChat[2m > [22m[2mdebe mostrar sugerencias cuando están disponibles
+[22m[39mYou provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+[90mstderr[2m | tests/components/ui/chat.test.tsx[2m > [22m[2mChat[2m > [22m[2mdebe manejar input vacío
+[22m[39mYou provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+[90mstderr[2m | tests/components/ui/chat.test.tsx[2m > [22m[2mChat[2m > [22m[2mdebe manejar input con texto
+[22m[39mYou provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+[90mstderr[2m | tests/components/ui/chat.test.tsx[2m > [22m[2mChat[2m > [22m[2mdebe aplicar className personalizado
+[22m[39mYou provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+[90mstderr[2m | tests/components/ui/chat.test.tsx[2m > [22m[2mChat[2m > [22m[2mdebe manejar estado de generación
+[22m[39mYou provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+[90mstderr[2m | tests/components/ui/chat.test.tsx[2m > [22m[2mChat[2m > [22m[2mdebe manejar la función stop cuando está disponible
+[22m[39mYou provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+[90mstderr[2m | tests/components/ui/chat.test.tsx[2m > [22m[2mChat[2m > [22m[2mdebe renderizar sin función stop
+[22m[39mYou provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+[90mstderr[2m | tests/components/ui/chat.test.tsx[2m > [22m[2mChat[2m > [22m[2mdebe manejar múltiples mensajes
+[22m[39mYou provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+ [32m✓[39m tests/components/ui/chat.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[32m 166[2mms[22m[39m
+ [32m✓[39m tests/components/appMenubar.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 1725[2mms[22m[39m
+     [33m[2m✓[22m[39m Navega desde el menú móvil [33m 393[2mms[22m[39m
+     [33m[2m✓[22m[39m Cierra sesión desde el menú móvil [33m 321[2mms[22m[39m
+ [32m✓[39m tests/components/ui/file-preview.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 253[2mms[22m[39m
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mInicia sesión exitosamente
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mInicia sesión exitosamente
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m tests/components/ui/label.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[32m 236[2mms[22m[39m
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mManeja el fallo de inicio de sesión
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mManeja el fallo de inicio de sesión
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mRegistra exitosamente
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mRegistra exitosamente
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mManeja el fallo de registro
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mManeja el fallo de registro
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mInicia sesión con Google exitosamente
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mInicia sesión con Google exitosamente
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mManeja el fallo de inicio de sesión con Google
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mManeja el fallo de inicio de sesión con Google
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/hooks/useAuth.test.tsx[2m > [22m[2museAuth[2m > [22m[2mCierra sesión
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/App.test.tsx[2m > [22m[2mApp[2m > [22m[2mRenderiza la página de inicio cuando no está autenticado
+[22m[39mreact-i18next:: useTranslation: You will need to pass in an i18next instance by using initReactI18next { code: [32m'NO_I18NEXT_INSTANCE'[39m }
+
+ [32m✓[39m tests/hooks/useAutoScroll.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[32m 73[2mms[22m[39m
+ [32m✓[39m tests/hooks/useAuth.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[32m 208[2mms[22m[39m
+ [31m❯[39m tests/App.test.tsx [2m([22m[2m11 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 362[2mms[22m[39m
+     [32m✓[39m Renderiza la página de inicio cuando no está autenticado[32m 113[2mms[22m[39m
+     [32m✓[39m Redirige al dashboard cuando está autenticado y accede a la raíz[32m 44[2mms[22m[39m
+     [32m✓[39m Renderiza la página de login cuando no está autenticado[32m 12[2mms[22m[39m
+     [32m✓[39m Renderiza la página de registro cuando no está autenticado[32m 10[2mms[22m[39m
+     [32m✓[39m Renderiza la página del dashboard cuando está autenticado[32m 13[2mms[22m[39m
+     [32m✓[39m Renderiza la página de tareas cuando está autenticado[32m 11[2mms[22m[39m
+[31m     [31m×[31m Renderiza la página compartida cuando está autenticado[39m[32m 39[2mms[22m[39m
+     [32m✓[39m Renderiza la página de configuración cuando está autenticado[32m 19[2mms[22m[39m
+     [32m✓[39m Renderiza la página de contactos sin autenticación[32m 42[2mms[22m[39m
+     [32m✓[39m Redirige a la raíz cuando la ruta no existe y no está autenticado[32m 25[2mms[22m[39m
+     [32m✓[39m Redirige al dashboard cuando la ruta no existe y está autenticado[32m 25[2mms[22m[39m
+ [32m✓[39m tests/components/ui/collapsible.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 153[2mms[22m[39m
+ [32m✓[39m tests/components/ui/message-list.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 167[2mms[22m[39m
+ [32m✓[39m tests/components/ui/icon.test.tsx [2m([22m[2m19 tests[22m[2m)[22m[32m 184[2mms[22m[39m
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2mreducers[2m > [22m[2mshould handle listUpdated
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.createdAt`. Value: [35m2025-12-14T19:19:14.566Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/listUpdated'[39m,
+  payload: {
+    id: [32m'1'[39m,
+    name: [32m'New Name'[39m,
+    userId: [32m'user-1'[39m,
+    createdAt: [35m2025-12-14T19:19:14.566Z[39m,
+    updatedAt: [35m2025-12-14T19:19:14.566Z[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+A non-serializable value was detected in the state, in the path: `lists.lists.0.createdAt`. Value: [35m2025-12-14T19:19:14.566Z[39m 
+Take a look at the reducer(s) handling this action type: lists/listUpdated.
+(See https://redux.js.org/faq/organizing-state#can-i-put-functions-promises-or-other-non-serializable-items-in-my-store-state)
+
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2mreducers[2m > [22m[2mshould not update list if not found
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.createdAt`. Value: [35m2025-12-14T19:19:14.572Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/listUpdated'[39m,
+  payload: {
+    id: [32m'nonexistent'[39m,
+    name: [32m'Test'[39m,
+    userId: [32m'user-1'[39m,
+    createdAt: [35m2025-12-14T19:19:14.572Z[39m,
+    updatedAt: [35m2025-12-14T19:19:14.572Z[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2mreducers[2m > [22m[2mshould handle listCreated
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.createdAt`. Value: [35m2025-12-14T19:19:14.574Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/listCreated'[39m,
+  payload: {
+    id: [32m'1'[39m,
+    name: [32m'New List'[39m,
+    userId: [32m'user-1'[39m,
+    createdAt: [35m2025-12-14T19:19:14.574Z[39m,
+    updatedAt: [35m2025-12-14T19:19:14.574Z[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+A non-serializable value was detected in the state, in the path: `lists.lists.0.createdAt`. Value: [35m2025-12-14T19:19:14.574Z[39m 
+Take a look at the reducer(s) handling this action type: lists/listCreated.
+(See https://redux.js.org/faq/organizing-state#can-i-put-functions-promises-or-other-non-serializable-items-in-my-store-state)
+
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2mreducers[2m > [22m[2mshould not add duplicate list
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.createdAt`. Value: [35m2025-12-14T19:19:14.580Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/listCreated'[39m,
+  payload: {
+    id: [32m'1'[39m,
+    name: [32m'List'[39m,
+    userId: [32m'user-1'[39m,
+    createdAt: [35m2025-12-14T19:19:14.580Z[39m,
+    updatedAt: [35m2025-12-14T19:19:14.580Z[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+A non-serializable value was detected in the state, in the path: `lists.lists.0.createdAt`. Value: [35m2025-12-14T19:19:14.580Z[39m 
+Take a look at the reducer(s) handling this action type: lists/listCreated.
+(See https://redux.js.org/faq/organizing-state#can-i-put-functions-promises-or-other-non-serializable-items-in-my-store-state)
+A non-serializable value was detected in an action, in the path: `payload.createdAt`. Value: [35m2025-12-14T19:19:14.580Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/listCreated'[39m,
+  payload: {
+    id: [32m'1'[39m,
+    name: [32m'List'[39m,
+    userId: [32m'user-1'[39m,
+    createdAt: [35m2025-12-14T19:19:14.580Z[39m,
+    updatedAt: [35m2025-12-14T19:19:14.580Z[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+A non-serializable value was detected in the state, in the path: `lists.lists.0.createdAt`. Value: [35m2025-12-14T19:19:14.580Z[39m 
+Take a look at the reducer(s) handling this action type: lists/listCreated.
+(See https://redux.js.org/faq/organizing-state#can-i-put-functions-promises-or-other-non-serializable-items-in-my-store-state)
+
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2masync thunks[2m > [22m[2mshould handle fetchLists.fulfilled
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.0.createdAt`. Value: [35m2025-12-14T19:19:14.591Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/fetchLists/fulfilled'[39m,
+  payload: [
+    {
+      id: [32m'1'[39m,
+      name: [32m'List 1'[39m,
+      userId: [32m'user-1'[39m,
+      createdAt: [35m2025-12-14T19:19:14.591Z[39m,
+      updatedAt: [35m2025-12-14T19:19:14.591Z[39m
+    }
+  ],
+  meta: {
+    arg: [90mundefined[39m,
+    requestId: [32m'NF3sQHk0Nqy81iEDg0Xdl'[39m,
+    requestStatus: [32m'fulfilled'[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+A non-serializable value was detected in the state, in the path: `lists.lists.0.createdAt`. Value: [35m2025-12-14T19:19:14.591Z[39m 
+Take a look at the reducer(s) handling this action type: lists/fetchLists/fulfilled.
+(See https://redux.js.org/faq/organizing-state#can-i-put-functions-promises-or-other-non-serializable-items-in-my-store-state)
+
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2masync thunks[2m > [22m[2mshould handle fetchSharedLists.fulfilled
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.0.createdAt`. Value: [35m2025-12-14T19:19:14.598Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/fetchSharedLists/fulfilled'[39m,
+  payload: [
+    {
+      id: [32m'1'[39m,
+      name: [32m'Shared List'[39m,
+      userId: [32m'user-2'[39m,
+      createdAt: [35m2025-12-14T19:19:14.598Z[39m,
+      updatedAt: [35m2025-12-14T19:19:14.598Z[39m
+    }
+  ],
+  meta: {
+    arg: [90mundefined[39m,
+    requestId: [32m'DXEB8zvide4m6viyqdjOL'[39m,
+    requestStatus: [32m'fulfilled'[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+A non-serializable value was detected in the state, in the path: `lists.lists.0.createdAt`. Value: [35m2025-12-14T19:19:14.598Z[39m 
+Take a look at the reducer(s) handling this action type: lists/fetchSharedLists/fulfilled.
+(See https://redux.js.org/faq/organizing-state#can-i-put-functions-promises-or-other-non-serializable-items-in-my-store-state)
+
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2masync thunks[2m > [22m[2mshould handle createList.fulfilled
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.createdAt`. Value: [35m2025-12-14T19:19:14.602Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/createList/fulfilled'[39m,
+  payload: {
+    id: [32m'1'[39m,
+    name: [32m'New List'[39m,
+    userId: [32m'user-1'[39m,
+    createdAt: [35m2025-12-14T19:19:14.602Z[39m,
+    updatedAt: [35m2025-12-14T19:19:14.602Z[39m
+  },
+  meta: {
+    arg: { name: [32m'New List'[39m },
+    requestId: [32m'DEjrbRAVHJcC8GH0gcb54'[39m,
+    requestStatus: [32m'fulfilled'[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+A non-serializable value was detected in the state, in the path: `lists.lists.0.createdAt`. Value: [35m2025-12-14T19:19:14.602Z[39m 
+Take a look at the reducer(s) handling this action type: lists/createList/fulfilled.
+(See https://redux.js.org/faq/organizing-state#can-i-put-functions-promises-or-other-non-serializable-items-in-my-store-state)
+
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2masync thunks[2m > [22m[2mshould handle updateList.fulfilled
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.createdAt`. Value: [35m2025-12-14T19:19:14.611Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/updateList/fulfilled'[39m,
+  payload: {
+    id: [32m'1'[39m,
+    name: [32m'Updated List'[39m,
+    userId: [32m'user-1'[39m,
+    createdAt: [35m2025-12-14T19:19:14.611Z[39m,
+    updatedAt: [35m2025-12-14T19:19:14.611Z[39m
+  },
+  meta: {
+    arg: { id: [32m'1'[39m, name: [32m'Updated List'[39m },
+    requestId: [32m'XmO78muYq_lz-Y6QICH0F'[39m,
+    requestStatus: [32m'fulfilled'[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2masync thunks[2m > [22m[2mshould handle shareList.fulfilled
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.createdAt`. Value: [35m2025-12-14T19:19:14.619Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/shareList/fulfilled'[39m,
+  payload: {
+    id: [32m'1'[39m,
+    name: [32m'Shared List'[39m,
+    userId: [32m'user-1'[39m,
+    createdAt: [35m2025-12-14T19:19:14.619Z[39m,
+    updatedAt: [35m2025-12-14T19:19:14.619Z[39m
+  },
+  meta: {
+    arg: { listId: [32m'1'[39m, email: [32m'test@example.com'[39m, permission: [32m'read'[39m },
+    requestId: [32m'9lbmeqriK8-mUdZmbIRuG'[39m,
+    requestStatus: [32m'fulfilled'[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2masync thunks[2m > [22m[2mshould handle updateListSharePermission.fulfilled
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.createdAt`. Value: [35m2025-12-14T19:19:14.623Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/updateListSharePermission/fulfilled'[39m,
+  payload: {
+    id: [32m'1'[39m,
+    name: [32m'List'[39m,
+    userId: [32m'user-1'[39m,
+    createdAt: [35m2025-12-14T19:19:14.623Z[39m,
+    updatedAt: [35m2025-12-14T19:19:14.623Z[39m
+  },
+  meta: {
+    arg: { listId: [32m'1'[39m, userId: [32m'user-2'[39m, permission: [32m'write'[39m },
+    requestId: [32m'tFEzvJPQ19yuqmKl0zriz'[39m,
+    requestStatus: [32m'fulfilled'[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+
+[90mstderr[2m | tests/store/listsSlice.test.ts[2m > [22m[2mlistsSlice[2m > [22m[2masync thunks[2m > [22m[2mshould handle unshareList.fulfilled
+[22m[39mA non-serializable value was detected in an action, in the path: `payload.createdAt`. Value: [35m2025-12-14T19:19:14.633Z[39m 
+Take a look at the logic that dispatched this action:  {
+  type: [32m'lists/unshareList/fulfilled'[39m,
+  payload: {
+    id: [32m'1'[39m,
+    name: [32m'List'[39m,
+    userId: [32m'user-1'[39m,
+    createdAt: [35m2025-12-14T19:19:14.633Z[39m,
+    updatedAt: [35m2025-12-14T19:19:14.633Z[39m
+  },
+  meta: {
+    arg: { listId: [32m'1'[39m, userId: [32m'user-2'[39m },
+    requestId: [32m'L70fQeRiQxl6Om6UlOGj0'[39m,
+    requestStatus: [32m'fulfilled'[39m
+  }
+} 
+(See https://redux.js.org/faq/actions#why-should-type-be-a-string-or-at-least-serializable-why-should-my-action-types-be-constants) 
+(To allow non-serializable values see: https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data)
+
+ [32m✓[39m tests/store/listsSlice.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 101[2mms[22m[39m
+ [32m✓[39m tests/components/ui/chat-message.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[32m 276[2mms[22m[39m
+ [32m✓[39m tests/components/auth/protectedRoute.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 68[2mms[22m[39m
+ [32m✓[39m tests/components/ui/interrupt-prompt.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 190[2mms[22m[39m
+ [32m✓[39m tests/store/slices/authSlice.test.ts [2m([22m[2m41 tests[22m[2m)[22m[32m 100[2mms[22m[39m
+[90mstderr[2m | tests/hooks/useRedux.test.tsx[2m > [22m[2museRedux[2m > [22m[2museAppSelector[2m > [22m[2mActualiza cuando cambia el estado
+[22m[39mAn update to TestComponent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m tests/hooks/useRedux.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 68[2mms[22m[39m
+ [32m✓[39m tests/components/auth/themeToggle.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 141[2mms[22m[39m
+ [32m✓[39m tests/components/ui/typing-indicator.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 98[2mms[22m[39m
+ [32m✓[39m tests/hooks/useTheme.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 86[2mms[22m[39m
+ [32m✓[39m tests/hooks/useAutosizeTextarea.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 77[2mms[22m[39m
+ [32m✓[39m tests/store/slices/tasksSlice.test.ts [2m([22m[2m58 tests[22m[2m)[22m[32m 64[2mms[22m[39m
+ [32m✓[39m tests/store/slices/listsSlice.test.ts [2m([22m[2m42 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m tests/lib/taskFilters.test.ts [2m([22m[2m21 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/store/uiSlice.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m tests/lib/utils.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m tests/schemas/validationSchemas.test.ts [2m([22m[2m21 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/store/slices/themeSlice.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/lib/api.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/store/slices/uiSlice.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/socket.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/App.test.tsx[2m > [22mApp[2m > [22mRenderiza la página compartida cuando está autenticado
+[31m[1mError[22m: could not find react-redux context value; please ensure the component is wrapped in a <Provider>[39m
+[90m [2m❯[22m useReduxContext2 node_modules/react-redux/dist/react-redux.mjs:[2m916:13[22m[39m
+[90m [2m❯[22m useStore2 node_modules/react-redux/dist/react-redux.mjs:[2m932:23[22m[39m
+[90m [2m❯[22m useDispatch2 node_modules/react-redux/dist/react-redux.mjs:[2m946:19[22m[39m
+[36m [2m❯[22m useAppDispatch src/hooks/useRedux.ts:[2m4:37[22m[39m
+    [90m  2| [39m[35mimport[39m type { [33mRootState[39m[33m,[39m [33mAppDispatch[39m } [35mfrom[39m [32m"@/store/store"[39m[33m;[39m
+    [90m  3| [39m
+    [90m  4| [39m[35mexport[39m [35mconst[39m useAppDispatch [33m=[39m () [33m=>[39m useDispatch[33m<[39m[33mAppDispatch[39m[33m>[39m()[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m  5| [39mexport const useAppSelector: TypedUseSelectorHook<RootState> = useSele…
+    [90m  6| [39m
+[90m [2m❯[22m useTasks src/hooks/useTasks.ts:[2m40:20[22m[39m
+[90m [2m❯[22m useTaskFilters src/hooks/useTaskFilters.ts:[2m17:7[22m[39m
+[90m [2m❯[22m SharedPage src/pages/authenticated/sharedPage.tsx:[2m27:7[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:[2m25904:20[22m[39m
+[90m [2m❯[22m renderWithHooks node_modules/react-dom/cjs/react-dom-client.development.js:[2m7662:22[22m[39m
+[90m [2m❯[22m updateFunctionComponent node_modules/react-dom/cjs/react-dom-client.development.js:[2m10166:19[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m52 passed[39m[22m[90m (53)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m859 passed[39m[22m[90m (860)[39m
+[2m   Start at [22m 19:19:07
+[2m   Duration [22m 8.63s[2m (transform 10.08s, setup 20.24s, collect 31.42s, tests 17.68s, environment 34.95s, prepare 1.24s)[22m
+

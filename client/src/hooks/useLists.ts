@@ -16,13 +16,10 @@ import {
   shareList as shareListThunk,
   updateListSharePermission,
   unshareList,
-  setLoading,
-  setError,
 } from "@/store/slices/listsSlice";
 import { selectUser } from "@/store/slices/authSlice";
 import {
   selectAccessibleLists,
-  getListPermission,
   canAccessList,
   isListOwner,
 } from "@/store/slices/permissionsSelectors";
@@ -70,13 +67,8 @@ export function useLists() {
   const removeShare = (listId: string, shareId: string) =>
     dispatch(unshareList({ listId, userId: shareId }));
 
-  const setLoadingState = (loading: boolean) => dispatch(setLoading(loading));
-  const setErrorState = (error: string | null) => dispatch(setError(error));
-
   const state = useAppSelector((state) => state);
 
-  const getPermission = (listId: string): SharePermission | null =>
-    getListPermission(listId)(state);
   const canAccess = (
     listId: string,
     permission: SharePermission = "VIEW",
@@ -101,9 +93,6 @@ export function useLists() {
     shareList,
     updateShare,
     removeShare,
-    setLoadingState,
-    setErrorState,
-    getPermission,
     canAccess,
     isOwner,
   };

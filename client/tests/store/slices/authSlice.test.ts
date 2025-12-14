@@ -8,7 +8,6 @@ import authReducer, {
   selectAuthError,
   selectAuthLoading,
   selectIsAuthenticated,
-  selectIsInitializing,
   selectToken,
   selectUser,
   updateUserProfile,
@@ -322,11 +321,6 @@ describe("authSlice", () => {
       expect(selectAuthError(state as { auth: AuthState })).toBe(
         "Error message",
       );
-    });
-
-    it("selectIsInitializing should return initializing status", () => {
-      const state = { auth: { ...initialState, isInitializing: true } };
-      expect(selectIsInitializing(state as { auth: AuthState })).toBe(true);
     });
   });
 

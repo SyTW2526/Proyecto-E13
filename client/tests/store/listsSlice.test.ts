@@ -9,9 +9,6 @@ import listsReducer, {
   listCreated,
   listDeleted,
   listUpdated,
-  resetListsState,
-  setError,
-  setLoading,
   setSelectedList,
   shareList,
   unshareList,
@@ -38,38 +35,12 @@ describe("listsSlice", () => {
   });
 
   describe("reducers", () => {
-    it("should handle setLoading", () => {
-      store.dispatch(setLoading(true));
-      expect(store.getState().lists.isLoading).toBe(true);
-
-      store.dispatch(setLoading(false));
-      expect(store.getState().lists.isLoading).toBe(false);
-    });
-
-    it("should handle setError", () => {
-      store.dispatch(setError("Test error"));
-      expect(store.getState().lists.error).toBe("Test error");
-      expect(store.getState().lists.isLoading).toBe(false);
-    });
-
     it("should handle setSelectedList", () => {
       store.dispatch(setSelectedList("list-123"));
       expect(store.getState().lists.selectedListId).toBe("list-123");
 
       store.dispatch(setSelectedList(null));
       expect(store.getState().lists.selectedListId).toBeNull();
-    });
-
-    it("should handle resetListsState", () => {
-      store.dispatch(setError("error"));
-      store.dispatch(setSelectedList("list-123"));
-      store.dispatch(resetListsState());
-
-      const state = store.getState().lists;
-      expect(state.lists).toEqual([]);
-      expect(state.selectedListId).toBeNull();
-      expect(state.isLoading).toBe(false);
-      expect(state.error).toBeNull();
     });
 
     it("should handle listUpdated", () => {

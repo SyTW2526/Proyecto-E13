@@ -140,17 +140,9 @@ const listsSlice = createSlice({
   name: "lists",
   initialState,
   reducers: {
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
-    },
-    setError: (state, action: PayloadAction<string | null>) => {
-      state.error = action.payload;
-      state.isLoading = false;
-    },
     setSelectedList: (state, action: PayloadAction<string | null>) => {
       state.selectedListId = action.payload;
     },
-    resetListsState: () => initialState,
     listUpdated: (state, action: PayloadAction<List>) => {
       const index = state.lists.findIndex((l) => l.id === action.payload.id);
       if (index !== -1) {
@@ -307,15 +299,8 @@ const listsSlice = createSlice({
   },
 });
 
-export const {
-  setLoading,
-  setError,
-  setSelectedList,
-  resetListsState,
-  listUpdated,
-  listCreated,
-  listDeleted,
-} = listsSlice.actions;
+export const { setSelectedList, listUpdated, listCreated, listDeleted } =
+  listsSlice.actions;
 
 export default listsSlice.reducer;
 
@@ -330,9 +315,6 @@ export const selectSelectedList = (state: { lists: ListsState }) => {
   const { lists, selectedListId } = state.lists;
   return lists.find((list) => list.id === selectedListId) || null;
 };
-export const selectListById =
-  (listId: string) => (state: { lists: ListsState }) =>
-    state.lists.lists.find((list) => list.id === listId) || null;
 export const selectOwnedLists =
   (userId: string) => (state: { lists: ListsState }) =>
     state.lists.lists.filter((list) => list.ownerId === userId);

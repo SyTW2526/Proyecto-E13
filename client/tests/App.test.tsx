@@ -44,7 +44,7 @@ vi.mock("@/pages/authenticated/tasksPage", () => ({
   default: () => <div data-testid="tasks-page">Tasks Page</div>,
 }));
 
-vi.mock("@/pages/authenticated/SharedPage", () => ({
+vi.mock("@/pages/authenticated/sharedPage", () => ({
   default: () => <div data-testid="shared-page">Shared Page</div>,
 }));
 

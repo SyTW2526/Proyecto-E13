@@ -157,34 +157,6 @@ const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
-    },
-    setError: (state, action: PayloadAction<string | null>) => {
-      state.error = action.payload;
-      state.isLoading = false;
-    },
-    setTasks: (state, action: PayloadAction<Task[]>) => {
-      state.tasks = action.payload;
-      state.isLoading = false;
-      state.error = null;
-    },
-    setTaskStatus: (
-      state,
-      action: PayloadAction<{ id: string; status: TaskStatus }>,
-    ) => {
-      const task = state.tasks.find((t) => t.id === action.payload.id);
-      if (task) {
-        task.status = action.payload.status;
-        if (action.payload.status === "COMPLETED") {
-          task.completed = true;
-          task.completedAt = new Date().toISOString();
-        } else {
-          task.completed = false;
-          task.completedAt = undefined;
-        }
-      }
-    },
     setSelectedTask: (state, action: PayloadAction<string | null>) => {
       state.selectedTaskId = action.payload;
     },
@@ -224,7 +196,6 @@ const tasksSlice = createSlice({
     toggleSortOrder: (state) => {
       state.sorting.order = state.sorting.order === "asc" ? "desc" : "asc";
     },
-    resetTasksState: () => initialState,
     taskAdded: (state, action: PayloadAction<Task>) => {
       if (!state.tasks.find((t) => t.id === action.payload.id)) {
         state.tasks.unshift(action.payload);
@@ -427,9 +398,6 @@ const tasksSlice = createSlice({
 });
 
 export const {
-  setLoading,
-  setError,
-  setTaskStatus,
   setSelectedTask,
   setStatusFilter,
   setListFilter,
@@ -439,7 +407,6 @@ export const {
   clearFilters,
   setSorting,
   toggleSortOrder,
-  resetTasksState,
   taskAdded,
   taskUpdated,
   taskDeleted,
@@ -463,14 +430,6 @@ export const selectSelectedTask = (state: { tasks: TasksState }) => {
   const { tasks, selectedTaskId } = state.tasks;
   return tasks.find((task) => task.id === selectedTaskId) || null;
 };
-
-export const selectTaskById =
-  (taskId: string) => (state: { tasks: TasksState }) =>
-    state.tasks.tasks.find((task) => task.id === taskId) || null;
-
-export const selectTasksByListId =
-  (listId: string) => (state: { tasks: TasksState }) =>
-    state.tasks.tasks.filter((task) => task.listId === listId);
 
 export const selectFilteredTasks = (state: { tasks: TasksState }) => {
   const { tasks, filters, sorting } = state.tasks;

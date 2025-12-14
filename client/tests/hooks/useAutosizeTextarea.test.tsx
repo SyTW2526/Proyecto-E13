@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { useAutosizeTextArea } from "../../src/hooks/use-autosize-textarea";
+import { useAutosizeTextArea } from "../../src/hooks/chatBot/useAutosizeTextarea";
 
 describe("useAutosizeTextArea", () => {
   let textareaRef: React.RefObject<HTMLTextAreaElement>;

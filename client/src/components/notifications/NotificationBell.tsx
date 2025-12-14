@@ -7,10 +7,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useTranslation } from "react-i18next";
-import type { NotificationType } from "@/types/notification";
 import { Bell, Circle } from "lucide-react";
 import { useMemo, useState } from "react";
 
