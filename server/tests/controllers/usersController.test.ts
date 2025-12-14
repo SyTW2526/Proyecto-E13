@@ -173,7 +173,7 @@ describe("UsersController", () => {
         error: "User not found",
       });
     });
-    
+
     it("should return 500 on database error", async () => {
       mockRequest.user = { id: "user-123" };
       vi.mocked(prisma.user.delete).mockRejectedValue(new Error("DB Error"));

@@ -224,7 +224,7 @@ describe("AuthController", () => {
       });
     });
 
-    it("should return 400 for user without password (OAuth user)", async () => {
+    it("should return 400 for user without password", async () => {
       mockRequest.body = {
         email: "oauth@example.com",
         password: "Password123",
@@ -621,6 +621,7 @@ describe("AuthController", () => {
         }),
       );
     });
+
     it("should use email prefix as name if name is missing from Google payload", async () => {
       mockRequest.body = { idToken: "valid-token" };
       const payload = {

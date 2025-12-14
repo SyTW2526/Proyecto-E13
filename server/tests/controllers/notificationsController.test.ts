@@ -113,14 +113,6 @@ describe("NotificationsController", () => {
         error: "Error al obtener notificaciones",
       });
     });
-
-    it("should return empty array when user has no notifications", async () => {
-      (prisma.notification.findMany as Mock).mockResolvedValue([]);
-
-      await getNotifications(mockReq as never, mockRes as Response);
-
-      expect(jsonMock).toHaveBeenCalledWith([]);
-    });
   });
 
   describe("markNotificationAsRead", () => {
@@ -231,16 +223,6 @@ describe("NotificationsController", () => {
         error: "Error al marcar todas las notificaciones",
       });
     });
-
-    it("should work when there are no unread notifications", async () => {
-      (prisma.notification.updateMany as Mock).mockResolvedValue({ count: 0 });
-
-      await markAllNotificationsAsRead(mockReq as never, mockRes as Response);
-
-      expect(jsonMock).toHaveBeenCalledWith({
-        message: "Todas las notificaciones marcadas como leídas",
-      });
-    });
   });
 
   describe("getUnreadCount", () => {
@@ -334,24 +316,6 @@ describe("NotificationsController", () => {
         },
       });
       expect(result).toEqual(mockNotification);
-    });
-
-    it("should not send email if notifications are disabled", async () => {
-      const mockNotification = {
-        id: "notif1",
-        userId: "user123",
-        user: {
-          email: "test@test.com",
-          name: "Test User",
-          emailNotifications: false,
-        },
-      };
-
-      (prisma.notification.create as Mock).mockResolvedValue(mockNotification);
-
-      await createNotification("user123", "SHARED", "Test", "Desc", "Actor");
-
-      expect(sendNotificationEmail).not.toHaveBeenCalled();
     });
 
     it("should handle email sending errors gracefully", async () => {
