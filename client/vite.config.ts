@@ -23,6 +23,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov", "html"],
+      include: ["src/**/*"],
       exclude: [
         "node_modules/",
         "/tests/",
@@ -31,6 +32,9 @@ export default defineConfig({
         "**/dist/**",
         "**/styles/**",
         "**/src/locales/**",
+        "**/src/components/ui/**",
+        "**/src/types/**",
+        "**/src/assets/**",
       ],
     },
   },

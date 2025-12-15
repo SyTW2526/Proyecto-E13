@@ -1,10 +1,4 @@
-/**
- * @file useTheme.ts
- * @description Hook personalizado para manejar el tema de la aplicación (claro/oscuro).
- * Ahora usa Redux para gestionar el estado global del tema.
- */
-
-import { useAppDispatch, useAppSelector } from "./useRedux";
+import { useAppDispatch, useAppSelector } from "../useRedux";
 import {
   selectTheme,
   setTheme as setThemeAction,

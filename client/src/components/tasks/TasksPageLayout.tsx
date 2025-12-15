@@ -6,7 +6,7 @@ import {
   TaskFavoriteToggle,
   TaskSortFilter,
 } from "@/components/tasks/TaskFilters";
-import { useUI } from "@/hooks/useUI";
+import { useUI } from "@/hooks/ui/useUI";
 import type { Task, TaskStatus, TaskPriority } from "@/types/tasks-system/task";
 
 type SortField = "name" | "dueDate" | "priority" | "createdAt" | "updatedAt";

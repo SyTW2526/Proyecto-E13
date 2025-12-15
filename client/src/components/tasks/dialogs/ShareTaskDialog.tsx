@@ -2,7 +2,7 @@ import {
   ShareDialog,
   type ShareCollaborator,
 } from "@/components/shared/ShareDialog";
-import { useTasks } from "@/hooks/useTasks";
+import { useTasks } from "@/hooks/tasks/useTasks";
 import type { Task } from "@/types/tasks-system/task";
 
 interface ShareTaskDialogProps {

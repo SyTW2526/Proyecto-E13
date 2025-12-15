@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from "react";
-import { useTasks } from "@/hooks/useTasks";
+import { useTasks } from "@/hooks/tasks/useTasks";
 import { useLists } from "@/hooks/useLists";
-import { useTaskFilters } from "@/hooks/useTaskFilters";
+import { useTaskFilters } from "@/hooks/tasks/useTaskFilters";
 import { SharedTaskCard } from "@/components/tasks/cards/SharedTaskCard";
 import { useTranslation } from "react-i18next";
 import { TasksPageLayout } from "@/components/tasks/TasksPageLayout";

@@ -67,7 +67,8 @@ export function NotificationBell() {
     try {
       await markAllAsRead();
     } catch (error) {
-      console.error("Error al marcar todos como leído:", error);
+      if (import.meta.env.DEV)
+        console.error("Error al marcar todos como leído:", error);
     }
   };
 
@@ -75,7 +76,8 @@ export function NotificationBell() {
     try {
       await markAsRead(id);
     } catch (error) {
-      console.error("Error al marcar como leído:", error);
+      if (import.meta.env.DEV)
+        console.error("Error al marcar como leído:", error);
     }
   };
 

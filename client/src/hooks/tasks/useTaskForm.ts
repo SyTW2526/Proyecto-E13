@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useTasks } from "./useTasks";
-import { useLists } from "./useLists";
+import { useLists } from "@/hooks/useLists";
 import type { Task, TaskPriority, TaskStatus } from "@/types/tasks-system/task";
 import type { List } from "@/types/tasks-system/list";
 

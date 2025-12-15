@@ -224,10 +224,10 @@ export function FilterableList({
                 onClick={() =>
                   onItemClick(selectedId === item.id ? null : item.id)
                 }
-                className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border border-border ${
+                className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border active:scale-[0.99] ${
                   selectedId === item.id
-                    ? "bg-primary text-secondary font-medium"
-                    : "bg-card dark:bg-card hover:bg-muted text-muted-foreground hover:text-foreground"
+                    ? "bg-primary text-secondary font-medium shadow-sm"
+                    : "bg-card dark:bg-card border-border/50 hover:border-primary/30 hover:bg-muted hover:shadow-sm hover:shadow-primary/5 text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <div className="flex items-center gap-3 overflow-hidden">

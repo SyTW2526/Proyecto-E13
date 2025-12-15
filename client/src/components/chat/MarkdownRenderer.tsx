@@ -32,7 +32,9 @@ const HighlightedPre = React.lazy(async () => {
     if (!(language in shiki.bundledLanguages)) {
       return <pre {...props}>{children}</pre>;
     }
-    const [tokens, setTokens] = React.useState<any[]>([]);
+    const [tokens, setTokens] = React.useState<
+      Array<Array<{ htmlStyle?: string | object; content: string }>>
+    >([]);
     React.useEffect(() => {
       let mounted = true;
       shiki

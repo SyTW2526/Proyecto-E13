@@ -1,7 +1,7 @@
 import { FormDialog } from "@/components/shared/FormDialog";
 import { TaskFormFields } from "@/components/tasks/TaskFormFields";
 import { CreateListDialog } from "@/components/lists/CreateListDialog";
-import { useTaskForm } from "@/hooks/useTaskForm";
+import { useTaskForm } from "@/hooks/tasks/useTaskForm";
 
 import { useTranslation } from "react-i18next";
 import type { Task } from "@/types/tasks-system/task";

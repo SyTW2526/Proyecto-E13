@@ -95,7 +95,6 @@ interface TextPart {
   text: string;
 }
 
-// For compatibility with AI SDK types, not used
 interface SourcePart {
   type: "source";
   source?: any;

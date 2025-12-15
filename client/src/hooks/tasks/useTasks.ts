@@ -20,7 +20,7 @@ import {
   toggleSortOrder,
   updateTask,
 } from "@/store/slices/tasksSlice";
-import { useAppDispatch, useAppSelector } from "./useRedux";
+import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 
 import { selectAccessibleTasks } from "@/store/slices/permissionsSelectors";
 import type { Task, TaskPriority, TaskStatus } from "@/types/tasks-system/task";

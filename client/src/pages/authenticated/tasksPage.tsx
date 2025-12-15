@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from "react";
-import { useTasks } from "@/hooks/useTasks";
+import { useTasks } from "@/hooks/tasks/useTasks";
 import { useLists } from "@/hooks/useLists";
-import { useTaskFilters } from "@/hooks/useTaskFilters";
+import { useTaskFilters } from "@/hooks/tasks/useTaskFilters";
 import { TaskCard } from "@/components/tasks/cards/TaskCard";
 import { useTranslation } from "react-i18next";
 import CreateTaskDialog from "@/components/tasks/dialogs/CreateTaskDialog";

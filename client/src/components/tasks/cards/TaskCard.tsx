@@ -9,7 +9,7 @@ import {
 } from "@/components/tasks/cards/TaskCardDialogs";
 import CreateTaskDialog from "@/components/tasks/dialogs/CreateTaskDialog";
 import ShareTaskDialog from "@/components/tasks/dialogs/ShareTaskDialog";
-import { useTasks } from "@/hooks/useTasks";
+import { useTasks } from "@/hooks/tasks/useTasks";
 import type { Task } from "@/types/tasks-system/task";
 import type { List } from "@/types/tasks-system/list";
 

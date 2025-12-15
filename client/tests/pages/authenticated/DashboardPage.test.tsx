@@ -6,11 +6,17 @@ import { I18nTestProvider } from "../../helpers/i18nTestProvider";
 vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => ({ user: { name: "Tomás" } }),
 }));
-vi.mock("@/hooks/useTasks", () => ({
+vi.mock("@/hooks/tasks/useTasks", () => ({
   useTasks: () => ({ accessibleTasks: [], fetchAllTasks: vi.fn() }),
 }));
 vi.mock("@/hooks/useLists", () => ({
   useLists: () => ({ accessibleLists: [], fetchAllLists: vi.fn() }),
+}));
+vi.mock("@/hooks/ui/useTypewriter", () => ({
+  useTypewriter: ({ text }: { text: string }) => ({
+    displayText: text,
+    isTyping: false,
+  }),
 }));
 vi.mock("@/hooks/useDashboardCharts", () => ({
   useDashboardCharts: () => ({

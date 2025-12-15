@@ -8,6 +8,7 @@ import type {
 } from "@/types/tasks-system/task";
 import {
   createAsyncThunk,
+  createSelector,
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
@@ -401,71 +402,73 @@ export const selectTaskFilters = (state: { tasks: TasksState }) =>
   state.tasks.filters;
 export const selectTaskSorting = (state: { tasks: TasksState }) =>
   state.tasks.sorting;
-export const selectFilteredTasks = (state: { tasks: TasksState }) => {
-  const { tasks, filters, sorting } = state.tasks;
-  let filtered = [...tasks];
+export const selectFilteredTasks = createSelector(
+  [selectTasks, selectTaskFilters, selectTaskSorting],
+  (tasks, filters, sorting) => {
+    let filtered = [...tasks];
 
-  if (filters.status !== "all") {
-    filtered = filtered.filter((task) => task.status === filters.status);
-  }
-
-  if (filters.listId) {
-    filtered = filtered.filter((task) => task.listId === filters.listId);
-  }
-
-  if (filters.priority !== "all") {
-    filtered = filtered.filter((task) => task.priority === filters.priority);
-  }
-
-  if (filters.search) {
-    const searchLower = filters.search.toLowerCase();
-    filtered = filtered.filter(
-      (task) =>
-        task.name.toLowerCase().includes(searchLower) ||
-        task.description?.toLowerCase().includes(searchLower),
-    );
-  }
-
-  if (filters.favorite !== "all") {
-    filtered = filtered.filter((task) =>
-      filters.favorite === "yes" ? task.favorite : !task.favorite,
-    );
-  }
-
-  filtered.sort((a, b) => {
-    let aValue: string | number;
-    let bValue: string | number;
-
-    switch (sorting.field) {
-      case "name":
-        aValue = a.name.toLowerCase();
-        bValue = b.name.toLowerCase();
-        break;
-      case "dueDate":
-        aValue = a.dueDate || "";
-        bValue = b.dueDate || "";
-        break;
-      case "priority": {
-        const priorityOrder = { LOW: 1, MEDIUM: 2, HIGH: 3, URGENT: 4 };
-        aValue = priorityOrder[a.priority];
-        bValue = priorityOrder[b.priority];
-        break;
-      }
-      case "updatedAt":
-        aValue = a.updatedAt;
-        bValue = b.updatedAt;
-        break;
-      case "createdAt":
-      default:
-        aValue = a.createdAt;
-        bValue = b.createdAt;
-        break;
+    if (filters.status !== "all") {
+      filtered = filtered.filter((task) => task.status === filters.status);
     }
 
-    if (aValue < bValue) return sorting.order === "asc" ? -1 : 1;
-    if (aValue > bValue) return sorting.order === "asc" ? 1 : -1;
-    return 0;
-  });
+    if (filters.listId) {
+      filtered = filtered.filter((task) => task.listId === filters.listId);
+    }
 
-  return filtered;
-};
+    if (filters.priority !== "all") {
+      filtered = filtered.filter((task) => task.priority === filters.priority);
+    }
+
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (task) =>
+          task.name.toLowerCase().includes(searchLower) ||
+          task.description?.toLowerCase().includes(searchLower),
+      );
+    }
+
+    if (filters.favorite !== "all") {
+      filtered = filtered.filter((task) =>
+        filters.favorite === "yes" ? task.favorite : !task.favorite,
+      );
+    }
+
+    filtered.sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (sorting.field) {
+        case "name":
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case "dueDate":
+          aValue = a.dueDate || "";
+          bValue = b.dueDate || "";
+          break;
+        case "priority": {
+          const priorityOrder = { LOW: 1, MEDIUM: 2, HIGH: 3, URGENT: 4 };
+          aValue = priorityOrder[a.priority];
+          bValue = priorityOrder[b.priority];
+          break;
+        }
+        case "updatedAt":
+          aValue = a.updatedAt;
+          bValue = b.updatedAt;
+          break;
+        case "createdAt":
+        default:
+          aValue = a.createdAt;
+          bValue = b.createdAt;
+          break;
+      }
+
+      if (aValue < bValue) return sorting.order === "asc" ? -1 : 1;
+      if (aValue > bValue) return sorting.order === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    return filtered;
+  },
+);

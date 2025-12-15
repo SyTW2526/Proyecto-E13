@@ -16,7 +16,7 @@ import {
   Languages,
 } from "lucide-react";
 import { useSettings } from "@/hooks/useSettings";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/hooks/ui/useTheme";
 import { useTranslation } from "react-i18next";
 import {
   Card,
@@ -37,7 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useUI } from "@/hooks/useUI";
+import { useUI } from "@/hooks/ui/useUI";
 import type { SidebarWidth } from "@/store/slices/uiSlice";
 import { Typewriter } from "@/components/shared/Typewriter";
 

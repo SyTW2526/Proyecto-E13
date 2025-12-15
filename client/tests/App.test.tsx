@@ -52,7 +52,7 @@ vi.mock("@/pages/authenticated/settingsPage", () => ({
   default: () => <div data-testid="settings-page">Settings Page</div>,
 }));
 
-vi.mock("@/components/auth/protectedRoute", () => ({
+vi.mock("@/components/auth/ProtectedRoute", () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="protected-route">{children}</div>
   ),

@@ -68,7 +68,7 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1 }}
-            className="flex items-center justify-center gap-6 text-sm text-muted-foreground"
+            className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-muted-foreground"
           >
             <div className="flex items-center gap-2">
               <Icon as="IconCheck" size={16} className="text-green-500" />

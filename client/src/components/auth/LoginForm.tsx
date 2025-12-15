@@ -60,7 +60,8 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
 
   useEffect(() => {
     if (isAuthenticated) {
-      console.log("Usuario autenticado, redirigiendo al dashboard...");
+      if (import.meta.env.DEV)
+        console.log("Usuario autenticado, redirigiendo al dashboard...");
       navigate("/dashboard", { replace: true });
     }
   }, [isAuthenticated, navigate]);
@@ -95,7 +96,7 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     const apiG = getGis();
     if (!apiG || !googleBtnRef.current) return;
     if (!googleClientId) {
-      console.error("Google Client ID no configurado");
+      if (import.meta.env.DEV) console.error("Google Client ID no configurado");
       setLocalError(t("auth.googleClientIdError"));
       return;
     }
@@ -140,7 +141,8 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
 
       setGoogleBtnRendered(true);
     } catch (error) {
-      console.error("Error al inicializar Google Sign-In:", error);
+      if (import.meta.env.DEV)
+        console.error("Error al inicializar Google Sign-In:", error);
       setLocalError(t("auth.googleInitError"));
     }
   }, [googleClientId, gisReady, googleBtnRendered, loginWithGoogle, t]);

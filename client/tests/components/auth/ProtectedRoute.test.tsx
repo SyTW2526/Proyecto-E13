@@ -1,4 +1,4 @@
-import ProtectedRoute from "@/components/auth/protectedRoute";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";

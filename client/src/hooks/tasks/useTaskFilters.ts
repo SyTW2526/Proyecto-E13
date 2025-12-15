@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTasks } from "./useTasks";
-import { useLists } from "./useLists";
+import { useLists } from "@/hooks/useLists";
 
 export function useTaskFilters() {
   const {

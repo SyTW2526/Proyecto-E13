@@ -7,6 +7,13 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov", "html"],
+      include: ["src/**/*.{ts,js}"],
+      exclude: [
+        "src/**/*.d.ts",
+        "**/node_modules/**",
+        "src/types/**",
+        "src/server.ts",
+      ],
     },
     env: {
       JWT_SECRET: "test-secret",

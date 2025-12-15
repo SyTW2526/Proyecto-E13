@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from "./useRedux";
+import { useAppDispatch, useAppSelector } from "../useRedux";
 import {
   selectSidebarWidth,
   selectTaskCardSize,

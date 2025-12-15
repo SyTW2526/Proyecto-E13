@@ -4,7 +4,7 @@
  * Utiliza un hook personalizado para gestionar el estado del tema.
  */
 
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/hooks/ui/useTheme";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 

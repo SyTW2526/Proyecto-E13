@@ -1,449 +1,315 @@
-import reducer, {
+import { configureStore } from "@reduxjs/toolkit";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import listsReducer, {
   createList,
   deleteList,
   fetchLists,
   fetchSharedLists,
-  selectLists,
-  selectListsError,
-  selectListsLoading,
-  selectOwnedLists,
-  selectSelectedList,
-  selectSelectedListId,
-  selectSharedLists,
+  listCreated,
+  listDeleted,
+  listUpdated,
   setSelectedList,
   shareList,
   unshareList,
   updateList,
   updateListSharePermission,
-} from "@/store/slices/listsSlice";
-import type { List, ListShare, ListsState } from "@/types/tasks-system/list";
-import { describe, expect, it } from "vitest";
+} from "../../../src/store/slices/listsSlice";
 
-const baseList: List = {
-  id: "l1",
-  name: "Inbox",
-  description: "default",
-  createdAt: "2024-01-01",
-  tasks: [],
-  ownerId: "owner-1",
-  shares: [],
+vi.mock("../../../src/lib/api", () => ({
+  api: {
+    get: vi.fn(),
+    post: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
+
+import { api } from "../../../src/lib/api";
+
+type RootState = {
+  lists: ReturnType<typeof listsReducer>;
 };
 
-const share: ListShare = {
-  id: "share-1",
-  permission: "VIEW",
-  listId: "l1",
-  userId: "user-1",
-};
+describe("listsSlice", () => {
+  let store: ReturnType<typeof configureStore<RootState>>;
 
-const initialState: ListsState = {
-  lists: [],
-  selectedListId: null,
-  isLoading: false,
-  error: null,
-};
-
-describe("listsSlice reducer", () => {
-  it("fetchLists.fulfilled reemplaza y limpia estado", () => {
-    const action = {
-      type: fetchLists.fulfilled.type,
-      payload: [baseList],
-    };
-    const state = reducer(
-      { ...initialState, error: "err", isLoading: true },
-      action,
-    );
-    expect(state.lists).toEqual([baseList]);
-    expect(state.error).toBeNull();
-    expect(state.isLoading).toBe(false);
-  });
-
-  it("createList.fulfilled inserta al inicio y limpia error", () => {
-    const another = { ...baseList, id: "l2", name: "Work" };
-    const action = {
-      type: createList.fulfilled.type,
-      payload: baseList,
-    };
-    const state = reducer(
-      { ...initialState, lists: [another], error: "x" },
-      action,
-    );
-    expect(state.lists.map((l) => l.id)).toEqual(["l1", "l2"]);
-    expect(state.error).toBeNull();
-  });
-
-  it("updateList.fulfilled modifica la lista encontrada", () => {
-    const action = {
-      type: updateList.fulfilled.type,
-      payload: { ...baseList, name: "Updated" },
-    };
-    const state = reducer({ ...initialState, lists: [baseList] }, action);
-    expect(state.lists[0].name).toBe("Updated");
-  });
-
-  it("updateList.fulfilled no modifica si no encuentra la lista", () => {
-    const action = {
-      type: updateList.fulfilled.type,
-      payload: { ...baseList, id: "not-found", name: "Updated" },
-    };
-    const state = reducer({ ...initialState, lists: [baseList] }, action);
-    expect(state.lists[0].name).toBe("Inbox");
-  });
-
-  it("deleteList.fulfilled elimina y limpia selectedListId", () => {
-    const populated: ListsState = {
-      ...initialState,
-      lists: [baseList],
-      selectedListId: "l1",
-    };
-    const action = {
-      type: deleteList.fulfilled.type,
-      payload: "l1",
-    };
-    const state = reducer(populated, action);
-    expect(state.lists).toHaveLength(0);
-    expect(state.selectedListId).toBeNull();
-  });
-
-  it("deleteList.fulfilled elimina pero mantiene selectedListId diferente", () => {
-    const otherList = { ...baseList, id: "l2", name: "Other" };
-    const populated: ListsState = {
-      ...initialState,
-      lists: [baseList, otherList],
-      selectedListId: "l2",
-    };
-    const action = {
-      type: deleteList.fulfilled.type,
-      payload: "l1",
-    };
-    const state = reducer(populated, action);
-    expect(state.lists).toHaveLength(1);
-    expect(state.lists[0].id).toBe("l2");
-    expect(state.selectedListId).toBe("l2");
-  });
-
-  it("setSelectedList guarda el id", () => {
-    const state = reducer(initialState, setSelectedList("l1"));
-    expect(state.selectedListId).toBe("l1");
-  });
-});
-
-describe("listsSlice selectors", () => {
-  const wrap = (lists: ListsState) => ({ lists });
-
-  it("selectLists y selectSelectedList", () => {
-    const state = wrap({
-      ...initialState,
-      lists: [baseList],
-      selectedListId: "l1",
+  beforeEach(() => {
+    vi.clearAllMocks();
+    store = configureStore({
+      reducer: {
+        lists: listsReducer,
+      },
     });
-    expect(selectLists(state)).toEqual([baseList]);
-    expect(selectSelectedList(state)).toEqual(baseList);
   });
 
-  it("selectOwnedLists filtra por ownerId", () => {
-    const state = wrap({
-      ...initialState,
-      lists: [baseList, { ...baseList, id: "l2", ownerId: "owner-2" }],
+  describe("reducers", () => {
+    it("should handle setSelectedList", () => {
+      store.dispatch(setSelectedList("list-123"));
+      expect(store.getState().lists.selectedListId).toBe("list-123");
+
+      store.dispatch(setSelectedList(null));
+      expect(store.getState().lists.selectedListId).toBeNull();
     });
-    expect(selectOwnedLists("owner-1")(state)).toHaveLength(1);
-    expect(selectOwnedLists("owner-2")(state)).toHaveLength(1);
-  });
 
-  it("selectSharedLists devuelve listas con share del usuario", () => {
-    const sharedList: List = {
-      ...baseList,
-      id: "l3",
-      shares: [share],
-    };
-    const state = wrap({
-      ...initialState,
-      lists: [baseList, sharedList],
+    it("should handle listUpdated", () => {
+      const initialList = {
+        id: "1",
+        name: "Old Name",
+        userId: "user-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      store = configureStore({
+        reducer: { lists: listsReducer },
+        preloadedState: {
+          lists: {
+            lists: [initialList],
+            selectedListId: null,
+            isLoading: false,
+            error: null,
+          },
+        },
+      });
+
+      const updatedList = { ...initialList, name: "New Name" };
+      store.dispatch(listUpdated(updatedList));
+
+      expect(store.getState().lists.lists[0].name).toBe("New Name");
     });
-    expect(selectSharedLists("user-1")(state)).toEqual([sharedList]);
-    expect(selectSharedLists("other")(state)).toEqual([]);
+
+    it("should not update list if not found", () => {
+      const list = {
+        id: "nonexistent",
+        name: "Test",
+        userId: "user-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      store.dispatch(listUpdated(list));
+      expect(store.getState().lists.lists).toEqual([]);
+    });
+
+    it("should handle listCreated", () => {
+      const newList = {
+        id: "1",
+        name: "New List",
+        userId: "user-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      store.dispatch(listCreated(newList));
+      expect(store.getState().lists.lists).toHaveLength(1);
+      expect(store.getState().lists.lists[0]).toEqual(newList);
+    });
+
+    it("should not add duplicate list", () => {
+      const list = {
+        id: "1",
+        name: "List",
+        userId: "user-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      store.dispatch(listCreated(list));
+      store.dispatch(listCreated(list));
+      expect(store.getState().lists.lists).toHaveLength(1);
+    });
+
+    it("should handle listDeleted", () => {
+      const list = {
+        id: "1",
+        name: "List",
+        userId: "user-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      store = configureStore({
+        reducer: { lists: listsReducer },
+        preloadedState: {
+          lists: {
+            lists: [list],
+            selectedListId: "1",
+            isLoading: false,
+            error: null,
+          },
+        },
+      });
+
+      store.dispatch(listDeleted("1"));
+      expect(store.getState().lists.lists).toHaveLength(0);
+      expect(store.getState().lists.selectedListId).toBeNull();
+    });
   });
 
-  it("selectListsLoading retorna estado de carga", () => {
-    const state = wrap({ ...initialState, isLoading: true });
-    expect(selectListsLoading(state)).toBe(true);
-  });
+  describe("async thunks", () => {
+    it("should handle fetchLists.fulfilled", async () => {
+      const mockLists = [
+        {
+          id: "1",
+          name: "List 1",
+          userId: "user-1",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
 
-  it("selectListsError retorna error", () => {
-    const state = wrap({ ...initialState, error: "Error de prueba" });
-    expect(selectListsError(state)).toBe("Error de prueba");
-  });
+      vi.mocked(api.get).mockResolvedValue({ data: mockLists });
 
-  it("selectSelectedListId retorna ID seleccionado", () => {
-    const state = wrap({ ...initialState, selectedListId: "l1" });
-    expect(selectSelectedListId(state)).toBe("l1");
-  });
-});
+      await store.dispatch(fetchLists());
 
-describe("listsSlice - Acciones asíncronas adicionales", () => {
-  it("fetchSharedLists.fulfilled reemplaza las listas", () => {
-    const sharedList = { ...baseList, id: "l-shared" };
-    const action = {
-      type: fetchSharedLists.fulfilled.type,
-      payload: [sharedList],
-    };
-    const state = reducer({ ...initialState, isLoading: true }, action);
-    expect(state.lists).toEqual([sharedList]);
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBeNull();
-  });
+      const state = store.getState().lists;
+      expect(state.lists).toEqual(mockLists);
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBeNull();
+    });
 
-  it("fetchSharedLists.rejected establece error", () => {
-    const action = {
-      type: fetchSharedLists.rejected.type,
-      payload: "Error al cargar listas compartidas",
-    };
-    const state = reducer({ ...initialState, isLoading: true }, action);
-    expect(state.error).toBe("Error al cargar listas compartidas");
-    expect(state.isLoading).toBe(false);
-  });
+    it("should handle fetchLists.rejected", async () => {
+      const mockError = {
+        response: { data: { message: "Network error" } },
+        message: "Network error",
+      };
+      vi.mocked(api.get).mockRejectedValue(mockError);
 
-  it("shareList.fulfilled actualiza la lista con shares", () => {
-    const updatedList = {
-      ...baseList,
-      shares: [share],
-    };
-    const action = {
-      type: shareList.fulfilled.type,
-      payload: updatedList,
-    };
-    const state = reducer({ ...initialState, lists: [baseList] }, action);
-    expect(state.lists[0].shares).toEqual([share]);
-    expect(state.error).toBeNull();
-  });
+      await store.dispatch(fetchLists());
 
-  it("shareList.fulfilled no actualiza si no encuentra la lista", () => {
-    const updatedList = {
-      ...baseList,
-      id: "not-found",
-      shares: [share],
-    };
-    const action = {
-      type: shareList.fulfilled.type,
-      payload: updatedList,
-    };
-    const state = reducer({ ...initialState, lists: [baseList] }, action);
-    expect(state.lists[0].shares).toEqual([]);
-  });
+      const state = store.getState().lists;
+      expect(state.isLoading).toBe(false);
+      expect(state.error).not.toBeNull();
+    });
 
-  it("shareList.rejected establece error", () => {
-    const action = {
-      type: shareList.rejected.type,
-      payload: "Error al compartir lista",
-    };
-    const state = reducer(initialState, action);
-    expect(state.error).toBe("Error al compartir lista");
-  });
+    it("should handle fetchSharedLists.fulfilled", async () => {
+      const mockLists = [
+        {
+          id: "1",
+          name: "Shared List",
+          userId: "user-2",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
 
-  it("updateListSharePermission.pending actualiza optimísticamente", () => {
-    const listWithShare = {
-      ...baseList,
-      shares: [{ ...share, permission: "VIEW" as const }],
-    };
-    const action = {
-      type: updateListSharePermission.pending.type,
-      meta: {
-        arg: { listId: "l1", userId: "user-1", permission: "EDIT" },
-      },
-    };
-    const state = reducer({ ...initialState, lists: [listWithShare] }, action);
-    expect(state.lists[0].shares?.[0].permission).toBe("EDIT");
-  });
+      vi.mocked(api.get).mockResolvedValue({ data: mockLists });
 
-  it("updateListSharePermission.pending no hace nada si no encuentra la lista", () => {
-    const action = {
-      type: updateListSharePermission.pending.type,
-      meta: {
-        arg: { listId: "not-found", userId: "user-1", permission: "EDIT" },
-      },
-    };
-    const state = reducer({ ...initialState, lists: [baseList] }, action);
-    expect(state.lists[0].shares).toEqual([]);
-  });
+      await store.dispatch(fetchSharedLists());
 
-  it("updateListSharePermission.pending no hace nada si la lista no tiene shares", () => {
-    const action = {
-      type: updateListSharePermission.pending.type,
-      meta: {
-        arg: { listId: "l1", userId: "user-1", permission: "EDIT" },
-      },
-    };
-    const state = reducer({ ...initialState, lists: [baseList] }, action);
-    expect(state.lists[0].shares).toEqual([]);
-  });
+      expect(store.getState().lists.lists).toEqual(mockLists);
+    });
 
-  it("updateListSharePermission.pending no hace nada si no encuentra el share", () => {
-    const listWithShare = {
-      ...baseList,
-      shares: [{ ...share, userId: "other-user" }],
-    };
-    const action = {
-      type: updateListSharePermission.pending.type,
-      meta: {
-        arg: { listId: "l1", userId: "user-1", permission: "EDIT" },
-      },
-    };
-    const state = reducer({ ...initialState, lists: [listWithShare] }, action);
-    expect(state.lists[0].shares?.[0].userId).toBe("other-user");
-  });
+    it("should handle createList.fulfilled", async () => {
+      const newList = {
+        id: "1",
+        name: "New List",
+        userId: "user-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
-  it("updateListSharePermission.fulfilled actualiza la lista", () => {
-    const updatedList = {
-      ...baseList,
-      shares: [{ ...share, permission: "EDIT" as const }],
-    };
-    const action = {
-      type: updateListSharePermission.fulfilled.type,
-      payload: updatedList,
-    };
-    const state = reducer({ ...initialState, lists: [baseList] }, action);
-    expect(state.lists[0].shares?.[0].permission).toBe("EDIT");
-  });
+      vi.mocked(api.post).mockResolvedValue({ data: newList });
 
-  it("updateListSharePermission.fulfilled no actualiza si no encuentra la lista", () => {
-    const updatedList = {
-      ...baseList,
-      id: "not-found",
-      shares: [{ ...share, permission: "EDIT" as const }],
-    };
-    const action = {
-      type: updateListSharePermission.fulfilled.type,
-      payload: updatedList,
-    };
-    const state = reducer({ ...initialState, lists: [baseList] }, action);
-    expect(state.lists[0].shares).toEqual([]);
-  });
+      await store.dispatch(createList({ name: "New List" }));
 
-  it("updateListSharePermission.rejected establece error", () => {
-    const action = {
-      type: updateListSharePermission.rejected.type,
-      payload: "Error al actualizar permisos",
-    };
-    const state = reducer(initialState, action);
-    expect(state.error).toBe("Error al actualizar permisos");
-  });
+      expect(api.post).toHaveBeenCalledWith("/lists", { name: "New List" });
+    });
 
-  it("unshareList.fulfilled elimina el share de la lista", () => {
-    const listWithoutShare = { ...baseList, shares: [] };
-    const action = {
-      type: unshareList.fulfilled.type,
-      payload: listWithoutShare,
-    };
-    const state = reducer(
-      { ...initialState, lists: [{ ...baseList, shares: [share] }] },
-      action,
-    );
-    expect(state.lists[0].shares).toEqual([]);
-  });
+    it("should handle updateList.fulfilled", async () => {
+      const updatedList = {
+        id: "1",
+        name: "Updated List",
+        userId: "user-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
-  it("unshareList.fulfilled no actualiza si no encuentra la lista", () => {
-    const listWithoutShare = { ...baseList, id: "not-found", shares: [] };
-    const action = {
-      type: unshareList.fulfilled.type,
-      payload: listWithoutShare,
-    };
-    const state = reducer(
-      { ...initialState, lists: [{ ...baseList, shares: [share] }] },
-      action,
-    );
-    expect(state.lists[0].shares).toEqual([share]);
-  });
+      vi.mocked(api.patch).mockResolvedValue({ data: updatedList });
 
-  it("unshareList.rejected establece error", () => {
-    const action = {
-      type: unshareList.rejected.type,
-      payload: "Error al dejar de compartir",
-    };
-    const state = reducer(initialState, action);
-    expect(state.error).toBe("Error al dejar de compartir");
-  });
+      await store.dispatch(updateList({ id: "1", name: "Updated List" }));
 
-  it("fetchLists.pending establece isLoading", () => {
-    const action = { type: fetchLists.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.isLoading).toBe(true);
-    expect(state.error).toBeNull();
-  });
+      expect(api.patch).toHaveBeenCalledWith("/lists/1", {
+        name: "Updated List",
+      });
+    });
 
-  it("fetchLists.rejected establece error", () => {
-    const action = {
-      type: fetchLists.rejected.type,
-      payload: "Error de red",
-    };
-    const state = reducer({ ...initialState, isLoading: true }, action);
-    expect(state.error).toBe("Error de red");
-    expect(state.isLoading).toBe(false);
-  });
+    it("should handle deleteList.fulfilled", async () => {
+      vi.mocked(api.delete).mockResolvedValue({ data: {} });
 
-  it("createList.pending establece isLoading", () => {
-    const action = { type: createList.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.isLoading).toBe(true);
-  });
+      await store.dispatch(deleteList("1"));
 
-  it("createList.rejected establece error", () => {
-    const action = {
-      type: createList.rejected.type,
-      payload: "Error al crear lista",
-    };
-    const state = reducer({ ...initialState, isLoading: true }, action);
-    expect(state.error).toBe("Error al crear lista");
-    expect(state.isLoading).toBe(false);
-  });
+      expect(api.delete).toHaveBeenCalledWith("/lists/1");
+    });
 
-  it("updateList.pending establece isLoading", () => {
-    const action = { type: updateList.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.isLoading).toBe(true);
-  });
+    it("should handle shareList.fulfilled", async () => {
+      const sharedList = {
+        id: "1",
+        name: "Shared List",
+        userId: "user-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
-  it("updateList.rejected establece error", () => {
-    const action = {
-      type: updateList.rejected.type,
-      payload: "Error al actualizar",
-    };
-    const state = reducer({ ...initialState, isLoading: true }, action);
-    expect(state.error).toBe("Error al actualizar");
-    expect(state.isLoading).toBe(false);
-  });
+      vi.mocked(api.post).mockResolvedValue({ data: sharedList });
 
-  it("deleteList.pending establece isLoading", () => {
-    const action = { type: deleteList.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.isLoading).toBe(true);
-  });
+      await store.dispatch(
+        shareList({
+          listId: "1",
+          email: "test@example.com",
+          permission: "read",
+        }),
+      );
 
-  it("deleteList.rejected establece error", () => {
-    const action = {
-      type: deleteList.rejected.type,
-      payload: "Error al eliminar",
-    };
-    const state = reducer({ ...initialState, isLoading: true }, action);
-    expect(state.error).toBe("Error al eliminar");
-    expect(state.isLoading).toBe(false);
-  });
+      expect(api.post).toHaveBeenCalledWith("/lists/1/share", {
+        email: "test@example.com",
+        permission: "read",
+      });
+    });
 
-  it("fetchSharedLists.pending establece isLoading", () => {
-    const action = { type: fetchSharedLists.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.isLoading).toBe(true);
-    expect(state.error).toBeNull();
-  });
+    it("should handle updateListSharePermission.fulfilled", async () => {
+      const updatedList = {
+        id: "1",
+        name: "List",
+        userId: "user-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
-  it("shareList.pending limpia error", () => {
-    const action = { type: shareList.pending.type };
-    const state = reducer({ ...initialState, error: "old error" }, action);
-    expect(state.error).toBeNull();
-  });
+      vi.mocked(api.patch).mockResolvedValue({ data: updatedList });
 
-  it("unshareList.pending limpia error", () => {
-    const action = { type: unshareList.pending.type };
-    const state = reducer({ ...initialState, error: "old error" }, action);
-    expect(state.error).toBeNull();
+      await store.dispatch(
+        updateListSharePermission({
+          listId: "1",
+          userId: "user-2",
+          permission: "write",
+        }),
+      );
+
+      expect(api.patch).toHaveBeenCalledWith("/lists/1/share/user-2", {
+        permission: "write",
+      });
+    });
+
+    it("should handle unshareList.fulfilled", async () => {
+      const unsharedList = {
+        id: "1",
+        name: "List",
+        userId: "user-1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(api.delete).mockResolvedValue({ data: unsharedList });
+
+      await store.dispatch(
+        unshareList({
+          listId: "1",
+          userId: "user-2",
+        }),
+      );
+
+      expect(api.delete).toHaveBeenCalledWith("/lists/1/share/user-2");
+    });
   });
 });

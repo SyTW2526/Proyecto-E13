@@ -1,4 +1,4 @@
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/hooks/ui/useTheme";
 import themeReducer from "@/store/slices/themeSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import { act, renderHook } from "@testing-library/react";

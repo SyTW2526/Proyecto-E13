@@ -3,8 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { dashboardCards } from "@/config/dashboardConfig";
 import { useTranslation } from "react-i18next";
 import FeatureCard from "@/components/shared/FeatureCard";
-import Icon from "@/components/ui/icon";
-import { useTasks } from "@/hooks/useTasks";
+import { useTasks } from "@/hooks/tasks/useTasks";
 import { useLists } from "@/hooks/useLists";
 import { useDashboardCharts } from "@/hooks/useDashboardCharts";
 import {

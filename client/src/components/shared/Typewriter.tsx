@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { useTypewriter } from "@/hooks/useTypewriter";
+import { useTypewriter } from "@/hooks/ui/useTypewriter";
 import { cn } from "@/lib/utils";
 
 interface TypewriterProps {
@@ -23,7 +23,7 @@ export const Typewriter = memo(function Typewriter({
   cursorChar = "|",
   onComplete,
 }: TypewriterProps) {
-  const { displayText, isTyping } = useTypewriter({
+  const { displayText } = useTypewriter({
     text,
     speed,
     delay,

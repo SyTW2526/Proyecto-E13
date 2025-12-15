@@ -10,7 +10,7 @@ import SettingsPage from "@/pages/authenticated/settingsPage";
 import TasksPage from "@/pages/authenticated/tasksPage";
 import SharedPage from "@/pages/authenticated/sharedPage";
 import ContactsPage from "@/pages/public/contactsPage";
-import ProtectedRoute from "@/components/auth/protectedRoute";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Footer from "@/components/layout/Footer";
 import AppMenubar from "@/components/layout/AppMenubar";
 import { useSocket } from "@/hooks/useSocket";

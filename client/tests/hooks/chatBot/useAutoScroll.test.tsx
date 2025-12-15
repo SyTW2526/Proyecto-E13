@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { useAutoScroll } from "../../src/hooks/chatBot/useAutoScroll";
+import { useAutoScroll } from "../../../src/hooks/chatBot/useAutoScroll";
 
 describe("useAutoScroll", () => {
   let mockContainer: HTMLDivElement;

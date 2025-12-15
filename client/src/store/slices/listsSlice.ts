@@ -3,6 +3,7 @@ import type { SharePermission } from "@/types/permissions";
 import type { List, ListsState } from "@/types/tasks-system/list";
 import {
   createAsyncThunk,
+  createSelector,
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
@@ -316,11 +317,15 @@ export const selectSelectedList = (state: { lists: ListsState }) => {
   const { lists, selectedListId } = state.lists;
   return lists.find((list) => list.id === selectedListId) || null;
 };
-export const selectOwnedLists =
-  (userId: string) => (state: { lists: ListsState }) =>
-    state.lists.lists.filter((list) => list.ownerId === userId);
-export const selectSharedLists =
-  (userId: string) => (state: { lists: ListsState }) =>
-    state.lists.lists.filter((list) =>
+export const selectOwnedLists = createSelector(
+  [selectLists, (_state: { lists: ListsState }, userId: string) => userId],
+  (lists, userId) => lists.filter((list) => list.ownerId === userId),
+);
+
+export const selectSharedLists = createSelector(
+  [selectLists, (_state: { lists: ListsState }, userId: string) => userId],
+  (lists, userId) =>
+    lists.filter((list) =>
       list.shares?.some((share) => share.userId === userId),
-    );
+    ),
+);

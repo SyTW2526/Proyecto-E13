@@ -39,8 +39,12 @@ export function useLists() {
   const selectedList = useAppSelector(selectSelectedList);
 
   const accessibleLists = useAppSelector(selectAccessibleLists);
-  const ownedLists = useAppSelector(selectOwnedLists(user?.id || ""));
-  const sharedLists = useAppSelector(selectSharedLists(user?.id || ""));
+  const ownedLists = useAppSelector((state) =>
+    selectOwnedLists(state, user?.id || ""),
+  );
+  const sharedLists = useAppSelector((state) =>
+    selectSharedLists(state, user?.id || ""),
+  );
 
   const fetchAllLists = () => dispatch(fetchLists());
   const fetchSharedListsAction = () => dispatch(fetchSharedLists());

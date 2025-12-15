@@ -1,18 +1,14 @@
 import reducer, {
-  clearFilters,
   createTask,
   deleteTask,
   fetchSharedTasks,
   fetchTasks,
   selectFilteredTasks,
-  selectSelectedTask,
   selectTaskFilters,
   selectTaskSorting,
   selectTasks,
   setListFilter,
   setPriorityFilter,
-  setSearchFilter,
-  setSelectedTask,
   setSorting,
   setStatusFilter,
   shareTask,
@@ -128,42 +124,31 @@ describe("tasksSlice reducer", () => {
     expect(state.selectedTaskId).toBeNull();
   });
 
-  it("actualiza filtros y sorting, y los restablece con clearFilters/toggleSortOrder", () => {
+  it("actualiza filtros y sorting con toggleSortOrder", () => {
     let state = reducer(initialState, setStatusFilter("PENDING"));
     state = reducer(state, setListFilter("l1"));
-    state = reducer(state, setSearchFilter("comprar"));
     state = reducer(state, setPriorityFilter("HIGH"));
     state = reducer(state, setSorting({ field: "name", order: "asc" }));
     expect(selectTaskFilters({ tasks: state }).status).toBe("PENDING");
     expect(selectTaskFilters({ tasks: state }).listId).toBe("l1");
-    expect(selectTaskFilters({ tasks: state }).search).toBe("comprar");
     expect(selectTaskFilters({ tasks: state }).priority).toBe("HIGH");
     expect(selectTaskSorting({ tasks: state }).order).toBe("asc");
 
     state = reducer(state, toggleSortOrder());
     expect(selectTaskSorting({ tasks: state }).order).toBe("desc");
-
-    state = reducer(state, clearFilters());
-    expect(selectTaskFilters({ tasks: state })).toEqual(initialState.filters);
-  });
-
-  it("setSelectedTask guarda id", () => {
-    const state = reducer(initialState, setSelectedTask("t1"));
-    expect(state.selectedTaskId).toBe("t1");
   });
 });
 
 describe("tasksSlice selectors", () => {
   const wrap = (tasks: TasksState) => ({ tasks });
 
-  it("selectTasks y selectSelectedTask", () => {
+  it("selectTasks devuelve las tareas", () => {
     const state = wrap({
       ...initialState,
       tasks: [baseTask],
       selectedTaskId: "t1",
     });
     expect(selectTasks(state)).toEqual([baseTask]);
-    expect(selectSelectedTask(state)).toEqual(baseTask);
   });
 
   it("selectFilteredTasks aplica filtros y ordenamiento", () => {

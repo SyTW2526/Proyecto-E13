@@ -61,7 +61,6 @@ interface ShareDialogProps {
 export function ShareDialog({
   open,
   onOpenChange,
-  item: _item,
   type,
   shares,
   onShare,
@@ -87,7 +86,7 @@ export function ShareDialog({
       setEmail("");
     } catch (err) {
       setError(t(`share.errorShare${type === "task" ? "Task" : "List"}`));
-      console.error(err);
+      if (import.meta.env.DEV) console.error(err);
     }
   };
 
@@ -97,7 +96,7 @@ export function ShareDialog({
         await onRemoveShare(collaboratorToRemove);
         setCollaboratorToRemove(null);
       } catch (err) {
-        console.error(err);
+        if (import.meta.env.DEV) console.error(err);
       }
     }
   };
