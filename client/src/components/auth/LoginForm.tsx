@@ -17,8 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
-import type { AuthenticateMode } from "@/types/components";
-import type { LoginFormProps } from "@/types/components";
+import type { AuthenticateMode, LoginFormProps } from "@/types/components";
 import { firstZodIssueMessage } from "@/lib/utils";
 import {
   googleAuthSchema,
@@ -27,10 +26,10 @@ import {
 } from "@/schemas/validationSchemas";
 
 function getGis() {
-  return window.google?.accounts?.id;
+  return globalThis.google?.accounts?.id;
 }
 
-export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
+export function LoginForm({ forceMode, linkTo }: Readonly<LoginFormProps>) {
   const { t } = useTranslation();
   const [mode, setMode] = useState<AuthenticateMode>(forceMode ?? "login");
   const [email, setEmail] = useState("");
@@ -82,14 +81,13 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
       return false;
     };
     if (!checkGisLoaded()) {
-      const i = window.setInterval(() => {
+      const i = globalThis.setInterval(() => {
         if (checkGisLoaded()) {
-          window.clearInterval(i);
+          globalThis.clearInterval(i);
         }
       }, 300);
-      return () => window.clearInterval(i);
+      return () => globalThis.clearInterval(i);
     }
-    return;
   }, []);
 
   useEffect(() => {
@@ -106,24 +104,26 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
     try {
       apiG.initialize({
         client_id: googleClientId,
-        callback: async (resp) => {
-          const idToken = resp?.credential;
-          if (!idToken) {
-            setLocalError(t("auth.googleAuthError"));
-            return;
-          }
+        callback: (resp) => {
+          void (async () => {
+            const idToken = resp?.credential;
+            if (!idToken) {
+              setLocalError(t("auth.googleAuthError"));
+              return;
+            }
 
-          const tokenValidation = googleAuthSchema.safeParse({ idToken });
-          if (!tokenValidation.success) {
-            setLocalError(firstZodIssueMessage(tokenValidation.error));
-            return;
-          }
-          const result = await loginWithGoogle(tokenValidation.data.idToken);
-          if (result.success) {
-            setOk(t("auth.googleLoginSuccess"));
-          } else {
-            setLocalError(result.error || t("auth.googleLoginError"));
-          }
+            const tokenValidation = googleAuthSchema.safeParse({ idToken });
+            if (!tokenValidation.success) {
+              setLocalError(firstZodIssueMessage(tokenValidation.error));
+              return;
+            }
+            const result = await loginWithGoogle(tokenValidation.data.idToken);
+            if (result.success) {
+              setOk(t("auth.googleLoginSuccess"));
+            } else {
+              setLocalError(result.error || t("auth.googleLoginError"));
+            }
+          })();
         },
         ux_mode: "popup",
         use_fedcm_for_prompt: false,
@@ -249,13 +249,25 @@ export function LoginForm({ forceMode, linkTo }: LoginFormProps) {
                     {ok}
                   </FieldDescription>
                 )}
-                <Button type="submit" disabled={isLoading} className="w-full">
-                  {isLoading
-                    ? t("auth.loading")
-                    : mode === "login"
-                      ? t("auth.enter")
-                      : t("auth.registerMe")}
-                </Button>
+                {(() => {
+                  let buttonText: string;
+                  if (isLoading) {
+                    buttonText = t("auth.loading");
+                  } else if (mode === "login") {
+                    buttonText = t("auth.enter");
+                  } else {
+                    buttonText = t("auth.registerMe");
+                  }
+                  return (
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-full"
+                    >
+                      {buttonText}
+                    </Button>
+                  );
+                })()}
                 {forceMode ? (
                   <Link
                     to={otherHref}

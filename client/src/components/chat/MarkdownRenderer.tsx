@@ -7,7 +7,7 @@ interface MarkdownRendererProps {
   children: string;
 }
 
-export function MarkdownRenderer({ children }: MarkdownRendererProps) {
+export function MarkdownRenderer({ children }: Readonly<MarkdownRendererProps>) {
   return (
     <div className="space-y-3">
       <Markdown remarkPlugins={[remarkGfm]} components={COMPONENTS}>
@@ -28,14 +28,15 @@ const HighlightedPre = React.lazy(async () => {
     children,
     language,
     ...props
-  }: HighlightedPre) {
-    if (!(language in shiki.bundledLanguages)) {
-      return <pre {...props}>{children}</pre>;
-    }
+  }: Readonly<HighlightedPre>) {
+    const isValidLanguage = language in shiki.bundledLanguages;
     const [tokens, setTokens] = React.useState<
       Array<Array<{ htmlStyle?: string | object; content: string }>>
     >([]);
+
     React.useEffect(() => {
+      if (!isValidLanguage) return;
+
       let mounted = true;
       shiki
         .codeToTokens(children, {
@@ -52,40 +53,44 @@ const HighlightedPre = React.lazy(async () => {
       return () => {
         mounted = false;
       };
-    }, [children, language]);
-    if (!tokens.length) {
+    }, [children, language, isValidLanguage]);
+
+    if (!isValidLanguage || !tokens.length) {
       return <pre {...props}>{children}</pre>;
     }
     return (
       <pre {...props}>
         <code>
-          {tokens.map((line, lineIndex) => (
-            <>
-              <span key={lineIndex}>
-                {line.map(
-                  (
-                    token: { htmlStyle?: string | object; content: string },
-                    tokenIndex: number,
-                  ) => {
-                    const style =
-                      typeof token.htmlStyle === "string"
-                        ? undefined
-                        : token.htmlStyle;
-                    return (
-                      <span
-                        key={tokenIndex}
-                        className="text-shiki-light bg-shiki-light-bg dark:text-shiki-dark dark:bg-shiki-dark-bg"
-                        style={style}
-                      >
-                        {token.content}
-                      </span>
-                    );
-                  },
-                )}
-              </span>
-              {lineIndex !== tokens.length - 1 && "\n"}
-            </>
-          ))}
+          {tokens.map((line) => {
+            const lineContent = line.map((t) => t.content).join("");
+            return (
+              <>
+                <span key={`line-${lineContent.slice(0, 50)}`}>
+                  {line.map(
+                    (
+                      token: { htmlStyle?: string | object; content: string },
+                      tokenIndex: number,
+                    ) => {
+                      const style =
+                        typeof token.htmlStyle === "string"
+                          ? undefined
+                          : token.htmlStyle;
+                      return (
+                        <span
+                          key={`${tokenIndex}-${token.content}`}
+                          className="text-shiki-light bg-shiki-light-bg dark:text-shiki-dark dark:bg-shiki-dark-bg"
+                          style={style}
+                        >
+                          {token.content}
+                        </span>
+                      );
+                    },
+                  )}
+                </span>
+                {tokens.indexOf(line) !== tokens.length - 1 && "\n"}
+              </>
+            );
+          })}
         </code>
       </pre>
     );
