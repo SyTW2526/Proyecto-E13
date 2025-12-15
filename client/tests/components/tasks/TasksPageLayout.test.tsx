@@ -12,6 +12,12 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
+vi.mock("@/components/shared/Typewriter", () => ({
+  Typewriter: ({ text, className }: { text: string; className?: string }) => (
+    <h1 className={className}>{text}</h1>
+  ),
+}));
+
 vi.mock("@/components/tasks/FilterableList", () => ({
   FilterableList: ({ title }: { title: string }) => (
     <div data-testid="filterable-list">{title}</div>

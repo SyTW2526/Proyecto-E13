@@ -25,7 +25,8 @@ describe("JWT Utils", () => {
       process.env.JWT_SECRET = "";
       const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-      await import("../../src/utils/jwt");
+      const { generateToken } = await import("../../src/utils/jwt");
+      generateToken(mockPayload);
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining("JWT_SECRET not set"),
