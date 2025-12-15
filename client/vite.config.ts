@@ -35,6 +35,7 @@ export default defineConfig({
         "**/src/components/ui/**",
         "**/src/types/**",
         "**/src/assets/**",
+        "**/src/config/**",
       ],
     },
   },

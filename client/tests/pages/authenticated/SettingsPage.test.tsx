@@ -69,7 +69,7 @@ describe("SettingsPage", () => {
           isInitializing: false,
         },
         theme: { theme: "light" },
-        ui: { sidebarWidth: "normal", taskCardSize: "normal" },
+        ui: { sidebarWidth: "normal", taskCardSize: 2 },
       },
     });
   });
@@ -84,60 +84,32 @@ describe("SettingsPage", () => {
     );
   };
 
-  it("renders settings page", () => {
+  it("renders all settings sections", () => {
     renderPage();
     expect(screen.getByText("settings.title")).toBeInTheDocument();
-  });
-
-  it("renders profile section", () => {
-    renderPage();
     expect(screen.getByText("settings.profile.title")).toBeInTheDocument();
-  });
-
-  it("renders preferences section", () => {
-    renderPage();
     expect(screen.getByText("settings.preferences.title")).toBeInTheDocument();
-  });
-
-  it("renders notifications section", () => {
-    renderPage();
     expect(
       screen.getByText("settings.notifications.title"),
     ).toBeInTheDocument();
-  });
-
-  it("renders privacy section", () => {
-    renderPage();
     expect(screen.getByText("settings.privacy.title")).toBeInTheDocument();
   });
 
-  it("renders name input with user name", () => {
+  it("renders profile form with user data", () => {
     renderPage();
     const nameInput = screen.getByLabelText(/settings.profile.name/i);
     expect(nameInput).toHaveValue("Test User");
-  });
-
-  it("renders email input disabled", () => {
-    renderPage();
     const emailInput = screen.getByLabelText(/settings.profile.email/i);
     expect(emailInput).toBeDisabled();
-  });
-
-  it("renders save profile button", () => {
-    renderPage();
     const saveButtons = screen.getAllByText("settings.profile.saveChanges");
     expect(saveButtons.length).toBeGreaterThan(0);
   });
 
-  it("renders delete account button", () => {
+  it("renders privacy and notification controls", () => {
     renderPage();
     expect(
       screen.getByText("settings.privacy.deleteAccount"),
     ).toBeInTheDocument();
-  });
-
-  it("renders email notifications switch", () => {
-    renderPage();
     const switches = screen.getAllByRole("switch");
     expect(switches.length).toBeGreaterThan(0);
   });

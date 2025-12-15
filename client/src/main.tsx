@@ -1,9 +1,3 @@
-/**
- * @file main.tsx
- * @description Punto de entrada principal de la aplicación React.
- * Configura el enrutador del navegador, Redux Provider y renderiza el componente App.
- */
-
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./styles/index.css";

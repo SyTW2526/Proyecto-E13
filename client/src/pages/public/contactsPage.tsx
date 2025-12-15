@@ -1,9 +1,3 @@
-/**
- * @file ContactsPage.tsx
- * @description Página de contactos que muestra información del equipo
- * con tarjetas individuales para cada miembro. Incluye nombre, email
- * y enlace al perfil ULL.
- */
 import {
   Card,
   CardContent,

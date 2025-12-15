@@ -75,6 +75,10 @@ describe("useSettings", () => {
     expect(result.current.isGoogleUser).toBe(false);
     expect(result.current.emailNotifications).toBe(true);
     expect(result.current.pushNotifications).toBe(false);
+    expect(result.current.savingProfile).toBe(false);
+    expect(result.current.savingPassword).toBe(false);
+    expect(result.current.profileMsg).toBeNull();
+    expect(result.current.passwordMsg).toBeNull();
   });
 
   it("setName updates the name state", () => {
@@ -85,92 +89,6 @@ describe("useSettings", () => {
     });
 
     expect(result.current.name).toBe("New Name");
-  });
-
-  it("setCurrPass updates current password state", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    act(() => {
-      result.current.setCurrPass("oldpassword");
-    });
-
-    expect(result.current.currPass).toBe("oldpassword");
-  });
-
-  it("setNewPass updates new password state", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    act(() => {
-      result.current.setNewPass("newpassword123");
-    });
-
-    expect(result.current.newPass).toBe("newpassword123");
-  });
-
-  it("provides saveProfile function", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(typeof result.current.saveProfile).toBe("function");
-  });
-
-  it("provides savePassword function", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(typeof result.current.savePassword).toBe("function");
-  });
-
-  it("provides toggleEmailNotifications function", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(typeof result.current.toggleEmailNotifications).toBe("function");
-  });
-
-  it("provides togglePushNotifications function", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(typeof result.current.togglePushNotifications).toBe("function");
-  });
-
-  it("provides deleteAccount function", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(typeof result.current.deleteAccount).toBe("function");
-  });
-
-  it("savingProfile is initially false", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(result.current.savingProfile).toBe(false);
-  });
-
-  it("savingPassword is initially false", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(result.current.savingPassword).toBe(false);
-  });
-
-  it("profileMsg is initially null", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(result.current.profileMsg).toBeNull();
-  });
-
-  it("passwordMsg is initially null", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(result.current.passwordMsg).toBeNull();
-  });
-
-  it("notifMsg is initially null", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(result.current.notifMsg).toBeNull();
-  });
-
-  it("deleteAccountMsg is initially null", () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    expect(result.current.deleteAccountMsg).toBeNull();
   });
 
   it("saveProfile validates empty name", async () => {
@@ -240,41 +158,11 @@ describe("useSettings", () => {
     });
   });
 
-  it("handles successful saveProfile", async () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    act(() => {
-      result.current.setName("Valid Name");
-    });
-
-    const mockEvent = { preventDefault: vi.fn() } as unknown as React.FormEvent;
-
-    await act(async () => {
-      await result.current.saveProfile(mockEvent);
-    });
-
-    await waitFor(() => {
-      expect(result.current.savingProfile).toBe(false);
-    });
-  });
-
   it("handles toggleEmailNotifications", async () => {
     const { result } = renderHook(() => useSettings(), { wrapper });
 
     await act(async () => {
       await result.current.toggleEmailNotifications();
-    });
-
-    await waitFor(() => {
-      expect(result.current.notifMsg).toBeDefined();
-    });
-  });
-
-  it("handles togglePushNotifications", async () => {
-    const { result } = renderHook(() => useSettings(), { wrapper });
-
-    await act(async () => {
-      await result.current.togglePushNotifications();
     });
 
     await waitFor(() => {

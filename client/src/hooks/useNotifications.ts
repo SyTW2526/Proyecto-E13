@@ -17,23 +17,14 @@ export function useNotifications() {
   const error = useAppSelector(selectNotificationsError);
   const unreadCount = useAppSelector(selectUnreadCount);
 
-  /**
-   * Cargar notificaciones desde la API
-   */
   const loadNotifications = useCallback(() => {
     dispatch(fetchNotifications());
   }, [dispatch]);
 
-  /**
-   * Cargar notificaciones al montar el componente
-   */
   useEffect(() => {
     loadNotifications();
   }, [loadNotifications]);
 
-  /**
-   * Marcar una notificación como leída
-   */
   const markAsRead = useCallback(
     async (notificationId: string) => {
       await dispatch(markNotificationAsRead(notificationId)).unwrap();
@@ -41,9 +32,6 @@ export function useNotifications() {
     [dispatch],
   );
 
-  /**
-   * Marcar todas las notificaciones como leídas
-   */
   const markAllAsRead = useCallback(async () => {
     await dispatch(markAllNotificationsAsRead()).unwrap();
   }, [dispatch]);

@@ -36,7 +36,6 @@ export function TaskFormFields({
 
   return (
     <>
-      {/* Nombre y Categoría - 1 columna en móvil, 2 en desktop */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <FormField
           label={t("tasks.fields.name.label")}
@@ -70,9 +69,7 @@ export function TaskFormFields({
         </FormField>
       </div>
 
-      {/* Prioridad y Estado - 1 columna en móvil, 2 en desktop */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        {/* Fecha de vencimiento */}
         <FormField label={t("tasks.fields.dueDate.label")} htmlFor="dueDate">
           <Input
             id="dueDate"
@@ -110,7 +107,6 @@ export function TaskFormFields({
         </FormField>
       </div>
 
-      {/* Descripción */}
       <FormField
         label={t("tasks.fields.description.label")}
         htmlFor="description"

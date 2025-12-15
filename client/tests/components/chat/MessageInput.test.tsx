@@ -73,98 +73,62 @@ describe("MessageInput", () => {
     vi.clearAllMocks();
   });
 
-  it("debe renderizar el componente MessageInput", () => {
-    render(<MessageInput {...defaultProps} />);
+  it("debe renderizar y manejar placeholder personalizado", () => {
+    const { rerender } = render(<MessageInput {...defaultProps} />);
     expect(
       screen.getByPlaceholderText("Write your prompt here..."),
     ).toBeDefined();
-  });
 
-  it("debe mostrar placeholder personalizado", () => {
-    render(<MessageInput {...defaultProps} placeholder="Custom placeholder" />);
-    expect(screen.getByPlaceholderText("Custom placeholder")).toBeDefined();
+    rerender(<MessageInput {...defaultProps} placeholder="Custom" />);
+    expect(screen.getByPlaceholderText("Custom")).toBeDefined();
   });
 
   it("debe actualizar el valor al escribir", async () => {
     const user = userEvent.setup();
     render(<MessageInput {...defaultProps} />);
-
     const textarea = screen.getByRole("textbox");
     await user.type(textarea, "Test message");
-
     expect(mockOnChange).toHaveBeenCalled();
   });
 
-  it("debe enviar al presionar Enter", () => {
+  it("debe manejar el envío con Enter pero no con Shift+Enter", () => {
     const form = document.createElement("form");
     const requestSubmit = vi.fn();
     form.requestSubmit = requestSubmit;
-
     const { container } = render(
       <MessageInput {...defaultProps} value="Test" />,
     );
-    const textarea = container.querySelector("textarea");
+    const textarea = container.querySelector("textarea")!;
+    Object.defineProperty(textarea, "form", {
+      value: form,
+      configurable: true,
+    });
 
-    if (textarea) {
-      Object.defineProperty(textarea, "form", {
-        value: form,
-        configurable: true,
-      });
+    fireEvent.keyDown(textarea, { key: "Enter", shiftKey: true });
+    expect(requestSubmit).not.toHaveBeenCalled();
 
-      fireEvent.keyDown(textarea, { key: "Enter", shiftKey: false });
-      expect(requestSubmit).toHaveBeenCalled();
-    }
+    fireEvent.keyDown(textarea, { key: "Enter", shiftKey: false });
+    expect(requestSubmit).toHaveBeenCalled();
   });
 
-  it("no debe enviar al presionar Shift+Enter", () => {
-    const form = document.createElement("form");
-    const requestSubmit = vi.fn();
-    form.requestSubmit = requestSubmit;
-
-    const { container } = render(
-      <MessageInput {...defaultProps} value="Test" />,
-    );
-    const textarea = container.querySelector("textarea");
-
-    if (textarea) {
-      Object.defineProperty(textarea, "form", {
-        value: form,
-        configurable: true,
-      });
-
-      fireEvent.keyDown(textarea, { key: "Enter", shiftKey: true });
-      expect(requestSubmit).not.toHaveBeenCalled();
-    }
-  });
-
-  it("debe mostrar botón stop cuando está generando", () => {
-    render(
-      <MessageInput {...defaultProps} isGenerating={true} stop={mockStop} />,
-    );
-    expect(screen.getByLabelText("Stop generating")).toBeDefined();
-  });
-
-  it("debe llamar a stop al hacer click en el botón", async () => {
+  it("debe mostrar y manejar botón de stop", async () => {
     const user = userEvent.setup();
     render(
       <MessageInput {...defaultProps} isGenerating={true} stop={mockStop} />,
     );
 
     const stopButton = screen.getByLabelText("Stop generating");
+    expect(stopButton).toBeDefined();
     await user.click(stopButton);
-
     expect(mockStop).toHaveBeenCalled();
   });
 
-  it("debe deshabilitar submit cuando el valor está vacío", () => {
-    render(<MessageInput {...defaultProps} value="" />);
+  it("debe gestionar estado del botón submit (disabled si vacío)", () => {
+    const { rerender } = render(<MessageInput {...defaultProps} value="" />);
     const submitButton = screen.getByLabelText("Send message");
     expect(submitButton.hasAttribute("disabled")).toBe(true);
-  });
 
-  it("debe habilitar submit cuando hay texto", () => {
-    render(<MessageInput {...defaultProps} value="Test" />);
-    const submitButton = screen.getByLabelText("Send message");
+    rerender(<MessageInput {...defaultProps} value="Test" />);
     expect(submitButton.hasAttribute("disabled")).toBe(false);
   });
 

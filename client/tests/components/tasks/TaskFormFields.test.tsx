@@ -1,99 +1,100 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { TaskFormFields } from "@/components/tasks/TaskFormFields";
-import { I18nTestProvider } from "../../helpers/i18nTestProvider";
+import userEvent from "@testing-library/user-event";
 
-const mockUpdateField = vi.fn();
-const mockFormData = {
-  name: "",
-  description: "",
-  priority: "MEDIUM" as const,
-  status: "PENDING" as const,
-  listId: "list-1",
-  dueDate: "",
-};
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
 
-const mockLists = [
-  {
-    id: "list-1",
-    name: "Personal",
-    createdAt: "2024-01-01",
-    tasks: [],
-    ownerId: "u1",
-    shares: [],
-  },
-  {
-    id: "list-2",
-    name: "Work",
-    createdAt: "2024-01-01",
-    tasks: [],
-    ownerId: "u1",
-    shares: [],
-  },
-];
+vi.mock("@/components/ui/combobox", () => ({
+  Combobox: ({ onValueChange, onCreateNew }: any) => (
+    <div data-testid="combobox">
+      <button onClick={() => onValueChange("list-2")}>Select List</button>
+      <button onClick={onCreateNew}>Create List</button>
+    </div>
+  ),
+}));
+
+vi.mock("@/components/tasks/TaskFilters", () => ({
+  TaskPriorityFilter: ({ onChange }: any) => (
+    <button onClick={() => onChange("HIGH")}>Set Priority</button>
+  ),
+  TaskStatusFilter: ({ onChange }: any) => (
+    <button onClick={() => onChange("IN_PROGRESS")}>Set Status</button>
+  ),
+}));
+
+vi.mock("@/components/shared/Field", () => ({
+  FormField: ({ label, children, htmlFor }: any) => (
+    <div>
+      <label htmlFor={htmlFor}>{label}</label>
+      {children}
+    </div>
+  ),
+}));
 
 describe("TaskFormFields", () => {
+  const mockFormData = {
+    name: "Test Task",
+    description: "Desc",
+    priority: "MEDIUM" as const,
+    status: "PENDING" as const,
+    listId: "list-1",
+    dueDate: "2024-12-31",
+  };
+  const mockUpdateField = vi.fn();
+  const mockCreateList = vi.fn();
+
+  const defaultProps = {
+    formData: mockFormData,
+    updateField: mockUpdateField,
+    accessibleLists: [{ id: "list-1", name: "List 1" }] as any,
+    onCreateList: mockCreateList,
+    showCreateList: true,
+  };
+
   it("renders all form fields", () => {
-    render(
-      <I18nTestProvider>
-        <TaskFormFields
-          formData={mockFormData}
-          updateField={mockUpdateField}
-          accessibleLists={mockLists}
-        />
-      </I18nTestProvider>,
+    render(<TaskFormFields {...defaultProps} />);
+    expect(screen.getByLabelText("tasks.fields.name.label")).toHaveValue(
+      "Test Task",
     );
-
-    expect(screen.getByLabelText(/nombre/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/descripción/i)).toBeInTheDocument();
+    expect(screen.getByLabelText("tasks.fields.description.label")).toHaveValue(
+      "Desc",
+    );
+    expect(screen.getByLabelText("tasks.fields.dueDate.label")).toHaveValue(
+      "2024-12-31",
+    );
   });
 
-  it("calls updateField when name changes", async () => {
-    const updateField = vi.fn();
+  it("calls updateField on inputs change", async () => {
     const user = userEvent.setup();
+    render(<TaskFormFields {...defaultProps} />);
 
-    render(
-      <I18nTestProvider>
-        <TaskFormFields
-          formData={mockFormData}
-          updateField={updateField}
-          accessibleLists={mockLists}
-        />
-      </I18nTestProvider>,
-    );
-
-    const nameInput = screen.getByLabelText(/nombre/i);
-    await user.type(nameInput, "New Task");
-
-    expect(updateField).toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText("tasks.fields.name.label"), {
+      target: { value: "New Task Name" },
+    });
+    expect(mockUpdateField).toHaveBeenCalledWith("name", "New Task Name");
   });
 
-  it("shows required indicator for name field", () => {
-    render(
-      <I18nTestProvider>
-        <TaskFormFields
-          formData={mockFormData}
-          updateField={mockUpdateField}
-          accessibleLists={mockLists}
-        />
-      </I18nTestProvider>,
-    );
+  it("calls updateField on component changes", () => {
+    render(<TaskFormFields {...defaultProps} />);
 
-    expect(screen.getAllByText("*").length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByText("Select List"));
+    expect(mockUpdateField).toHaveBeenCalledWith("listId", "list-2");
+
+    fireEvent.click(screen.getByText("Set Priority"));
+    expect(mockUpdateField).toHaveBeenCalledWith("priority", "HIGH");
+
+    fireEvent.click(screen.getByText("Set Status"));
+    expect(mockUpdateField).toHaveBeenCalledWith("status", "IN_PROGRESS");
   });
 
-  it("renders date picker for due date", () => {
-    render(
-      <I18nTestProvider>
-        <TaskFormFields
-          formData={mockFormData}
-          updateField={mockUpdateField}
-          accessibleLists={mockLists}
-        />
-      </I18nTestProvider>,
-    );
-
-    expect(screen.getByLabelText(/fecha/i)).toBeInTheDocument();
+  it("calls onCreateList when triggered from combobox", () => {
+    render(<TaskFormFields {...defaultProps} />);
+    fireEvent.click(screen.getByText("Create List"));
+    expect(mockCreateList).toHaveBeenCalled();
   });
 });

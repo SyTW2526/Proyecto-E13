@@ -89,7 +89,6 @@ export const TaskCard = memo(function TaskCard({
         task={task}
       />
 
-      {/* Delete Confirmation Dialog */}
       <DeleteTaskDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
@@ -97,14 +96,12 @@ export const TaskCard = memo(function TaskCard({
         onConfirm={handleDelete}
       />
 
-      {/* Error Alert Dialog */}
       <TaskErrorDialog
         open={errorDialogOpen}
         onOpenChange={setErrorDialogOpen}
         errorMessage={errorMessage}
       />
 
-      {/* Task Completion Alert Dialog */}
       <TaskCompletionDialog
         open={completionDialogOpen}
         onOpenChange={setCompletionDialogOpen}

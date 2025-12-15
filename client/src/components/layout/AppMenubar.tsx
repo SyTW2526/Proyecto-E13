@@ -52,10 +52,8 @@ export default function AppMenubar() {
         <div className="flex items-center gap-2">
           {isAuthenticated && (
             <>
-              {/* Campana de notificaciones (desktop y móvil) */}
               <NotificationBell />
 
-              {/* Desktop: menú de usuario */}
               <div className="hidden md:flex md:items-center">
                 <DropdownMenuWithIcon
                   onLogout={handleLogout}
@@ -71,7 +69,6 @@ export default function AppMenubar() {
                 />
               </div>
 
-              {/* Mobile Layout */}
               <div className="md:hidden">
                 <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                   <SheetTrigger asChild>

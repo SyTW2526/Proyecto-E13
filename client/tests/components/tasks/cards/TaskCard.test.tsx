@@ -241,4 +241,68 @@ describe("TaskCard", () => {
 
     expect(checkbox).toBeInTheDocument();
   });
+
+  it("opens delete dialog and confirms deletion", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <I18nTestProvider>
+        <TaskCard task={mockTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    const buttons = screen.getAllByRole("button");
+    const actionsButton = buttons.find(
+      (btn) => btn.getAttribute("aria-haspopup") === "menu",
+    );
+    await user.click(actionsButton!);
+
+    const deleteButton = screen.getByText(/eliminar/i);
+    await user.click(deleteButton);
+
+    expect(screen.getByText(/¿estás seguro/i)).toBeInTheDocument();
+
+    const confirmButton = screen.getByRole("button", {
+      name: /confirm|eliminar|aceptar/i,
+    });
+    await user.click(confirmButton);
+  });
+
+  it("opens share dialog when share button is clicked", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <I18nTestProvider>
+        <TaskCard task={mockTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    const buttons = screen.getAllByRole("button");
+    const actionsButton = buttons.find(
+      (btn) => btn.getAttribute("aria-haspopup") === "menu",
+    );
+    await user.click(actionsButton!);
+
+    const shareButton = screen.getByText(/compartir/i);
+    await user.click(shareButton);
+  });
+
+  it("opens edit dialog when edit button is clicked", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <I18nTestProvider>
+        <TaskCard task={mockTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    const buttons = screen.getAllByRole("button");
+    const actionsButton = buttons.find(
+      (btn) => btn.getAttribute("aria-haspopup") === "menu",
+    );
+    await user.click(actionsButton!);
+
+    const editButton = screen.getByText(/editar/i);
+    await user.click(editButton);
+  });
 });

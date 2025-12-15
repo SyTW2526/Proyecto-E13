@@ -1,9 +1,3 @@
-/**
- * @file SettingsPage.tsx
- * @description Página de ajustes donde los usuarios pueden modificar su perfil,
- * preferencias, notificaciones y privacidad.
- */
-
 import {
   Save,
   User,
@@ -97,9 +91,7 @@ export default function SettingsPage() {
         </p>
       </header>
 
-      {/* Grid de tarjetas de configuración */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-        {/* Perfil - ocupa toda la fila en desktop */}
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -111,7 +103,6 @@ export default function SettingsPage() {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            {/* Nombre y email */}
             <form onSubmit={saveProfile} className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label
@@ -164,7 +155,6 @@ export default function SettingsPage() {
 
             {!isGoogleUser && <Separator />}
 
-            {/* Contraseña */}
             {!isGoogleUser && (
               <form
                 onSubmit={savePassword}
@@ -219,7 +209,6 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* PREFERENCIAS: tema e idioma */}
         <Card className="md:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -320,7 +309,6 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* NOTIFICACIONES: persistentes */}
         <Card className="md:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -365,7 +353,6 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* PRIVACIDAD: eliminar cuenta */}
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

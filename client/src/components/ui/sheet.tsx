@@ -97,10 +97,4 @@ function SheetTitle({
   );
 }
 
-export {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-};
+export { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle };

@@ -37,7 +37,6 @@ export const SharedTaskCard = memo(function SharedTaskCard({
   const [errorMessage, setErrorMessage] = useState("");
   const { removeTask, editTask, removeShare } = useTasks();
 
-  // Calculate permissions
   const myId = user?.id;
   const taskShare = task.shares?.find((s) => s.userId === myId);
   const listShare = list?.shares?.find((s) => s.userId === myId);
@@ -123,21 +122,18 @@ export const SharedTaskCard = memo(function SharedTaskCard({
         />
       </CardContent>
 
-      {/* Edit Dialog */}
       <CreateTaskDialog
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         editTask={task}
       />
 
-      {/* Share Dialog */}
       <ShareTaskDialog
         open={shareDialogOpen}
         onOpenChange={setShareDialogOpen}
         task={task}
       />
 
-      {/* Delete Confirmation Dialog */}
       <DeleteTaskDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
@@ -145,7 +141,6 @@ export const SharedTaskCard = memo(function SharedTaskCard({
         onConfirm={handleDelete}
       />
 
-      {/* Unshare Confirmation Dialog */}
       <UnshareTaskDialog
         open={unshareDialogOpen}
         onOpenChange={setUnshareDialogOpen}
@@ -153,14 +148,12 @@ export const SharedTaskCard = memo(function SharedTaskCard({
         onConfirm={handleUnshare}
       />
 
-      {/* Error Alert Dialog */}
       <TaskErrorDialog
         open={errorDialogOpen}
         onOpenChange={setErrorDialogOpen}
         errorMessage={errorMessage}
       />
 
-      {/* Task Completion Alert Dialog */}
       <TaskCompletionDialog
         open={completionDialogOpen}
         onOpenChange={setCompletionDialogOpen}

@@ -143,14 +143,12 @@ describe("ShareDialog", () => {
 
   it("displays permission select for collaborators", () => {
     renderDialog({ shares: mockShares });
-    // Collaborator permission dropdown exists
     const comboboxes = screen.getAllByRole("combobox");
     expect(comboboxes.length).toBeGreaterThan(0);
   });
 
   it("provides onUpdateShare callback", () => {
     renderDialog({ shares: mockShares });
-    // Just verify component renders with shares
     expect(screen.getByText("John Doe")).toBeInTheDocument();
   });
 

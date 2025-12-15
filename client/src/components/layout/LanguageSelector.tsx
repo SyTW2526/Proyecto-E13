@@ -1,9 +1,3 @@
-/**
- * @file languageSelector.tsx
- * @description Componente para cambiar el idioma de la aplicación.
- * Puede mostrarse como botón independiente o como submenú.
- */
-
 import { useTranslation } from "react-i18next";
 import {
   DropdownMenu,

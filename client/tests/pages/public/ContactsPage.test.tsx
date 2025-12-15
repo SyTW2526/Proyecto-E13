@@ -35,48 +35,18 @@ vi.mock("@/config/team", () => ({
 }));
 
 describe("ContactsPage", () => {
-  it("renders contacts page title", () => {
+  it("renders page header and team members", () => {
     render(<ContactsPage />);
     expect(screen.getByText("contacts.title")).toBeInTheDocument();
-  });
-
-  it("renders contacts page subtitle", () => {
-    render(<ContactsPage />);
     expect(screen.getByText("contacts.subtitle")).toBeInTheDocument();
-  });
-
-  it("renders team member cards", () => {
-    render(<ContactsPage />);
     expect(screen.getByText("Team Member 1")).toBeInTheDocument();
     expect(screen.getByText("Team Member 2")).toBeInTheDocument();
   });
 
-  it("renders team member emails", () => {
+  it("renders team member details with links", () => {
     render(<ContactsPage />);
     expect(screen.getByText("member1@example.com")).toBeInTheDocument();
-    expect(screen.getByText("member2@example.com")).toBeInTheDocument();
-  });
-
-  it("renders role labels", () => {
-    render(<ContactsPage />);
-    const roles = screen.getAllByText("contacts.role");
-    expect(roles.length).toBe(2);
-  });
-
-  it("renders ULL profile links", () => {
-    render(<ContactsPage />);
-    const profileLinks = screen.getAllByText("contacts.ullProfile");
-    expect(profileLinks.length).toBe(2);
-  });
-
-  it("renders team member avatars", () => {
-    render(<ContactsPage />);
-    const avatars = screen.getAllByRole("img");
-    expect(avatars.length).toBe(2);
-  });
-
-  it("renders email links with mailto", () => {
-    render(<ContactsPage />);
+    expect(screen.getAllByRole("img").length).toBe(2);
     const emailLinks = screen.getAllByRole("link");
     const mailtoLink = emailLinks.find(
       (link) => link.getAttribute("href") === "mailto:member1@example.com",

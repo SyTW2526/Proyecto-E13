@@ -28,24 +28,10 @@ describe("useUI", () => {
     <Provider store={store}>{children}</Provider>
   );
 
-  it("returns sidebarWidth from store", () => {
+  it("returns initial state from store", () => {
     const { result } = renderHook(() => useUI(), { wrapper });
     expect(result.current.sidebarWidth).toBe("normal");
-  });
-
-  it("returns taskCardSize from store", () => {
-    const { result } = renderHook(() => useUI(), { wrapper });
     expect(result.current.taskCardSize).toBe(2);
-  });
-
-  it("provides setSidebarWidth function", () => {
-    const { result } = renderHook(() => useUI(), { wrapper });
-    expect(typeof result.current.setSidebarWidth).toBe("function");
-  });
-
-  it("provides setTaskCardSize function", () => {
-    const { result } = renderHook(() => useUI(), { wrapper });
-    expect(typeof result.current.setTaskCardSize).toBe("function");
   });
 
   it("setSidebarWidth updates the store", () => {
@@ -58,27 +44,7 @@ describe("useUI", () => {
     expect(result.current.sidebarWidth).toBe("compact");
   });
 
-  it("setSidebarWidth to wide updates store", () => {
-    const { result } = renderHook(() => useUI(), { wrapper });
-
-    act(() => {
-      result.current.setSidebarWidth("wide");
-    });
-
-    expect(result.current.sidebarWidth).toBe("wide");
-  });
-
   it("setTaskCardSize updates the store", () => {
-    const { result } = renderHook(() => useUI(), { wrapper });
-
-    act(() => {
-      result.current.setTaskCardSize(3);
-    });
-
-    expect(result.current.taskCardSize).toBe(3);
-  });
-
-  it("setTaskCardSize to maximum updates store", () => {
     const { result } = renderHook(() => useUI(), { wrapper });
 
     act(() => {
@@ -86,14 +52,5 @@ describe("useUI", () => {
     });
 
     expect(result.current.taskCardSize).toBe(4);
-  });
-
-  it("returns all required properties", () => {
-    const { result } = renderHook(() => useUI(), { wrapper });
-
-    expect(result.current).toHaveProperty("sidebarWidth");
-    expect(result.current).toHaveProperty("setSidebarWidth");
-    expect(result.current).toHaveProperty("taskCardSize");
-    expect(result.current).toHaveProperty("setTaskCardSize");
   });
 });

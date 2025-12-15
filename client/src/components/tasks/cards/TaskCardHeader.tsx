@@ -176,7 +176,6 @@ export const TaskCardHeader = memo(function TaskCardHeader({
 }: TaskCardHeaderProps) {
   return (
     <div className="flex flex-wrap justify-between items-center sm:items-center w-full gap-2 sm:gap-0">
-      {/* Actions Menu (Left) */}
       <div className="flex items-center gap-2">
         {actions && (
           <ItemActionsMenu
@@ -189,7 +188,6 @@ export const TaskCardHeader = memo(function TaskCardHeader({
         )}
       </div>
 
-      {/* Status, Priority, Favorite (Right) */}
       <div className="flex flex-row flex-wrap justify-end items-center gap-1 sm:gap-1">
         {onStatusChange && (
           <StatusDropdown

@@ -1,9 +1,3 @@
-/**
- * @file api.ts
- * @description Cliente HTTP configurado para comunicarse con el backend.
- * Incluye manejo de tokens de autenticación y normalización de errores.
- */
-
 import axios, { AxiosError } from "axios";
 
 export const api = axios.create({

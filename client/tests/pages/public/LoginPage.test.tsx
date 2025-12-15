@@ -40,7 +40,7 @@ describe("LoginPage", () => {
     },
   });
 
-  it("renders login page", () => {
+  it("renders LoginForm with correct props", () => {
     render(
       <Provider store={store}>
         <MemoryRouter>
@@ -49,27 +49,7 @@ describe("LoginPage", () => {
       </Provider>,
     );
     expect(screen.getByTestId("login-form")).toBeInTheDocument();
-  });
-
-  it("passes forceMode=login to LoginForm", () => {
-    render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <LoginPage />
-        </MemoryRouter>
-      </Provider>,
-    );
     expect(screen.getByTestId("force-mode")).toHaveTextContent("login");
-  });
-
-  it("passes linkTo=/register to LoginForm", () => {
-    render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <LoginPage />
-        </MemoryRouter>
-      </Provider>,
-    );
     expect(screen.getByTestId("link-to")).toHaveTextContent("/register");
   });
 });

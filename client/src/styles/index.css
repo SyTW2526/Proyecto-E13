@@ -167,19 +167,16 @@
     @apply text-foreground/90;
   }
 
-  /* Focus states with glow */
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-primary/50;
     box-shadow: 0 0 0 4px oklch(var(--primary) / 0.1);
   }
 
-  /* Smooth transitions */
   a,
   button {
     @apply transition-all duration-200;
   }
 
-  /* Selection with primary accent */
   ::selection {
     @apply bg-primary/20 text-foreground;
   }

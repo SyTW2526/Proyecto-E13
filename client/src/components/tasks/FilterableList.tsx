@@ -71,7 +71,6 @@ export function FilterableList({
 
   return (
     <div>
-      {/* Dialogs */}
       {editingListId && getList(editingListId) && (
         <EditListDialog
           open={!!editingListId}
@@ -158,7 +157,6 @@ export function FilterableList({
         </DialogContent>
       </Dialog>
 
-      {/* Error Alert Dialog */}
       <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -179,7 +177,6 @@ export function FilterableList({
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
         {showAddButton && (
           <div className="flex gap-2">
-            {/* Boton de crear listas */}
             <CreateListDialogStandalone>
               <Button leftIcon="IconList" />
             </CreateListDialogStandalone>

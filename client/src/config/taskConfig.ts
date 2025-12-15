@@ -1,9 +1,3 @@
-/**
- * @file taskConfig.ts
- * @description Configuración de tareas, prioridades y estados.
- * Define las opciones y etiquetas para la gestión de tareas.
- */
-
 export const priorityConfig = {
   LOW: {
     color:

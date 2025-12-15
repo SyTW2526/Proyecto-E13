@@ -119,7 +119,6 @@ export function TasksPageLayout({
             {headerActions && <div className="flex gap-2">{headerActions}</div>}
           </div>
 
-          {/* Filtros */}
           <div className="flex flex-wrap gap-4 items-center justify-between bg-card p-2 rounded-lg border border-border">
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <TaskStatusFilter

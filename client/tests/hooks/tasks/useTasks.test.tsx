@@ -35,10 +35,9 @@ describe("useTasks", () => {
   const mockTasks = [
     {
       id: "task-1",
-      title: "Task 1",
+      name: "Task 1",
       description: "Description 1",
       listId: "list-1",
-      userId: "user-1",
       status: "PENDING",
       priority: "HIGH",
       favorite: false,
@@ -48,10 +47,9 @@ describe("useTasks", () => {
     },
     {
       id: "task-2",
-      title: "Task 2",
+      name: "Task 2",
       description: "Description 2",
       listId: "list-1",
-      userId: "user-1",
       status: "COMPLETED",
       priority: "LOW",
       favorite: true,
@@ -105,38 +103,18 @@ describe("useTasks", () => {
     <Provider store={store}>{children}</Provider>
   );
 
-  it("returns tasks from store", () => {
+  it("returns initial state correctly", () => {
     const { result } = renderHook(() => useTasks(), { wrapper });
 
     expect(result.current.tasks).toEqual(mockTasks);
-  });
-
-  it("returns loading state", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
     expect(result.current.isLoading).toBe(false);
-  });
-
-  it("returns error state", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
     expect(result.current.error).toBeNull();
-  });
-
-  it("returns filters", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
     expect(result.current.filters).toEqual({
       status: "all",
       listId: null,
       priority: "all",
       favorite: "all",
     });
-  });
-
-  it("returns sorting", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
     expect(result.current.sorting).toEqual({
       field: "createdAt",
       order: "desc",
@@ -145,129 +123,39 @@ describe("useTasks", () => {
 
   it("filterByStatus updates status filter", async () => {
     const { result } = renderHook(() => useTasks(), { wrapper });
-
-    act(() => {
-      result.current.filterByStatus("PENDING");
-    });
-
-    await waitFor(() => {
-      expect(result.current.filters.status).toBe("PENDING");
-    });
+    act(() => result.current.filterByStatus("PENDING"));
+    await waitFor(() => expect(result.current.filters.status).toBe("PENDING"));
   });
 
   it("filterByList updates list filter", async () => {
     const { result } = renderHook(() => useTasks(), { wrapper });
-
-    act(() => {
-      result.current.filterByList("list-1");
-    });
-
-    await waitFor(() => {
-      expect(result.current.filters.listId).toBe("list-1");
-    });
+    act(() => result.current.filterByList("list-1"));
+    await waitFor(() => expect(result.current.filters.listId).toBe("list-1"));
   });
 
   it("filterByPriority updates priority filter", async () => {
     const { result } = renderHook(() => useTasks(), { wrapper });
-
-    act(() => {
-      result.current.filterByPriority("HIGH");
-    });
-
-    await waitFor(() => {
-      expect(result.current.filters.priority).toBe("HIGH");
-    });
+    act(() => result.current.filterByPriority("HIGH"));
+    await waitFor(() => expect(result.current.filters.priority).toBe("HIGH"));
   });
 
   it("filterByFavorite updates favorite filter", async () => {
     const { result } = renderHook(() => useTasks(), { wrapper });
-
-    act(() => {
-      result.current.filterByFavorite("yes");
-    });
-
-    await waitFor(() => {
-      expect(result.current.filters.favorite).toBe("yes");
-    });
+    act(() => result.current.filterByFavorite("yes"));
+    await waitFor(() => expect(result.current.filters.favorite).toBe("yes"));
   });
 
-  it("sortBy updates sorting field and order", async () => {
+  it("sorting updates work correctly", async () => {
     const { result } = renderHook(() => useTasks(), { wrapper });
 
-    act(() => {
-      result.current.sortBy("priority", "asc");
-    });
-
+    act(() => result.current.sortBy("priority", "asc"));
     await waitFor(() => {
       expect(result.current.sorting.field).toBe("priority");
       expect(result.current.sorting.order).toBe("asc");
     });
-  });
 
-  it("toggleSort changes sort order", async () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
-    act(() => {
-      result.current.toggleSort();
-    });
-
-    await waitFor(() => {
-      expect(result.current.sorting.order).toBe("asc");
-    });
-  });
-
-  it("provides fetchAllTasks function", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
-    expect(typeof result.current.fetchAllTasks).toBe("function");
-  });
-
-  it("provides fetchSharedTasks function", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
-    expect(typeof result.current.fetchSharedTasks).toBe("function");
-  });
-
-  it("provides createTask function", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
-    expect(typeof result.current.createTask).toBe("function");
-  });
-
-  it("provides editTask function", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
-    expect(typeof result.current.editTask).toBe("function");
-  });
-
-  it("provides removeTask function", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
-    expect(typeof result.current.removeTask).toBe("function");
-  });
-
-  it("provides toggleFavorite function", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
-    expect(typeof result.current.toggleFavorite).toBe("function");
-  });
-
-  it("provides shareTask function", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
-    expect(typeof result.current.shareTask).toBe("function");
-  });
-
-  it("provides updateShare function", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
-    expect(typeof result.current.updateShare).toBe("function");
-  });
-
-  it("provides removeShare function", () => {
-    const { result } = renderHook(() => useTasks(), { wrapper });
-
-    expect(typeof result.current.removeShare).toBe("function");
+    act(() => result.current.toggleSort());
+    await waitFor(() => expect(result.current.sorting.order).toBe("desc"));
   });
 
   it("filteredTasks filters by status", () => {

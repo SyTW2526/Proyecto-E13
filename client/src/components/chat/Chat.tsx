@@ -266,6 +266,5 @@ export function ChatMessages({
   );
 }
 
-// Re-export separated components for backward compatibility
 export { ChatContainer } from "@/components/chat/ChatContainer";
 export { ChatForm } from "@/components/chat/ChatForm";

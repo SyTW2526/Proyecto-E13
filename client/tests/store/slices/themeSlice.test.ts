@@ -1,7 +1,4 @@
-import themeReducer, {
-  selectTheme,
-  setTheme,
-} from "@/store/slices/themeSlice";
+import themeReducer, { selectTheme, setTheme } from "@/store/slices/themeSlice";
 import type { ThemeState } from "@/types/theme";
 import { beforeEach, describe, expect, it } from "vitest";
 

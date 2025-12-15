@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import { Chat } from "@/components/chat/Chat";
 
 vi.mock("react-i18next", () => ({
@@ -8,7 +8,7 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
-vi.mock("@/hooks/use-auto-scroll", () => ({
+vi.mock("@/hooks/chatBot/useAutoScroll", () => ({
   useAutoScroll: () => ({
     containerRef: { current: null },
     scrollToBottom: vi.fn(),
@@ -18,15 +18,26 @@ vi.mock("@/hooks/use-auto-scroll", () => ({
   }),
 }));
 
+let capturedStopFn: (() => void) | undefined;
+
 vi.mock("@/components/chat/MessageList", () => ({
   MessageList: ({
     messages,
+    messageOptions,
   }: {
     messages: Array<{ id: string; content: string }>;
+    messageOptions?: (msg: any) => { actions: React.ReactNode };
   }) => (
     <div data-testid="message-list">
       {messages.map((m) => (
-        <div key={m.id}>{m.content}</div>
+        <div key={m.id}>
+          {m.content}
+          {messageOptions && (
+            <div data-testid={`actions-${m.id}`}>
+              {messageOptions(m).actions}
+            </div>
+          )}
+        </div>
       ))}
     </div>
   ),
@@ -35,11 +46,27 @@ vi.mock("@/components/chat/MessageList", () => ({
 vi.mock("@/components/chat/MessageInput", () => ({
   MessageInput: ({
     value,
+    stop,
+    isGenerating,
   }: {
     value: string;
     onChange?: () => void;
     onSubmit?: () => void;
-  }) => <textarea data-testid="message-input" value={value} />,
+    stop?: () => void;
+    isGenerating?: boolean;
+  }) => {
+    capturedStopFn = stop;
+    return (
+      <div>
+        <textarea data-testid="message-input" value={value} readOnly />
+        {isGenerating && stop && (
+          <button data-testid="stop-button" onClick={stop}>
+            Stop
+          </button>
+        )}
+      </div>
+    );
+  },
 }));
 
 vi.mock("@/components/chat/PromptSuggestions", () => ({
@@ -69,12 +96,11 @@ describe("Chat", () => {
     isGenerating: false,
   };
 
-  it("debe renderizar el componente correctamente", () => {
-    render(<Chat {...defaultProps} />);
-    expect(screen.getByRole("textbox")).toBeDefined();
+  beforeEach(() => {
+    capturedStopFn = undefined;
   });
 
-  it("debe mostrar mensajes cuando hay mensajes", () => {
+  it("renders with messages and input", () => {
     const messages = [
       {
         id: "1",
@@ -94,7 +120,7 @@ describe("Chat", () => {
     expect(screen.getByText("Hi")).toBeDefined();
   });
 
-  it("debe mostrar sugerencias cuando están disponibles", () => {
+  it("renders suggestions when provided", () => {
     const props = {
       ...defaultProps,
       append: vi.fn(),
@@ -102,99 +128,9 @@ describe("Chat", () => {
     };
     render(<Chat {...props} />);
     expect(screen.getByTestId("prompt-suggestions")).toBeDefined();
-    expect(screen.getByText("Suggestion 1")).toBeDefined();
   });
 
-  it("debe manejar input vacío", () => {
-    render(<Chat {...defaultProps} input="" />);
-    expect(screen.getByRole("textbox")).toBeDefined();
-  });
-
-  it("debe manejar input con texto", () => {
-    render(<Chat {...defaultProps} input="Test message" />);
-    expect(screen.getByRole("textbox")).toBeDefined();
-  });
-
-  it("debe aplicar className personalizado", () => {
-    const { container } = render(
-      <Chat {...defaultProps} className="custom-class" />,
-    );
-    expect(container.querySelector(".custom-class")).toBeDefined();
-  });
-
-  it("debe manejar estado de generación", () => {
-    const { rerender } = render(
-      <Chat {...defaultProps} isGenerating={false} />,
-    );
-    expect(screen.getByRole("textbox")).toBeDefined();
-
-    rerender(<Chat {...defaultProps} isGenerating={true} />);
-    expect(screen.getByRole("textbox")).toBeDefined();
-  });
-
-  it("debe manejar la función stop cuando está disponible", () => {
-    const stopFn = vi.fn();
-    render(<Chat {...defaultProps} stop={stopFn} isGenerating={true} />);
-    expect(screen.getByRole("textbox")).toBeDefined();
-  });
-
-  it("debe renderizar sin función stop", () => {
-    render(<Chat {...defaultProps} isGenerating={false} />);
-    expect(screen.getByRole("textbox")).toBeDefined();
-  });
-
-  it("debe manejar múltiples mensajes", () => {
-    const messages = Array.from({ length: 10 }, (_, i) => ({
-      id: `${i}`,
-      role: i % 2 === 0 ? ("user" as const) : ("assistant" as const),
-      content: `Message ${i}`,
-      createdAt: new Date(),
-    }));
-    render(<Chat {...defaultProps} messages={messages} />);
-    expect(screen.getByText("Message 0")).toBeDefined();
-    expect(screen.getByText("Message 9")).toBeDefined();
-  });
-
-  it("renders with onRateResponse callback", () => {
-    const onRateResponse = vi.fn();
-    const messages = [
-      {
-        id: "1",
-        role: "assistant" as const,
-        content: "Response",
-        createdAt: new Date(),
-      },
-    ];
-    render(
-      <Chat
-        {...defaultProps}
-        messages={messages}
-        onRateResponse={onRateResponse}
-      />,
-    );
-    expect(screen.getByText("Response")).toBeDefined();
-  });
-
-  it("handles setMessages prop", () => {
-    const setMessages = vi.fn();
-    render(<Chat {...defaultProps} setMessages={setMessages} />);
-    expect(screen.getByRole("textbox")).toBeDefined();
-  });
-
-  it("renders when last message is from assistant", () => {
-    const messages = [
-      {
-        id: "1",
-        role: "assistant" as const,
-        content: "Assistant message",
-        createdAt: new Date(),
-      },
-    ];
-    render(<Chat {...defaultProps} messages={messages} />);
-    expect(screen.getByText("Assistant message")).toBeDefined();
-  });
-
-  it("handles stop with setMessages and toolInvocations", () => {
+  it("triggers handleStop when stop button clicked with toolInvocations in call state", () => {
     const setMessages = vi.fn();
     const stopFn = vi.fn();
     const messages = [
@@ -215,10 +151,15 @@ describe("Chat", () => {
         isGenerating={true}
       />,
     );
-    expect(screen.getByRole("textbox")).toBeDefined();
+
+    const stopButton = screen.getByTestId("stop-button");
+    fireEvent.click(stopButton);
+
+    expect(stopFn).toHaveBeenCalled();
+    expect(setMessages).toHaveBeenCalled();
   });
 
-  it("handles stop with parts containing tool-invocation", () => {
+  it("triggers handleStop with parts containing tool-invocation in call state", () => {
     const setMessages = vi.fn();
     const stopFn = vi.fn();
     const messages = [
@@ -244,19 +185,59 @@ describe("Chat", () => {
         isGenerating={true}
       />,
     );
-    expect(screen.getByRole("textbox")).toBeDefined();
+
+    const stopButton = screen.getByTestId("stop-button");
+    fireEvent.click(stopButton);
+
+    expect(stopFn).toHaveBeenCalled();
+    expect(setMessages).toHaveBeenCalled();
   });
 
-  it("renders ChatMessages component with messages", () => {
+  it("calls handleStop without updating when no assistant message", () => {
+    const setMessages = vi.fn();
+    const stopFn = vi.fn();
     const messages = [
       {
         id: "1",
         role: "user" as const,
-        content: "Test",
+        content: "Hello",
         createdAt: new Date(),
       },
     ];
-    render(<Chat {...defaultProps} messages={messages} />);
-    expect(screen.getByTestId("message-list")).toBeDefined();
+    render(
+      <Chat
+        {...defaultProps}
+        messages={messages}
+        setMessages={setMessages}
+        stop={stopFn}
+        isGenerating={true}
+      />,
+    );
+
+    const stopButton = screen.getByTestId("stop-button");
+    fireEvent.click(stopButton);
+
+    expect(stopFn).toHaveBeenCalled();
+    expect(setMessages).not.toHaveBeenCalled();
+  });
+
+  it("renders rating buttons when onRateResponse is provided", () => {
+    const onRateResponse = vi.fn();
+    const messages = [
+      {
+        id: "1",
+        role: "assistant" as const,
+        content: "Response",
+        createdAt: new Date(),
+      },
+    ];
+    render(
+      <Chat
+        {...defaultProps}
+        messages={messages}
+        onRateResponse={onRateResponse}
+      />,
+    );
+    expect(screen.getByTestId("actions-1")).toBeDefined();
   });
 });

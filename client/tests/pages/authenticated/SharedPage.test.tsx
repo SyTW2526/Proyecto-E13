@@ -5,61 +5,93 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "@/store/slices/authSlice";
-import themeReducer from "@/store/slices/themeSlice";
 import listsReducer from "@/store/slices/listsSlice";
 import tasksReducer from "@/store/slices/tasksSlice";
 import notificationsReducer from "@/store/slices/notificationsSlice";
 import uiReducer from "@/store/slices/uiSlice";
+import themeReducer from "@/store/slices/themeSlice";
+
+import { useTasks } from "@/hooks/tasks/useTasks";
+import { useLists } from "@/hooks/useLists";
+import { useTaskFilters } from "@/hooks/tasks/useTaskFilters";
+
+vi.mock("@/hooks/tasks/useTasks", () => ({ useTasks: vi.fn() }));
+vi.mock("@/hooks/useLists", () => ({ useLists: vi.fn() }));
+vi.mock("@/hooks/tasks/useTaskFilters", () => ({ useTaskFilters: vi.fn() }));
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => key,
-    i18n: { language: "es" },
+    i18n: { language: "en" },
   }),
 }));
 
-vi.mock("@/lib/api", () => ({
-  api: {
-    get: vi.fn().mockResolvedValue({ data: [] }),
-  },
-  apiErrorMessage: vi.fn(),
-}));
-
 vi.mock("@/components/tasks/TasksPageLayout", () => ({
-  TasksPageLayout: ({
-    title,
-    emptyTasksMessage,
-    headerActions,
-  }: {
-    title: string;
-    emptyTasksMessage: string;
-    headerActions?: React.ReactNode;
-  }) => (
-    <div data-testid="shared-layout">
+  TasksPageLayout: ({ title, headerActions, tasks, renderCard }: any) => (
+    <div data-testid="tasks-layout">
       <h1>{title}</h1>
-      {headerActions && <div data-testid="header-actions">{headerActions}</div>}
-      <p>{emptyTasksMessage}</p>
+      <div data-testid="header-actions">{headerActions}</div>
+      <div data-testid="task-list">
+        {tasks.map((task: any) => renderCard(task))}
+      </div>
     </div>
   ),
 }));
 
-vi.mock("@/components/tasks/dialogs/CreateTaskDialog", () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="create-task-dialog">{children}</div>
+vi.mock("@/components/tasks/cards/SharedTaskCard", () => ({
+  SharedTaskCard: ({ task }: any) => (
+    <div data-testid={`task-${task.id}`}>{task.name}</div>
   ),
 }));
 
 describe("SharedPage", () => {
   let store: ReturnType<typeof configureStore>;
-
-  const mockUser = {
-    id: "user-1",
-    email: "test@example.com",
-    name: "Test User",
+  const mockFetchSharedTasks = vi.fn();
+  const mockFetchSharedLists = vi.fn();
+  const mockDisplayTasks = [
+    {
+      id: "1",
+      name: "Shared Task 1",
+      listId: "list-1",
+      createdAt: "2024-01-01",
+    },
+  ];
+  const mockFilters = {
+    status: "all",
+    priority: "all",
   };
+  const mockSorting = { field: "createdAt", order: "desc" };
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    vi.mocked(useTasks).mockReturnValue({
+      fetchSharedTasks: mockFetchSharedTasks,
+      isLoading: false,
+    } as any);
+
+    vi.mocked(useLists).mockReturnValue({
+      fetchSharedLists: mockFetchSharedLists,
+      isLoading: false,
+      isOwner: vi.fn(),
+      canAccess: vi.fn(),
+      accessibleLists: [],
+    } as any);
+
+    vi.mocked(useTaskFilters).mockReturnValue({
+      displayTasks: [],
+      filters: mockFilters,
+      sorting: mockSorting,
+      filterByStatus: vi.fn(),
+      filterByPriority: vi.fn(),
+      sortBy: vi.fn(),
+      toggleSort: vi.fn(),
+      accessibleLists: [],
+      listTaskCounts: [],
+      selectedListId: null,
+      handleListFilter: vi.fn(),
+    } as any);
+
     store = configureStore({
       reducer: {
         auth: authReducer,
@@ -70,63 +102,47 @@ describe("SharedPage", () => {
         ui: uiReducer,
       },
       preloadedState: {
-        auth: {
-          user: mockUser,
-          token: "token123",
-          isAuthenticated: true,
-          isLoading: false,
-          error: null,
-          isInitializing: false,
-        },
-        lists: {
-          lists: [],
-          isLoading: false,
-          error: null,
-          selectedListId: null,
-        },
-        tasks: {
-          tasks: [],
-          isLoading: false,
-          error: null,
-          filters: {
-            status: "all",
-            listId: null,
-            priority: "all",
-            favorite: "all",
-          },
-          sorting: { field: "createdAt", order: "desc" },
-        },
-      },
-    });
+        auth: { user: { id: "u1", name: "User" } },
+      } as any,
+    } as any);
   });
 
-  const renderPage = () => {
-    return render(
+  it("fetches shared tasks and lists on mount", () => {
+    render(
       <Provider store={store}>
         <MemoryRouter>
           <SharedPage />
         </MemoryRouter>
       </Provider>,
     );
-  };
-
-  it("renders shared page layout", () => {
-    renderPage();
-    expect(screen.getByTestId("shared-layout")).toBeInTheDocument();
+    expect(mockFetchSharedTasks).toHaveBeenCalled();
+    expect(mockFetchSharedLists).toHaveBeenCalled();
   });
 
-  it("renders page title", () => {
-    renderPage();
-    expect(screen.getByText("shared.title")).toBeInTheDocument();
-  });
+  it("renders shared task cards", () => {
+    vi.mocked(useTaskFilters).mockReturnValue({
+      displayTasks: mockDisplayTasks,
+      filters: mockFilters,
+      sorting: mockSorting,
+      filterByStatus: vi.fn(),
+      filterByPriority: vi.fn(),
+      sortBy: vi.fn(),
+      toggleSort: vi.fn(),
+      accessibleLists: [{ id: "list-1", name: "List 1" }],
+      listTaskCounts: [],
+      handleListFilter: vi.fn(),
+      selectedListId: null,
+    } as any);
 
-  it("renders header actions", () => {
-    renderPage();
-    expect(screen.getByTestId("header-actions")).toBeInTheDocument();
-  });
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SharedPage />
+        </MemoryRouter>
+      </Provider>,
+    );
 
-  it("renders empty state message", () => {
-    renderPage();
-    expect(screen.getByText("shared.emptyState")).toBeInTheDocument();
+    expect(screen.getByTestId("task-1")).toBeInTheDocument();
+    expect(screen.getByText("Shared Task 1")).toBeInTheDocument();
   });
 });

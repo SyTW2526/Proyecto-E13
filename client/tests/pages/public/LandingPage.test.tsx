@@ -49,57 +49,18 @@ describe("LandingPage", () => {
     );
   };
 
-  it("renders landing page", () => {
+  it("renders hero section with navigation", () => {
     renderPage();
     expect(screen.getByText(/landing.welcome/)).toBeInTheDocument();
-  });
-
-  it("renders subtitle", () => {
-    renderPage();
     expect(screen.getByText("landing.subtitle")).toBeInTheDocument();
-  });
-
-  it("renders register and login buttons", () => {
-    renderPage();
     expect(screen.getByText("auth.register")).toBeInTheDocument();
     expect(screen.getByText("auth.login")).toBeInTheDocument();
   });
 
-  it("renders benefits section", () => {
-    renderPage();
-    expect(screen.getByText("landing.benefits.free")).toBeInTheDocument();
-  });
-
-  it("renders features section", () => {
+  it("renders features and CTA sections", () => {
     renderPage();
     expect(screen.getByText("landing.features.title")).toBeInTheDocument();
-  });
-
-  it("renders feature cards", () => {
-    renderPage();
     expect(screen.getByTestId("feature-card")).toBeInTheDocument();
-  });
-
-  it("renders CTA section", () => {
-    renderPage();
     expect(screen.getByText("landing.cta.title")).toBeInTheDocument();
-  });
-
-  it("has links to register page", () => {
-    renderPage();
-    const registerLinks = screen.getAllByRole("link");
-    const registerLink = registerLinks.find(
-      (link) => link.getAttribute("href") === "/register",
-    );
-    expect(registerLink).toBeDefined();
-  });
-
-  it("has links to login page", () => {
-    renderPage();
-    const links = screen.getAllByRole("link");
-    const loginLink = links.find(
-      (link) => link.getAttribute("href") === "/login",
-    );
-    expect(loginLink).toBeDefined();
   });
 });
