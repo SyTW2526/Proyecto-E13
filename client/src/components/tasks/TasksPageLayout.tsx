@@ -8,6 +8,7 @@ import {
 } from "@/components/tasks/TaskFilters";
 import { useUI } from "@/hooks/ui/useUI";
 import type { Task, TaskStatus, TaskPriority } from "@/types/tasks-system/task";
+import { Typewriter } from "@/components/shared/Typewriter";
 
 type SortField = "name" | "dueDate" | "priority" | "createdAt" | "updatedAt";
 
@@ -112,9 +113,10 @@ export function TasksPageLayout({
         <div className="mb-6 space-y-4">
           <div className="flex flex-row items-center justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-extrabold tracking-tight text-foreground/90">
-                {title}
-              </h1>
+              <Typewriter
+                text={title}
+                className="text-4xl font-bold inline-flex items-center gap-2"
+              />
             </div>
             {headerActions && <div className="flex gap-2">{headerActions}</div>}
           </div>

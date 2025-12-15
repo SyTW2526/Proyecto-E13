@@ -36,16 +36,46 @@ Contacta con el equipo de DevOps para obtener:
 
 > **⚠️ Nota de Seguridad:** Las credenciales y configuraciones sensibles nunca se comparten públicamente. Solo el equipo autorizado tiene acceso.
 
+#### Configuración del archivo .env
+
+Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+
+```env
+# Application environment
+NODE_ENV=development
+
+# Database configuration
+DATABASE_URL=postgresql://usuario:contraseña@host:puerto/base_de_datos?pgbouncer=true
+DIRECT_URL=postgresql://usuario:contraseña@host:puerto/base_de_datos
+
+# Server configuration
+PORT=5200
+JWT_SECRET=tu_secreto_jwt_muy_seguro_y_largo
+
+# Google OAuth2 configuration
+GOOGLE_CLIENT_ID=tu_google_client_id.apps.googleusercontent.com
+
+# Google Gemini AI configuration
+GOOGLE_GENERATIVE_AI_API_KEY=tu_api_key_de_gemini
+GEMINI_MODEL=gemini-2.5-flash-lite
+
+# Client configuration
+VITE_API_BASE_URL=/api
+VITE_GOOGLE_CLIENT_ID=tu_google_client_id.apps.googleusercontent.com
+```
+
+**Variables requeridas:**
+- `DATABASE_URL`: URL de conexión a PostgreSQL con pooler
+- `DIRECT_URL`: URL de conexión directa a PostgreSQL
+- `JWT_SECRET`: Clave secreta para firmar tokens JWT (mínimo 64 caracteres)
+- `GOOGLE_CLIENT_ID`: ID de cliente de Google OAuth2
+- `GOOGLE_GENERATIVE_AI_API_KEY`: API key de Google Gemini AI
+- `VITE_GOOGLE_CLIENT_ID`: Mismo ID de cliente de Google para el frontend
+
 ### 2. Instalar Dependencias
 
 ```bash
-# Backend
-cd ./server
-npm install
-
-# Frontend
-cd ./client
-npm install
+npm run install:all
 ```
 
 ### 3. Inicializar Base de Datos
@@ -57,21 +87,13 @@ npm run prisma:generate
 
 ### 4. Iniciar la Aplicación en Modo Desarrollo
 
-**Terminal 1 - Backend:**
-
 ```bash
-cd server
 npm run dev
 ```
 
-**Terminal 2 - Frontend:**
-
-```bash
-cd client
-npm run dev
-```
-
-La aplicación estará disponible en `http://localhost:5173`
+La aplicación estará disponible en:
+- **Frontend:** `http://localhost:5173`
+- **Backend:** `http://localhost:5200`
 
 ---
 
