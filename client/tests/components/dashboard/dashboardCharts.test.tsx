@@ -1,11 +1,10 @@
-// client/tests/components/dashboard/dashboardCharts.test.tsx
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import "@testing-library/jest-dom";
 import {
   PriorityChart,
   WeeklyTasksChart,
-} from "../../../src/components/dashboard/DashboardCharts";
+} from "@/components/dashboard/DashboardCharts";
 import { I18nTestProvider } from "../../helpers/i18nTestProvider";
 
 describe("DashboardCharts", () => {
@@ -16,7 +15,6 @@ describe("DashboardCharts", () => {
       baja: { label: "Baja", color: "#10b981" },
     };
 
-    // ============ UNHAPPY PATH: Empty Data ============
     it("Muestra mensaje cuando no hay datos (data.length === 0)", () => {
       const { container } = render(
         <I18nTestProvider>
@@ -24,18 +22,14 @@ describe("DashboardCharts", () => {
         </I18nTestProvider>,
       );
 
-      // Verifica el mensaje de error
       expect(
         screen.getByText(/No hay tareas para mostrar/i),
       ).toBeInTheDocument();
-
-      // No debe haber ChartContainer cuando no hay datos
       expect(
         container.querySelector('[data-slot="chart"]'),
       ).not.toBeInTheDocument();
     });
 
-    // ============ HAPPY PATH: Normal Data ============
     it("Renderiza gráfico de prioridades con datos", () => {
       const data = [
         { name: "Alta", value: 10, fill: "#ef4444" },
@@ -49,13 +43,11 @@ describe("DashboardCharts", () => {
         </I18nTestProvider>,
       );
 
-      // Verificar que SÍ se renderiza el ChartContainer
       expect(
         container.querySelector('[data-slot="chart"]'),
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: Single Item ============
     it("Renderiza con un solo elemento en data", () => {
       const data = [{ name: "Alta", value: 100, fill: "#ef4444" }];
 
@@ -73,7 +65,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: Tiny Values ============
     it("Renderiza con valores muy pequeños (< 1%)", () => {
       const data = [
         { name: "Alta", value: 1, fill: "#ef4444" },
@@ -91,7 +82,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: Equal Values ============
     it("Renderiza con valores iguales (todos ~33%)", () => {
       const data = [
         { name: "Alta", value: 33, fill: "#ef4444" },
@@ -110,7 +100,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: Many Items (tests map iteration) ============
     it("Itera correctamente sobre muchos elementos (data.map)", () => {
       const data = [
         { name: "Alta", value: 10, fill: "#ef4444" },
@@ -139,7 +128,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: Extreme Percentages ============
     it("Calcula porcentajes correctos cuando un valor domina (99%)", () => {
       const data = [
         { name: "Alta", value: 99, fill: "#ef4444" },
@@ -157,7 +145,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: Zero Value ============
     it("Maneja correctamente valor cero en los datos", () => {
       const data = [
         { name: "Alta", value: 0, fill: "#ef4444" },
@@ -176,7 +163,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ INTEGRATION: Tooltip & Legend ============
     it("Renderiza tooltip y leyenda correctamente", () => {
       const data = [
         { name: "Alta", value: 10, fill: "#ef4444" },
@@ -202,7 +188,6 @@ describe("DashboardCharts", () => {
       completed: { label: "Completado", color: "#15803d" },
     };
 
-    // ============ HAPPY PATH ============
     it("Renderiza gráfico de barras semanales", () => {
       const data = [
         { day: "Lun", pending: 5, inProgress: 3, completed: 2 },
@@ -219,7 +204,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: All Zeros (CustomBar height <= 0) ============
     it("CustomBar retorna null cuando height <= 0", () => {
       const data = [{ day: "Lun", pending: 0, inProgress: 0, completed: 0 }];
 
@@ -232,7 +216,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: CustomBar isOnly (solo una barra con valor) ============
     it("CustomBar con isOnly=true (solo pending tiene valor)", () => {
       const data = [{ day: "Lun", pending: 10, inProgress: 0, completed: 0 }];
 
@@ -269,7 +252,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: CustomBar isFirst (primera barra con valor) ============
     it("CustomBar con isFirst=true (pending es primera, completed tiene valor)", () => {
       const data = [{ day: "Lun", pending: 5, inProgress: 0, completed: 3 }];
 
@@ -294,7 +276,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: CustomBar isLast (última barra con valor) ============
     it("CustomBar con isLast=true (completed es última, pending tiene valor)", () => {
       const data = [{ day: "Lun", pending: 4, inProgress: 0, completed: 6 }];
 
@@ -319,7 +300,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: CustomBar middle (!isFirst && !isLast) ============
     it("CustomBar con barra del medio (inProgress entre pending y completed)", () => {
       const data = [{ day: "Lun", pending: 2, inProgress: 5, completed: 3 }];
 
@@ -344,7 +324,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: CustomLabel retorna null cuando total === 0 ============
     it("CustomLabel retorna null cuando total === 0", () => {
       const data = [{ day: "Lun", pending: 0, inProgress: 0, completed: 0 }];
 
@@ -357,7 +336,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: CustomLabel muestra total > 0 ============
     it("CustomLabel muestra total cuando es > 0", () => {
       const data = [{ day: "Lun", pending: 2, inProgress: 3, completed: 5 }];
 
@@ -370,7 +348,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: Multiple Days with Mixed Data ============
     it("Maneja múltiples días con diferentes combinaciones", () => {
       const data = [
         { day: "Lun", pending: 5, inProgress: 3, completed: 2 },
@@ -391,7 +368,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: All Three Values Present (tests all bars) ============
     it("Renderiza las tres barras cuando todas tienen valor", () => {
       const data = [{ day: "Lun", pending: 5, inProgress: 8, completed: 12 }];
 
@@ -404,7 +380,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: Config sin colores (usa defaults) ============
     it("Usa colores por defecto cuando config no tiene color", () => {
       const data = [{ day: "Lun", pending: 5, inProgress: 3, completed: 2 }];
       const configNoColors = {
@@ -422,7 +397,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ EDGE CASE: Large Values ============
     it("Maneja valores grandes correctamente", () => {
       const data = [
         { day: "Lun", pending: 999, inProgress: 888, completed: 777 },
@@ -437,7 +411,6 @@ describe("DashboardCharts", () => {
       ).toBeInTheDocument();
     });
 
-    // ============ INTEGRATION: Tooltip & Legend ============
     it("Renderiza con tooltip y leyenda", () => {
       const data = [{ day: "Lun", pending: 5, inProgress: 3, completed: 2 }];
 

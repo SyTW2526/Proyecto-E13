@@ -1,9 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import type { Message } from "../../../src/components/chat/ChatMessage";
-import { MessageList } from "../../../src/components/chat/MessageList";
+import type { Message } from "@/components/chat/ChatMessage";
+import { MessageList } from "@/components/chat/MessageList";
 
-// Mock los componentes hijos
 vi.mock("@/components/chat/ChatMessage", () => ({
   ChatMessage: ({ content }: { content: string }) => <div>{content}</div>,
 }));

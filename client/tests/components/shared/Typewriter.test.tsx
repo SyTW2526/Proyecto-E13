@@ -11,7 +11,6 @@ describe("Typewriter", () => {
       </I18nTestProvider>,
     );
 
-    // Text may be partially rendered due to animation
     expect(screen.getByRole("heading")).toBeInTheDocument();
   });
 

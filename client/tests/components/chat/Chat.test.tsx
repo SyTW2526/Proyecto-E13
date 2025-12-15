@@ -1,15 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { Chat } from "../../../src/components/chat/Chat";
+import { Chat } from "@/components/chat/Chat";
 
-// Mocks
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => key,
   }),
 }));
 
-vi.mock("../../../src/hooks/use-auto-scroll", () => ({
+vi.mock("@/hooks/use-auto-scroll", () => ({
   useAutoScroll: () => ({
     containerRef: { current: null },
     scrollToBottom: vi.fn(),
@@ -108,13 +107,11 @@ describe("Chat", () => {
 
   it("debe manejar input vacío", () => {
     render(<Chat {...defaultProps} input="" />);
-    // Just verify it renders without error
     expect(screen.getByRole("textbox")).toBeDefined();
   });
 
   it("debe manejar input con texto", () => {
     render(<Chat {...defaultProps} input="Test message" />);
-    // Just verify it renders without error
     expect(screen.getByRole("textbox")).toBeDefined();
   });
 
@@ -156,5 +153,110 @@ describe("Chat", () => {
     render(<Chat {...defaultProps} messages={messages} />);
     expect(screen.getByText("Message 0")).toBeDefined();
     expect(screen.getByText("Message 9")).toBeDefined();
+  });
+
+  it("renders with onRateResponse callback", () => {
+    const onRateResponse = vi.fn();
+    const messages = [
+      {
+        id: "1",
+        role: "assistant" as const,
+        content: "Response",
+        createdAt: new Date(),
+      },
+    ];
+    render(
+      <Chat
+        {...defaultProps}
+        messages={messages}
+        onRateResponse={onRateResponse}
+      />,
+    );
+    expect(screen.getByText("Response")).toBeDefined();
+  });
+
+  it("handles setMessages prop", () => {
+    const setMessages = vi.fn();
+    render(<Chat {...defaultProps} setMessages={setMessages} />);
+    expect(screen.getByRole("textbox")).toBeDefined();
+  });
+
+  it("renders when last message is from assistant", () => {
+    const messages = [
+      {
+        id: "1",
+        role: "assistant" as const,
+        content: "Assistant message",
+        createdAt: new Date(),
+      },
+    ];
+    render(<Chat {...defaultProps} messages={messages} />);
+    expect(screen.getByText("Assistant message")).toBeDefined();
+  });
+
+  it("handles stop with setMessages and toolInvocations", () => {
+    const setMessages = vi.fn();
+    const stopFn = vi.fn();
+    const messages = [
+      {
+        id: "1",
+        role: "assistant" as const,
+        content: "",
+        toolInvocations: [{ state: "call" as const, toolName: "test" }],
+        createdAt: new Date(),
+      },
+    ];
+    render(
+      <Chat
+        {...defaultProps}
+        messages={messages}
+        setMessages={setMessages}
+        stop={stopFn}
+        isGenerating={true}
+      />,
+    );
+    expect(screen.getByRole("textbox")).toBeDefined();
+  });
+
+  it("handles stop with parts containing tool-invocation", () => {
+    const setMessages = vi.fn();
+    const stopFn = vi.fn();
+    const messages = [
+      {
+        id: "1",
+        role: "assistant" as const,
+        content: "",
+        parts: [
+          {
+            type: "tool-invocation" as const,
+            toolInvocation: { state: "call" as const, toolName: "test" },
+          },
+        ],
+        createdAt: new Date(),
+      },
+    ];
+    render(
+      <Chat
+        {...defaultProps}
+        messages={messages}
+        setMessages={setMessages}
+        stop={stopFn}
+        isGenerating={true}
+      />,
+    );
+    expect(screen.getByRole("textbox")).toBeDefined();
+  });
+
+  it("renders ChatMessages component with messages", () => {
+    const messages = [
+      {
+        id: "1",
+        role: "user" as const,
+        content: "Test",
+        createdAt: new Date(),
+      },
+    ];
+    render(<Chat {...defaultProps} messages={messages} />);
+    expect(screen.getByTestId("message-list")).toBeDefined();
   });
 });

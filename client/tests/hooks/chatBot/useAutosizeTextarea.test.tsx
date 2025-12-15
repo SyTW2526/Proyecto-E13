@@ -1,13 +1,12 @@
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { useAutosizeTextArea } from "../../../src/hooks/chatBot/useAutosizeTextarea";
+import { useAutosizeTextArea } from "@/hooks/chatBot/useAutosizeTextarea";
 
 describe("useAutosizeTextArea", () => {
   let textareaRef: React.RefObject<HTMLTextAreaElement>;
   let mockTextarea: HTMLTextAreaElement;
 
   beforeEach(() => {
-    // Crear un textarea mock
     mockTextarea = document.createElement("textarea");
     Object.defineProperty(mockTextarea, "scrollHeight", {
       writable: true,
@@ -30,7 +29,6 @@ describe("useAutosizeTextArea", () => {
 
     expect(mockTextarea.style.height).toBe("100px");
 
-    // Cambiar scrollHeight
     Object.defineProperty(mockTextarea, "scrollHeight", {
       writable: true,
       value: 150,
@@ -41,7 +39,6 @@ describe("useAutosizeTextArea", () => {
   });
 
   it("debe respetar maxHeight", () => {
-    // First set initial scrollHeight
     Object.defineProperty(mockTextarea, "scrollHeight", {
       writable: true,
       value: 100,
@@ -57,7 +54,6 @@ describe("useAutosizeTextArea", () => {
       { initialProps: { deps: ["initial"] } },
     );
 
-    // Now change scrollHeight to exceed maxHeight
     Object.defineProperty(mockTextarea, "scrollHeight", {
       writable: true,
       value: 300,
@@ -65,7 +61,6 @@ describe("useAutosizeTextArea", () => {
 
     rerender({ deps: ["changed"] });
 
-    // El hook debería limitar a maxHeight
     const height = parseInt(mockTextarea.style.height);
     expect(height).toBeLessThanOrEqual(200);
   });
@@ -85,7 +80,6 @@ describe("useAutosizeTextArea", () => {
       { initialProps: { dependencies: ["initial"] } },
     );
 
-    // Intentar reducir scrollHeight por debajo del original
     Object.defineProperty(mockTextarea, "scrollHeight", {
       writable: true,
       value: 50,
@@ -93,7 +87,6 @@ describe("useAutosizeTextArea", () => {
 
     rerender({ dependencies: ["changed"] });
 
-    // Debe mantener la altura original (100)
     expect(mockTextarea.style.height).toBe("100px");
   });
 
@@ -111,9 +104,8 @@ describe("useAutosizeTextArea", () => {
       }),
     );
 
-    // El height final debería tener en cuenta el borderWidth
     const height = parseInt(mockTextarea.style.height);
-    expect(height).toBeGreaterThan(90); // originalHeight: 100 - borderWidth*2: 10 = 90, luego +10
+    expect(height).toBeGreaterThan(90);
   });
 
   it("no debe hacer nada si ref.current es null", () => {
@@ -126,7 +118,6 @@ describe("useAutosizeTextArea", () => {
       }),
     );
 
-    // No debería lanzar error
     expect(true).toBe(true);
   });
 
@@ -171,7 +162,6 @@ describe("useAutosizeTextArea", () => {
       }),
     );
 
-    // No debe limitar la altura si no se especifica maxHeight
     expect(mockTextarea.style.height).toBe("10000px");
   });
 });

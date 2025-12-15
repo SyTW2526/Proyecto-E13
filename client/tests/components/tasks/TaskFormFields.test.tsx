@@ -80,7 +80,6 @@ describe("TaskFormFields", () => {
       </I18nTestProvider>,
     );
 
-    // Required fields should have asterisks
     expect(screen.getAllByText("*").length).toBeGreaterThan(0);
   });
 

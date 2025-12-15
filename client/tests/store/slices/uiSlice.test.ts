@@ -5,7 +5,7 @@ import uiReducer, {
   setTaskCardSize,
   SidebarWidth,
   TaskCardSize,
-} from "../../../src/store/slices/uiSlice";
+} from "@/store/slices/uiSlice";
 
 type RootState = {
   ui: ReturnType<typeof uiReducer>;
@@ -41,7 +41,6 @@ describe("uiSlice", () => {
       validWidths.forEach((width) => {
         localStorage.clear();
         localStorage.setItem("sidebarWidth", width);
-        // El valor se carga al crear el reducer, así que verificamos que acepta valores válidos
         store.dispatch(setSidebarWidth(width));
         expect(store.getState().ui.sidebarWidth).toBe(width);
       });
@@ -56,13 +55,11 @@ describe("uiSlice", () => {
     });
 
     it("should handle invalid sidebar width values", () => {
-      // El estado inicial ya está cargado, así que verificamos que solo acepta valores válidos
       const currentWidth = store.getState().ui.sidebarWidth;
       expect(["compact", "normal", "wide"]).toContain(currentWidth);
     });
 
     it("should handle invalid task card size values", () => {
-      // El estado inicial ya está cargado, así que verificamos que solo acepta valores válidos
       const currentSize = store.getState().ui.taskCardSize;
       expect([2, 3, 4]).toContain(currentSize);
     });

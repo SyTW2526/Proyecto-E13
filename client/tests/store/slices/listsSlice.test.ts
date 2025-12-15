@@ -13,9 +13,9 @@ import listsReducer, {
   unshareList,
   updateList,
   updateListSharePermission,
-} from "../../../src/store/slices/listsSlice";
+} from "@/store/slices/listsSlice";
 
-vi.mock("../../../src/lib/api", () => ({
+vi.mock("@/lib/api", () => ({
   api: {
     get: vi.fn(),
     post: vi.fn(),
@@ -24,7 +24,7 @@ vi.mock("../../../src/lib/api", () => ({
   },
 }));
 
-import { api } from "../../../src/lib/api";
+import { api } from "@/lib/api";
 
 type RootState = {
   lists: ReturnType<typeof listsReducer>;

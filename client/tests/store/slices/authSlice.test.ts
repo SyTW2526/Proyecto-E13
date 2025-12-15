@@ -59,7 +59,6 @@ describe("authSlice", () => {
       });
     });
 
-    // Login Thunk
     it("should handle loginUser.pending", () => {
       const action = { type: loginUser.pending.type };
       const state = authReducer(initialState, action);
@@ -94,7 +93,6 @@ describe("authSlice", () => {
       expect(state.isAuthenticated).toBe(false);
     });
 
-    // Register Thunk
     it("should handle registerUser.pending", () => {
       const action = { type: registerUser.pending.type };
       const state = authReducer(initialState, action);
@@ -129,7 +127,6 @@ describe("authSlice", () => {
       expect(state.isAuthenticated).toBe(false);
     });
 
-    // Google Login Thunk
     it("should handle loginWithGoogleUser.pending", () => {
       const action = { type: loginWithGoogleUser.pending.type };
       const state = authReducer(initialState, action);
@@ -183,7 +180,6 @@ describe("authSlice", () => {
       expect(state.error).toBeNull();
     });
 
-    // Update Profile Thunk
     it("should handle updateUserProfile.pending", () => {
       const action = { type: updateUserProfile.pending.type };
       const state = authReducer(initialState, action);
@@ -232,7 +228,6 @@ describe("authSlice", () => {
       expect(state.error).toBe("Update failed");
     });
 
-    // Change Password Thunk
     it("should handle changeUserPassword.pending", () => {
       const action = { type: changeUserPassword.pending.type };
       const state = authReducer(initialState, action);
@@ -258,7 +253,6 @@ describe("authSlice", () => {
       expect(state.error).toBe("Password change failed");
     });
 
-    // Delete Account Thunk
     it("should handle deleteUserAccount.pending", () => {
       const action = { type: deleteUserAccount.pending.type };
       const state = authReducer(initialState, action);
@@ -326,14 +320,8 @@ describe("authSlice", () => {
 
   describe("getUserFromLocalStorage error handling", () => {
     it("should handle JSON parse errors in localStorage", () => {
-      // Guardamos un JSON inválido en localStorage
       localStorage.setItem("user", "invalid-json{");
-
-      // Reimportamos el módulo para que ejecute getUserFromLocalStorage con el valor inválido
-      // Como ya está cargado, simplemente creamos un nuevo estado inicial
       const state = authReducer(undefined, { type: "@@INIT" });
-
-      // Debe manejar el error y retornar null
       expect(state.user).toBeNull();
     });
   });
@@ -478,8 +466,8 @@ describe("authSlice", () => {
 
       const response = { user: mockUser, token: "token123" };
       vi.mocked(api.post)
-        .mockResolvedValueOnce({ data: null }) // register response
-        .mockResolvedValueOnce({ data: response }); // login response
+        .mockResolvedValueOnce({ data: null })
+        .mockResolvedValueOnce({ data: response });
 
       await store.dispatch(
         registerUser({
@@ -563,7 +551,6 @@ describe("authSlice", () => {
     it("should handle corrupted localStorage data", () => {
       localStorage.setItem("user", "invalid-json{");
 
-      // Force re-import to test the initialization
       const state = authReducer(undefined, { type: "@@INIT" });
       expect(state.user).toBeNull();
     });

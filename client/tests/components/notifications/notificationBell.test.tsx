@@ -89,7 +89,6 @@ describe("NotificationBell", () => {
       </I18nTestProvider>,
     );
 
-    // Verificar que existe el indicador rojo
     expect(container.querySelector(".bg-red-500")).toBeInTheDocument();
   });
 

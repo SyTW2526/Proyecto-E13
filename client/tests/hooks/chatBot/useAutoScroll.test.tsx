@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { useAutoScroll } from "../../../src/hooks/chatBot/useAutoScroll";
+import { useAutoScroll } from "@/hooks/chatBot/useAutoScroll";
 
 describe("useAutoScroll", () => {
   let mockContainer: HTMLDivElement;
@@ -48,8 +48,7 @@ describe("useAutoScroll", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
-    // Scroll cerca del final (dentro del threshold de 50px)
-    mockContainer.scrollTop = 460; // 1000 - 460 - 500 = 40 < 50
+    mockContainer.scrollTop = 460;
 
     act(() => {
       result.current.handleScroll();
@@ -62,14 +61,12 @@ describe("useAutoScroll", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
-    // Primera llamada para establecer previousScrollTop
     mockContainer.scrollTop = 400;
     act(() => {
       result.current.handleScroll();
     });
 
-    // Scroll hacia arriba más de MIN_SCROLL_UP_THRESHOLD (10px)
-    mockContainer.scrollTop = 380; // diferencia: 20px
+    mockContainer.scrollTop = 380;
 
     act(() => {
       result.current.handleScroll();
@@ -82,14 +79,11 @@ describe("useAutoScroll", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
-    // Primera llamada
     mockContainer.scrollTop = 460;
     act(() => {
       result.current.handleScroll();
     });
-
-    // Scroll hacia arriba menor a MIN_SCROLL_UP_THRESHOLD
-    mockContainer.scrollTop = 455; // diferencia: 5px < 10px
+    mockContainer.scrollTop = 455;
 
     act(() => {
       result.current.handleScroll();
@@ -113,15 +107,13 @@ describe("useAutoScroll", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
-    // Desactivar auto-scroll
     act(() => {
       result.current.handleTouchStart();
     });
 
     expect(result.current.shouldAutoScroll).toBe(false);
 
-    // Scrollear hasta el final
-    mockContainer.scrollTop = 470; // 1000 - 470 - 500 = 30 < 50
+    mockContainer.scrollTop = 470;
 
     act(() => {
       result.current.handleScroll();
@@ -151,14 +143,12 @@ describe("useAutoScroll", () => {
     result.current.containerRef.current = mockContainer;
     mockContainer.scrollTop = 0;
 
-    // Desactivar auto-scroll
     act(() => {
       result.current.handleTouchStart();
     });
 
     rerender({ deps: ["dep2"] });
 
-    // No debería haber cambiado
     expect(mockContainer.scrollTop).toBe(0);
   });
 
@@ -173,7 +163,6 @@ describe("useAutoScroll", () => {
       result.current.scrollToBottom();
     });
 
-    // No debe lanzar error
     expect(true).toBe(true);
   });
 
@@ -191,8 +180,6 @@ describe("useAutoScroll", () => {
       result.current.handleScroll();
     });
 
-    // El comportamiento correcto es que se detecte como scroll hacia abajo
-    // y se mantenga el auto-scroll si está cerca del final
     expect(result.current.shouldAutoScroll).toBeDefined();
   });
 
@@ -200,14 +187,11 @@ describe("useAutoScroll", () => {
     const { result } = renderHook(() => useAutoScroll([]));
     result.current.containerRef.current = mockContainer;
 
-    // Primera llamada
     mockContainer.scrollTop = 400;
     act(() => {
       result.current.handleScroll();
     });
-
-    // Scroll hacia abajo
-    mockContainer.scrollTop = 460; // cerca del final
+    mockContainer.scrollTop = 460;
 
     act(() => {
       result.current.handleScroll();

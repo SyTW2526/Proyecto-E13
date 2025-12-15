@@ -90,7 +90,6 @@ describe("TaskCard", () => {
       </I18nTestProvider>,
     );
 
-    // Find first dropdown trigger button (actions menu)
     const buttons = screen.getAllByRole("button");
     const actionsButton = buttons.find(
       (btn) => btn.getAttribute("aria-haspopup") === "menu",
@@ -123,5 +122,123 @@ describe("TaskCard", () => {
 
     const favoriteCheckbox = screen.getByRole("checkbox");
     expect(favoriteCheckbox).toBeInTheDocument();
+  });
+
+  it("renders task with favorite true", () => {
+    const favoriteTask = { ...mockTask, favorite: true };
+    render(
+      <I18nTestProvider>
+        <TaskCard task={favoriteTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    const checkbox = screen.getByRole("checkbox");
+    expect(checkbox).toBeChecked();
+  });
+
+  it("renders task with IN_PROGRESS status", () => {
+    const progressTask = { ...mockTask, status: "IN_PROGRESS" as const };
+    render(
+      <I18nTestProvider>
+        <TaskCard task={progressTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    expect(screen.getByText("Test Task")).toBeInTheDocument();
+  });
+
+  it("renders task with COMPLETED status", () => {
+    const completedTask = {
+      ...mockTask,
+      status: "COMPLETED" as const,
+      completed: true,
+    };
+    render(
+      <I18nTestProvider>
+        <TaskCard task={completedTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    expect(screen.getByText("Test Task")).toBeInTheDocument();
+  });
+
+  it("renders task with HIGH priority", () => {
+    const highPriorityTask = { ...mockTask, priority: "HIGH" as const };
+    render(
+      <I18nTestProvider>
+        <TaskCard task={highPriorityTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    expect(screen.getByText(/alta/i)).toBeInTheDocument();
+  });
+
+  it("renders task with LOW priority", () => {
+    const lowPriorityTask = { ...mockTask, priority: "LOW" as const };
+    render(
+      <I18nTestProvider>
+        <TaskCard task={lowPriorityTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    expect(screen.getByText(/baja/i)).toBeInTheDocument();
+  });
+
+  it("renders task without description", () => {
+    const noDescTask = { ...mockTask, description: undefined };
+    render(
+      <I18nTestProvider>
+        <TaskCard task={noDescTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    expect(screen.getByText("Test Task")).toBeInTheDocument();
+  });
+
+  it("renders task without due date", () => {
+    const noDueDateTask = { ...mockTask, dueDate: undefined };
+    render(
+      <I18nTestProvider>
+        <TaskCard task={noDueDateTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    expect(screen.getByText("Test Task")).toBeInTheDocument();
+  });
+
+  it("renders task with shares", () => {
+    const sharedTask = {
+      ...mockTask,
+      shares: [
+        {
+          id: "share-1",
+          permission: "VIEW" as const,
+          userId: "user-2",
+          taskId: "task-1",
+        },
+      ],
+    };
+    render(
+      <I18nTestProvider>
+        <TaskCard task={sharedTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    expect(screen.getByText("Test Task")).toBeInTheDocument();
+  });
+
+  it("toggles favorite on checkbox click", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <I18nTestProvider>
+        <TaskCard task={mockTask} formatDate={mockFormatDate} />
+      </I18nTestProvider>,
+    );
+
+    const checkbox = screen.getByRole("checkbox");
+    await user.click(checkbox);
+
+    expect(checkbox).toBeInTheDocument();
   });
 });

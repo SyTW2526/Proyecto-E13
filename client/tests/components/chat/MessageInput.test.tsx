@@ -1,9 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { MessageInput } from "../../../src/components/chat/MessageInput";
+import { MessageInput } from "@/components/chat/MessageInput";
 
-// Mocks
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -32,7 +31,7 @@ vi.mock("framer-motion", () => ({
   },
 }));
 
-vi.mock("../../../src/hooks/use-autosize-textarea", () => ({
+vi.mock("@/hooks/use-autosize-textarea", () => ({
   useAutosizeTextArea: vi.fn(),
 }));
 
@@ -232,7 +231,6 @@ describe("MessageInput", () => {
 
       if (wrapper) {
         fireEvent.dragOver(wrapper);
-        // Debería mostrar el overlay de drop
         expect(
           screen.getByText("Drop your files here to attach them."),
         ).toBeDefined();
@@ -246,7 +244,6 @@ describe("MessageInput", () => {
       if (wrapper) {
         fireEvent.dragOver(wrapper);
         fireEvent.dragLeave(wrapper);
-        // El overlay debería desaparecer
         expect(
           screen.queryByText("Drop your files here to attach them."),
         ).toBeNull();
@@ -364,7 +361,6 @@ describe("MessageInput", () => {
       />,
     );
 
-    // Trigger interrupt prompt
     const form = document.createElement("form");
     form.requestSubmit = vi.fn();
 

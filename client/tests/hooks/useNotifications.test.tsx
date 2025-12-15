@@ -130,7 +130,6 @@ describe("useNotifications", () => {
     });
 
     expect(result.current.error).toBe("Error de red");
-    // expect(consoleErrorSpy).toHaveBeenCalled(); // Redux toolkit might not log to console.error by default or different behavior
 
     consoleErrorSpy.mockRestore();
   });
@@ -268,7 +267,6 @@ describe("useNotifications", () => {
     });
 
     await expect(result.current.markAsRead("1")).rejects.toThrow();
-    // expect(consoleErrorSpy).toHaveBeenCalled();
 
     consoleErrorSpy.mockRestore();
   });
@@ -344,7 +342,6 @@ describe("useNotifications", () => {
     });
 
     await expect(result.current.markAllAsRead()).rejects.toThrow();
-    // expect(consoleErrorSpy).toHaveBeenCalled();
 
     consoleErrorSpy.mockRestore();
   });

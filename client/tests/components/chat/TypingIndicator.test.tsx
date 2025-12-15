@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { TypingIndicator } from "../../../src/components/chat/TypingIndicator";
+import { TypingIndicator } from "@/components/chat/TypingIndicator";
 
 describe("TypingIndicator", () => {
   it("debe renderizar el indicador de escritura", () => {
@@ -24,7 +24,6 @@ describe("TypingIndicator", () => {
     const { container } = render(<TypingIndicator />);
     const dots = container.querySelectorAll("svg");
 
-    // Verificar que hay 3 puntos
     expect(dots.length).toBe(3);
   });
 });

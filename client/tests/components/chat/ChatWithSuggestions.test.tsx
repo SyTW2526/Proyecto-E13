@@ -1,9 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ChatWithSuggestions } from "../../../src/components/chat/ChatWithSuggestions";
+import { ChatWithSuggestions } from "@/components/chat/ChatWithSuggestions";
 
-// Mocks
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -118,7 +117,6 @@ describe("ChatWithSuggestions", () => {
     const input = screen.getByTestId("input");
     await user.type(input, "Hello");
 
-    // Verify typing worked by checking the element exists
     expect(input).toBeDefined();
   });
 
@@ -233,7 +231,6 @@ describe("ChatWithSuggestions", () => {
     const suggestion = screen.getByText("Create a task");
     await user.click(suggestion);
 
-    // La sugerencia ya está en el componente, solo verificamos que se haya hecho click
     expect(globalThis.fetch).toHaveBeenCalled();
   });
 
@@ -266,10 +263,8 @@ describe("ChatWithSuggestions", () => {
     const submitButton = screen.getByTestId("submit");
     await user.click(submitButton);
 
-    // Intentar enviar de nuevo mientras carga
     await user.click(submitButton);
 
-    // Solo debe haber una llamada
     await waitFor(() => {
       expect(globalThis.fetch).toHaveBeenCalledTimes(1);
     });
@@ -294,7 +289,6 @@ describe("ChatWithSuggestions", () => {
     const submitButton = screen.getByTestId("submit");
     await user.click(submitButton);
 
-    // El input se limpia inmediatamente al enviar
     await waitFor(() => {
       const currentValue = input.getAttribute("value");
       expect(currentValue === "" || currentValue === null).toBe(true);
@@ -341,7 +335,6 @@ describe("ChatWithSuggestions", () => {
     const submitButton = screen.getByTestId("submit");
     await user.click(submitButton);
 
-    // No debe romper por el JSON inválido
     await waitFor(() => {
       expect(screen.queryByTestId("loading")).toBeDefined();
     });

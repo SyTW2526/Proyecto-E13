@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { InterruptPrompt } from "../../../src/components/chat/InterruptPrompt";
+import { InterruptPrompt } from "@/components/chat/InterruptPrompt";
 
 describe("InterruptPrompt", () => {
   it("debe renderizar cuando isOpen es true", () => {

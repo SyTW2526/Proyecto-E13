@@ -1,10 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { FilePreview } from "../../../src/components/chat/FilePreview";
+import { FilePreview } from "@/components/chat/FilePreview";
 
 describe("FilePreview", () => {
-  // Mock URL.createObjectURL
   beforeAll(() => {
     window.URL.createObjectURL = vi.fn(() => "mock-url");
     window.URL.revokeObjectURL = vi.fn();
