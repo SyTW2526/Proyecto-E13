@@ -196,7 +196,6 @@ const listsSlice = createSlice({
 
     builder
       .addCase(createList.pending, (state) => {
-        state.isLoading = true;
         state.error = null;
       })
       .addCase(createList.fulfilled, (state, action) => {
@@ -213,7 +212,6 @@ const listsSlice = createSlice({
 
     builder
       .addCase(updateList.pending, (state) => {
-        state.isLoading = true;
         state.error = null;
       })
       .addCase(updateList.fulfilled, (state, action) => {
@@ -231,7 +229,6 @@ const listsSlice = createSlice({
 
     builder
       .addCase(deleteList.pending, (state) => {
-        state.isLoading = true;
         state.error = null;
       })
       .addCase(deleteList.fulfilled, (state, action) => {

@@ -25,6 +25,8 @@ import {
 } from "@/store/slices/permissionsSelectors";
 import type { List, ListShare } from "@/types/tasks-system/list";
 import type { SharePermission } from "@/types/permissions";
+import { useCallback } from "react";
+import { store } from "@/store/store";
 
 export function useLists() {
   const dispatch = useAppDispatch();
@@ -67,13 +69,15 @@ export function useLists() {
   const removeShare = (listId: string, shareId: string) =>
     dispatch(unshareList({ listId, userId: shareId }));
 
-  const state = useAppSelector((state) => state);
-
-  const canAccess = (
-    listId: string,
-    permission: SharePermission = "VIEW",
-  ): boolean => canAccessList(listId, permission)(state);
-  const isOwner = (listId: string): boolean => isListOwner(listId)(state);
+  const canAccess = useCallback(
+    (listId: string, permission: SharePermission = "VIEW"): boolean =>
+      canAccessList(listId, permission)(store.getState()),
+    [],
+  );
+  const isOwner = useCallback(
+    (listId: string): boolean => isListOwner(listId)(store.getState()),
+    [],
+  );
 
   return {
     lists,

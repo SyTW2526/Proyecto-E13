@@ -31,6 +31,18 @@ const initialState: TasksState = {
   },
 };
 
+function mergeTaskPayload(existingTask: Task, payload: Task): Task {
+  return {
+    ...existingTask,
+    ...payload,
+    list:
+      payload.list && existingTask.list
+        ? { ...existingTask.list, ...payload.list }
+        : payload.list || existingTask.list,
+    shares: payload.shares || existingTask.shares,
+  };
+}
+
 export const fetchTasks = createAsyncThunk(
   "tasks/fetchTasks",
   async (_, { rejectWithValue }) => {
@@ -161,32 +173,17 @@ const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    setSelectedTask: (state, action: PayloadAction<string | null>) => {
-      state.selectedTaskId = action.payload;
-    },
     setStatusFilter: (state, action: PayloadAction<"all" | TaskStatus>) => {
       state.filters.status = action.payload;
     },
     setListFilter: (state, action: PayloadAction<string | null>) => {
       state.filters.listId = action.payload;
     },
-    setSearchFilter: (state, action: PayloadAction<string>) => {
-      state.filters.search = action.payload;
-    },
     setPriorityFilter: (state, action: PayloadAction<"all" | TaskPriority>) => {
       state.filters.priority = action.payload;
     },
     setFavoriteFilter: (state, action: PayloadAction<"all" | "yes" | "no">) => {
       state.filters.favorite = action.payload;
-    },
-    clearFilters: (state) => {
-      state.filters = {
-        status: "all",
-        listId: null,
-        search: "",
-        priority: "all",
-        favorite: "all",
-      };
     },
     setSorting: (
       state,
@@ -283,15 +280,10 @@ const tasksSlice = createSlice({
       .addCase(updateTask.fulfilled, (state, action) => {
         const index = state.tasks.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) {
-          state.tasks[index] = {
-            ...state.tasks[index],
-            ...action.payload,
-            list:
-              action.payload.list && state.tasks[index].list
-                ? { ...state.tasks[index].list, ...action.payload.list }
-                : action.payload.list || state.tasks[index].list,
-            shares: action.payload.shares || state.tasks[index].shares,
-          };
+          state.tasks[index] = mergeTaskPayload(
+            state.tasks[index],
+            action.payload,
+          );
         }
         state.error = null;
       })
@@ -323,15 +315,10 @@ const tasksSlice = createSlice({
       .addCase(shareTask.fulfilled, (state, action) => {
         const index = state.tasks.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) {
-          state.tasks[index] = {
-            ...state.tasks[index],
-            ...action.payload,
-            list:
-              action.payload.list && state.tasks[index].list
-                ? { ...state.tasks[index].list, ...action.payload.list }
-                : action.payload.list || state.tasks[index].list,
-            shares: action.payload.shares || state.tasks[index].shares,
-          };
+          state.tasks[index] = mergeTaskPayload(
+            state.tasks[index],
+            action.payload,
+          );
         }
         state.error = null;
       })
@@ -355,15 +342,10 @@ const tasksSlice = createSlice({
       .addCase(updateTaskSharePermission.fulfilled, (state, action) => {
         const index = state.tasks.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) {
-          state.tasks[index] = {
-            ...state.tasks[index],
-            ...action.payload,
-            list:
-              action.payload.list && state.tasks[index].list
-                ? { ...state.tasks[index].list, ...action.payload.list }
-                : action.payload.list || state.tasks[index].list,
-            shares: action.payload.shares || state.tasks[index].shares,
-          };
+          state.tasks[index] = mergeTaskPayload(
+            state.tasks[index],
+            action.payload,
+          );
         }
         state.error = null;
       })
@@ -378,15 +360,10 @@ const tasksSlice = createSlice({
       .addCase(unshareTask.fulfilled, (state, action) => {
         const index = state.tasks.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) {
-          state.tasks[index] = {
-            ...state.tasks[index],
-            ...action.payload,
-            list:
-              action.payload.list && state.tasks[index].list
-                ? { ...state.tasks[index].list, ...action.payload.list }
-                : action.payload.list || state.tasks[index].list,
-            shares: action.payload.shares || state.tasks[index].shares,
-          };
+          state.tasks[index] = mergeTaskPayload(
+            state.tasks[index],
+            action.payload,
+          );
         }
         state.error = null;
       })
@@ -402,13 +379,10 @@ const tasksSlice = createSlice({
 });
 
 export const {
-  setSelectedTask,
   setStatusFilter,
   setListFilter,
-  setSearchFilter,
   setPriorityFilter,
   setFavoriteFilter,
-  clearFilters,
   setSorting,
   toggleSortOrder,
   taskAdded,
@@ -423,18 +397,10 @@ export const selectTasksLoading = (state: { tasks: TasksState }) =>
   state.tasks.isLoading;
 export const selectTasksError = (state: { tasks: TasksState }) =>
   state.tasks.error;
-export const selectSelectedTaskId = (state: { tasks: TasksState }) =>
-  state.tasks.selectedTaskId;
 export const selectTaskFilters = (state: { tasks: TasksState }) =>
   state.tasks.filters;
 export const selectTaskSorting = (state: { tasks: TasksState }) =>
   state.tasks.sorting;
-
-export const selectSelectedTask = (state: { tasks: TasksState }) => {
-  const { tasks, selectedTaskId } = state.tasks;
-  return tasks.find((task) => task.id === selectedTaskId) || null;
-};
-
 export const selectFilteredTasks = (state: { tasks: TasksState }) => {
   const { tasks, filters, sorting } = state.tasks;
   let filtered = [...tasks];

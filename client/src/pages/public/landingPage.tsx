@@ -23,7 +23,7 @@ export default function LandingPage() {
             <Typewriter
               text={`${t("landing.welcome")} ${t("app.name")}`}
               className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-tight"
-              speed={30}
+              speed={60}
               showCursor={true}
             />
           </div>

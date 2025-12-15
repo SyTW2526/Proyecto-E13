@@ -69,7 +69,9 @@ export function useChatApi(options: UseChatApiOptions = {}): UseChatApiReturn {
                 );
               }
             } catch (e) {
-              console.error("Error parsing chunk:", e);
+              if (import.meta.env.DEV) {
+                console.error("Error parsing chunk:", e);
+              }
             }
           }
         }
@@ -133,7 +135,9 @@ export function useChatApi(options: UseChatApiOptions = {}): UseChatApiReturn {
         await sendMessage(userMessage, currentMessages);
       } catch (error) {
         if ((error as Error).name !== "AbortError") {
-          console.error("Error:", error);
+          if (import.meta.env.DEV) {
+            console.error("Error:", error);
+          }
           const errorMessage: Message = {
             id: (Date.now() + 1).toString(),
             role: "assistant",
@@ -165,7 +169,9 @@ export function useChatApi(options: UseChatApiOptions = {}): UseChatApiReturn {
         await sendMessage(userMessage, currentMessages);
       } catch (error) {
         if ((error as Error).name !== "AbortError") {
-          console.error("Error:", error);
+          if (import.meta.env.DEV) {
+            console.error("Error:", error);
+          }
           const errorMessage: Message = {
             id: (Date.now() + 1).toString(),
             role: "assistant",

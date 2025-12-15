@@ -66,7 +66,6 @@ export default function App() {
 
       <Footer />
 
-      {/* Botón flotante para abrir el chat */}
       <Button
         onClick={() => setOpenChat(true)}
         className="fixed bottom-6 right-6 z-50 rounded-full text-3xl shadow-lg p-4"
@@ -75,7 +74,6 @@ export default function App() {
         size="icon-xl"
       />
 
-      {/* Sheet lateral con el chat bot */}
       <Sheet open={openChat} onOpenChange={setOpenChat}>
         <SheetContent className="w-full sm:max-w-2xl flex flex-col h-full p-0">
           <SheetHeader className="px-6 py-4 border-b">

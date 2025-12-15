@@ -101,7 +101,6 @@ export default function DashboardPage() {
             text={`${t("dashboard.welcome")}${user?.name || "Usuario"}!`}
             className="text-4xl font-bold mb-2 inline-flex items-center gap-2"
           />
-          <Icon as="IconUser" size={26} className="inline-block ml-2" />
           <p className="text-muted-foreground">
             {t("dashboard.description")} - {weekStats.weekNumber}
           </p>

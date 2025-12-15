@@ -9,6 +9,13 @@ import {
 
 const PRIORITY_COLORS = TaskPriorityColors;
 const STATUS_COLORS = TaskStatusColors;
+const LIST_COLORS = [
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+];
 
 function getStartOfWeek(): Date {
   const now = new Date();
@@ -115,9 +122,6 @@ export function useDashboardCharts({
   }, [accessibleTasks]);
 
   const priorityChartData = useMemo(() => {
-    console.log("Dashboard - accessibleTasks:", accessibleTasks);
-    console.log("Dashboard - tasksThisWeek:", tasksThisWeek);
-
     return Object.entries(priorityStats)
       .map(([priority, count]) => {
         const labelKey = `tasks.priority.${priority}`;
@@ -130,7 +134,7 @@ export function useDashboardCharts({
         };
       })
       .filter((item) => item.value > 0);
-  }, [priorityStats, accessibleTasks, tasksThisWeek, t]);
+  }, [priorityStats, t]);
 
   const priorityChartConfig = useMemo(() => {
     return Object.entries(priorityConfig).reduce((acc, [key]) => {
@@ -250,14 +254,6 @@ export function useDashboardCharts({
     }),
     [t],
   );
-
-  const LIST_COLORS = [
-    "hsl(var(--chart-1))",
-    "hsl(var(--chart-2))",
-    "hsl(var(--chart-3))",
-    "hsl(var(--chart-4))",
-    "hsl(var(--chart-5))",
-  ];
 
   const tasksPerListData = useMemo(() => {
     return tasksPerList

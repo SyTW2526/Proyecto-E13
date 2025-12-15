@@ -19,7 +19,7 @@ import { Typewriter } from "@/components/shared/Typewriter";
 export default function ContactsPage() {
   const { t } = useTranslation();
   return (
-    <div className="mx-auto w-full max-w-6xl px-4">
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 flex flex-col items-center">
       <header className="mb-6 text-center">
         <Typewriter
           text={t("contacts.title")}
@@ -86,8 +86,6 @@ export default function ContactsPage() {
           </Card>
         ))}
       </section>
-
-      <div className="pb-16" />
     </div>
   );
 }

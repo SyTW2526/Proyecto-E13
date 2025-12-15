@@ -35,10 +35,7 @@ export const Typewriter = memo(function Typewriter({
       {displayText}
       {showCursor && (
         <span
-          className={cn(
-            "inline-block ml-0.5 font-light",
-            isTyping ? "animate-pulse" : "opacity-0",
-          )}
+          className="inline-block font-light animate-blink"
           aria-hidden="true"
         >
           {cursorChar}

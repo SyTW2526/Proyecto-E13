@@ -30,16 +30,12 @@ export function useTaskFilters() {
     [accessibleLists, accessibleTasks],
   );
 
-  const displayTasks = useMemo(() => {
-    return filteredTasks;
-  }, [filteredTasks]);
-
   const handleListFilter = (listId: string | null) => {
     filterByList(listId);
   };
 
   return {
-    displayTasks,
+    displayTasks: filteredTasks,
     listTaskCounts,
     selectedListId,
     handleListFilter,

@@ -1,7 +1,6 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useRef } from "react";
+import { useAppDispatch, useAppSelector } from "./useRedux";
 import { socket } from "../utils/socket";
-import type { AppDispatch, RootState } from "../store/store";
 import {
   taskAdded,
   taskUpdated,
@@ -18,9 +17,10 @@ import type { List } from "@/types/tasks-system/list";
 import type { Notification } from "@/types/notification";
 
 export const useSocket = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.auth);
-  const { lists } = useSelector((state: RootState) => state.lists);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
+  const lists = useAppSelector((state) => state.lists.lists);
+  const joinedListIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (user) {
@@ -75,22 +75,25 @@ export const useSocket = () => {
       socket.off("list:shared");
       socket.off("list:unshared");
       socket.off("notification:created");
+      joinedListIds.current.clear();
     };
   }, [user, dispatch]);
 
   useEffect(() => {
-    if (lists.length > 0) {
-      lists.forEach((list) => {
-        socket.emit("join_list", list.id);
-      });
+    const currentIds = new Set(lists.map((list) => list.id));
+
+    for (const id of currentIds) {
+      if (!joinedListIds.current.has(id)) {
+        socket.emit("join_list", id);
+        joinedListIds.current.add(id);
+      }
     }
 
-    return () => {
-      if (lists.length > 0) {
-        lists.forEach((list) => {
-          socket.emit("leave_list", list.id);
-        });
+    for (const id of joinedListIds.current) {
+      if (!currentIds.has(id)) {
+        socket.emit("leave_list", id);
+        joinedListIds.current.delete(id);
       }
-    };
+    }
   }, [lists]);
 };

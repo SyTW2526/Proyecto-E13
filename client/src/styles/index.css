@@ -122,7 +122,7 @@
 
   body {
     @apply text-foreground;
-    font-family: "Outfit", sans-serif;
+    font-family: "Montserrat", sans-serif;
     background-color: var(--background);
     min-height: 100vh;
   }
@@ -208,9 +208,7 @@
   }
 }
 
-/* Utility classes for distinctive effects */
 @layer utilities {
-  /* Glassmorphism effect */
   .glass {
     @apply bg-background/80 backdrop-blur-xl border border-border/50;
   }
@@ -219,7 +217,6 @@
     @apply bg-background/60 backdrop-blur-2xl border border-border/30;
   }
 
-  /* Subtle glow effects */
   .glow-sm {
     box-shadow: 0 0 20px -5px oklch(var(--primary) / 0.15);
   }
@@ -228,7 +225,6 @@
     box-shadow: 0 0 40px -10px oklch(var(--primary) / 0.2);
   }
 
-  /* Animated gradient background */
   .gradient-animate {
     background-size: 200% 200%;
     animation: gradient-shift 8s ease infinite;
@@ -244,7 +240,6 @@
     }
   }
 
-  /* Text gradient utility */
   .text-gradient {
     background: linear-gradient(
       135deg,
@@ -263,7 +258,6 @@
     -webkit-text-fill-color: transparent;
   }
 
-  /* Hover lift effect */
   .hover-lift {
     @apply transition-all duration-300;
   }
@@ -273,7 +267,6 @@
     box-shadow: 0 10px 40px -10px oklch(0 0 0 / 0.1);
   }
 
-  /* Subtle pulse animation */
   .pulse-subtle {
     animation: pulse-subtle 2s ease-in-out infinite;
   }
@@ -285,6 +278,20 @@
     }
     50% {
       opacity: 0.8;
+    }
+  }
+
+  .animate-blink {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
     }
   }
 }
