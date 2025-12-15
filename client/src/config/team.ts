@@ -4,7 +4,7 @@
  * Define los miembros del equipo con toda su información de contacto.
  */
 
-import { TeamMember } from "@/types/team";
+import type { TeamMember } from "@/types/team";
 
 export const team: TeamMember[] = [
   {

@@ -49,7 +49,9 @@
   "landing": {
     "welcome": "Bienvenido a",
     "subtitle": "Organiza tus tareas de manera eficiente y mejora tu productividad",
+    "scroll": "Desliza para ver más",
     "features": {
+      "title": "Características",
       "taskManagement": {
         "title": "Gestión de tareas inteligente",
         "description": "Crea, organiza y prioriza tareas con facilidad",
@@ -75,6 +77,17 @@
         "description": "Asignación, comentarios y seguimiento de actividad",
         "details": "Trabaja en equipo con asignaciones, menciones y un feed de actividad centralizado."
       }
+    },
+    "benefits": {
+      "free": "Gratuito",
+      "unlimited": "Ilimitado",
+      "real_time": "En tiempo real",
+      "collaboration": "Colaborativo"
+    },
+    "cta": {
+      "title": "Empieza a usar TaskGrid",
+      "subtitle": "Organiza tus tareas y colabora con tu equipo de la forma más eficiente posible. Además dispondrás de estadísticas y análisis para optimizar tu productividad.",
+      "register": "Regístrate"
     }
   },
   "contacts": {

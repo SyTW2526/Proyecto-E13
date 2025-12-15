@@ -1,7 +1,11 @@
 import { api, apiErrorMessage } from "@/lib/api";
 import type { SharePermission } from "@/types/permissions";
 import type { List, ListsState } from "@/types/tasks-system/list";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 
 const initialState: ListsState = {
   lists: [],

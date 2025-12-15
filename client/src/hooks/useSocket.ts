@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../utils/socket";
-import { AppDispatch, RootState } from "../store/store";
+import type { AppDispatch, RootState } from "../store/store";
 import {
   taskAdded,
   taskUpdated,
@@ -13,9 +13,9 @@ import {
   listDeleted,
 } from "../store/slices/listsSlice";
 import { notificationAdded } from "../store/slices/notificationsSlice";
-import { Task } from "@/types/tasks-system/task";
-import { List } from "@/types/tasks-system/list";
-import { Notification } from "@/types/notification";
+import type { Task } from "@/types/tasks-system/task";
+import type { List } from "@/types/tasks-system/list";
+import type { Notification } from "@/types/notification";
 
 export const useSocket = () => {
   const dispatch = useDispatch<AppDispatch>();

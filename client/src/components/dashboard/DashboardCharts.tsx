@@ -5,7 +5,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { Bar, BarChart, Pie, PieChart, Cell, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Pie, PieChart, Cell, XAxis } from "recharts";
 import { useTranslation } from "react-i18next";
 
 const BAR_RADIUS = 8;

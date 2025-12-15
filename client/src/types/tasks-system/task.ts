@@ -1,4 +1,4 @@
-import { SharePermission } from "../permissions";
+import type { SharePermission } from "../permissions";
 
 export type TaskStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED";
 

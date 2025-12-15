@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
-import { FeatureCardProps } from "@/types/components";
+import type { FeatureCardProps } from "@/types/components";
 
 export default function FeatureCard({
   icon,
@@ -20,22 +20,28 @@ export default function FeatureCard({
   chart = false,
 }: FeatureCardProps) {
   return (
-    <Card className={className}>
-      <CardHeader className="flex flex-row items-center gap-3 pb-3 sm:pb-6">
+    <Card
+      className={`group relative overflow-hidden bg-card/80 backdrop-blur-sm border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-lg hover:shadow-primary/5 ${className}`}
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      <CardHeader className="relative flex flex-row items-start gap-4 pb-3 sm:pb-4">
         {icon ? (
-          <div className="text-xl shrink-0">
+          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shrink-0">
             <Icon
               as={icon}
-              size={24}
+              size={22}
               ariaLabel={iconLabel}
-              className="inline-block"
+              className="transition-transform duration-300 group-hover:scale-110"
             />
           </div>
         ) : null}
-        <div className="min-w-0">
-          <CardTitle className="text-base sm:text-lg">{title}</CardTitle>
+        <div className="min-w-0 pt-1">
+          <CardTitle className="text-base sm:text-lg font-semibold tracking-tight">
+            {title}
+          </CardTitle>
           {description ? (
-            <CardDescription className="text-xs sm:text-sm">
+            <CardDescription className="text-xs sm:text-sm mt-1 text-muted-foreground/80">
               {description}
             </CardDescription>
           ) : null}
@@ -43,20 +49,22 @@ export default function FeatureCard({
       </CardHeader>
 
       {bigDetails && details ? (
-        <CardContent id="big-details" className="pt-0">
+        <CardContent id="big-details" className="relative pt-0">
           <span className="text-3xl sm:text-4xl leading-none font-bold text-foreground">
             {details}
           </span>
         </CardContent>
       ) : details && !chart ? (
-        <CardContent id="details" className="pt-0">
-          <p className="text-xs sm:text-sm text-muted-foreground whitespace-pre-line">
+        <CardContent id="details" className="relative pt-0">
+          <p className="text-xs sm:text-sm text-muted-foreground/70 whitespace-pre-line leading-relaxed">
             {details}
           </p>
         </CardContent>
       ) : null}
 
-      {children && <CardContent className="pt-0">{children}</CardContent>}
+      {children && (
+        <CardContent className="relative pt-0">{children}</CardContent>
+      )}
     </Card>
   );
 }

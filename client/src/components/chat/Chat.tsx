@@ -1,22 +1,17 @@
 "use client";
 
-import {
-  forwardRef,
-  useCallback,
-  useRef,
-  useState,
-  type ReactElement,
-} from "react";
+import { useCallback, useRef } from "react";
 import { ArrowDown, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { cn } from "@/lib/utils";
 import { useAutoScroll } from "@/hooks/chatBot/useAutoScroll";
 import { Button } from "@/components/ui/button";
 import { type Message } from "@/components/chat/ChatMessage";
 import { MessageInput } from "@/components/chat/MessageInput";
 import { MessageList } from "@/components/chat/MessageList";
 import { PromptSuggestions } from "@/components/chat/PromptSuggestions";
+import { ChatContainer } from "@/components/chat/ChatContainer";
+import { ChatForm } from "@/components/chat/ChatForm";
 
 interface ChatPropsBase {
   handleSubmit: (
@@ -271,61 +266,6 @@ export function ChatMessages({
   );
 }
 
-export const ChatContainer = forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
-  return (
-    <div
-      ref={ref}
-      className={cn("flex flex-col h-full w-full", className)}
-      {...props}
-    />
-  );
-});
-ChatContainer.displayName = "ChatContainer";
-
-interface ChatFormProps {
-  className?: string;
-  isPending: boolean;
-  handleSubmit: (
-    event?: { preventDefault?: () => void },
-    options?: { experimental_attachments?: FileList },
-  ) => void;
-  children: (props: {
-    files: File[] | null;
-    setFiles: React.Dispatch<React.SetStateAction<File[] | null>>;
-  }) => ReactElement;
-}
-
-export const ChatForm = forwardRef<HTMLFormElement, ChatFormProps>(
-  ({ children, handleSubmit, className }, ref) => {
-    const [files, setFiles] = useState<File[] | null>(null);
-
-    const onSubmit = (event: React.FormEvent) => {
-      if (!files) {
-        handleSubmit(event);
-        return;
-      }
-
-      const fileList = createFileList(files);
-      handleSubmit(event, { experimental_attachments: fileList });
-      setFiles(null);
-    };
-
-    return (
-      <form ref={ref} onSubmit={onSubmit} className={className}>
-        {children({ files, setFiles })}
-      </form>
-    );
-  },
-);
-ChatForm.displayName = "ChatForm";
-
-function createFileList(files: File[] | FileList): FileList {
-  const dataTransfer = new DataTransfer();
-  for (const file of Array.from(files)) {
-    dataTransfer.items.add(file);
-  }
-  return dataTransfer.files;
-}
+// Re-export separated components for backward compatibility
+export { ChatContainer } from "@/components/chat/ChatContainer";
+export { ChatForm } from "@/components/chat/ChatForm";

@@ -60,21 +60,26 @@ const HighlightedPre = React.lazy(async () => {
           {tokens.map((line, lineIndex) => (
             <>
               <span key={lineIndex}>
-                {line.map((token, tokenIndex) => {
-                  const style =
-                    typeof token.htmlStyle === "string"
-                      ? undefined
-                      : token.htmlStyle;
-                  return (
-                    <span
-                      key={tokenIndex}
-                      className="text-shiki-light bg-shiki-light-bg dark:text-shiki-dark dark:bg-shiki-dark-bg"
-                      style={style}
-                    >
-                      {token.content}
-                    </span>
-                  );
-                })}
+                {line.map(
+                  (
+                    token: { htmlStyle?: string | object; content: string },
+                    tokenIndex: number,
+                  ) => {
+                    const style =
+                      typeof token.htmlStyle === "string"
+                        ? undefined
+                        : token.htmlStyle;
+                    return (
+                      <span
+                        key={tokenIndex}
+                        className="text-shiki-light bg-shiki-light-bg dark:text-shiki-dark dark:bg-shiki-dark-bg"
+                        style={style}
+                      >
+                        {token.content}
+                      </span>
+                    );
+                  },
+                )}
               </span>
               {lineIndex !== tokens.length - 1 && "\n"}
             </>
@@ -131,7 +136,7 @@ function childrenTakeAllStringContents(element: any): string {
   }
 
   if (element?.props?.children) {
-    let children = element.props.children;
+    const children = element.props.children;
 
     if (Array.isArray(children)) {
       return children

@@ -4,13 +4,12 @@
  * Ahora usa Redux para gestionar el estado global del tema.
  */
 
-import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./useRedux";
 import {
   selectTheme,
   setTheme as setThemeAction,
 } from "@/store/slices/themeSlice";
-import { Theme } from "@/types/theme";
+import type { Theme } from "@/types/theme";
 
 export function useTheme() {
   const dispatch = useAppDispatch();

@@ -14,15 +14,18 @@ import {
 import { Mail, ExternalLink } from "lucide-react";
 import { team } from "@/config/team";
 import { useTranslation } from "react-i18next";
+import { Typewriter } from "@/components/shared/Typewriter";
 
 export default function ContactsPage() {
   const { t } = useTranslation();
   return (
     <div className="mx-auto w-full max-w-6xl px-4">
       <header className="mb-6 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          {t("contacts.title")}
-        </h1>
+        <Typewriter
+          text={t("contacts.title")}
+          className="text-3xl font-semibold tracking-tight"
+          speed={35}
+        />
         <p className="mt-1 text-sm text-muted-foreground">
           {t("contacts.subtitle")}
         </p>

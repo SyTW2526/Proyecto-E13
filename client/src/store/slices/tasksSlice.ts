@@ -6,7 +6,11 @@ import type {
   TasksState,
   TaskStatus,
 } from "@/types/tasks-system/task";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import { deleteList } from "./listsSlice";
 
 const initialState: TasksState = {

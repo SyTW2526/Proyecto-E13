@@ -1,6 +1,10 @@
 import { api, apiErrorMessage } from "@/lib/api";
 import type { Notification } from "@/types/notification";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 
 export interface NotificationsState {
   notifications: Notification[];

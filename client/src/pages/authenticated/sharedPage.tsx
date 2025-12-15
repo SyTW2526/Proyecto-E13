@@ -19,7 +19,6 @@ export default function SharedPage() {
     accessibleLists,
     filterByStatus,
     filterByPriority,
-    filterByFavorite,
     filters,
     sortBy,
     toggleSort,

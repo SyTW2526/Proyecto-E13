@@ -38,7 +38,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUI } from "@/hooks/useUI";
-import { SidebarWidth } from "@/store/slices/uiSlice";
+import type { SidebarWidth } from "@/store/slices/uiSlice";
+import { Typewriter } from "@/components/shared/Typewriter";
 
 export default function SettingsPage() {
   const { t, i18n } = useTranslation();
@@ -86,9 +87,11 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto w-full max-w-7xl p-6 space-y-8">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {t("settings.title")}
-        </h1>
+        <Typewriter
+          text={t("settings.title")}
+          className="text-2xl font-semibold tracking-tight"
+          speed={30}
+        />
         <p className="text-sm text-muted-foreground">
           {t("settings.subtitle")}
         </p>

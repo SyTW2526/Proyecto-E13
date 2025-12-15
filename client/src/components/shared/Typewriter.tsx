@@ -1,0 +1,49 @@
+import { memo } from "react";
+import { useTypewriter } from "@/hooks/useTypewriter";
+import { cn } from "@/lib/utils";
+
+interface TypewriterProps {
+  text: string;
+  speed?: number;
+  delay?: number;
+  className?: string;
+  as?: "h1" | "h2" | "h3" | "h4" | "span" | "p";
+  showCursor?: boolean;
+  cursorChar?: string;
+  onComplete?: () => void;
+}
+
+export const Typewriter = memo(function Typewriter({
+  text,
+  speed = 40,
+  delay = 100,
+  className,
+  as: Tag = "h1",
+  showCursor = true,
+  cursorChar = "|",
+  onComplete,
+}: TypewriterProps) {
+  const { displayText, isTyping } = useTypewriter({
+    text,
+    speed,
+    delay,
+    onComplete,
+  });
+
+  return (
+    <Tag className={cn(className)}>
+      {displayText}
+      {showCursor && (
+        <span
+          className={cn(
+            "inline-block ml-0.5 font-light",
+            isTyping ? "animate-pulse" : "opacity-0",
+          )}
+          aria-hidden="true"
+        >
+          {cursorChar}
+        </span>
+      )}
+    </Tag>
+  );
+});

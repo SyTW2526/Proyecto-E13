@@ -17,8 +17,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
-import { AuthenticateMode } from "@/types/components";
-import { LoginFormProps } from "@/types/components";
+import type { AuthenticateMode } from "@/types/components";
+import type { LoginFormProps } from "@/types/components";
 import { firstZodIssueMessage } from "@/lib/utils";
 import {
   googleAuthSchema,

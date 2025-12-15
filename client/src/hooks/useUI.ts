@@ -4,8 +4,8 @@ import {
   selectTaskCardSize,
   setSidebarWidth as setSidebarWidthAction,
   setTaskCardSize as setTaskCardSizeAction,
-  SidebarWidth,
-  TaskCardSize,
+  type SidebarWidth,
+  type TaskCardSize,
 } from "@/store/slices/uiSlice";
 
 export function useUI() {

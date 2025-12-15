@@ -1,37 +1,17 @@
 import { useState, memo } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ItemActionsMenu } from "@/components/shared/ItemActionsMenu";
+import { TaskCardHeader } from "@/components/tasks/cards/TaskCardHeader";
+import { TaskCardContent } from "@/components/tasks/cards/TaskCardContent";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import Icon from "@/components/ui/icon";
-import { Checkbox } from "@/components/ui/checkbox";
+  DeleteTaskDialog,
+  TaskErrorDialog,
+  TaskCompletionDialog,
+} from "@/components/tasks/cards/TaskCardDialogs";
 import CreateTaskDialog from "@/components/tasks/dialogs/CreateTaskDialog";
 import ShareTaskDialog from "@/components/tasks/dialogs/ShareTaskDialog";
-import { useTranslation } from "react-i18next";
-
 import { useTasks } from "@/hooks/useTasks";
 import type { Task } from "@/types/tasks-system/task";
 import type { List } from "@/types/tasks-system/list";
-import {
-  TaskStatusFilter,
-  TaskPriorityFilter,
-} from "@/components/tasks/TaskFilters";
 
 interface TaskCardProps {
   task: Task;
@@ -43,7 +23,6 @@ export const TaskCard = memo(function TaskCard({
   task,
   formatDate,
 }: TaskCardProps) {
-  const { t } = useTranslation();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
@@ -52,120 +31,58 @@ export const TaskCard = memo(function TaskCard({
   const [errorMessage, setErrorMessage] = useState("");
   const { toggleFavorite, removeTask, editTask } = useTasks();
 
+  const handleDelete = async () => {
+    try {
+      await removeTask(task.id).unwrap();
+      setDeleteDialogOpen(false);
+    } catch (err) {
+      setErrorMessage(err as string);
+      setErrorDialogOpen(true);
+      setDeleteDialogOpen(false);
+    }
+  };
+
   return (
     <Card
       id={task.id}
-      className="py-0 group relative flex flex-col shadow-none border border-border bg-card hover:shadow-sm transition-all duration-200 overflow-hidden rounded-xl"
+      className="py-0 group relative flex flex-col border border-border/50 bg-gradient-to-br from-card via-card to-card/80 hover:border-primary/30 hover:shadow-sm hover:shadow-primary/5 transition-all duration-300 overflow-hidden rounded-xl backdrop-blur-sm"
     >
-      <CardContent className="flex flex-col gap-4 w-full p-4 sm:p-6">
-        {/* Top Section: Actions (Left) and Status/Priority/Favorite (Right) */}
-        <div className="flex flex-wrap justify-between items-center sm:items-center w-full gap-2 sm:gap-0">
-          {/* Actions Menu (Left) */}
-          <ItemActionsMenu
-            onShare={() => setShareDialogOpen(true)}
-            onEdit={() => setEditDialogOpen(true)}
-            onDelete={() => setDeleteDialogOpen(true)}
-            align="start"
-          />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-          <div className="flex flex-row flex-wrap justify-end items-center gap-1 sm:gap-1">
-            {/* Status Filter */}
-            <TaskStatusFilter
-              variant="compact"
-              value={task.status}
-              onChange={(status) => {
-                if (status !== "all") {
-                  editTask({ id: task.id, status });
-                  if (status === "COMPLETED" && task.status !== "COMPLETED") {
-                    setCompletionDialogOpen(true);
-                  }
-                }
-              }}
-              showAll={false}
-            />
+      <CardContent className="relative flex flex-col gap-4 w-full p-4 sm:p-5">
+        <TaskCardHeader
+          status={task.status}
+          priority={task.priority}
+          favorite={task.favorite}
+          canEdit={true}
+          actions={{
+            onShare: () => setShareDialogOpen(true),
+            onEdit: () => setEditDialogOpen(true),
+            onDelete: () => setDeleteDialogOpen(true),
+            align: "start",
+          }}
+          onStatusChange={(status) => editTask({ id: task.id, status })}
+          onPriorityChange={(priority) => editTask({ id: task.id, priority })}
+          onFavoriteToggle={() => toggleFavorite(task.id)}
+          onStatusComplete={() => setCompletionDialogOpen(true)}
+          showFavorite={true}
+        />
 
-            {/* Priority Filter */}
-            <TaskPriorityFilter
-              variant="compact"
-              value={task.priority}
-              onChange={(priority) => {
-                if (priority !== "all") {
-                  editTask({ id: task.id, priority });
-                }
-              }}
-              showAll={false}
-            />
-
-            {/* Favorite Checkbox */}
-            <Checkbox
-              checked={task.favorite}
-              onCheckedChange={() => toggleFavorite(task.id)}
-              className="ml-2 sm:ml-2 cursor-pointer hover:scale-110 transition-transform duration-200"
-              icon={
-                <Icon
-                  as="IconStar"
-                  size={16}
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                />
-              }
-              checkedIcon={
-                <Icon
-                  as="IconStarFilled"
-                  size={16}
-                  className="fill-primary text-primary"
-                />
-              }
-            />
-          </div>
-        </div>
-
-        {/* Left Section: Title & Description */}
-        <div className="flex-1 flex flex-col justify-center text-left">
-          <h3 className="text-base sm:text-base md:text-lg font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors break-words">
-            {task.name}
-          </h3>
-
-          {/* Dates */}
-          <div className="flex flex-wrap gap-1.5 mt-1">
-            <div className="flex items-center gap-1.5 text-xs sm:text-xs md:text-sm text-muted-foreground">
-              <Icon
-                as="IconCalendarPlus"
-                size={14}
-                className="text-muted-foreground shrink-0"
-              />
-              <span className="truncate max-w-[120px] sm:max-w-none">
-                {formatDate(task.createdAt)}
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs sm:text-xs md:text-sm text-muted-foreground">
-              <Icon
-                as="IconCalendarEvent"
-                size={14}
-                className="text-muted-foreground shrink-0"
-              />
-              <span className="truncate max-w-[120px] sm:max-w-none">
-                {task.dueDate
-                  ? formatDate(task.dueDate)
-                  : t("tasks.card.noDate")}
-              </span>
-            </div>
-          </div>
-          {task.description && (
-            <p className="mt-1.5 text-sm sm:text-sm md:text-base text-muted-foreground line-clamp-2 leading-relaxed break-words">
-              {task.description}
-            </p>
-          )}
-        </div>
+        <TaskCardContent
+          name={task.name}
+          description={task.description}
+          createdAt={task.createdAt}
+          dueDate={task.dueDate}
+          formatDate={formatDate}
+        />
       </CardContent>
 
-      {/* Edit Dialog */}
       <CreateTaskDialog
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         editTask={task}
       />
 
-      {/* Share Dialog */}
       <ShareTaskDialog
         open={shareDialogOpen}
         onOpenChange={setShareDialogOpen}
@@ -173,76 +90,25 @@ export const TaskCard = memo(function TaskCard({
       />
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("tasks.delete.title")}</DialogTitle>
-            <DialogDescription>
-              {t("tasks.delete.description", { name: task.name })}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-            >
-              {t("tasks.delete.cancel")}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                try {
-                  await removeTask(task.id).unwrap();
-                  setDeleteDialogOpen(false);
-                } catch (err) {
-                  setErrorMessage(err as string);
-                  setErrorDialogOpen(true);
-                  setDeleteDialogOpen(false);
-                }
-              }}
-            >
-              {t("tasks.delete.confirm")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteTaskDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        taskName={task.name}
+        onConfirm={handleDelete}
+      />
 
       {/* Error Alert Dialog */}
-      <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t("share.errors.actionNotAllowed")}
-            </AlertDialogTitle>
-            <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>
-              {t("share.errors.understood")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <TaskErrorDialog
+        open={errorDialogOpen}
+        onOpenChange={setErrorDialogOpen}
+        errorMessage={errorMessage}
+      />
 
       {/* Task Completion Alert Dialog */}
-      <AlertDialog
+      <TaskCompletionDialog
         open={completionDialogOpen}
         onOpenChange={setCompletionDialogOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("tasks.completion.title")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("tasks.completion.description")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setCompletionDialogOpen(false)}>
-              {t("tasks.completion.understood")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      />
     </Card>
   );
 });

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { FilterableList } from "@/components/tasks/FilterableList";
 import {
   TaskStatusFilter,
@@ -7,7 +7,7 @@ import {
   TaskSortFilter,
 } from "@/components/tasks/TaskFilters";
 import { useUI } from "@/hooks/useUI";
-import { Task, TaskStatus, TaskPriority } from "@/types/tasks-system/task";
+import type { Task, TaskStatus, TaskPriority } from "@/types/tasks-system/task";
 
 type SortField = "name" | "dueDate" | "priority" | "createdAt" | "updatedAt";
 
