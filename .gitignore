@@ -35,5 +35,4 @@ server/src/generated/prisma
 coverage/
 node_modules/
 html/
-
 package-lock.json

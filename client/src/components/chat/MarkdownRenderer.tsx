@@ -7,7 +7,9 @@ interface MarkdownRendererProps {
   children: string;
 }
 
-export function MarkdownRenderer({ children }: Readonly<MarkdownRendererProps>) {
+export function MarkdownRenderer({
+  children,
+}: Readonly<MarkdownRendererProps>) {
   return (
     <div className="space-y-3">
       <Markdown remarkPlugins={[remarkGfm]} components={COMPONENTS}>

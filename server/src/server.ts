@@ -1,4 +1,4 @@
-import "dotenv/config";  
+import "dotenv/config";
 import express, { Request, Response } from "express";
 import { createServer } from "node:http";
 import { initSocket } from "./utils/socket.js";

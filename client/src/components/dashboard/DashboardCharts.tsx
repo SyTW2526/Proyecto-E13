@@ -163,7 +163,10 @@ interface WeeklyTasksChartProps {
   config: Record<string, { label?: string; color?: string }>;
 }
 
-export function WeeklyTasksChart({ data, config }: Readonly<WeeklyTasksChartProps>) {
+export function WeeklyTasksChart({
+  data,
+  config,
+}: Readonly<WeeklyTasksChartProps>) {
   const renderLabel = React.useCallback(
     (props: Omit<CustomLabelProps, "data">) => (
       <CustomLabel {...props} data={data} />
