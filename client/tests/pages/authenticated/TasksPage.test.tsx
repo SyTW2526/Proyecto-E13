@@ -36,17 +36,14 @@ vi.mock("@/lib/api", () => ({
 vi.mock("@/components/tasks/TasksPageLayout", () => ({
   TasksPageLayout: ({
     title,
-    emptyTasksMessage,
     headerActions,
   }: {
     title: string;
-    emptyTasksMessage: string;
     headerActions?: React.ReactNode;
   }) => (
     <div data-testid="tasks-layout">
       <h1>{title}</h1>
       {headerActions && <div data-testid="header-actions">{headerActions}</div>}
-      <p>{emptyTasksMessage}</p>
     </div>
   ),
 }));

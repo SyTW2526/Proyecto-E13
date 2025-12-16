@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
-import { CreateListDialogStandalone } from "../lists/CreateListDialog";
+import { CreateListCard } from "../lists/CreateListCard";
 import { Button } from "@/components/ui/button";
 import { ItemActionsMenu } from "@/components/shared/ItemActionsMenu";
 import { useLists } from "@/hooks/useLists";
@@ -175,13 +175,6 @@ export function FilterableList({
 
       <div className="flex flex-row items-center justify-between gap-4">
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
-        {showAddButton && (
-          <div className="flex gap-2">
-            <CreateListDialogStandalone>
-              <Button leftIcon="IconList" />
-            </CreateListDialogStandalone>
-          </div>
-        )}
       </div>
       <div className="mt-4 flex flex-col gap-4 sm:gap-2 mx-auto">
         {(() => {
@@ -304,6 +297,7 @@ export function FilterableList({
             );
           });
         })()}
+        {showAddButton && <CreateListCard />}
       </div>
     </div>
   );

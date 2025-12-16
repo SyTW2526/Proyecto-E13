@@ -3,11 +3,10 @@ import { useTasks } from "@/hooks/tasks/useTasks";
 import { useLists } from "@/hooks/useLists";
 import { useTaskFilters } from "@/hooks/tasks/useTaskFilters";
 import { SharedTaskCard } from "@/components/tasks/cards/SharedTaskCard";
+import { CreateTaskCard } from "@/components/tasks/cards/CreateTaskCard";
 import { useTranslation } from "react-i18next";
 import { TasksPageLayout } from "@/components/tasks/TasksPageLayout";
 import type { Task } from "@/types/tasks-system/task";
-import { Button } from "@/components/ui/button";
-import CreateTaskDialog from "@/components/tasks/dialogs/CreateTaskDialog";
 
 export default function SharedPage() {
   const { t, i18n } = useTranslation();
@@ -55,17 +54,16 @@ export default function SharedPage() {
   return (
     <TasksPageLayout
       title={t("shared.title")}
-      headerActions={
-        <CreateTaskDialog filterByEditPermission={true} showCreateList={false}>
-          <Button
-            leftIcon="IconTask"
-            disabled={
-              !accessibleLists.some(
-                (l) => isOwner(l.id) || canAccess(l.id, "EDIT"),
-              )
-            }
-          />
-        </CreateTaskDialog>
+      createTaskCard={
+        <CreateTaskCard
+          filterByEditPermission={true}
+          showCreateList={false}
+          disabled={
+            !accessibleLists.some(
+              (l) => isOwner(l.id) || canAccess(l.id, "EDIT"),
+            )
+          }
+        />
       }
       sidebarTitle={t("shared.listsTitle")}
       sidebarActions={false}
@@ -83,7 +81,6 @@ export default function SharedPage() {
       onToggleSort={toggleSort}
       isLoadingTasks={isLoading}
       tasks={displayTasks}
-      emptyTasksMessage={t("shared.emptyState")}
       renderCard={(task: Task) => {
         const list = accessibleLists.find((list) => list.id === task.listId);
         return (

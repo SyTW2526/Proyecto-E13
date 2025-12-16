@@ -19,6 +19,8 @@ interface ControlledProps {
 interface StandaloneProps {
   mode?: "standalone";
   trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 type CreateListDialogUnifiedProps = ControlledProps | StandaloneProps;
@@ -110,6 +112,8 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
   return (
     <FormDialog
       trigger={props.trigger}
+      open={props.open}
+      onOpenChange={props.onOpenChange}
       title={t("lists.create.title")}
       description={t("lists.create.description")}
       onSubmit={handleStandaloneSubmit}
@@ -123,12 +127,23 @@ function CreateListDialogUnified(props: CreateListDialogUnifiedProps) {
 
 export default CreateListDialogUnified;
 
-export function CreateListDialog(props: Omit<Readonly<ControlledProps>, "mode">) {
+export function CreateListDialog(
+  props: Omit<Readonly<ControlledProps>, "mode">,
+) {
   return <CreateListDialogUnified mode="controlled" {...props} />;
 }
 
 export function CreateListDialogStandalone(props: {
   children?: Readonly<React.ReactNode>;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
-  return <CreateListDialogUnified mode="standalone" trigger={props.children} />;
+  return (
+    <CreateListDialogUnified
+      mode="standalone"
+      trigger={props.children}
+      open={props.open}
+      onOpenChange={props.onOpenChange}
+    />
+  );
 }

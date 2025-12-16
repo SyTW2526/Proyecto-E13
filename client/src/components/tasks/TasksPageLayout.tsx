@@ -14,7 +14,7 @@ type SortField = "name" | "dueDate" | "priority" | "createdAt" | "updatedAt";
 
 interface TasksPageLayoutProps {
   title: string;
-  headerActions?: ReactNode;
+  createTaskCard?: ReactNode;
   sidebarTitle: string;
   sidebarActions?: boolean;
   sidebarItems: Array<{
@@ -45,12 +45,11 @@ interface TasksPageLayoutProps {
   error?: string | null;
   tasks: Task[];
   renderCard: (task: Task) => ReactNode;
-  emptyTasksMessage: string;
 }
 
 export function TasksPageLayout({
   title,
-  headerActions,
+  createTaskCard,
   sidebarTitle,
   sidebarActions,
   sidebarItems,
@@ -70,7 +69,6 @@ export function TasksPageLayout({
   error,
   tasks,
   renderCard,
-  emptyTasksMessage,
 }: TasksPageLayoutProps) {
   const { sidebarWidth } = useUI();
 
@@ -111,14 +109,11 @@ export function TasksPageLayout({
 
       <div className="flex-1 min-w-0 w-full order-2 lg:order-1">
         <div className="mb-6 space-y-4">
-          <div className="flex flex-row items-center justify-between gap-4">
-            <div>
-              <Typewriter
-                text={title}
-                className="text-4xl font-bold inline-flex items-center gap-2"
-              />
-            </div>
-            {headerActions && <div className="flex gap-2">{headerActions}</div>}
+          <div>
+            <Typewriter
+              text={title}
+              className="text-4xl font-bold inline-flex items-center gap-2"
+            />
           </div>
 
           <div className="flex flex-wrap gap-4 items-center justify-between bg-card p-2 rounded-lg border border-border">
@@ -181,8 +176,8 @@ export function TasksPageLayout({
 
           if (tasks.length === 0) {
             return (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">{emptyTasksMessage}</p>
+              <div className={`grid ${layoutConfig.grid} gap-6`}>
+                {createTaskCard}
               </div>
             );
           }
@@ -190,6 +185,7 @@ export function TasksPageLayout({
           return (
             <div className={`grid ${layoutConfig.grid} gap-6`}>
               {tasks.map((task) => renderCard(task))}
+              {createTaskCard}
             </div>
           );
         })()}

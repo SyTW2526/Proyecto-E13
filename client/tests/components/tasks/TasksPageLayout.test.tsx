@@ -48,7 +48,6 @@ describe("TasksPageLayout", () => {
     isLoadingTasks: false,
     tasks: [],
     renderCard: vi.fn((task) => <div key={task.id}>{task.name}</div>),
-    emptyTasksMessage: "No tasks",
   };
 
   beforeEach(() => {
@@ -78,14 +77,14 @@ describe("TasksPageLayout", () => {
     expect(screen.getByTestId("filterable-list")).toBeInTheDocument();
   });
 
-  it("renders header actions when provided", () => {
-    renderLayout({ headerActions: <button>Create</button> });
+  it("renders create task card when provided", () => {
+    renderLayout({ createTaskCard: <button>Create</button> });
     expect(screen.getByText("Create")).toBeInTheDocument();
   });
 
-  it("renders empty message when no tasks", () => {
-    renderLayout();
-    expect(screen.getByText("No tasks")).toBeInTheDocument();
+  it("renders create task card in empty state", () => {
+    renderLayout({ createTaskCard: <div data-testid="create-card">+</div> });
+    expect(screen.getByTestId("create-card")).toBeInTheDocument();
   });
 
   it("renders tasks when provided", () => {
