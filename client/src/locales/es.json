@@ -1,0 +1,418 @@
+{
+  "app": {
+    "name": "TaskGrid"
+  },
+  "nav": {
+    "dashboard": "Resumen",
+    "tasks": "Tareas",
+    "shared": "Compartido",
+    "settings": "Configuración",
+    "menu": "Menú"
+  },
+  "chat": {
+    "title": "Asistente de Chat",
+    "suggestions": {
+      "createTask": "¿Cómo creo una nueva tarea?",
+      "shareList": "¿Cómo comparto una lista con mi equipo?",
+      "notifications": "¿Cómo configuro las notificaciones?"
+    },
+    "placeholder": "Pregunta sobre TaskGrid...",
+    "botResponse": "Soy un asistente de TaskGrid. Por favor configura el backend de IA para habilitar conversaciones reales.",
+    "promptsLabel": "Prueba estos prompts ✨",
+    "copiedMessage": "¡Respuesta copiada al portapapeles!"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "profile": "Perfil",
+    "myAccount": "Mi cuenta",
+    "welcomeTo": "Bienvenido a TaskGrid",
+    "name": "Nombre",
+    "email": "Email",
+    "password": "Contraseña",
+    "enter": "Entrar",
+    "registerMe": "Registrarme",
+    "createAccount": "Crear una cuenta",
+    "haveAccount": "Ya tengo cuenta",
+    "loading": "Cargando...",
+    "termsAndPrivacy": "Al continuar aceptas los Términos y la Política de Privacidad",
+    "loginSuccess": "Login correcto. Redirigiendo...",
+    "registerSuccess": "Registro exitoso. Redirigiendo al dashboard...",
+    "googleLoginSuccess": "Login con Google exitoso",
+    "googleLoginError": "Error al iniciar sesión con Google",
+    "googleAuthError": "Error de autorización de Google. Verifica que tu origen esté autorizado en Google Cloud Console.",
+    "googleClientIdError": "Google Client ID no configurado. Verifica tu archivo .env",
+    "googleInitError": "Error al inicializar Google Sign-In. Verifica la configuración.",
+    "authError": "Error al autenticar"
+  },
+  "landing": {
+    "welcome": "Bienvenido a",
+    "subtitle": "Organiza tus tareas de manera eficiente y mejora tu productividad",
+    "scroll": "Desliza para ver más",
+    "features": {
+      "title": "Características",
+      "taskManagement": {
+        "title": "Gestión de tareas inteligente",
+        "description": "Crea, organiza y prioriza tareas con facilidad",
+        "details": "Listas, subtareas, fechas de entrega y prioridades en una vista clara. Completa tareas más rápido con acciones rápidas y plantillas reutilizables."
+      },
+      "notifications": {
+        "title": "Notificaciones inteligentes",
+        "description": "Recordatorios configurables y alertas oportunas",
+        "details": "Recibe avisos por plazos, recordatorios recurrentes y notificaciones push o por correo. Configura la frecuencia y silencia en momentos de concentración."
+      },
+      "projects": {
+        "title": "Proyectos y categorías",
+        "description": "Organiza tu trabajo por proyectos y equipos",
+        "details": "Agrupa tareas por proyecto, usa carpetas y etiquetas personalizadas. Comparte vistas y permisos para colaborar sin perder el control."
+      },
+      "customization": {
+        "title": "Personalización y accesibilidad",
+        "description": "Temas, modos y vistas adaptadas a tu flujo",
+        "details": "Soporte para modo claro/oscuro, ajustes de densidad y esquemas de color. Personaliza atajos y la disposición para adaptar la app a tu forma de trabajar."
+      },
+      "collaboration": {
+        "title": "Colaboración en equipo",
+        "description": "Asignación, comentarios y seguimiento de actividad",
+        "details": "Trabaja en equipo con asignaciones, menciones y un feed de actividad centralizado."
+      }
+    },
+    "benefits": {
+      "free": "Gratuito",
+      "unlimited": "Ilimitado",
+      "real_time": "En tiempo real",
+      "collaboration": "Colaborativo"
+    },
+    "cta": {
+      "title": "Empieza a usar TaskGrid",
+      "subtitle": "Organiza tus tareas y colabora con tu equipo de la forma más eficiente posible. Además dispondrás de estadísticas y análisis para optimizar tu productividad.",
+      "register": "Regístrate"
+    }
+  },
+  "contacts": {
+    "title": "Nuestro equipo",
+    "subtitle": "Contacto directo del equipo de TaskGrid.",
+    "role": "Estudiante de Ingeniería Informática",
+    "ullProfile": "Perfil ULL",
+    "avatarAlt": "Avatar de {{name}}",
+    "profileAria": "Perfil ULL de {{name}}",
+    "emailAria": "Enviar correo a {{name}}",
+    "openProfileAria": "Abrir perfil ULL de {{name}}"
+  },
+  "footer": {
+    "contact": "Contacto",
+    "rights": "Equipo 13 · TaskGrid",
+    "ariaLabel": "Pie de página"
+  },
+  "theme": {
+    "toggle": "Cambiar a tema",
+    "dark": "oscuro",
+    "light": "claro"
+  },
+  "language": {
+    "label": "Idioma",
+    "name": "Español",
+    "flag": "🇪🇸"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "subtitle": "Preferencias de cuenta, notificaciones y privacidad.",
+    "profile": {
+      "title": "Perfil",
+      "description": "Actualiza tu nombre y contraseña.",
+      "name": "Nombre",
+      "namePlaceholder": "Introduce tu nombre",
+      "email": "Email",
+      "currentPassword": "Contraseña actual",
+      "newPassword": "Nueva contraseña",
+      "saveChanges": "Guardar cambios",
+      "saving": "Guardando...",
+      "googleUserPasswordInfo": "Los usuarios que acceden con Google no pueden cambiar su contraseña desde la aplicación."
+    },
+    "preferences": {
+      "title": "Preferencias",
+      "description": "Tema, idioma y experiencia de uso.",
+      "darkTheme": "Tema oscuro",
+      "darkThemeDescription": "Activa el modo oscuro para una experiencia visual más cómoda en entornos con poca luz.",
+      "language": "Idioma de la aplicación",
+      "languageDescription": "Selecciona el idioma en el que deseas usar la aplicación.",
+      "sidebarWidth": "Densidad del diseño",
+      "sidebarWidthDescription": "Ajusta la densidad de la interfaz y el tamaño de los elementos.",
+      "cardSize": "Tamaño de las tarjetas",
+      "cardSizeDescription": "Ajusta el tamaño de las tarjetas de tarea.",
+      "compact": "Compacto",
+      "normal": "Normal",
+      "wide": "Amplio",
+      "columns": "Columnas",
+      "selectSize": "Selecciona un tamaño"
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "description": "Configura cómo recibir avisos.",
+      "email": "Correo electrónico",
+      "emailDescription": "Recibe correos electrónicos con la información acerca de tus tareas.",
+      "push": "Notificaciones push",
+      "pushDescription": "Recibe notificaciones emergentes en tiempo real cuando alguien te comparta una tarea o alguna tarea esté por vencer."
+    },
+    "privacy": {
+      "title": "Privacidad",
+      "description": "Elimina tu cuenta de forma irreversible.",
+      "deleteAccount": "Eliminar cuenta"
+    }
+  },
+  "tasks": {
+    "title": "Mis Tareas",
+    "emptyState": "No hay tareas disponibles",
+    "noTasks": "Sin tareas",
+    "taskCount": {
+      "singular": "tarea",
+      "plural": "tareas",
+      "suffix": "en total"
+    },
+    "create": {
+      "title": "Crear Nueva Tarea",
+      "description": "Completa los campos para crear una nueva tarea",
+      "submit": "Crear Tarea",
+      "cancel": "Cancelar"
+    },
+    "edit": {
+      "title": "Editar Tarea",
+      "description": "Modifica los campos para editar la tarea",
+      "submit": "Guardar Cambios"
+    },
+    "delete": {
+      "title": "¿Estás seguro?",
+      "description": "Esta acción no se puede deshacer. La tarea \"{{name}}\" será eliminada permanentemente.",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "card": {
+      "createdLabel": "Creada:",
+      "dueLabel": "Vence:",
+      "noDate": "No vence"
+    },
+    "filters": {
+      "statusPlaceholder": "Estado",
+      "statusAll": "Todos los Estados",
+      "priorityPlaceholder": "Prioridad",
+      "priorityAll": "Todas las Prioridades",
+      "sortPlaceholder": "Ordenar por",
+      "sortFields": {
+        "dueDate": "Fecha de Vencimiento",
+        "createdAt": "Fecha de Creación",
+        "name": "Nombre"
+      },
+      "sortOrder": {
+        "asc": "Ascendente",
+        "desc": "Descendente"
+      },
+      "showFavorites": "Mostrar favoritas",
+      "showAll": "Mostrar todas"
+    },
+    "priority": {
+      "LOW": "Baja",
+      "MEDIUM": "Media",
+      "HIGH": "Alta",
+      "URGENT": "Urgente"
+    },
+    "status": {
+      "PENDING": "Pendiente",
+      "IN_PROGRESS": "En Progreso",
+      "COMPLETED": "Completada"
+    },
+    "favorite": {
+      "FAVORITE": "Favorita",
+      "NOT_FAVORITE": "No Favorita"
+    },
+    "fields": {
+      "name": {
+        "label": "Nombre",
+        "placeholder": "Nombre de la tarea"
+      },
+      "description": {
+        "label": "Descripción",
+        "placeholder": "Descripción de la tarea (opcional)"
+      },
+      "list": {
+        "label": "Lista",
+        "placeholder": "Selecciona una lista",
+        "searchPlaceholder": "Buscar lista...",
+        "emptyMessage": "No se encontró ninguna lista.",
+        "createNew": "Crear nueva lista"
+      },
+      "priority": {
+        "label": "Prioridad"
+      },
+      "status": {
+        "label": "Estado"
+      },
+      "favorite": {
+        "label": "Favorita"
+      },
+      "dueDate": {
+        "label": "Fecha de vencimiento"
+      }
+    },
+    "completion": {
+      "title": "¡Tarea Completada!",
+      "description": "Esta tarea será eliminada automáticamente en 7 días.",
+      "understood": "Entendido"
+    }
+  },
+  "lists": {
+    "title": "Listas",
+    "emptyState": "No hay listas",
+    "sidebar": {
+      "title": "Mis Listas"
+    },
+    "create": {
+      "title": "Nueva Lista",
+      "description": "Crea una nueva lista para organizar tus tareas",
+      "submit": "Crear Lista",
+      "cancel": "Cancelar"
+    },
+    "edit": {
+      "title": "Editar Lista",
+      "description": "Modifica los detalles de la lista.",
+      "submit": "Guardar cambios",
+      "cancel": "Cancelar"
+    },
+    "delete": {
+      "title": "¿Estás seguro?",
+      "description": "Esta acción eliminará la lista y todas sus tareas permanentemente.",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "fields": {
+      "name": {
+        "label": "Nombre",
+        "placeholder": "Nombre de la lista"
+      },
+      "description": {
+        "label": "Descripción",
+        "placeholder": "Descripción (opcional)"
+      }
+    }
+  },
+  "share": {
+    "task": {
+      "title": "Compartir Tarea",
+      "description": "Invita a otros usuarios a colaborar en esta tarea via email."
+    },
+    "list": {
+      "title": "Compartir Lista",
+      "description": "Invita a otros usuarios a colaborar en esta lista via email."
+    },
+    "inviteCollaborator": "Invitar colaborador",
+    "emailPlaceholder": "ejemplo@correo.com",
+    "invite": "Invitar",
+    "peopleWithAccess": "Personas con acceso",
+    "noSharesTask": "Esta tarea no se ha compartido con nadie aún.",
+    "noSharesList": "Esta lista no se ha compartido con nadie aún.",
+    "sharedBy": "Compartido por: {{name}} ({{email}})",
+    "errorShareTask": "Error al compartir la tarea. Verifica el email.",
+    "errorShareList": "Error al compartir la lista. Verifica el email.",
+    "removeCollaborator": {
+      "title": "¿Estás seguro?",
+      "descriptionTask": "Esta acción eliminará al colaborador de la tarea.",
+      "descriptionList": "Esta acción eliminará al colaborador de la lista.",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    },
+    "permissions": {
+      "VIEW": "Ver",
+      "EDIT": "Editar",
+      "ADMIN": "Admin"
+    },
+    "errors": {
+      "noSharePermission": "No tienes permisos para compartir esta tarea.",
+      "noEditPermission": "No tienes permisos para editar esta tarea.",
+      "noDeletePermission": "No tienes permisos para eliminar esta tarea.",
+      "actionNotAllowed": "Acción no permitida",
+      "understood": "Entendido"
+    }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "openNotifications": "Abrir notificaciones",
+    "unread": "{{count}} sin leer",
+    "allCaughtUp": "Todo al día por ahora",
+    "markAllRead": "Marcar todo como leído",
+    "loading": "Cargando notificaciones...",
+    "noNotifications": "No hay notificaciones en esta pestaña.",
+    "activityCenter": "Centro de actividad de TaskGrid",
+    "viewAll": "Ver todas",
+    "timeAgo": {
+      "now": "Ahora mismo",
+      "minutes": "Hace {{count}} min",
+      "hours": "Hace {{count}} horas",
+      "days": "Hace {{count}} días"
+    },
+    "tabs": {
+      "ALL": "Todos",
+      "SYSTEM": "Sistema",
+      "SHARED": "Compartidas",
+      "EXPIRED": "Vencidas"
+    }
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "welcome": "¡Bienvenido, ",
+    "description": "Resumen de tus tareas y estadísticas",
+    "noTasks": "No hay tareas para mostrar.",
+    "weekNumber": "Semana {{number}}",
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb",
+      "sun": "Dom"
+    },
+    "statusLabels": {
+      "pending": "Pendientes",
+      "inProgress": "En Progreso",
+      "completed": "Completadas"
+    },
+    "cards": {
+      "upcomingTasks": "Próximas Tareas",
+      "upcomingTasksDesc": "Vencen esta semana",
+      "completedTasks": "Tareas Completadas",
+      "completedTasksDesc": "Esta semana",
+      "tasksByList": "Tareas Por Lista",
+      "tasksByListDesc": "Distribución por lista",
+      "currentWeek": "Semana Actual",
+      "currentWeekDesc": "Tareas de lunes a domingo",
+      "tasksByPriority": "Tareas Por Prioridad",
+      "tasksByPriorityDesc": "Distribución por prioridad",
+      "tasksByStatus": "Tareas Por Estado",
+      "tasksByStatusDesc": "Distribución por estado"
+    }
+  },
+  "shared": {
+    "title": "Tareas Compartidas",
+    "emptyState": "No hay tareas compartidas",
+    "listsTitle": "Listas Compartidas",
+    "listsEmptyState": "No hay listas compartidas"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "close": "Cerrar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "required": "Requerido",
+    "share": "Compartir",
+    "leave": "Salir"
+  },
+  "accessibility": {
+    "close": "Cerrar"
+  }
+}

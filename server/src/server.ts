@@ -1,0 +1,34 @@
+import "dotenv/config";
+import express, { Request, Response } from "express";
+import { createServer } from "node:http";
+import { initSocket } from "./utils/socket.js";
+import cors from "cors";
+import router from "./routes/routes.js";
+import { startCleanupJob } from "./utils/cleanupTasks.js";
+
+const app = express();
+const httpServer = createServer(app);
+const PORT = process.env.PORT || 5200;
+
+initSocket(httpServer);
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  }),
+);
+
+app.use(express.json());
+
+app.use("/api", router);
+app.use((req: Request, res: Response) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on port: ${PORT}`);
+  startCleanupJob();
+});
+
+export { app, httpServer };
