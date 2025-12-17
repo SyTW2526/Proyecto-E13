@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-TaskGrid es una aplicación **fullstack** construida con una arquitectura moderna de **cliente-servidor separados**, desplegada en **Vercel** y utilizando **PostgreSQL** como base de datos.
+TaskGrid es una aplicación **fullstack** construida con una arquitectura moderna de **cliente-servidor separados**, utilizando **PostgreSQL** como base de datos.
 
 ---
 
@@ -50,45 +50,6 @@ TaskGrid es una aplicación **fullstack** construida con una arquitectura modern
 │  │Notifications │  │ Permissions  │  │   Sharing    │       │
 │  └──────────────┘  └──────────────┘  └──────────────┘       │
 └─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🗂️ Estructura de Carpetas
-
-```plaintext
-Proyecto-E13/
-├── client/               # 🎨 Frontend (React + TypeScript)
-│   ├── src/
-│   │   ├── components/  # Componentes reutilizables
-│   │   ├── pages/       # Páginas de la aplicación
-│   │   ├── store/       # Redux store y slices
-│   │   ├── hooks/       # Custom React hooks
-│   │   ├── lib/         # Utilidades y helpers
-│   │   └── assets/      # Imágenes, iconos, etc.
-│   ├── tests/           # Tests unitarios del frontend
-│   └── public/          # Archivos estáticos
-│
-├── server/              # ⚙️ Backend (Node.js + Express)
-│   ├── src/
-│   │   ├── controllers/ # Lógica de negocio
-│   │   ├── routes/      # Definición de rutas
-│   │   ├── middleware/  # Middleware personalizado
-│   │   ├── schemas/     # Validación con Zod
-│   │   ├── jobs/        # Tareas programadas
-│   │   └── utils/       # Utilidades del servidor
-│   ├── prisma/          # Esquema de base de datos
-│   └── tests/           # Tests unitarios del backend
-│
-├── api/                 # 📡 Definiciones de API
-│   └── openapi.yaml     # Especificación OpenAPI
-│
-├── docs/                # 📚 Documentación
-│   ├── Images/          # Capturas de pantalla
-│   └── *.md             # Guías y documentación
-│
-└── .github/             # 🔄 CI/CD
-    └── workflows/       # GitHub Actions
 ```
 
 ---
@@ -149,166 +110,13 @@ Proyecto-E13/
 
 ---
 
-## 🔐 Flujo de Autenticación
-
-```plaintext
-┌─────────┐                  ┌─────────┐                 ┌──────────┐
-│ Cliente │                  │ Servidor│                 │   DB     │
-└────┬────┘                  └────┬────┘                 └────┬─────┘
-     │                            │                           │
-     │ POST /auth/login           │                           │
-     │───────────────────────────>│                           │
-     │                            │                           │
-     │                            │  Verifica credenciales    │
-     │                            │──────────────────────────>│
-     │                            │                           │
-     │                            │<──────────────────────────│
-     │                            │  Usuario encontrado       │
-     │                            │                           │
-     │                            │  Genera JWT               │
-     │                            │                           │
-     │  200 OK + Token JWT        │                           │
-     │<───────────────────────────│                           │
-     │                            │                           │
-     │  Guarda token en           │                           │
-     │  localStorage              │                           │
-     │                            │                           │
-     │  GET /tasks (con token)    │                           │
-     │───────────────────────────>│                           │
-     │                            │  Verifica JWT             │
-     │                            │                           │
-     │                            │  Consulta tareas          │
-     │                            │──────────────────────────>│
-     │                            │                           │
-     │  200 OK + Tareas           │                           │
-     │<───────────────────────────│                           │
-```
-
----
-
-## 🔄 Flujo de Datos
-
-### Ejemplo: Crear una nueva tarea
-
-1. **Usuario interactúa con la interfaz:**
-
-   - Completa el formulario de nueva tarea
-   - Hace clic en "Crear Tarea"
-
-2. **El frontend procesa la solicitud:**
-
-   - Valida los datos del formulario
-   - Envía la petición al servidor de forma segura
-
-3. **El backend recibe y valida:**
-
-   - Verifica la autenticación del usuario
-   - Valida el formato y contenido de los datos
-   - Procesa la solicitud
-
-4. **La base de datos persiste:**
-
-   - Guarda la nueva tarea
-   - Retorna confirmación
-
-5. **Respuesta al usuario:**
-   - El servidor confirma la operación
-   - La interfaz se actualiza automáticamente
-   - El usuario ve su nueva tarea en la lista
-
-Todo este proceso ocurre en segundos y de forma completamente segura.
-
----
-
-## 🚀 Infraestructura
-
-### Cliente
-
-- Desplegado en infraestructura cloud moderna
-- Build optimizado para producción
-- Variables de configuración gestionadas de forma segura
-
-### Servidor
-
-- Arquitectura serverless escalable
-- Configuración de entorno protegida
-- Conexiones seguras a base de datos
-
-### Base de Datos
-
-- Hosting en infraestructura cloud profesional
-- Sistema de migraciones automático
-- Backups y redundancia
-
----
-
-## 🔍 Patrones de Diseño Utilizados
-
-### 1. **MVC (Model-View-Controller)**
-
-- **Model:** Prisma schemas
-- **View:** React components
-- **Controller:** Express controllers
-
-### 2. **Repository Pattern**
-
-- Prisma actúa como capa de abstracción
-- Facilita testing y cambio de BD
-
-### 3. **Middleware Pattern**
-
-- Express middleware para:
-  - Autenticación
-  - Validación
-  - Manejo de errores
-  - Logging
-
-### 4. **Redux Pattern (Flux)**
-
-- Flujo unidireccional de datos
-- Estado predecible
-- Time-travel debugging
-
----
-
-## 📊 Escalabilidad
-
-### Actual
-
-- **Usuarios concurrentes:** ~1000
-- **Base de datos:** PostgreSQL con conexiones limitadas
-- **Almacenamiento:** Supabase Storage
-
-### Futuras Mejoras
-
-1. **Caché:** Redis para sesiones y datos frecuentes
-2. **CDN:** Cloudflare para assets estáticos
-3. **Load Balancing:** Múltiples instancias del servidor
-4. **Microservicios:** Separar notificaciones y chatbot
-5. **WebSockets:** Actualizaciones en tiempo real más eficientes
-
----
-
 ## 🛡️ Seguridad
 
 ### Medidas Implementadas
 
-- ✅ HTTPS en todas las comunicaciones
 - ✅ Tokens de sesión con expiración automática
 - ✅ Validación estricta de todos los datos
 - ✅ CORS configurado para dominios autorizados
-- ✅ Límite de intentos en operaciones sensibles
-- ✅ Prevención de inyección SQL
-- ✅ Protección contra XSS (Cross-Site Scripting)
-
-### Mejoras Continuas
-
-El equipo de seguridad trabaja constantemente en:
-
-- Actualización de dependencias
-- Auditorías de seguridad
-- Implementación de nuevas protecciones
-- Monitoreo de vulnerabilidades
 
 ---
 
@@ -319,17 +127,6 @@ El equipo de seguridad trabaja constantemente en:
 - **Análisis de código:** Revisión automática de calidad
 - **Cobertura de tests:** Verificación exhaustiva de funcionalidades
 - **Integración continua:** Tests automáticos en cada actualización
-
-### Métricas Clave
-
-Monitoreamos constantemente:
-
-- Rendimiento de la aplicación
-- Tiempo de respuesta del servidor
-- Tasa de errores
-- Experiencia del usuario
-
-Esto nos permite mantener altos estándares de calidad y detectar problemas proactivamente.
 
 ---
 
@@ -355,13 +152,3 @@ La aplicación cuenta con pruebas exhaustivas:
 - Validación de casos de uso reales
 
 Para más detalles, consulta la documentación técnica interna disponible para el equipo de desarrollo.
-
----
-
-## 📚 Recursos Adicionales
-
-- [API Documentation](./API.md)
-- [Database Schema](./DATABASE.md)
-- [Authentication Flow](./AUTHENTICATION.md)
-- [Deployment Guide](./DEPLOYMENT.md)
-- [Frontend Guide](./FRONTEND.md)

@@ -2,8 +2,7 @@
 
 ## Base URL
 
-**Producción:** `https://taskgrid-proyecto-e13.vercel.app/api`  
-**Desarrollo:** `http://localhost:3000/api` (solo para personal autorizado)
+**Desarrollo:** `http://localhost:3000/api`
 
 ---
 

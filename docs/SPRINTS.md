@@ -13,7 +13,7 @@ El desarrollo de TaskGrid se ha estructurado en una serie de sprints, realizados
 - Desarrollo de endpoints REST para gestión de usuarios
 - Implementación de endpoint para la página de inicio
 
-![Sprint 1](./docs/Images/sprint1.png)
+![Sprint 1](./Images/sprint1.png)
 
 ## Sprint 2 – Estructura Visual y Validación
 
@@ -25,7 +25,7 @@ El desarrollo de TaskGrid se ha estructurado en una serie de sprints, realizados
 - Completado del frontend para Login y Registro
 - Diseño de la interfaz del BentoGrid para la página principal
 
-![Sprint 2](./docs/Images/sprint2.png)
+![Sprint 2](./Images/sprint2.png)
 
 ## Sprint 3 – Integración Visual y Estado
 
@@ -38,7 +38,7 @@ El desarrollo de TaskGrid se ha estructurado en una serie de sprints, realizados
   - Finalización de middlewares de validación con Zod en backend
   - Completar diseño del BentoGrid de la página principal
 
-![Sprint 3](./docs/Images/sprint3.png)
+![Sprint 3](./Images/sprint3.png)
 
 ## Sprint 4 – Tests y Funcionalidades Clave
 
@@ -50,7 +50,7 @@ El desarrollo de TaskGrid se ha estructurado en una serie de sprints, realizados
 - Desarrollo de funciones de filtrado para el dashboard resumen
 - Implementación de validación con Zod en el frontend
 
-![Sprint 4](./docs/Images/sprint4.png)
+![Sprint 4](./Images/sprint4.png)
 
 ## Sprint 5 – Finalización de Funcionalidades
 
@@ -64,7 +64,7 @@ El desarrollo de TaskGrid se ha estructurado en una serie de sprints, realizados
 - Refactorización de modelos de datos (eliminación de categorías)
 - _Inconveniente:_ No se pudo completar la integración con Coveralls debido a falta de permisos para hacer el repositorio público. Solicitud de acceso pendiente por parte de la organización de la asignatura.
 
-![Sprint 5](./docs/Images/sprint5.png)
+![Sprint 5](./Images/sprint5.png)
 
 ## Sprint 6 – Gamificación y Refinamiento
 
@@ -79,7 +79,7 @@ El desarrollo de TaskGrid se ha estructurado en una serie de sprints, realizados
 - **Inconveniente**:
   - Se decidión no implementar el sistema de puntuación y gamificación debido a limitaciones de tiempo y recursos. En su lugar, se priorizó la mejora de otras funcionalidades clave y la estabilidad general de la aplicación.
 
-![Sprint 6](./docs/Images/sprint6.png)
+![Sprint 6](./Images/sprint6.png)
 
 ## Sprint 7 – Documentación y Despliegue
 
@@ -89,4 +89,4 @@ El desarrollo de TaskGrid se ha estructurado en una serie de sprints, realizados
 - Preparación y configuración final para despliegue en producción
 - Optimización y refinamiento de la aplicación para entrega final
 
-![Sprint 7](./docs/Images/sprint7.png)
+![Sprint 7](./Images/sprint7.png)

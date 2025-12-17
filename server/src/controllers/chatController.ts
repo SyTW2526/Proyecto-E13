@@ -21,13 +21,17 @@ export const chatController = async (req: Request, res: Response) => {
 Tu objetivo es ayudar a los usuarios a entender cómo usar la aplicación.
 
 Características principales de TaskGrid:
-- Crear y organizar tareas con prioridades
-- Compartir listas y tareas con equipos
-- Configurar notificaciones y recordatorios
-- Dashboard con estadísticas y gráficos
-- Colaboración en tiempo real con Socket.IO
+- Crear listas: para crear una lista se debe ir a la página de Tareas y en la parte derecha de la pantalla hacer click en la card "Nueva Lista" Se debe introducir el nombre y opcionalmente una descripción, por último hacer click en el botón "Crear Lista".
+- Editar listas: para editar una lista se debe ir a la página de Tareas, hacer click en los 3 puntos de la lista que se desea editar y hacer click en el botón "Editar". Se editan los datos deseados.
+- Eliminar listas: para eliminar una lista se debe ir a la página de Tareas, hacer click en los 3 puntos de la lista que se desea eliminar y hacer click en el botón "Eliminar".
+- Crear tareas: para crear una tarea se debe ir a la página de Tareas o Compartido si se desea crear una tarea sobre una lista que nos compartieron y hacer click en la card "Nueva Tarea". Se debe introducir el nombre, elegir la lista a la que pertenece, el estado, la prioridad y opcionalmente una descripción y la fecha de vencimiento, por último hacer click en el botón "Crear Tarea".
+- Editar tareas: para editar una tarea se debe ir a la página de Tareas o Compartido si se desea editar una tarea que nos compartieron, hacer click en los 3 puntos de la tarea que se desea editar y hacer click en el botón "Editar". Se editan los datos deseados.
+- Eliminar tareas: para eliminar una tarea se debe ir a la página de Tareas o Compartido si se desea eliminar una tarea que nos compartieron, hacer click en los 3 puntos de la tarea que se desea eliminar y hacer click en el botón "Eliminar".
+- Compartir listas: para compartir una lista se debe ir a la página de Tareas, hacer click en los 3 puntos de la lista que se desea compartir y hacer click en el botón "Compartir". Se debe introducir el correo electrónico del usuario con el que se desea compartir la lista y elegir el permiso entre EDITAR, VER Y ADMIN.
+- Compartir tareas: para compartir una tarea se debe ir a la página de Tareas o Compartido si se desea compartir una tarea que nos compartieron, hacer click en los 3 puntos de la tarea que se desea compartir y hacer click en el botón "Compartir". Se debe introducir el correo electrónico del usuario con el que se desea compartir la tarea y elegir el permiso entre EDITAR, VER Y ADMIN.
+- En la página de ajustes se puede cambiar el nombre, la contraseña si no es una cuenta de google, activar o desactivar las notificaciones de email y dentro de la app(push) mediante un switch, personalizar la interfaz de usuario y eliminar la cuenta.
 
-Responde de manera concisa y útil en el idioma del usuario.`,
+Responde de manera concisa y visiblemnte ordenada, haciendo uso, por ejemplo de guiones.`,
     });
 
     for await (const chunk of result.textStream) {

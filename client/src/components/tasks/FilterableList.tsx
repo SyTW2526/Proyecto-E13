@@ -215,12 +215,19 @@ export function FilterableList({
               canEditList || canDeleteList || canShareList || canUnshareList;
 
             return (
-              <button
+              <div
                 key={item.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() =>
                   onItemClick(selectedId === item.id ? null : item.id)
                 }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onItemClick(selectedId === item.id ? null : item.id);
+                  }
+                }}
                 className={`group flex items-center justify-between gap-2 p-3 rounded-xl cursor-pointer transition-all duration-200 border active:scale-[0.99] text-left w-full ${
                   selectedId === item.id
                     ? "bg-primary text-secondary font-medium shadow-sm"
@@ -293,7 +300,7 @@ export function FilterableList({
                     </div>
                   )}
                 </div>
-              </button>
+              </div>
             );
           });
         })()}
