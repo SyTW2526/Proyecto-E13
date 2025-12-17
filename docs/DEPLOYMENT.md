@@ -11,6 +11,7 @@ Bienvenido a **TaskGrid**. Este documento te guiará para usar nuestra aplicaci�
 Cambia los .env.examples con tus datos.
 
 ### 2. Instalar Dependencias
+
 ```bash
 cd client
 npm install
@@ -41,6 +42,7 @@ npm run dev
 ```
 
 La aplicación estará disponible en:
+
 - `http://localhost:5173`
 
 ---

@@ -61,3 +61,4 @@ El desarrollo de TaskGrid se organizó en sprints iterativos siguiendo metodolog
 [![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)](https://www.prisma.io/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
+[![Neon](https://img.shields.io/badge/Neon-00E599?style=for-the-badge&logoColor=white)](https://neon.tech/)
