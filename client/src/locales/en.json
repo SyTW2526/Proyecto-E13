@@ -313,6 +313,8 @@
     "sharedBy": "Shared by: {{name}} ({{email}})",
     "errorShareTask": "Error sharing the task. Check the email.",
     "errorShareList": "Error sharing the list. Check the email.",
+    "leaveConfirmation": "Are you sure you want to leave the task \"{{name}}\"? You will no longer have access to it.",
+    "leaveListConfirmation": "Are you sure you want to leave this list? You will no longer have access to it or its tasks.",
     "removeCollaborator": {
       "title": "Are you sure?",
       "descriptionTask": "This action will remove the collaborator from the task.",

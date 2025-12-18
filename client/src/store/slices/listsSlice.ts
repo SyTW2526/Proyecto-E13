@@ -289,9 +289,19 @@ const listsSlice = createSlice({
         state.error = null;
       })
       .addCase(unshareList.fulfilled, (state, action) => {
-        const index = state.lists.findIndex((l) => l.id === action.payload.id);
+        const listId = action.payload.id;
+        const listShares = action.payload.shares || [];
+        const index = state.lists.findIndex((l) => l.id === listId);
+
         if (index !== -1) {
-          state.lists[index] = action.payload;
+          if (listShares.length === 0) {
+            state.lists.splice(index, 1);
+            if (state.selectedListId === listId) {
+              state.selectedListId = null;
+            }
+          } else {
+            state.lists[index] = action.payload;
+          }
         }
         state.error = null;
       })

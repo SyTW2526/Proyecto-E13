@@ -286,7 +286,31 @@ export const shareList = async (req: Request, res: Response) => {
             },
           },
         },
-        tasks: true,
+        tasks: {
+          include: {
+            shares: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+            list: true,
+          },
+        },
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
       },
     });
 

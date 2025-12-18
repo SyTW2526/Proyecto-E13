@@ -313,6 +313,8 @@
     "sharedBy": "Compartido por: {{name}} ({{email}})",
     "errorShareTask": "Error al compartir la tarea. Verifica el email.",
     "errorShareList": "Error al compartir la lista. Verifica el email.",
+    "leaveConfirmation": "¿Estás seguro de que quieres salir de la tarea \"{{name}}\"? Ya no tendrás acceso a ella.",
+    "leaveListConfirmation": "¿Estás seguro de que quieres salir de esta lista? Ya no tendrás acceso a ella ni a sus tareas.",
     "removeCollaborator": {
       "title": "¿Estás seguro?",
       "descriptionTask": "Esta acción eliminará al colaborador de la tarea.",

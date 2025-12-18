@@ -22,7 +22,7 @@ export default function SharedPage() {
     sortBy,
     toggleSort,
     sorting,
-  } = useTaskFilters();
+  } = useTaskFilters("shared");
 
   const { fetchSharedTasks, isLoading } = useTasks();
   const {

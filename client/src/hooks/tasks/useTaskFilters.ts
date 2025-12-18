@@ -2,7 +2,9 @@ import { useMemo } from "react";
 import { useTasks } from "./useTasks";
 import { useLists } from "@/hooks/useLists";
 
-export function useTaskFilters() {
+type ListMode = "owned" | "shared" | "all";
+
+export function useTaskFilters(listMode: ListMode = "all") {
   const {
     accessibleTasks,
     filteredTasks,
@@ -15,19 +17,31 @@ export function useTaskFilters() {
     toggleSort,
     sorting,
   } = useTasks();
-  const { accessibleLists } = useLists();
+  const { accessibleLists, ownedLists, sharedLists } = useLists();
+
+  const listsToUse = useMemo(() => {
+    switch (listMode) {
+      case "owned":
+        return ownedLists;
+      case "shared":
+        return sharedLists;
+      case "all":
+      default:
+        return accessibleLists;
+    }
+  }, [listMode, ownedLists, sharedLists, accessibleLists]);
 
   const selectedListId = filters.listId;
   const listTaskCounts = useMemo(
     () =>
-      accessibleLists.map((list) => ({
+      listsToUse.map((list) => ({
         id: list.id,
         name: list.name,
         count: accessibleTasks.filter((task) => task.listId === list.id).length,
         description: list.description,
         owner: list.owner,
       })),
-    [accessibleLists, accessibleTasks],
+    [listsToUse, accessibleTasks],
   );
 
   const handleListFilter = (listId: string | null) => {
@@ -46,6 +60,6 @@ export function useTaskFilters() {
     sortBy,
     toggleSort,
     sorting,
-    accessibleLists,
+    accessibleLists: listsToUse,
   };
 }

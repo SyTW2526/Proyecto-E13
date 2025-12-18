@@ -85,15 +85,23 @@ export const deleteTask = async (req: Request, res: Response) => {
       return res.status(403).json({ error: "Unauthorized" });
     }
 
-    await prisma.task.delete({
+    const taskDeleted = await prisma.task.delete({
       where: {
         id,
+      },
+      include: {
+        shares: true,
       },
     });
 
     getIO().to(`list:${task.listId}`).emit("task:deleted", id);
+    if (taskDeleted.shares) {
+      taskDeleted.shares.forEach((share: any) => {
+        getIO().to(`user:${share.userId}`).emit("task:deleted", id);
+      });
+    }
 
-    return res.status(200).json(task);
+    return res.status(200).json(taskDeleted);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Error deleting task" });
@@ -261,6 +269,11 @@ export const updateTask = async (req: Request, res: Response) => {
     });
 
     getIO().to(`list:${taskUpdated.listId}`).emit("task:updated", taskUpdated);
+    if (taskUpdated.shares) {
+      taskUpdated.shares.forEach((share: any) => {
+        getIO().to(`user:${share.userId}`).emit("task:updated", taskUpdated);
+      });
+    }
 
     return res.status(200).json(taskUpdated);
   } catch (error) {
@@ -343,6 +356,8 @@ export const shareTask = async (req: Request, res: Response) => {
       currentUser?.name || "Usuario",
     );
 
+    getIO().to(`user:${userToShare.id}`).emit("task:shared", taskUpdated);
+
     return res.status(200).json(taskUpdated);
   } catch (error) {
     console.error(error);
@@ -416,6 +431,8 @@ export const updateSharePermission = async (req: Request, res: Response) => {
       },
     });
 
+    getIO().to(`user:${userId}`).emit("task:updated", taskUpdated);
+
     return res.status(200).json(taskUpdated);
   } catch (error) {
     console.error(error);
@@ -484,6 +501,8 @@ export const unshareTask = async (req: Request, res: Response) => {
         list: true,
       },
     });
+
+    getIO().to(`user:${userId}`).emit("task:unshared", id);
 
     return res.status(200).json(taskUpdated);
   } catch (error) {

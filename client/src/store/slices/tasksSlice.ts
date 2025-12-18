@@ -68,6 +68,18 @@ export const fetchSharedTasks = createAsyncThunk(
   },
 );
 
+export const fetchTasksByList = createAsyncThunk(
+  "tasks/fetchTasksByList",
+  async (listId: string, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get<Task[]>(`/lists/${listId}/tasks`);
+      return data;
+    } catch (err) {
+      return rejectWithValue(apiErrorMessage(err));
+    }
+  },
+);
+
 export const createTask = createAsyncThunk(
   "tasks/createTask",
   async (taskData: Partial<Task>, { rejectWithValue }) => {
@@ -215,6 +227,14 @@ const tasksSlice = createSlice({
         state.selectedTaskId = null;
       }
     },
+    tasksDeletedByList: (state, action: PayloadAction<string>) => {
+      const listId = action.payload;
+      state.tasks = state.tasks.filter((t) => t.listId !== listId);
+      const selectedTask = state.tasks.find((t) => t.id === state.selectedTaskId);
+      if (!selectedTask) {
+        state.selectedTaskId = null;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -243,6 +263,14 @@ const tasksSlice = createSlice({
       .addCase(fetchSharedTasks.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchTasksByList.fulfilled, (state, action) => {
+        for (const task of action.payload) {
+          if (!state.tasks.find((t) => t.id === task.id)) {
+            state.tasks.push(task);
+          }
+        }
+        state.error = null;
       });
 
     builder
@@ -359,12 +387,22 @@ const tasksSlice = createSlice({
         state.error = null;
       })
       .addCase(unshareTask.fulfilled, (state, action) => {
-        const index = state.tasks.findIndex((t) => t.id === action.payload.id);
+        const taskId = action.payload.id;
+        const taskShares = action.payload.shares || [];
+        const index = state.tasks.findIndex((t) => t.id === taskId);
+
         if (index !== -1) {
-          state.tasks[index] = mergeTaskPayload(
-            state.tasks[index],
-            action.payload,
-          );
+          if (taskShares.length === 0) {
+            state.tasks.splice(index, 1);
+            if (state.selectedTaskId === taskId) {
+              state.selectedTaskId = null;
+            }
+          } else {
+            state.tasks[index] = mergeTaskPayload(
+              state.tasks[index],
+              action.payload,
+            );
+          }
         }
         state.error = null;
       })
@@ -389,6 +427,7 @@ export const {
   taskAdded,
   taskUpdated,
   taskDeleted,
+  tasksDeletedByList,
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;

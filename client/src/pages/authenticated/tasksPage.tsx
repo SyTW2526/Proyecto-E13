@@ -23,7 +23,7 @@ export default function TasksPage() {
     sortBy,
     toggleSort,
     sorting,
-  } = useTaskFilters();
+  } = useTaskFilters("owned");
 
   const { fetchAllTasks, isLoading } = useTasks();
   const { fetchAllLists, isLoading: isLoadingLists } = useLists();

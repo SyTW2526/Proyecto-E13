@@ -265,7 +265,7 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     expect(state.error).toBe("Error al actualizar permisos");
   });
 
-  it("unshareTask.fulfilled elimina el share de la tarea", () => {
+  it("unshareTask.fulfilled elimina la tarea del estado cuando no quedan shares", () => {
     const taskWithoutShare = { ...baseTask, shares: [] };
     const action = {
       type: unshareTask.fulfilled.type,
@@ -275,7 +275,22 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
       { ...initialState, tasks: [{ ...baseTask, shares: [share] }] },
       action,
     );
-    expect(state.tasks[0].shares).toEqual([]);
+    expect(state.tasks).toHaveLength(0);
+  });
+
+  it("unshareTask.fulfilled actualiza shares cuando otro usuario es removido", () => {
+    const otherShare = { ...share, userId: "other-user" };
+    const taskWithUpdatedShares = { ...baseTask, shares: [share] };
+    const action = {
+      type: unshareTask.fulfilled.type,
+      payload: taskWithUpdatedShares,
+    };
+    const state = reducer(
+      { ...initialState, tasks: [{ ...baseTask, shares: [share, otherShare] }] },
+      action,
+    );
+    expect(state.tasks).toHaveLength(1);
+    expect(state.tasks[0].shares).toEqual([share]);
   });
 
   it("unshareTask.rejected establece error", () => {
@@ -629,17 +644,18 @@ describe("tasksSlice - Acciones asíncronas adicionales", () => {
     expect(state.tasks[0].shares).toHaveLength(0);
   });
 
-  it("unshareTask.fulfilled actualiza tarea sin el share eliminado", () => {
-    const taskWithoutShare = {
+  it("unshareTask.fulfilled mantiene la tarea cuando quedan shares despues de remover otro usuario", () => {
+    const taskWithUpdatedShares = {
       ...baseTask,
-      shares: [],
+      shares: [share],
     };
     const action = {
       type: unshareTask.fulfilled.type,
-      payload: taskWithoutShare,
+      payload: taskWithUpdatedShares,
     };
-    const state = reducer({ ...initialState, tasks: [baseTask] }, action);
-    expect(state.tasks[0].shares).toHaveLength(0);
+    const state = reducer({ ...initialState, tasks: [{ ...baseTask, shares: [share] }] }, action);
+    expect(state.tasks).toHaveLength(1);
+    expect(state.tasks[0].shares).toEqual([share]);
     expect(state.error).toBeNull();
   });
 

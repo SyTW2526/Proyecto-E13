@@ -5,6 +5,7 @@ import {
   taskAdded,
   taskUpdated,
   taskDeleted,
+  tasksDeletedByList,
 } from "../store/slices/tasksSlice";
 import {
   listUpdated,
@@ -39,6 +40,14 @@ export const useSocket = () => {
         dispatch(taskDeleted(taskId));
       });
 
+      socket.on("task:shared", (task: Task) => {
+        dispatch(taskAdded(task));
+      });
+
+      socket.on("task:unshared", (taskId: string) => {
+        dispatch(taskDeleted(taskId));
+      });
+
       socket.on("list:updated", (list: List) => {
         dispatch(listUpdated(list));
       });
@@ -53,9 +62,15 @@ export const useSocket = () => {
 
       socket.on("list:shared", (list: List) => {
         dispatch(listCreated(list));
+        if (list.tasks && Array.isArray(list.tasks)) {
+          for (const task of list.tasks) {
+            dispatch(taskAdded(task));
+          }
+        }
       });
 
       socket.on("list:unshared", (listId: string) => {
+        dispatch(tasksDeletedByList(listId));
         dispatch(listDeleted(listId));
       });
 
@@ -69,6 +84,8 @@ export const useSocket = () => {
       socket.off("task:created");
       socket.off("task:updated");
       socket.off("task:deleted");
+      socket.off("task:shared");
+      socket.off("task:unshared");
       socket.off("list:updated");
       socket.off("list:created");
       socket.off("list:deleted");
